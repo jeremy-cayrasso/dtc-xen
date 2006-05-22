@@ -1,0 +1,5 @@
+dtc-xen (0.1.0) unstable; urgency=low
+
+  * Debian users can now do dpkg-buildpackage -rfakeroot -us -uc
+
+ -- Thomas GOIRAND <thomas@goirand.fr>  Tue, 28 Jun 2005 16:06:38 +0200

@@ -1,0 +1,20 @@
+Source: dtc-xen
+Section: web
+Priority: optional
+Maintainer: Thomas GOIRAND <thomas@goirand.fr>
+Build-Depends: python2.3-dev, debhelper (>> 4.0.0), dh-make
+Standards-Version: 0.1.0
+
+Package: dtc-xen
+Version: 0.1.0
+Section: web
+Priority: optional
+Architecture: all
+Depends: python2.3
+Maintainer: Thomas GOIRAND <thomas@goirand.fr>
+Description: A control panel to manage Xen VMs
+ dtc-xen is a web GUI tool to manage, create and
+ destroy your domU under Xen. It's written to
+ integrate within DTC web hosting control panel.
+ See http://www.gplhost.com/software.html for
+ more details.

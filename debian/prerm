@@ -1,0 +1,10 @@
+#!/bin/sh
+
+set -e
+
+# Debian uninstall bash script for dtc-xen
+# Written by Thomas GOIRAND <thomas@goirand.fr>
+# under LGPL Licence
+
+. /usr/share/debconf/confmodule
+db_version 2.0
