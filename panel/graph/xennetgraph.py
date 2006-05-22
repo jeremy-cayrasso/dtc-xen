@@ -32,7 +32,7 @@ def graph(basename, subname, seconds):
         cmdline+="GPRINT:id%dbytestotal:AVERAGE:\"%s\" "%(id,"Total bytes usage\: %02.0lf\\r")
 
     # print cmdline
-    os.system("rrdtool graph %sxen-net-%s.png --start -%d --end -69 %s"%(folder,subname,seconds,cmdline))
+    os.system("rrdtool graph %sxen-net-%s.png --start -%d --end -69 %s > /dev/null"%(folder,subname,seconds,cmdline))
 
 basename=sys.argv[1]
 folder=basename

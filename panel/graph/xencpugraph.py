@@ -28,7 +28,7 @@ def graph(basename, subname, seconds):
 	cmdline+="GPRINT:id%dpercent:AVERAGE:\"%s\" "%(id,"Average CPU usage\: %02.0lf%%\\j")
 
     # print cmdline
-    os.system("nice -n+20 rrdtool graph %sxen-cpu-%s.png --start -%d --end -69 %s"%(folder,subname,seconds,cmdline))
+    os.system("nice -n+20 rrdtool graph %sxen-cpu-%s.png --start -%d --end -69 %s > /dev/null"%(folder,subname,seconds,cmdline))
 
 basename=sys.argv[1]
 folder=basename
