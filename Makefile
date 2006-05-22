@@ -17,7 +17,13 @@ install:
 	@#now for documentation
 	@-mkdir -p $(DESTDIR)/usr/share/doc/dtc-xen
 	@-cp -rf doc/* $(DESTDIR)/usr/share/doc/dtc-xen
-	@-cp debian/changelog $(DESTDIR)/usr/share/dtc-xen/doc
-	@-gzip -9 $(DESTDIR)/usr/share/dtc-xen/doc/changelog
+	@-cp debian/changelog $(DESTDIR)/usr/share/doc/dtc-xen
+	@-gzip -9 $(DESTDIR)/usr/share/doc/dtc-xen/changelog
+	@-if find $(DESTDIR)/ -iname 'CVS' -exec rm -rf {} \; &>/dev/null ; then \
+		echo "Erased CVS dirs" ; \
+	fi;
+	@-if find $(DESTDIR)/ -iname '*~' -exec rm -rf {} \; &>/dev/null ; then \
+		echo "Erased backup files" ; \
+	fi;
 
 	@-chown -R root:root $(DESTDIR)/usr
