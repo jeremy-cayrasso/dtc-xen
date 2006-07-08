@@ -258,6 +258,7 @@ root = \"/dev/sda1 ro\"
 # Sets runlevel 4.
 extra = \"4\"
 " >/etc/xen/${VPSNAME}
+ln -s ../${VPSNAME} /etc/xen/auto/${VPSNAME}
 
 echo "Copying modules..."
 mv ${VPSGLOBPATH}/${VPSNUM}/lib/tls ${VPSGLOBPATH}/${VPSNUM}/lib/tls.disabled
