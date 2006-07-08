@@ -1,3 +1,9 @@
+dtc-xen (0.1.1) unstable; urgency=low
+
+  * Added the dtc_create_vps.sh script in /usr/sbin
+
+ -- Thomas GOIRAND <thomas@goirand.fr>  Sat, 8 Jul 2006 16:06:38 +0200
+
 dtc-xen (0.1.0) unstable; urgency=low
 
   * Debian users can now do dpkg-buildpackage -rfakeroot -us -uc

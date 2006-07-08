@@ -3,10 +3,10 @@ Section: web
 Priority: optional
 Maintainer: Thomas GOIRAND <thomas@goirand.fr>
 Build-Depends: python2.3-dev, debhelper (>> 4.0.0), dh-make
-Standards-Version: 0.1.0
+Standards-Version: 0.1.1
 
 Package: dtc-xen
-Version: 0.1.0
+Version: 0.1.1
 Section: web
 Priority: optional
 Architecture: all
