@@ -11,6 +11,7 @@ install:
 	@-mkdir -p $(DESTDIR)/var/lib/dtc-xen/rrds
 	@-mkdir -p $(DESTDIR)/var/www
 	@-mkdir -p $(DESTDIR)/etc/cron.d
+	@-mkdir -p $(DESTDIR)/usr/sbin
 	@-cp debian/dtc-xen $(DESTDIR)/etc/cron.d
 	@-ln -s /usr/share/dtc-xen $(DESTDIR)/var/www/dtc-xen
 	@-cp -rf panel/* $(DESTDIR)/usr/share/dtc-xen
