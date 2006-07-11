@@ -1,10 +1,7 @@
 import SOAPpy
-from xmlapi import *
-import repmgr
-import re
 
-server_url = "http://node6501.gplhost.com/dtc-xen/soap"
-server_port = "8080"
+server_url = "node6501.gplhost.com"
+server_port = 8089
 
 def testVPSServer():
   return "ok"
@@ -23,7 +20,7 @@ def listStartedVPS():
   return "ok"
 
 
-soapserver = SOAPpy.SOAPServer((server_url, server_port))
+soapserver = SOAPpy.SOAPServer(("dtc.xen650202.gplhost.com", server_port))
 soapserver.registerFunction(testVPSServer)
 soapserver.registerFunction(startVPS)
 soapserver.registerFunction(destroyVPS)
