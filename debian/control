@@ -2,7 +2,7 @@ Source: dtc-xen
 Section: web
 Priority: optional
 Maintainer: Thomas GOIRAND <thomas@goirand.fr>
-Build-Depends: python2.3-dev, debhelper (>> 4.0.0), dh-make, python-soappy
+Build-Depends: python2.3-dev, debhelper (>> 4.0.0), dh-make, python-soappy, python-crypto, m2crypto
 Standards-Version: 0.1.1
 
 Package: dtc-xen
