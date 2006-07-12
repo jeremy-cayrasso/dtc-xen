@@ -1,4 +1,5 @@
 import sys
+import SOAPpy
 from SOAPpy import *
 from M2Crypto import SSL
 
@@ -33,11 +34,15 @@ def _authorize(*args, **kw):
 def auth(userid, password, mode='clear', auth=None):
   return userid
 
+def _passphrase(cert):
+  print "Pass phrase faked..."
+  return "aaaa"
+
 if not Config.SSLserver:
   raise RuntimeError, "this Python installation doesn't have OpenSSL and M2Crypto"
 
 ssl_context = SSL.Context()
-ssl_context.load_cert('privkey.pem')
+ssl_context.load_cert('soap.cert.cert', 'privkey.pem', callback=_passphrase)
 
 soapserver = SOAPpy.SOAPServer((server_url, server_port))
 soapserver.registerFunction(auth)
