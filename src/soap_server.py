@@ -3,6 +3,7 @@ import SOAPpy
 from SOAPpy import *
 from M2Crypto import SSL
 
+# server_url = "mirror.tusker.net"
 server_url = "dtc.xen650202.gplhost.com"
 server_port = 8089
 
@@ -44,7 +45,7 @@ if not Config.SSLserver:
 ssl_context = SSL.Context()
 ssl_context.load_cert('soap.cert.cert', 'privkey.pem', callback=_passphrase)
 
-soapserver = SOAPpy.SOAPServer((server_url, server_port))
+soapserver = SOAPpy.SOAPServer((server_url, server_port), ssl_context = ssl_context)
 soapserver.registerFunction(auth)
 soapserver.registerFunction(testVPSServer)
 soapserver.registerFunction(startVPS)
