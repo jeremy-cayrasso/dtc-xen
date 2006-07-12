@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import sys
 import SOAPpy
 from SOAPpy import *
@@ -31,8 +32,11 @@ Config.authMethod = "_authorize"
 
 def _authorize(*args, **kw):
   global Config
+  print "_authorize called..."
+  return 1
 
 def auth(userid, password, mode='clear', auth=None):
+  print "auth called..."
   return userid
 
 def _passphrase(cert):
@@ -47,13 +51,18 @@ ssl_context.load_cert('soap.cert.cert', 'privkey.pem', callback=_passphrase)
 
 soapserver = SOAPpy.SOAPServer((server_url, server_port), ssl_context = ssl_context)
 soapserver.registerFunction(auth)
+soapserver.registerFunction(_authorize)
 soapserver.registerFunction(testVPSServer)
 soapserver.registerFunction(startVPS)
 soapserver.registerFunction(destroyVPS)
 soapserver.registerFunction(shutdownVPS)
 soapserver.registerFunction(listStartedVPS)
-print "Starting dtc-xen python SOAP server at http://%s:%s/ ..." % (server_url, server_port)
-try:
-  soapserver.serve_forever()
-except KeyboardInterrupt:
-  pass
+print "Starting dtc-xen python SOAP server at https://%s:%s/ ..." % (server_url, server_port)
+while True:
+	try:
+	  soapserver.serve_forever()
+	except KeyboardInterrupt:
+          print "Shutting down..."
+	  sys.exit(0)
+	except:
+	  print "Caught exception handling connection"
