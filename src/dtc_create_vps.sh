@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if [ $# -lt 3 ]; then 
-	echo "Usage: $0 <xen id> <package id> <ip address> [debian/centos/gentoo/manual]"
+	echo "Usage: $0 <xen id> <package id> <ip address> [debian/ubuntu_dapper/centos/gentoo/manual]"
 fi
 
 # Things that often change
@@ -104,6 +104,8 @@ if [ ""$DISTRO = "centos" ] ; then
 	/usr/bin/rpmstrap --verbose --local-source /usr/src/centos3 centos3 ${VPSGLOBPATH}/${VPSNUM}
 elif [ ""$DISTRO = "debian" ] ; then
 	$DEBOOTSTRAP --arch ${DEBIAN_BINARCH} sarge ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
+elif [ ""$DISTRO = "ubuntu_dapper" ] ; then
+	$DEBOOTSTRAP --arch i386 dapper ${VPSGLOBPATH}/${VPSNUM} http://archive.ubuntu.ocm/ubuntu
 elif [ ""$DISTRO = "gentoo" ]; then
 	if [ ! -e /usr/src/gentoo/stage3-x86-2006.0.tar.bz2 ]; then
 		echo "Please download the gentoo stage3 from http://mirror.gentoo.gr.jp/releases/x86/2006.0/stages/stage3-x86-2006.0.tar.bz2"
@@ -225,14 +227,27 @@ chroot ${VPSGLOBPATH}/${VPSNUM} rc-update add net.eth0 default
 
 elif [ ""$DISTRO = "debian" ] ; then
 		cp /etc/apt/sources.list ${VPSGLOBPATH}/${VPSNUM}/etc/apt
-		echo "# This file describes the network interfaces available on your system
-# and how to activate them. For more information, see interfaces(5).
-
-# The loopback network interface
-auto lo
+		echo "auto lo
 iface lo inet loopback
 
-# The primary network interface
+auto eth0
+iface eth0 inet static
+	address ${IPADDR}
+	netmask ${NETMASK}
+	network ${NETWORK}
+	broadcast ${BROADCAST}
+	gateway ${GATEWAY}
+" >${ETC}/network/interfaces
+elif [ ""$DISTRO = "ubuntu_dapper" ] ; then
+	echo "deb http://archive.ubuntu.com/ubuntu/ dapper main restricted
+deb-src http://archive.ubuntu.com/ubuntu/ dapper main restricted
+		
+deb http://archive.ubuntu.com/ubuntu/ dapper-updates main restricted
+deb-src http://archive.ubuntu.com/ubuntu/ dapper-updates main restricted
+" >${VPSGLOBPATH}/${VPSNUM}/etc/apt
+		echo "auto lo
+iface lo inet loopback
+
 auto eth0
 iface eth0 inet static
 	address ${IPADDR}
@@ -245,7 +260,6 @@ else
 	echo "Not implemented for other distros yet"
 	exit
 fi
-
 
 echo "kernel = \"${KERNELPATH}\"
 memory = ${VPSMEM}

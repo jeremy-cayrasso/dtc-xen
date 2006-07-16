@@ -15,7 +15,7 @@ install:
 	@-cp debian/dtc-xen $(DESTDIR)/etc/cron.d
 	@-ln -s /usr/share/dtc-xen $(DESTDIR)/var/www/dtc-xen
 	@-cp -rf panel/* $(DESTDIR)/usr/share/dtc-xen
-	@-cp -rf src/* $(DESTDIR)/usr/sbin/
+	@-cp -rf src/dtc_create_vps.sh $(DESTDIR)/usr/sbin/
 	@#now for documentation
 	@-mkdir -p $(DESTDIR)/usr/share/doc/dtc-xen
 	@-cp -rf doc/* $(DESTDIR)/usr/share/doc/dtc-xen
