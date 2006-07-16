@@ -12,10 +12,12 @@ install:
 	@-mkdir -p $(DESTDIR)/var/www
 	@-mkdir -p $(DESTDIR)/etc/cron.d
 	@-mkdir -p $(DESTDIR)/usr/sbin
+	@-mkdir -p $(DESTDIR)/usr/lib/debootstrap/scripts
 	@-cp debian/dtc-xen $(DESTDIR)/etc/cron.d
 	@-ln -s /usr/share/dtc-xen $(DESTDIR)/var/www/dtc-xen
 	@-cp -rf panel/* $(DESTDIR)/usr/share/dtc-xen
 	@-cp -rf src/dtc_create_vps.sh $(DESTDIR)/usr/sbin/
+	@-cp -rf debootstrap_scripts/dapper $(DESTDIR)/usr/lib/debootstrap/scripts
 	@#now for documentation
 	@-mkdir -p $(DESTDIR)/usr/share/doc/dtc-xen
 	@-cp -rf doc/* $(DESTDIR)/usr/share/doc/dtc-xen
