@@ -4,8 +4,11 @@ import SOAPpy
 from SOAPpy import *
 from M2Crypto import SSL
 
+import crypt
+# print crypt.crypt('somepw','py')
+
 # debug
-SOAPpy.Config.debug=1
+SOAPpy.Config.debug=0
 
 # server_url = "mirror.tusker.net"
 server_url = "dtc.xen650202.gplhost.com"
@@ -36,14 +39,14 @@ Config.authMethod = "_authorize"
 def _authorize(*args, **kw):
   global Config
   print "_authorize called..."
+
+
   c = kw["_SOAPContext"]
   print "**kw =%s" % str(kw)
 
   # The socket object, useful for
   print "Peer connected: ",  c.connection.getpeername()
 
-  print "basicAuthEchoServer.echoClass._authorize"
- 
   # get authorization info from HTTP headers
   ah = c.httpheaders.get("Authorization","")
 
@@ -53,21 +56,30 @@ def _authorize(*args, **kw):
     username, password = base64.decodestring(ah[6:].strip()).split(":")
     print "Authorization string: \"%s\"" % (ah,)
     print "Username: \"%s\" Password: \"%s\"" % (username, password)
+
+    print "Load .htpasswd..."
+    fd = open('.htpasswd', 'r') 
+
+    for line in fd:
+      u, h = line.strip().split(':')
+      if u == username:
+        print "Found user: ",username
+	print "Password from file: ", h
+        verify_pass = crypt.crypt(password, h[:2])
+        print "Check hash password: ",verify_pass
+	if verify_pass == h:
+          print "Password matches the one in the file!"
+          return 1
+        else:
+          print "Password didn't match the one in .htpasswd"
+          return 0
     
-    # do username,password checks here and decide on action
-    if username == "JohnDoe" and password == "JDsPassword":
-      print "Allowing request"
-      return 1
-    
-    else:
-      print "Refusing request"
-      return 0
+    print "Couldn't find user in password file!"
+    return 0
     
   else:
     print "NO authorization information in HTTP headers, refusing."
     return 0
-
-  return 1
 
 def auth(userid, password, mode='clear', auth=None):
   print "auth called..."
