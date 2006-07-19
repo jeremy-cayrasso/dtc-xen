@@ -4,6 +4,9 @@ import SOAPpy
 from SOAPpy import *
 from M2Crypto import SSL
 
+# debug
+SOAPpy.Config.debug=1
+
 # server_url = "mirror.tusker.net"
 server_url = "dtc.xen650202.gplhost.com"
 server_port = 8089
@@ -33,6 +36,37 @@ Config.authMethod = "_authorize"
 def _authorize(*args, **kw):
   global Config
   print "_authorize called..."
+  c = kw["_SOAPContext"]
+  print "**kw =%s" % str(kw)
+
+  # The socket object, useful for
+  print "Peer connected: ",  c.connection.getpeername()
+
+  print "basicAuthEchoServer.echoClass._authorize"
+ 
+  # get authorization info from HTTP headers
+  ah = c.httpheaders.get("Authorization","")
+
+  if ah:
+    # decode and analyze the string for the username and password
+    # (we slice the string from 6 onwards to remove the "Basic ")
+    username, password = base64.decodestring(ah[6:].strip()).split(":")
+    print "Authorization string: \"%s\"" % (ah,)
+    print "Username: \"%s\" Password: \"%s\"" % (username, password)
+    
+    # do username,password checks here and decide on action
+    if username == "JohnDoe" and password == "JDsPassword":
+      print "Allowing request"
+      return 1
+    
+    else:
+      print "Refusing request"
+      return 0
+    
+  else:
+    print "NO authorization information in HTTP headers, refusing."
+    return 0
+
   return 1
 
 def auth(userid, password, mode='clear', auth=None):
@@ -50,6 +84,8 @@ ssl_context = SSL.Context()
 ssl_context.load_cert('soap.cert.cert', 'privkey.pem', callback=_passphrase)
 
 soapserver = SOAPpy.SOAPServer((server_url, server_port), ssl_context = ssl_context)
+# No ssl 
+# soapserver = SOAPpy.SOAPServer((server_url, server_port))
 soapserver.registerFunction(auth)
 soapserver.registerFunction(_authorize)
 soapserver.registerFunction(testVPSServer)
