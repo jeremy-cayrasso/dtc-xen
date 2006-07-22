@@ -1,6 +1,6 @@
 Template: dtc-xen/conf_soap_hostname
 Type: string
-Default: $default_conf_soap_hostname
+Default: ${default_conf_soap_hostname}
 Description: Server hostname.
  What will be the hostname for this dtc-xen
  server? This will be used as a part of the URL
