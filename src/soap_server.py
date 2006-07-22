@@ -3,15 +3,21 @@ import sys
 import os
 import SOAPpy
 from SOAPpy import *
+
+# debug
+SOAPpy.Config.debug=1
+
 from M2Crypto import SSL
 
 import crypt
 from Properties import *
 
+# import xm stuff
+sys.path.append( '/usr/lib/python' ) #Required to import from /usr/lib/python for FC4
+import xen.xm.main as xenxm
+
 # print crypt.crypt('somepw','py')
 
-# debug
-SOAPpy.Config.debug=0
 
 # read config file
 p=Properties()
@@ -27,17 +33,22 @@ def testVPSServer():
   return "ok"
 
 def startVPS(vpsname):
-  return "ok"
+  print "Starting ", vpsname
+  return "ok", vpsname
 
 def destroyVPS(vpsname):
-  return "ok"
+  print "Destroying ", vpsname
+  return "ok", vpsname
 
 
 def shutdownVPS(vpsname):
-  return "ok"
+  print "Shutdown ", vpsname
+  return "ok", vpsname
 
 def listStartedVPS():
-  return "ok"
+  doms = xenxm.server.xend_domains()
+  doms.sort()
+  return doms
 
 # ask for returned SOAP responses to be converted to basic python types
 Config.simplify_objects = 1
