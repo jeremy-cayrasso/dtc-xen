@@ -22,7 +22,7 @@ import xen.xm.main as xenxm
 
 # read config file
 p=Properties()
-p.load(open('soap.conf'))
+p.load(open('/etc/dtc-xen/soap.conf'))
 server_host=p.getProperty("soap_server_host");
 server_port=int(p.getProperty("soap_server_port"));
 
