@@ -58,6 +58,9 @@ if [ ${TEST} = "true" ] ; then
 	# If the config file exist, read the passphrase from the file
 	if [ -e ${DTCXEN_ETCPATH}/soap.conf ] ; then
 		conf_ssl_passphrase=`grep soap_server_pass_phrase /etc/dtc-xen/soap.conf | cut -d"=" -f 2`
+		if [ -z ""$conf_ssl_passphrase ] ; then
+			conf_ssl_passphrase=`echo ${RANDOM}${RANDOM}`
+		fi
 	else
 		conf_ssl_passphrase=`echo ${RANDOM}${RANDOM}`
 	fi
