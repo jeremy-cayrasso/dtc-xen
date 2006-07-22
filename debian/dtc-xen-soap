@@ -1,7 +1,7 @@
 #!/bin/bash
 
-echo "Not start/stop doing for debug purpose now!"
-exit 0
+#echo "Not start/stop doing for debug purpose now!"
+#exit 0
 
 PYTHON=/usr/bin/python
 case "$1" in

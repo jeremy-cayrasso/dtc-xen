@@ -14,12 +14,14 @@ install:
 	@-mkdir -p $(DESTDIR)/etc/init.d
 	@-mkdir -p $(DESTDIR)/usr/sbin
 	@-mkdir -p $(DESTDIR)/usr/lib/debootstrap/scripts
+	@-mkdir -p $(DESTDIR)/usr/lib/dtc-xen
 	@-cp debian/dtc-xen-soap $(DESTDIR)/etc/init.d
 	@-cp debian/dtc-xen $(DESTDIR)/etc/cron.d
 	@-ln -s /usr/share/dtc-xen $(DESTDIR)/var/www/dtc-xen
 	@-cp -rf panel/* $(DESTDIR)/usr/share/dtc-xen
 	@-cp -rf src/dtc_create_vps.sh $(DESTDIR)/usr/sbin/
 	@-cp -rf src/dtc-soap-server.py $(DESTDIR)/usr/sbin/
+	@-cp src/Properties.py $(DESTDIR)/usr/lib/dtc-xen
 	@-cp -rf debootstrap_scripts/dapper $(DESTDIR)/usr/lib/debootstrap/scripts
 	@#now for documentation
 	@-mkdir -p $(DESTDIR)/usr/share/man/man8

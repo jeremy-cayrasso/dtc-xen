@@ -10,6 +10,7 @@ SOAPpy.Config.debug=1
 from M2Crypto import SSL
 
 import crypt
+sys.path.append( '/usr/lib/dtc-xen' )
 from Properties import *
 
 # import xm stuff
