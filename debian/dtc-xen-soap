@@ -7,8 +7,8 @@ PYTHON=/usr/bin/python
 case "$1" in
     start)
         echo -n "Starting python SOAP server: dtc-soap-server.py"
-	start-stop-daemon --start --oknodo --pidfile /var/run/dtc-xen-soap-server.pid \
-		--exec $PYTHON /usr/sbin/dtc-soap-server.py &
+	start-stop-daemon -b --start --oknodo --pidfile /var/run/dtc-xen-soap-server.pid \
+		--exec $PYTHON /usr/sbin/dtc-soap-server.py
         echo "done!"
         ;;
     stop)
