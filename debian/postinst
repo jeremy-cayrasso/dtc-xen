@@ -7,3 +7,66 @@ set -e
 . /usr/share/debconf/confmodule
 db_version 2.0
 
+db_get dtc-xen/conf_soap_hostname
+conf_soap_hostname=$RET
+db_get dtc-xen/conf_soap_port
+conf_soap_port=$RET
+db_get dtc-xen/conf_soap_login
+conf_soap_login=$RET
+db_get dtc-xen/conf_soap_pass
+conf_soap_pass=$RET
+
+db_unregister dtc-xen/conf_soap_pass
+db_stop
+
+VERBOSE_INSTALL=yes
+
+MKTEMP="mktemp -t"
+OPENSSL=/usr/bin/openssl
+if [ -e "/usr/bin/htpasswd" ] ;then
+	HTPASSWD="/usr/bin/htpasswd"
+else
+	if [ -e "/usr/sbin/htpasswd2" ] ;then
+		HTPASSWD="/usr/sbin/htpasswd2"
+	else
+		echo "Didn't find any htpasswd binary: exiting !!!"
+		exit 1;
+	fi
+fi
+
+DTCXEN_ETCPATH=/etc/dtc-xen
+mkdir -p $DTCXEN_ETCPATH
+CWD=`pwd`
+cd $DTCXEN_ETCPATH
+if [ (! -e $DTCXEN_ETCPATH/privkey.pem) -o (! -e $DTCXEN_ETCPATH/dtc-xen.cert.csr) -o (! -e $DTCXEN_ETCPATH/dtc-xen.cert.cert) -o (! -e $DTCXEN_ETCPATH/dtc-xen.cert.key) ] ; then
+	if [ ""$VERBOSE_INSTALL = "yes" ] ;then
+		echo "===> Generating SSL certs for the SOAP python server"
+	fi
+	CERTPASS_TMP_FILE=`${MKTEMP} certfilepass.XXXXXX`  || exit 1
+	echo $conf_gen_ssl_cert"" >$CERTPASS_TMP_FILE
+	( echo "US";
+	echo "the state";
+	echo "In the space location";
+	echo "GPLHost";
+	echo "No-unit";
+	echo $conf_soap_hostname;
+	echo "webmaster@"$conf_soap_hostname;
+	echo "challenge pass";
+	echo $conf_cert_organization; ) | $OPENSSL req -passout file:$CERTPASS_TMP_FILE -new > dtc-xen.cert.csr
+	$OPENSSL rsa -passin file:$CERTPASS_TMP_FILE -in privkey.pem -out dtc-xen.cert.key
+	$OPENSSL x509 -in dtc-xen.cert.csr -out dtc-xen.cert.cert -req -signkey dtc-xen.cert.key -days 3650
+	rm $CERTPASS_TMP_FILE
+fi
+if [ ""$VERBOSE_INSTALL = "yes" ] ;then
+	echo "===> Generating $DTCXEN_ETCPATH/htpasswd file for the SOAP python server"
+fi
+$HTPASSWD -cb $DTCXEN_ETCPATH/htpasswd ${conf_soap_login} ${conf_soap_pass}
+
+echo "# This is a generated file, don't edit it, do a dpkg-reconfigure dtc-xen instead!
+soap_server_host=
+soap_server_port=
+" >{$DTCXEN_ETCPATH}/soap.conf
+
+cd $CWD
+
+exit 0;

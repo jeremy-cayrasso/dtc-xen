@@ -3,10 +3,10 @@ Section: web
 Priority: optional
 Maintainer: Thomas GOIRAND <thomas@goirand.fr>
 Build-Depends: python2.3-dev, debhelper (>> 4.0.0), dh-make, python-soappy, python-crypto, m2crypto
-Standards-Version: 0.1.1
+Standards-Version: 0.1.2
 
 Package: dtc-xen
-Version: 0.1.1
+Version: 0.1.2
 Section: web
 Priority: optional
 Architecture: all

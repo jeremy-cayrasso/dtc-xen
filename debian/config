@@ -2,8 +2,17 @@
 
 # Source debconf library -- we have a Depends line
 # to make sure it is there...
+
+action=$1
+version=$2
+
 . /usr/share/debconf/confmodule
 db_version 2.0
 
-exit 0;
+db_input high dtc-xen/conf_soap_hostname
+db_input low dtc-xen/conf_soap_port
+db_input high dtc-xen/conf_soap_login
+db_input high dtc-xen/conf_soap_pass
+db_go
 
+exit 0;

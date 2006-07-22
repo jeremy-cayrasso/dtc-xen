@@ -1,3 +1,9 @@
+dtc-xen (0.1.2) unstable; urgency=low
+
+  * Added packaging of the soap server
+
+ -- Thomas GOIRAND <thomas@goirand.fr> Sat, 22 Jul 2006 15:21:00 +0200
+
 dtc-xen (0.1.1) unstable; urgency=low
 
   * Added the dtc_create_vps.sh script in /usr/sbin
