@@ -22,7 +22,7 @@ Description: SOAP server login.
  create on that server.
 
 Template: dtc-xen/conf_soap_pass
-Type: string
+Type: password
 Default: dtc-xen
 Description: SOAP server pass.
  dtc-xen will generate a password (in a .htpasswd file)

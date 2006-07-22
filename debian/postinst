@@ -35,38 +35,60 @@ else
 fi
 
 DTCXEN_ETCPATH=/etc/dtc-xen
+
 mkdir -p $DTCXEN_ETCPATH
 CWD=`pwd`
 cd $DTCXEN_ETCPATH
-if [ (! -e $DTCXEN_ETCPATH/privkey.pem) -o (! -e $DTCXEN_ETCPATH/dtc-xen.cert.csr) -o (! -e $DTCXEN_ETCPATH/dtc-xen.cert.cert) -o (! -e $DTCXEN_ETCPATH/dtc-xen.cert.key) ] ; then
+# Check if all the files of the cert are present
+TEST=false
+if [ ! -e $DTCXEN_ETCPATH/privkey.pem ] ; then
+	TEST=true
+fi
+if [ ! -e $DTCXEN_ETCPATH/dtc-xen.cert.csr ] ; then
+	TEST=true
+fi
+if [ ! -e $DTCXEN_ETCPATH/dtc-xen.cert.cert ] ; then
+	 TEST=true
+fi
+if [ ! -e $DTCXEN_ETCPATH/dtc-xen.cert.key ] ; then
+	TEST=true
+fi
+# If one is missing, just regenerate the cert from scratch !
+if [ ${TEST} = "true" ] ; then
+	# If the config file exist, read the passphrase from the file
+	if [ -e ${DTCXEN_ETCPATH}/soap.conf ] ; then
+		conf_ssl_passphrase=`grep soap_server_pass_phrase /etc/dtc-xen/soap.conf | cut -d"=" -f 2`
+	else
+		conf_ssl_passphrase=`echo ${RANDOM}${RANDOM}`
+	fi
 	if [ ""$VERBOSE_INSTALL = "yes" ] ;then
 		echo "===> Generating SSL certs for the SOAP python server"
 	fi
 	CERTPASS_TMP_FILE=`${MKTEMP} certfilepass.XXXXXX`  || exit 1
-	echo $conf_gen_ssl_cert"" >$CERTPASS_TMP_FILE
-	( echo "US";
-	echo "the state";
-	echo "In the space location";
-	echo "GPLHost";
-	echo "No-unit";
-	echo $conf_soap_hostname;
-	echo "webmaster@"$conf_soap_hostname;
-	echo "challenge pass";
-	echo $conf_cert_organization; ) | $OPENSSL req -passout file:$CERTPASS_TMP_FILE -new > dtc-xen.cert.csr
-	$OPENSSL rsa -passin file:$CERTPASS_TMP_FILE -in privkey.pem -out dtc-xen.cert.key
-	$OPENSSL x509 -in dtc-xen.cert.csr -out dtc-xen.cert.cert -req -signkey dtc-xen.cert.key -days 3650
+	echo $conf_ssl_passphrase >$CERTPASS_TMP_FILE
+	( echo "US"; echo "the-state"; echo "My-ocation"; echo "GPLHost"; echo "No-unit"; echo $conf_soap_hostname;
+	echo "webmaster@"$conf_soap_hostname; echo "challenge pass";
+	echo $conf_cert_organization; ) | $OPENSSL req -passout file:$CERTPASS_TMP_FILE -new > $DTCXEN_ETCPATH/dtc-xen.cert.csr
+	$OPENSSL rsa -passin file:$CERTPASS_TMP_FILE -in $DTCXEN_ETCPATH/privkey.pem -out $DTCXEN_ETCPATH/dtc-xen.cert.key
+	$OPENSSL x509 -in $DTCXEN_ETCPATH/dtc-xen.cert.csr -out $DTCXEN_ETCPATH/dtc-xen.cert.cert -req -signkey $DTCXEN_ETCPATH/dtc-xen.cert.key -days 3650
 	rm $CERTPASS_TMP_FILE
 fi
+
+# Generate the htpasswd file (each time, it doesn't mater)
 if [ ""$VERBOSE_INSTALL = "yes" ] ;then
 	echo "===> Generating $DTCXEN_ETCPATH/htpasswd file for the SOAP python server"
+#	echo "$HTPASSWD -cb $DTCXEN_ETCPATH/htpasswd ${conf_soap_login} ${conf_soap_pass}"
 fi
 $HTPASSWD -cb $DTCXEN_ETCPATH/htpasswd ${conf_soap_login} ${conf_soap_pass}
 
+# Create the python config file
 echo "# This is a generated file, don't edit it, do a dpkg-reconfigure dtc-xen instead!
-soap_server_host=
-soap_server_port=
-" >{$DTCXEN_ETCPATH}/soap.conf
+soap_server_host=${conf_soap_hostname}
+soap_server_port=${conf_soap_port}
+soap_server_pass_phrase=${conf_ssl_passphrase}
+" >${DTCXEN_ETCPATH}/soap.conf
 
+# Install and start the python SOAP server
 if [ -x "/etc/init.d/dtc-xen-soap" ] ; then
 	update-rc.d dtc-xen-soap defaults 22 >/dev/null
 	if [ -x /usr/sbin/invoke-rc.d ] ; then
