@@ -1,18 +1,27 @@
 #!/usr/bin/env python
 import sys
+import os
 import SOAPpy
 from SOAPpy import *
 from M2Crypto import SSL
 
 import crypt
+from Properties import *
+
 # print crypt.crypt('somepw','py')
 
 # debug
 SOAPpy.Config.debug=0
 
-# server_url = "mirror.tusker.net"
-server_url = "dtc.xen650202.gplhost.com"
-server_port = 8089
+# read config file
+p=Properties()
+p.load(open('soap.conf'))
+server_host=p.getProperty("soap_server_host");
+server_port=int(p.getProperty("soap_server_port"));
+
+# server_host = "mirror.tusker.net"
+# server_host = "dtc.xen650202.gplhost.com"
+# server_port = 8089
 
 def testVPSServer():
   return "ok"
@@ -95,9 +104,9 @@ if not Config.SSLserver:
 ssl_context = SSL.Context()
 ssl_context.load_cert('soap.cert.cert', 'privkey.pem', callback=_passphrase)
 
-soapserver = SOAPpy.SOAPServer((server_url, server_port), ssl_context = ssl_context)
+soapserver = SOAPpy.SOAPServer((server_host, server_port), ssl_context = ssl_context)
 # No ssl 
-# soapserver = SOAPpy.SOAPServer((server_url, server_port))
+# soapserver = SOAPpy.SOAPServer((server_host, server_port))
 soapserver.registerFunction(auth)
 soapserver.registerFunction(_authorize)
 soapserver.registerFunction(testVPSServer)
@@ -105,7 +114,7 @@ soapserver.registerFunction(startVPS)
 soapserver.registerFunction(destroyVPS)
 soapserver.registerFunction(shutdownVPS)
 soapserver.registerFunction(listStartedVPS)
-print "Starting dtc-xen python SOAP server at https://%s:%s/ ..." % (server_url, server_port)
+print "Starting dtc-xen python SOAP server at https://%s:%s/ ..." % (server_host, server_port)
 while True:
 	try:
 	  soapserver.serve_forever()
