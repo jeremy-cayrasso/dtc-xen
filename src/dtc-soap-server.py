@@ -25,6 +25,7 @@ p=Properties()
 p.load(open('/etc/dtc-xen/soap.conf'))
 server_host=p.getProperty("soap_server_host");
 server_port=int(p.getProperty("soap_server_port"));
+cert_passphrase=p.getProperty("soap_server_pass_phrase");
 
 # server_host = "mirror.tusker.net"
 # server_host = "dtc.xen650202.gplhost.com"
@@ -77,8 +78,8 @@ def _authorize(*args, **kw):
     print "Authorization string: \"%s\"" % (ah,)
     print "Username: \"%s\" Password: \"%s\"" % (username, password)
 
-    print "Load .htpasswd..."
-    fd = open('.htpasswd', 'r') 
+    print "Loading /etc/dtc-xen/htpasswd..."
+    fd = open('/etc/dtc-xen/htpasswd', 'r') 
 
     for line in fd:
       u, h = line.strip().split(':')
@@ -107,13 +108,13 @@ def auth(userid, password, mode='clear', auth=None):
 
 def _passphrase(cert):
   print "Pass phrase faked..."
-  return "aaaa"
+  return cert_passphrase
 
 if not Config.SSLserver:
   raise RuntimeError, "this Python installation doesn't have OpenSSL and M2Crypto"
 
 ssl_context = SSL.Context()
-ssl_context.load_cert('soap.cert.cert', 'privkey.pem', callback=_passphrase)
+ssl_context.load_cert('/etc/dtc-xen/dtc-xen.cert.cert', '/etc/dtc-xen/privkey.pem', callback=_passphrase)
 
 soapserver = SOAPpy.SOAPServer((server_host, server_port), ssl_context = ssl_context)
 # No ssl 
