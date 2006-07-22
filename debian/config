@@ -10,7 +10,8 @@ version=$2
 db_version 2.0
 
 # Todo: use db_subst to get the hostname -fqdn value!
-db_subst default_conf_soap_hostname `hostname -f`
+hostname_tested=`hostname -f`
+db_subst dtc-xen/conf_soap_hostname default_conf_soap_hostname ${hostname_tested}
 db_input high dtc-xen/conf_soap_hostname
 db_input low dtc-xen/conf_soap_port
 db_input high dtc-xen/conf_soap_login
