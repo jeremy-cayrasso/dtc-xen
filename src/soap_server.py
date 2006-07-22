@@ -33,17 +33,16 @@ def testVPSServer():
   return "ok"
 
 def startVPS(vpsname):
-  print "Starting ", vpsname
-  return "ok", vpsname
+  print "Starting %s..." % vpsname
+  return "OK","Started %s" % vpsname
 
 def destroyVPS(vpsname):
-  print "Destroying ", vpsname
-  return "ok", vpsname
-
+  print "Destroying %s..." % vpsname
+  return "OK","Destroyed %s" % vpsname
 
 def shutdownVPS(vpsname):
-  print "Shutdown ", vpsname
-  return "ok", vpsname
+  print "Shutting down %s..." % vpsname
+  return "OK","Shutdown %s" % vpsname
 
 def listStartedVPS():
   doms = xenxm.server.xend_domains()
