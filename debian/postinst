@@ -39,6 +39,7 @@ DTCXEN_ETCPATH=/etc/dtc-xen
 mkdir -p $DTCXEN_ETCPATH
 CWD=`pwd`
 cd $DTCXEN_ETCPATH
+
 # Check if all the files of the cert are present
 TEST=false
 if [ ! -e $DTCXEN_ETCPATH/privkey.pem ] ; then
@@ -53,17 +54,22 @@ fi
 if [ ! -e $DTCXEN_ETCPATH/dtc-xen.cert.key ] ; then
 	TEST=true
 fi
+
+# Check if we have an old passphrase stored!
+if [ -e ${DTCXEN_ETCPATH}/soap.conf ] ; then
+	conf_ssl_passphrase=`grep soap_server_pass_phrase /etc/dtc-xen/soap.conf | cut -d"=" -f 2`
+	if [ -z ""$conf_ssl_passphrase ] ; then
+		echo "Detected empty password: regenerating it!"
+		conf_ssl_passphrase=`echo ${RANDOM}${RANDOM}`
+	fi
+	TEST=false
+else
+	conf_ssl_passphrase=`echo ${RANDOM}${RANDOM}`
+fi
+
 # If one is missing, just regenerate the cert from scratch !
 if [ ${TEST} = "true" ] ; then
 	# If the config file exist, read the passphrase from the file
-	if [ -e ${DTCXEN_ETCPATH}/soap.conf ] ; then
-		conf_ssl_passphrase=`grep soap_server_pass_phrase /etc/dtc-xen/soap.conf | cut -d"=" -f 2`
-		if [ -z ""$conf_ssl_passphrase ] ; then
-			conf_ssl_passphrase=`echo ${RANDOM}${RANDOM}`
-		fi
-	else
-		conf_ssl_passphrase=`echo ${RANDOM}${RANDOM}`
-	fi
 	if [ ""$VERBOSE_INSTALL = "yes" ] ;then
 		echo "===> Generating SSL certs for the SOAP python server"
 	fi
@@ -90,6 +96,8 @@ soap_server_host=${conf_soap_hostname}
 soap_server_port=${conf_soap_port}
 soap_server_pass_phrase=${conf_ssl_passphrase}
 " >${DTCXEN_ETCPATH}/soap.conf
+
+chmod 600 ${DTCXEN_ETCPATH}/*
 
 # Install and start the python SOAP server
 if [ -x "/etc/init.d/dtc-xen-soap" ] ; then
