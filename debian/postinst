@@ -67,6 +67,15 @@ soap_server_host=
 soap_server_port=
 " >{$DTCXEN_ETCPATH}/soap.conf
 
+if [ -x "/etc/init.d/dtc-xen-soap" ] ; then
+	update-rc.d dtc-xen-soap defaults 22 >/dev/null
+	if [ -x /usr/sbin/invoke-rc.d ] ; then
+		/usr/sbin/invoke-rc.d dtc-xen-soap start
+	else
+		/etc/init.d/dtc-xen-soap start
+	fi
+fi
+
 cd $CWD
 
 exit 0;
