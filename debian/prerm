@@ -17,6 +17,5 @@ if [ -x "/etc/init.d/dtc-xen-soap" ] ; then
 	else
 		/etc/init.d/dtc-xen-soap stop
 	fi
-	update-rc.d -f remove dtc-xen-soap
 fi
 
