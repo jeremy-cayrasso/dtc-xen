@@ -15,6 +15,20 @@ db_get dtc-xen/conf_soap_login
 conf_soap_login=$RET
 db_get dtc-xen/conf_soap_pass
 conf_soap_pass=$RET
+db_get dtc-xen/conf_node_number
+conf_node_number=$RET
+db_get dtc-xen/conf_debian_repository
+conf_debian_repository=$RET
+db_get dtc-xen/conf_netmask
+conf_netmask=$RET
+db_get dtc-xen/conf_network
+conf_network=$RET
+db_get dtc-xen/conf_broadcast
+conf_broadcast=$RET
+db_get dtc-xen/conf_gateway
+conf_gateway=$RET
+db_get dtc-xen/conf_linux_kernel_name
+conf_linux_kernel_name=$RET
 
 db_unregister dtc-xen/conf_soap_pass
 db_stop
@@ -97,6 +111,20 @@ soap_server_host=${conf_soap_hostname}
 soap_server_port=${conf_soap_port}
 soap_server_pass_phrase=${conf_ssl_passphrase}
 " >${DTCXEN_ETCPATH}/soap.conf
+
+echo "#!/bin/sh
+# This is a generated file, don't edit it, do a dpkg-reconfigure dtc-xen instead!
+
+NODE_NUM=$conf_node_number
+DEBIAN_REPOS=\"$conf_debian_repository\"
+NETMASK=$conf_netmask
+NETWORK=$conf_network
+BROADCAST=$conf_broadcast
+GATEWAY=$conf_gateway
+
+KERNELNAME=$conf_linux_kernel_name
+
+" > ${DTCXEN_ETCPATH}/dtc_create_vps.conf.sh
 
 chmod 600 ${DTCXEN_ETCPATH}/*
 

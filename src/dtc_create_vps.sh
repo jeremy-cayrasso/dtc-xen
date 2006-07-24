@@ -5,17 +5,21 @@ if [ $# -lt 3 ]; then
 fi
 
 # Things that often change
-NODE_NUM=6501
-DEBIAN_REPOS="http://65.apt-proxy.gplhost.com:9999/debian"
-NETMASK=255.255.255.0
-NETWORK=202.124.18.0
-BROADCAST=202.124.18.255
-GATEWAY=202.124.18.1
+
+# Source the configuration in the config file!
+. /etc/dtc-xen/dtc_create_vps.conf.sh
+
+#NODE_NUM=6501
+#DEBIAN_REPOS="http://65.apt-proxy.gplhost.com:9999/debian"
+#NETMASK=255.255.255.0
+#NETWORK=202.124.18.0
+#BROADCAST=202.124.18.255
+#GATEWAY=202.124.18.1
 
 # Things that might change
 LVMNAME=lvm1
 VPSGLOBPATH=/xen
-KERNELNAME="2.6.11.12-xenU"
+#KERNELNAME="2.6.11.12-xenU"
 KERNELPATH="/boot/vmlinuz-${KERNELNAME}"
 DEBIAN_BINARCH=i386
 

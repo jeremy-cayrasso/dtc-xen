@@ -16,6 +16,13 @@ db_input high dtc-xen/conf_soap_hostname
 db_input low dtc-xen/conf_soap_port
 db_input high dtc-xen/conf_soap_login
 db_input high dtc-xen/conf_soap_pass
+db_input high dtc-xen/conf_node_number
+db_input high dtc-xen/conf_debian_repository
+db_input high dtc-xen/conf_netmask
+db_input high dtc-xen/conf_network
+db_input high dtc-xen/conf_broadcast
+db_input high dtc-xen/conf_gateway
+db_input high dtc-xen/conf_linux_kernel_name
 db_go
 
 exit 0;
