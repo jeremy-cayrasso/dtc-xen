@@ -35,21 +35,31 @@ def testVPSServer():
   return "ok"
 
 def startVPS(vpsname):
-  print "Starting %s..." % vpsname
-  return "OK","Started %s" % vpsname
+	xmargs=['foo', 'create', vpsname]
+	print "Starting %s..." % vpsname
+	xenxm.main(xmargs)
+	return "OK","Started %s" % vpsname
 
 def destroyVPS(vpsname):
-  print "Destroying %s..." % vpsname
-  return "OK","Destroyed %s" % vpsname
+	xmargs=['foo','destroy',vpsname]
+	print "Destroying %s..." % vpsname
+	xenxm.main(xmargs)
+	return "OK","Destroyed %s" % vpsname
 
 def shutdownVPS(vpsname):
-  print "Shutting down %s..." % vpsname
-  return "OK","Shutdown %s" % vpsname
+	xmargs=['foo','shutdown',vpsname]
+	print "Shutting down %s..." % vpsname
+	xenxm.main(xmargs)
+	return "OK","Shutdown %s" % vpsname
+
+def infoVPS(vpsname):
+	infos=['vpsname']
+	return "OK",infos
 
 def listStartedVPS():
-  doms = xenxm.server.xend_domains()
-  doms.sort()
-  return doms
+	doms = xenxm.server.xend_domains()
+	doms.sort()
+	return doms
 
 # ask for returned SOAP responses to be converted to basic python types
 Config.simplify_objects = 1
