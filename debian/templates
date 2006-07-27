@@ -1,6 +1,6 @@
 Template: dtc-xen/conf_soap_hostname
 Type: string
-Default: ${default_conf_soap_hostname}
+Default: node5555.example.com
 Description: Server hostname.
  What will be the hostname for this dtc-xen
  server? This will be used as a part of the URL
@@ -66,14 +66,14 @@ Template: dtc-xen/conf_broadcast
 Type: string
 Default: 192.168.60.255
 Description: Broascast to be setup in the VPSes
- Please neter the Network broadcast address to use when doing
+ Please neter the network broadcast address to use when doing
  the VPS network customization when dtc-xen creates a VPS.
 
 Template: dtc-xen/conf_gateway
 Type: string
 Default: 192.168.60.254
-Description: Broascast to be setup in the VPSes
- Please enter the Network broadcast address to use when doing
+Description: Gateway to be setup in the VPSes
+ Please enter the network gateway address to use when doing
  the VPS network customization when dtc-xen creates a VPS.
 
 Template: dtc-xen/conf_linux_kernel_name

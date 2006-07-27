@@ -6,14 +6,14 @@
 PYTHON=/usr/bin/python
 case "$1" in
     start)
-        echo -n "Starting python SOAP server: dtc-soap-server.py"
-	start-stop-daemon -b --start --oknodo --pidfile /var/run/dtc-xen-soap-server.pid \
-		--exec $PYTHON /usr/sbin/dtc-soap-server.py
+        echo -n "Starting python SOAP server: dtc-soap-server.py "
+	start-stop-daemon --start -b --quiet --pidfile /var/run/dtc-xen-soap-server.pid --make-pidfile --exec $PYTHON /usr/sbin/dtc-soap-server.py
         echo "done!"
         ;;
     stop)
-    	echo -n "Stoping python SOAP server: dtc-soap-server.py"
-    	start-stop-daemon --start --oknodo --pidfile /var/run/dtc-xen-soap-server.pid
+    	echo -n "Stoping python SOAP server: dtc-soap-server.py "
+    	start-stop-daemon --stop --oknodo --pidfile /var/run/dtc-xen-soap-server.pid
+	echo "done!"
         ;;
     restart|reload|force-reload)
     	$0 stop

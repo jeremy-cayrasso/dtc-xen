@@ -76,13 +76,13 @@ if [ -e ${DTCXEN_ETCPATH}/soap.conf ] ; then
 		echo "Detected empty password: regenerating it!"
 		conf_ssl_passphrase=`echo ${RANDOM}${RANDOM}`
 	fi
-	TEST=false
+	TEST=true
 else
 	conf_ssl_passphrase=`echo ${RANDOM}${RANDOM}`
 fi
 
 # If one is missing, just regenerate the cert from scratch !
-if [ ${TEST} = "false" ] ; then
+if [ ${TEST} = "true" ] ; then
 	# If the config file exist, read the passphrase from the file
 	if [ ""$VERBOSE_INSTALL = "yes" ] ;then
 		echo "===> Generating SSL certs for the SOAP python server"
