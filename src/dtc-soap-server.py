@@ -63,14 +63,15 @@ def listStartedVPS():
 
 def getVPSState(vpsname):
 	info = xenxm.server.xend_domain(vpsname)
-	d = {}
-	d['dom'] = int(xenxm.sxp.child_value(info, 'id', '-1'))
-	d['name'] = xenxm.sxp.child_value(info, 'name', '??')
-	d['mem'] = int(xenxm.sxp.child_value(info, 'memory', '0'))
-	d['cpu'] = int(xenxm.sxp.child_value(info, 'cpu', '0'))
-	d['state'] = xenxm.sxp.child_value(info, 'state', '??')
-	d['cpu_time'] = float(sxp.child_value(info, 'cpu_time', '0'))
-	return d
+	return info
+#	d = {}
+#	d['dom'] = int(xenxm.sxp.child_value(info, 'id', '-1'))
+#	d['name'] = xenxm.sxp.child_value(info, 'name', '??')
+#	d['mem'] = int(xenxm.sxp.child_value(info, 'memory', '0'))
+#	d['cpu'] = int(xenxm.sxp.child_value(info, 'cpu', '0'))
+#	d['state'] = xenxm.sxp.child_value(info, 'state', '??')
+#	d['cpu_time'] = float(sxp.child_value(info, 'cpu_time', '0'))
+#	return d
 
 # ask for returned SOAP responses to be converted to basic python types
 Config.simplify_objects = 1

@@ -9,7 +9,7 @@ $host = "dtc.xen650202.gplhost.com";
 require("nusoap.php");
 
 $soap_client = new soapclient("https://$host:$port/");
-$soap_client->setCredentials("JohnDoe", "JDsPassword");
+$soap_client->setCredentials("dtc-xen", "test");
 $r = $soap_client->call("listStartedVPS","","","","");
 
 $err = $soap_client->getError();
