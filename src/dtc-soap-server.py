@@ -61,6 +61,17 @@ def listStartedVPS():
 	doms.sort()
 	return doms
 
+def getVPSState(vpsname):
+	info = xenxm.server.xend_domain(vpsname)
+	d = {}
+	d['dom'] = int(xenxm.sxp.child_value(info, 'id', '-1'))
+	d['name'] = xenxm.sxp.child_value(info, 'name', '??')
+	d['mem'] = int(xenxm.sxp.child_value(info, 'memory', '0'))
+	d['cpu'] = int(xenxm.sxp.child_value(info, 'cpu', '0'))
+	d['state'] = xenxm.sxp.child_value(info, 'state', '??')
+	d['cpu_time'] = float(sxp.child_value(info, 'cpu_time', '0'))
+	return d
+
 # ask for returned SOAP responses to be converted to basic python types
 Config.simplify_objects = 1
 
@@ -136,6 +147,7 @@ soapserver.registerFunction(startVPS)
 soapserver.registerFunction(destroyVPS)
 soapserver.registerFunction(shutdownVPS)
 soapserver.registerFunction(listStartedVPS)
+soapserver.registerFunction(getVPSState)
 print "Starting dtc-xen python SOAP server at https://%s:%s/ ..." % (server_host, server_port)
 while True:
 	try:
