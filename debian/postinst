@@ -140,4 +140,53 @@ fi
 
 cd $CWD
 
+# Add the group xenusers
+if grep xenusers /etc/group 2>&1 >/dev/null ; then
+	echo "Group xenusers already exists in /etc/group"
+else
+	echo "Add group xenusers"
+	groupadd xenusers
+fi
+
+# Add the 19th users to /etc/passwd with random password if they don't exist
+function dtcaddxenuser {
+	if grep ${1} /etc/passwd 2>&1 >/dev/null ; then
+		echo "User already exists "${1}
+	else
+		echo "Adding user "${1}
+		useradd --groups xenusers -p ${RANDOM}${RANDOM} -s /bin/dtc-xen_userconsole.sh ${1}
+	fi
+}
+
+dtcaddxenuser xen01
+dtcaddxenuser xen02
+dtcaddxenuser xen03
+dtcaddxenuser xen04
+dtcaddxenuser xen05
+dtcaddxenuser xen06
+dtcaddxenuser xen07
+dtcaddxenuser xen08
+dtcaddxenuser xen09
+dtcaddxenuser xen10
+dtcaddxenuser xen11
+dtcaddxenuser xen12
+dtcaddxenuser xen13
+dtcaddxenuser xen14
+dtcaddxenuser xen15
+dtcaddxenuser xen16
+dtcaddxenuser xen17
+dtcaddxenuser xen18
+dtcaddxenuser xen19
+
+# Modify the sudoers file
+if grep xenusers /etc/sudoers 2>&1 >/dev/null ; then
+	echo "Sudoers already modified"
+else
+	echo "Adding avaibility of dtc-xen_userconsole.sh to xenusers in /etc/sudoers"
+	echo "%xenusers       ALL= NOPASSWD: /bin/dtc-xen_userconsole.sh" >>/etc/sudoers
+fi
+
+chown root:xenusers /bin/dtc-xen_userconsole.sh
+chmod +s /bin/dtc-xen_userconsole.sh
+
 exit 0;
