@@ -13,8 +13,10 @@ basename=sys.argv[1]
 data=os.popen2("/usr/sbin/xm list")[1].read()
 domains=data.split("\n")[1:-1]
 for domain in domains:
-    name,id,mem,cpu,state,cputime,console=re.split("[\t ]+",domain)
-
+    if len(domain) == 7:
+      name,id,mem,cpu,state,cputime,console=re.split("[\t ]+",domain)
+    else:
+      name,id,mem,cpu,state,cputime=re.split("[\t ]+",domain)
     # Log the CPU of each domain
     cputime=int(float(cputime)*1000)
     cpurrd=basename+"/cpu-"+name+".rrd"
