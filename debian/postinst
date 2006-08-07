@@ -183,10 +183,10 @@ if grep xenusers /etc/sudoers 2>&1 >/dev/null ; then
 	echo "Sudoers already modified"
 else
 	echo "Adding avaibility of dtc-xen_userconsole.sh to xenusers in /etc/sudoers"
-	echo "%xenusers       ALL= NOPASSWD: /bin/dtc-xen_userconsole.sh" >>/etc/sudoers
+	echo "%xenusers       ALL= NOPASSWD: /usr/sbin/xm console xen*" >>/etc/sudoers
 fi
 
 chown root:xenusers /bin/dtc-xen_userconsole.sh
-chmod +s /bin/dtc-xen_userconsole.sh
+chmod -s /bin/dtc-xen_userconsole.sh
 
 exit 0;

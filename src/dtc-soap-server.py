@@ -2,6 +2,7 @@
 import sys
 import os
 import SOAPpy
+import commands
 from SOAPpy import *
 
 # debug
@@ -60,6 +61,10 @@ def listStartedVPS():
 	doms = xenxm.server.xend_domains()
 	doms.sort()
 	return doms
+
+def changeVPSxmPassword(vpsname,password):
+	commands.getstatusoutput("(echo %s; sleep 1; echo %s;) | passwd %s" % (password,password,vpsname))
+	return "Ok"
 
 def getVPSState(vpsname):
 	info = xenxm.server.xend_domain(vpsname)
@@ -149,6 +154,7 @@ soapserver.registerFunction(destroyVPS)
 soapserver.registerFunction(shutdownVPS)
 soapserver.registerFunction(listStartedVPS)
 soapserver.registerFunction(getVPSState)
+soapserver.registerFunction(changeVPSxmPassword)
 print "Starting dtc-xen python SOAP server at https://%s:%s/ ..." % (server_host, server_port)
 while True:
 	try:
