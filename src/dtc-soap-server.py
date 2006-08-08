@@ -137,7 +137,7 @@ def listStartedVPS():
 
 def changeVPSxmPassword(vpsname,password):
 	username = getUser()
-	if username == "dtc-xen":
+	if username == "dtc-xen" or username == vpsname:
 		commands.getstatusoutput("(echo %s; sleep 1; echo %s;) | passwd %s" % (password,password,vpsname))
 		return "OK"
 	else:
@@ -150,6 +150,44 @@ def changeVPSsoapPassword(vpsname,password):
 		return "OK"
 	else:
 		return "NOTOK"
+
+def changeVPSsshKey(vpsname,keystring):
+	username = getUser()
+	if username == "dtc-xen" or username == vpsname:
+		try:
+			# create the directory if it doesn't exist
+			os.makedirs("/home/%s/.ssh/" % vpsname)
+			os.chown("/home/%s/.ssh/" % vpsname, getuserid(vpsname), getusergroup(vpsname))
+			# open file stream
+			filename = "/home/%s/.ssh/authorized_keys" % vpsname
+			file = open(filename, "w")
+			file.write(keystring)
+			file.close()
+			os.chown(filename, getuserid(vpsname), getusergroup(vpsname))
+		except IOError:
+			return "NOTOK - There was an error writing to", filename
+		return "OK"
+	else:
+		return "NOTOK"
+
+def getuserid(user):
+    import pwd
+    if isinstance(user, int):
+        return user
+    entry = pwd.getpwnam(user)
+    return entry[2]
+
+def getusergroup(user):
+    import pwd
+    import grp
+    return grp.getgrgid(pwd.getpwnam(user)[3])[2]
+
+def getgroupid(group):
+    import grp
+    if isinstance(group, int):
+        return group
+    entry = grp.getgrnam(group)
+    return entry[2]
 
 def getVPSState(vpsname):
 	username = getUser()
@@ -269,6 +307,7 @@ soapserver.registerFunction(listStartedVPS)
 soapserver.registerFunction(getVPSState)
 soapserver.registerFunction(changeVPSxmPassword)
 soapserver.registerFunction(changeVPSsoapPassword)
+soapserver.registerFunction(changeVPSsshKey)
 print "Starting dtc-xen python SOAP server at https://%s:%s/ ..." % (server_host, server_port)
 while True:
 	try:
