@@ -154,7 +154,7 @@ function dtcaddxenuser {
 		echo "User already exists "${1}
 	else
 		echo "Adding user "${1}
-		useradd -g xenusers -p ${RANDOM}${RANDOM} -s /bin/dtc-xen_userconsole.sh ${1}
+		useradd -m -g xenusers -p ${RANDOM}${RANDOM} -s /bin/dtc-xen_userconsole.sh ${1}
 	fi
 }
 
