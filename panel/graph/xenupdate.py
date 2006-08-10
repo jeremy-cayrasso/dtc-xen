@@ -13,10 +13,15 @@ basename=sys.argv[1]
 data=os.popen2("/usr/sbin/xm list")[1].read()
 domains=data.split("\n")[1:-1]
 for domain in domains:
-    if len(domain) == 7:
-      name,id,mem,cpu,state,cputime,console=re.split("[\t ]+",domain)
+    domainsplit = re.split("[\t ]+",domain)
+    if len(domainsplit) == 7:
+      name,id,mem,cpu,state,cputime,console=domainsplit
+    elif len(domain) == 6:
+      name,id,mem,cpu,state,cputime=domainsplit
     else:
-      name,id,mem,cpu,state,cputime=re.split("[\t ]+",domain)
+      print "Domain has unknown size of %d" % len(domainsplit)
+      print "Domain: %s" % domain
+      exit(1)
     # Log the CPU of each domain
     cputime=int(float(cputime)*1000)
     cpurrd=basename+"/cpu-"+name+".rrd"
