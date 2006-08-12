@@ -21,7 +21,7 @@ LVMNAME=lvm1
 VPSGLOBPATH=/xen
 #KERNELNAME="2.6.11.12-xenU"
 KERNELPATH="/boot/vmlinuz-${KERNELNAME}"
-DEBIAN_BINARCH=i386
+#DEBIAN_BINARCH=i386
 
 # Things that most of then time don't change
 VPSNUM=$1
@@ -105,7 +105,11 @@ if [ ""$DISTRO = "centos" ] ; then
 		echo "Please install rpmstrap from http://rpmstrap.pimpscript.net/"
 		exit
 	fi
-	/usr/bin/rpmstrap --verbose --local-source /usr/src/centos3 centos3 ${VPSGLOBPATH}/${VPSNUM}
+	if [ ""$DEBIAN_BINARCH = "amd64" ] ; then
+		/usr/bin/rpmstrap --verbose --arch x86_64 --local-source /usr/src/centos3 centos3 ${VPSGLOBPATH}/${VPSNUM}
+	else
+		/usr/bin/rpmstrap --verbose --local-source /usr/src/centos3 centos3 ${VPSGLOBPATH}/${VPSNUM}
+	fi
 elif [ ""$DISTRO = "debian" ] ; then
 	$DEBOOTSTRAP --arch ${DEBIAN_BINARCH} sarge ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
 elif [ ""$DISTRO = "ubuntu_dapper" ] ; then
@@ -282,7 +286,7 @@ echo "Copying modules..."
 mv ${VPSGLOBPATH}/${VPSNUM}/lib/tls ${VPSGLOBPATH}/${VPSNUM}/lib/tls.disabled
 # create the /lib/modules if it doesn't exist
 if [ ! -e ${VPSGLOBPATH}/${VPSNUM}/lib/modules ]; then 
-	mkdir -p ${VPSGLOBPATH}/${VPSNUM}/lib/modules
+	$MKDIR -p ${VPSGLOBPATH}/${VPSNUM}/lib/modules
 fi
 cp -auxvf /lib/modules/${KERNELNAME} ${VPSGLOBPATH}/${VPSNUM}/lib/modules
 cp -L ${KERNELPATH} ${VPSGLOBPATH}/${VPSNUM}/boot
