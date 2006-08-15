@@ -1,3 +1,9 @@
+dtc-xen (0.2.0) unstable; urgency=low
+
+  * Now all the functions we needed are working for the fist time
+
+ -- Thomas GOIRAND <thomas@goirand.fr>  Tue, 15 Aug 2006 15:21:00 +0200
+
 dtc-xen (0.1.2) unstable; urgency=low
 
   * Added packaging of the soap server
