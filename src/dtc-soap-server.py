@@ -3,6 +3,7 @@ import sys
 import os
 import SOAPpy
 import commands
+#import sqlite
 from StringIO import StringIO
 from SOAPpy import *
 
@@ -28,6 +29,7 @@ p.load(open('/etc/dtc-xen/soap.conf'))
 server_host=p.getProperty("soap_server_host");
 server_port=int(p.getProperty("soap_server_port"));
 cert_passphrase=p.getProperty("soap_server_pass_phrase");
+dtcxen_user=p.getProperty("soap_server_dtcxen_user");
 
 # server_host = "mirror.tusker.net"
 # server_host = "dtc.xen650202.gplhost.com"
@@ -38,7 +40,8 @@ def testVPSServer():
 
 def startVPS(vpsname):
 	username = getUser()
-	if username == "dtc-xen" or username == vpsname:
+	if username == dtcxen_user or username == vpsname:
+		# Lookup the database to see if we are running a process (mkfs/fsck/etc...) on the VM instance...
 		xmargs=['foo', 'create', vpsname]
 		print "Starting %s..." % vpsname
 		localsysout = StringIO()
@@ -60,7 +63,7 @@ def startVPS(vpsname):
 
 def destroyVPS(vpsname):
 	username = getUser()
-	if username == "dtc-xen" or username == vpsname:
+	if username == dtcxen_user or username == vpsname:
 		xmargs=['foo','destroy',vpsname]
 		print "Destroying %s..." % vpsname
 		localsysout = StringIO()
@@ -82,7 +85,7 @@ def destroyVPS(vpsname):
 
 def shutdownVPS(vpsname):
 	username = getUser()
-	if username == "dtc-xen" or username == vpsname:
+	if username == dtcxen_user or username == vpsname:
 		xmargs=['foo','shutdown',vpsname]
 		print "Shutting down %s..." % vpsname
 		localsysout = StringIO()
@@ -104,7 +107,7 @@ def shutdownVPS(vpsname):
 
 def infoVPS(vpsname):
 	username = getUser()
-        if username == "dtc-xen" or username == vpsname:
+        if username == dtcxen_user or username == vpsname:
 		infos=['vpsname']
 		return "OK",infos
 	else:
@@ -112,7 +115,7 @@ def infoVPS(vpsname):
 
 def listStartedVPS():
 	username = getUser()
-	if username == "dtc-xen":
+	if username == dtcxen_user:
 		# first check to see if we have a xend_domain method (for 2.x)
 		try:
 			func = getattr(xenxm.server, "xend_domains")
@@ -137,7 +140,7 @@ def listStartedVPS():
 
 def changeVPSxmPassword(vpsname,password):
 	username = getUser()
-	if username == "dtc-xen" or username == vpsname:
+	if username == dtcxen_user or username == vpsname:
 		commands.getstatusoutput("(echo %s; sleep 1; echo %s;) | passwd %s" % (password,password,vpsname))
 		return "OK"
 	else:
@@ -145,7 +148,7 @@ def changeVPSxmPassword(vpsname,password):
 
 def changeVPSsoapPassword(vpsname,password):
 	username = getUser()
-	if username == "dtc-xen" or username == vpsname:
+	if username == dtcxen_user or username == vpsname:
 		commands.getstatusoutput("htpasswd -b /etc/dtc-xen/htpasswd %s %s" % (vpsname,password))
 		return "OK"
 	else:
@@ -153,7 +156,7 @@ def changeVPSsoapPassword(vpsname,password):
 
 def changeVPSsshKey(vpsname,keystring):
 	username = getUser()
-	if username == "dtc-xen" or username == vpsname:
+	if username == dtcxen_user or username == vpsname:
 		try:
 			# create the directory if it doesn't exist
 			os.makedirs("/home/%s/.ssh/" % vpsname)
@@ -167,6 +170,48 @@ def changeVPSsshKey(vpsname,keystring):
 		except IOError:
 			return "NOTOK - There was an error writing to", filename
 		return "OK"
+	else:
+		return "NOTOK"
+
+def fsckVPSpartition(vpsname):
+	username = getUser()
+	if username == dtcxen_user or username == vpsname:
+		filename = "/var/lib/dtc-xen/states/%s" % vpsname
+		try:
+			fd = open(filename, 'r')
+			return "NOTOK"
+		except:
+			# Write the semaphore file before proceeding
+			fd2 = open(filename, 'w')
+			fd2.write("fsck\n")
+			fd2.close()
+			# Fork the daemon
+			pid = os.fork()
+			if pid > 0:
+				return "Ok, started fsck."
+			else:
+				# Do the fsck
+				print "Starting file system check for %s" % vpsname
+				commands.getstatusoutput("/sbin/fsck.ext3 -p /dev/lvm1/%s" %vpsname)
+				print "fsck for VPS %s finished" % vpsname
+				# Delete the semaphore file
+				os.remove(filename)
+				os._exit(0)
+#				sys.exit(0)
+	else:
+		return "NOTOK"
+
+def reinstallVPSos(vpsname,ostype):
+	username = getUser()
+	if username == dtcxen_user or username == vpsname:
+		filename = "/var/lib/dtc-xen/states/%s" % vpsname
+		try:
+			fd = open(filename, 'r')
+			return "NOTOK"
+		except:
+			fd2 = open(filename, 'w')
+			fd2.write("fsck\n")
+			return "OK"
 	else:
 		return "NOTOK"
 
@@ -191,7 +236,20 @@ def getgroupid(group):
 
 def getVPSState(vpsname):
 	username = getUser()
-        if username == "dtc-xen" or username == vpsname:
+        if username == dtcxen_user or username == vpsname:
+        	filename = "/var/lib/dtc-xen/states/%s" % vpsname
+        	print "Checking %s" % filename
+        	try:
+	        	fd = open(filename, 'r')
+	        	for line in fd:
+	        		if string.find(line,"fsck") != -1:
+	        			return "fsck"
+				else:
+					if find(line,"mkos"):
+						return "mkos"
+			fd.close()
+		except:
+			print "No semaphore (fsck/mkos): continuing"
 		try:
 			func = getattr(xenxm.server, "xend_domain")
 			if func:
@@ -270,9 +328,11 @@ def _authorize(*args, **kw):
         verify_pass = crypt.crypt(password, h[:2])
         print "Check hash password: ",verify_pass
 	if verify_pass == h:
+	  fd.close()
           print "Password matches the one in the file!"
           return 1
         else:
+	  fd.close()
           print "Password didn't match the one in .htpasswd"
           return 0
     
@@ -308,6 +368,8 @@ soapserver.registerFunction(getVPSState)
 soapserver.registerFunction(changeVPSxmPassword)
 soapserver.registerFunction(changeVPSsoapPassword)
 soapserver.registerFunction(changeVPSsshKey)
+soapserver.registerFunction(reinstallVPSos)
+soapserver.registerFunction(fsckVPSpartition)
 print "Starting dtc-xen python SOAP server at https://%s:%s/ ..." % (server_host, server_port)
 while True:
 	try:

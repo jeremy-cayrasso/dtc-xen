@@ -9,6 +9,7 @@ install:
 	@-echo "Copying to $(DESTDIR)..."
 	@-mkdir -p $(DESTDIR)/usr/share/dtc-xen
 	@-mkdir -p $(DESTDIR)/var/lib/dtc-xen/rrds
+	@-mkdir -p $(DESTDIR)/var/lib/dtc-xen/states
 	@-mkdir -p $(DESTDIR)/var/www
 	@-mkdir -p $(DESTDIR)/etc/cron.d
 	@-mkdir -p $(DESTDIR)/etc/init.d

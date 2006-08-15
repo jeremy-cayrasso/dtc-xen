@@ -110,6 +110,7 @@ echo "# This is a generated file, don't edit it, do a dpkg-reconfigure dtc-xen i
 soap_server_host=${conf_soap_hostname}
 soap_server_port=${conf_soap_port}
 soap_server_pass_phrase=${conf_ssl_passphrase}
+soap_server_dtcxen_user=${conf_soap_login}
 " >${DTCXEN_ETCPATH}/soap.conf
 
 echo "#!/bin/sh
