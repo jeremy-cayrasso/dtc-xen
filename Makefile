@@ -24,13 +24,17 @@ install:
 	@-cp -rf panel/* $(DESTDIR)/usr/share/dtc-xen
 	@-cp -rf src/dtc_create_vps.sh $(DESTDIR)/usr/sbin/
 	@-cp -rf src/dtc_reinstall_os.sh $(DESTDIR)/usr/sbin/
-	@-cp -rf src/dtc_setup_vps_disk.sh.8 $(DESTDIR)/usr/sbin/
+	@-cp -rf src/dtc_setup_vps_disk.sh $(DESTDIR)/usr/sbin/
+	@-cp -rf src/dtc_change_bsd_kernel.sh $(DESTDIR)/usr/sbin/
 	@-cp -rf src/dtc-soap-server.py $(DESTDIR)/usr/sbin/
 	@-cp src/Properties.py $(DESTDIR)/usr/lib/dtc-xen
 	@-cp -rf debootstrap_scripts/dapper $(DESTDIR)/usr/lib/debootstrap/scripts
 	@#now for documentation
 	@-mkdir -p $(DESTDIR)/usr/share/man/man8
 	@-cp doc/dtc_create_vps.sh.8 $(DESTDIR)/usr/share/man/man8
+	@-cp -rf doc/dtc_reinstall_os.sh.8 $(DESTDIR)/usr/share/man/man8
+	@-cp -rf doc/dtc_setup_vps_disk.sh.8 $(DESTDIR)/usr/share/man/man8
+	@-cp -rf doc/dtc_change_bsd_kernel.sh.8 $(DESTDIR)/usr/share/man/man8
 	@-mkdir -p $(DESTDIR)/usr/share/doc/dtc-xen
 	@-cp -rf doc/todo $(DESTDIR)/usr/share/doc/dtc-xen
 	@-cp debian/changelog $(DESTDIR)/usr/share/doc/dtc-xen

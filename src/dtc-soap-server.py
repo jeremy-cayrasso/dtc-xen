@@ -201,17 +201,30 @@ def fsckVPSpartition(vpsname):
 	else:
 		return "NOTOK"
 
-def reinstallVPSos(vpsname,ostype):
+# Take care! This time, the vpsname has to be only the number (eg XX and not xenXX)
+def reinstallVPSos(vpsname,ostype,hddsize,ramsize,ipaddr):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
-		filename = "/var/lib/dtc-xen/states/%s" % vpsname
+		filename = "/var/lib/dtc-xen/states/xen%s" % vpsname
+		print "Checking %s for mkos" % vpsname
 		try:
+			print "Semaphore file existed: abording"
 			fd = open(filename, 'r')
 			return "NOTOK"
 		except:
 			fd2 = open(filename, 'w')
-			fd2.write("fsck\n")
-			return "OK"
+			fd2.write("mkos\n")
+			pid = os.fork()
+			if pid > 0:
+				return "Ok, started mkos."
+			else:
+				print "Starting reinstallation of operating system for xen%s" % vpsname
+				cmd = "/usr/sbin/dtc_reinstall_os.sh %s %s %s %s %s" % (vpsname,hddsize,ramsize,ipaddr,ostype)
+				print cmd
+				commands.getstatusoutput(cmd)
+				print "mkos for VPS %s finished: removing file" % vpsname
+				os.remove(filename)
+				os._exit(0)
 	else:
 		return "NOTOK"
 
@@ -238,7 +251,7 @@ def getVPSState(vpsname):
 	username = getUser()
         if username == dtcxen_user or username == vpsname:
         	filename = "/var/lib/dtc-xen/states/%s" % vpsname
-        	print "Checking %s" % filename
+        	print "Checking %s for getVPSState" % filename
         	try:
 	        	fd = open(filename, 'r')
 	        	for line in fd:
@@ -257,8 +270,9 @@ def getVPSState(vpsname):
 			else:
 				print "Couldn't find xend_domain method"
 		except:
-			info = xenxm.server.xend.domain(vpsname)
-		return info
+#			info = xenxm.server.xend.domain(vpsname)
+#			return info
+			return "Not running"
 	else:
 		return "NOTOK"
 #	d = {}

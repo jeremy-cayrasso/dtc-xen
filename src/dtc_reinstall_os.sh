@@ -32,6 +32,30 @@ VPSMEM=$3
 IPADDR=$4
 DISTRO=$5
 
+FOUNDED_ARCH=`uname -m`
+
+case "$FOUNDED_ARCH" in
+	i386)
+		DEBIAN_BINARCH=i386
+		;;
+	i436)
+		DEBIAN_BINARCH=i386
+		;;
+	i586)
+		DEBIAN_BINARCH=i386
+		;;
+	i686)
+		DEBIAN_BINARCH=i386
+		;;
+	x86_64)
+		DEBIAN_BINARCH=amd64
+		;;
+	*)
+		echo "Unrecognized arch: exiting!"
+		exit 1
+		;;
+esac
+
 # default distro to debian
 if [ -z ""$DISTRO ]; then
 DISTRO=debian
@@ -47,20 +71,17 @@ DEBOOTSTRAP=/usr/sbin/debootstrap
 echo "Seleted ${VPSNAME}: ${VPSHDD}G HDD and ${VPSMEM}MB RAM";
 echo "Creating disks..."
 
-if [ ! -L /dev/${LVMNAME}/${VPSNAME} ] ; then
-#	$LVCREATE -L${VPSHDD}G -n${VPSNAME} ${LVMNAME}
-	$MKFS /dev/${LVMNAME}/${VPSNAME}
-	$MKDIR -p ${VPSGLOBPATH}/${VPSNUM}
-fi
-if [ ! -L /dev/${LVMNAME}/${VPSNAME}swap ] ; then
-#	$LVCREATE -L${VPSMEM} -n${VPSNAME}swap ${LVMNAME}
-	$MKSWAP /dev/${LVMNAME}/${VPSNAME}swap
-fi
+$MKFS /dev/${LVMNAME}/${VPSNAME}
+$MKDIR -p ${VPSGLOBPATH}/${VPSNUM}
+$LVCREATE -L${VPSMEM} -n${VPSNAME}swap ${LVMNAME}
+$MKSWAP /dev/${LVMNAME}/${VPSNAME}swap
+
 if grep ${VPSNAME} /etc/fstab >/dev/null ; then
-	echo "LV already exists in fstab"
+	echo "LV already exists in fstab: skiping"
 else
 	echo "/dev/mapper/${LVMNAME}-${VPSNAME}  ${VPSGLOBPATH}/${VPSNUM} ext3    defaults,noauto 0 0" >>/etc/fstab
 fi
+
 echo "Mouting..."
 $MOUNT ${VPSGLOBPATH}/${VPSNUM}
 
@@ -81,6 +102,7 @@ if [ ""$DISTRO = "centos" ] ; then
 		/usr/bin/rpmstrap --verbose --local-source /usr/src/centos3 centos3 ${VPSGLOBPATH}/${VPSNUM}
 	fi
 elif [ ""$DISTRO = "debian" ] ; then
+	echo $DEBOOTSTRAP --arch ${DEBIAN_BINARCH} sarge ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
 	$DEBOOTSTRAP --arch ${DEBIAN_BINARCH} sarge ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
 elif [ ""$DISTRO = "ubuntu_dapper" ] ; then
 	$DEBOOTSTRAP --arch i386 dapper ${VPSGLOBPATH}/${VPSNUM} http://archive.ubuntu.ocm/ubuntu
