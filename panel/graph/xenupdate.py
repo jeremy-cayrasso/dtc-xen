@@ -16,7 +16,7 @@ for domain in domains:
     domainsplit = re.split("[\t ]+",domain)
     if len(domainsplit) == 7:
       name,id,mem,cpu,state,cputime,console=domainsplit
-    elif len(domain) == 6:
+    elif len(domainsplit) == 6:
       name,id,mem,cpu,state,cputime=domainsplit
     else:
       print "Domain has unknown size of %d" % len(domainsplit)
