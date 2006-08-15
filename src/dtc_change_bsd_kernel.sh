@@ -21,13 +21,13 @@ fi
 LVMNAME=lvm1
 VPSGLOBPATH=/xen
 #KERNELNAME="2.6.11.12-xenU"
-NORMAL_KERNELPATH="/boot/netbsd-INSTALL_XENU"
-INSTALL_KERNELPATH="/boot/netbsd-XENU"
+INSTALL_KERNELPATH="/boot/netbsd-INSTALL_XENU"
+NORMAL_KERNELPATH="/boot/netbsd-XENU"
 #DEBIAN_BINARCH=i386
 
 # Things that most of then time don't change
 VPSNUM=$1
-VPSNAME=xen${VPSNUM}
+VPSNAME=${VPSNUM}
 VPSHOSTNAME=xen${NODE_NUM}${VPSNUM}
 RAMSIZE=$2
 KERNEL_TYPE=$3
@@ -37,7 +37,7 @@ case "$KERNEL_TYPE" in
 		KERNELPATH=$INSTALL_KERNELPATH
 		;;
 	"normal")
-		KERNELPATH=$INSTALL_KERNELPATH
+		KERNELPATH=$NORMAL_KERNELPATH
 		;;
 	*)
 		echo $USAGE;
@@ -52,7 +52,7 @@ name = \"${VPSNAME}\"
 #cpu = -1   # leave to Xen to pick
 nics=1
 #vif = [ 'mac=aa:00:00:00:00:11, bridge=xen-br0' ]
-disk = [ 'phy:/dev/mapper/lvm1-xen${VPSNUM},0x3,w' ]
+disk = [ 'phy:/dev/mapper/lvm1-${VPSNAME},0x3,w' ]
 " >/etc/xen/${VPSNAME}
 if [ ! -e /etc/xen/auto/${VPSNAME} ] ; then
 	ln -s ../${VPSNAME} /etc/xen/auto/${VPSNAME}

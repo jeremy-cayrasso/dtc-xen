@@ -201,6 +201,13 @@ def fsckVPSpartition(vpsname):
 	else:
 		return "NOTOK"
 
+def changeBSDkernel(vpsname,ramsize,kerneltype):
+	username = getUser()
+	if username == dtcxen_user or username == vpsname:
+		print "Changing kernel of a BSD VM"
+		commands.getstatusoutput("dtc_change_bsd_kernel.sh %s %s %s" % (vpsname,ramsize,kerneltype))
+		return "OK"
+
 # Take care! This time, the vpsname has to be only the number (eg XX and not xenXX)
 def reinstallVPSos(vpsname,ostype,hddsize,ramsize,ipaddr):
 	username = getUser()
@@ -384,6 +391,7 @@ soapserver.registerFunction(changeVPSsoapPassword)
 soapserver.registerFunction(changeVPSsshKey)
 soapserver.registerFunction(reinstallVPSos)
 soapserver.registerFunction(fsckVPSpartition)
+soapserver.registerFunction(changeBSDkernel)
 print "Starting dtc-xen python SOAP server at https://%s:%s/ ..." % (server_host, server_port)
 while True:
 	try:
