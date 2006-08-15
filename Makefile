@@ -23,6 +23,8 @@ install:
 	@-ln -s /usr/share/dtc-xen $(DESTDIR)/var/www/dtc-xen
 	@-cp -rf panel/* $(DESTDIR)/usr/share/dtc-xen
 	@-cp -rf src/dtc_create_vps.sh $(DESTDIR)/usr/sbin/
+	@-cp -rf src/dtc_reinstall_os.sh $(DESTDIR)/usr/sbin/
+	@-cp -rf src/dtc_setup_vps_disk.sh.8 $(DESTDIR)/usr/sbin/
 	@-cp -rf src/dtc-soap-server.py $(DESTDIR)/usr/sbin/
 	@-cp src/Properties.py $(DESTDIR)/usr/lib/dtc-xen
 	@-cp -rf debootstrap_scripts/dapper $(DESTDIR)/usr/lib/debootstrap/scripts
