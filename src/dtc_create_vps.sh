@@ -23,6 +23,11 @@ VPSGLOBPATH=/xen
 KERNELPATH="/boot/vmlinuz-${KERNELNAME}"
 #DEBIAN_BINARCH=i386
 
+# default to i386 if we haven't specified him yet
+if [ -z $DEBIAN_BINARCH ]; then
+	DEBIAN_BINARCH=i386
+fi
+
 # Things that most of then time don't change
 VPSNUM=$1
 VPSNAME=xen${VPSNUM}
