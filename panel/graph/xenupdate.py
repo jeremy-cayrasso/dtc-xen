@@ -21,7 +21,7 @@ for domain in domains:
     else:
       print "Domain has unknown size of %d" % len(domainsplit)
       print "Domain: %s" % domain
-      exit(1)
+      sys.exit(1)
     # Log the CPU of each domain
     cputime=int(float(cputime)*1000)
     cpurrd=basename+"/cpu-"+name+".rrd"
