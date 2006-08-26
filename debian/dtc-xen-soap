@@ -8,15 +8,16 @@ case "$1" in
     start)
         echo -n "Starting python SOAP server: dtc-soap-server.py "
 	start-stop-daemon --start -b --quiet --pidfile /var/run/dtc-xen-soap-server.pid --make-pidfile --exec $PYTHON /usr/sbin/dtc-soap-server.py
-        echo "done!"
+        echo "."
         ;;
     stop)
     	echo -n "Stoping python SOAP server: dtc-soap-server.py "
     	start-stop-daemon --stop --oknodo --pidfile /var/run/dtc-xen-soap-server.pid
-	echo "done!"
+	echo "."
         ;;
     restart|reload|force-reload)
     	$0 stop
+    	sleep 1
         $0 start
         ;;
     *)
