@@ -204,7 +204,7 @@ def fsckVPSpartition(vpsname):
 def changeBSDkernel(vpsname,ramsize,kerneltype):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
-		print "Changing kernel of a BSD VM"
+		print "Changing kernel of a BSD VM: vps: %s ram: %s kernel: %s" % (vpsname,ramsize,kerneltype)
 		commands.getstatusoutput("dtc_change_bsd_kernel.sh %s %s %s" % (vpsname,ramsize,kerneltype))
 		return "OK"
 

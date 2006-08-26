@@ -47,7 +47,7 @@ esac
 	
 
 echo "kernel = \"${KERNELPATH}\"
-memory = ${VPSMEM}
+memory = ${RAMSIZE}
 name = \"${VPSNAME}\"
 #cpu = -1   # leave to Xen to pick
 nics=1
