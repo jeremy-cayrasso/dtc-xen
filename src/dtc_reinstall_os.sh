@@ -21,6 +21,7 @@ LVMNAME=lvm1
 VPSGLOBPATH=/xen
 #KERNELNAME="2.6.11.12-xenU"
 KERNELPATH="/boot/vmlinuz-${KERNELNAME}"
+BSDKERNELPATH="/boot/netbsd-INSTALL_XENU"
 #DEBIAN_BINARCH=i386
 
 # Things that most of then time don't change
@@ -58,7 +59,7 @@ esac
 
 # default distro to debian
 if [ -z ""$DISTRO ]; then
-DISTRO=debian
+	DISTRO=debian
 fi
 
 LVCREATE=/sbin/lvcreate
@@ -69,21 +70,25 @@ MOUNT=/bin/mount
 DEBOOTSTRAP=/usr/sbin/debootstrap
 
 echo "Seleted ${VPSNAME}: ${VPSHDD}G HDD and ${VPSMEM}MB RAM";
-echo "Creating disks..."
-
-$MKFS /dev/${LVMNAME}/${VPSNAME}
-$MKDIR -p ${VPSGLOBPATH}/${VPSNUM}
-$LVCREATE -L${VPSMEM} -n${VPSNAME}swap ${LVMNAME}
-$MKSWAP /dev/${LVMNAME}/${VPSNAME}swap
-
-if grep ${VPSNAME} /etc/fstab >/dev/null ; then
-	echo "LV already exists in fstab: skiping"
+if [ ""$DISTRO = "netbsd" ] ; then
+	echo "Not creating disks: NetBSD!"
 else
-	echo "/dev/mapper/${LVMNAME}-${VPSNAME}  ${VPSGLOBPATH}/${VPSNUM} ext3    defaults,noauto 0 0" >>/etc/fstab
-fi
+	echo "Creating disks..."
 
-echo "Mouting..."
-$MOUNT ${VPSGLOBPATH}/${VPSNUM}
+	$MKFS /dev/${LVMNAME}/${VPSNAME}
+	$MKDIR -p ${VPSGLOBPATH}/${VPSNUM}
+#	$LVCREATE -L${VPSMEM} -n${VPSNAME}swap ${LVMNAME}
+	$MKSWAP /dev/${LVMNAME}/${VPSNAME}swap
+
+	if grep ${VPSNAME} /etc/fstab >/dev/null ; then
+		echo "LV already exists in fstab: skiping"
+	else
+		echo "/dev/mapper/${LVMNAME}-${VPSNAME}  ${VPSGLOBPATH}/${VPSNUM} ext3    defaults,noauto 0 0" >>/etc/fstab
+	fi
+
+	echo "Mouting..."
+	$MOUNT ${VPSGLOBPATH}/${VPSNUM}
+fi
 
 echo "Bootstraping..."
 if [ ""$DISTRO = "centos" ] ; then
@@ -130,14 +135,17 @@ else
 	echo "Cheers!"
 	exit
 fi
-echo "Customizing vps..."
-ETC=${VPSGLOBPATH}/${VPSNUM}/etc
-echo "/dev/sda1       /       ext3    errors=remount-ro       0       0
+if [ ""$DISTRO = "netbsd" ] ; then
+	echo "Nothing to do: it's BSD"
+else
+	echo "Customizing vps..."
+	ETC=${VPSGLOBPATH}/${VPSNUM}/etc
+	echo "/dev/sda1       /       ext3    errors=remount-ro       0       0
 proc            /proc   proc    defaults                0       0
 /dev/sda2       none    swap    sw                      0       0
 " >${ETC}/fstab
-echo "${VPSHOSTNAME}" >${ETC}/hostname
-echo "127.0.0.1	localhost.localdomain   localhost
+	echo "${VPSHOSTNAME}" >${ETC}/hostname
+	echo "127.0.0.1	localhost.localdomain   localhost
 202.124.17.46	dtc.node6503.gplhost.com
 66.251.193.20	dtc.gplhost.com
 ${IPADDR}	${VPSHOSTNAME} dtc.${VPSHOSTNAME}.gplhost.com ${VPSHOSTNAME}.gplhost.com
@@ -150,7 +158,7 @@ ff02::1	ip6-allnodes
 ff02::2	ip6-allrouters
 ff02::3	ip6-allhosts
 " >${ETC}/hosts
-echo "
+	echo "
   ______    ___________________     GPL.Host_____    ____ ___|   .__
  (  ___/___(____     /  |______|   |_______(    /___(  _/_\___   __/
  |  \___  \_  |/    /   |\    \_   ____  \_   ___ \_______  \|   |
@@ -161,9 +169,9 @@ echo "
 ${VPSHOSTNAME}
 
 " >${ETC}/motd
-cp /root/.bashrc ${VPSGLOBPATH}/${VPSNUM}/root
+	cp /root/.bashrc ${VPSGLOBPATH}/${VPSNUM}/root
 
-echo "#!/bin/bash
+	echo "#!/bin/bash
 
 MODPROBE=/sbin/modprobe
 case \"\$1\" in
@@ -186,17 +194,20 @@ esac
 exit 0
 
  " >${ETC}/init.d/capabilities
-chmod +x ${ETC}/init.d/capabilities
-ln -s ../init.d/capabilities ${ETC}/rc0.d/K19capabilities
-ln -s ../init.d/capabilities ${ETC}/rc1.d/K19capabilities
-ln -s ../init.d/capabilities ${ETC}/rc6.d/K19capabilities
-ln -s ../init.d/capabilities ${ETC}/rc2.d/S19capabilities
-ln -s ../init.d/capabilities ${ETC}/rc3.d/S19capabilities
-ln -s ../init.d/capabilities ${ETC}/rc4.d/S19capabilities
-ln -s ../init.d/capabilities ${ETC}/rc5.d/S19capabilities
+	chmod +x ${ETC}/init.d/capabilities
+	ln -s ../init.d/capabilities ${ETC}/rc0.d/K19capabilities
+	ln -s ../init.d/capabilities ${ETC}/rc1.d/K19capabilities
+	ln -s ../init.d/capabilities ${ETC}/rc6.d/K19capabilities
+	ln -s ../init.d/capabilities ${ETC}/rc2.d/S19capabilities
+	ln -s ../init.d/capabilities ${ETC}/rc3.d/S19capabilities
+	ln -s ../init.d/capabilities ${ETC}/rc4.d/S19capabilities
+	ln -s ../init.d/capabilities ${ETC}/rc5.d/S19capabilities
+fi
 
 # handle the network setup
-if [ ""$DISTRO = "centos" ] ; then
+if [ ""$DISTRO = "netbsd" ] ; then
+	echo "Nothing to do: it's BSD!"
+elif [ ""$DISTRO = "centos" ] ; then
 	# Configure the eth0
 	echo "DEVICE=eth0
 BOOTPROTO=static
@@ -261,7 +272,17 @@ else
 	exit
 fi
 
-echo "kernel = \"${KERNELPATH}\"
+if [ ""$DISTRO = "netbsd" ] ; then
+	echo "kernel = \"${BSDKERNELPATH}\"
+memory = ${VPSMEM}
+name = \"${VPSNAME}\"
+#cpu = -1   # leave to Xen to pick
+nics=1
+#vif = [ 'mac=aa:00:00:00:00:11, bridge=xen-br0' ]
+disk = [ 'phy:/dev/mapper/lvm1-xen${VPSNUM},0x3,w' ]
+" >/etc/xen/${VPSNAME}
+else
+	echo "kernel = \"${KERNELPATH}\"
 memory = ${VPSMEM}
 name = \"${VPSNAME}\"
 #cpu = -1   # leave to Xen to pick
@@ -272,21 +293,26 @@ root = \"/dev/sda1 ro\"
 # Sets runlevel 4.
 extra = \"4\"
 " >/etc/xen/${VPSNAME}
+fi
 ln -s ../${VPSNAME} /etc/xen/auto/${VPSNAME}
 
-echo "Copying modules..."
-mv ${VPSGLOBPATH}/${VPSNUM}/lib/tls ${VPSGLOBPATH}/${VPSNUM}/lib/tls.disabled
-# create the /lib/modules if it doesn't exist
-if [ ! -e ${VPSGLOBPATH}/${VPSNUM}/lib/modules ]; then 
-	$MKDIR -p ${VPSGLOBPATH}/${VPSNUM}/lib/modules
+if [ ""$DISTRO = "netbsd" ] ; then
+	echo "Not coping modules: it's BSD!"
+else
+	echo "Copying modules..."
+	mv ${VPSGLOBPATH}/${VPSNUM}/lib/tls ${VPSGLOBPATH}/${VPSNUM}/lib/tls.disabled
+	# create the /lib/modules if it doesn't exist
+	if [ ! -e ${VPSGLOBPATH}/${VPSNUM}/lib/modules ]; then 
+		$MKDIR -p ${VPSGLOBPATH}/${VPSNUM}/lib/modules
+	fi
+	cp -auxvf /lib/modules/${KERNELNAME} ${VPSGLOBPATH}/${VPSNUM}/lib/modules
+	cp -L ${KERNELPATH} ${VPSGLOBPATH}/${VPSNUM}/boot
+	cp -L /boot/System.map-${KERNELNAME} ${VPSGLOBPATH}/${VPSNUM}/boot
+	# symlink the System.map and kernel
+	ln -s /boot/System.map-${KERNELNAME} ${VPSGLOBPATH}/${VPSNUM}/boot/System.map
+	ln -s /boot/vmlinuz-${KERNELNAME} ${VPSGLOBPATH}/${VPSNUM}/boot/vmlinuz
+	# regen the module dependancies within the chroot (just in case)
+	chroot ${VPSGLOBPATH}/${VPSNUM} depmod -a ${KERNELNAME}
+	echo "Unmounting..."
+	umount ${VPSGLOBPATH}/${VPSNUM}
 fi
-cp -auxvf /lib/modules/${KERNELNAME} ${VPSGLOBPATH}/${VPSNUM}/lib/modules
-cp -L ${KERNELPATH} ${VPSGLOBPATH}/${VPSNUM}/boot
-cp -L /boot/System.map-${KERNELNAME} ${VPSGLOBPATH}/${VPSNUM}/boot
-# symlink the System.map and kernel
-ln -s /boot/System.map-${KERNELNAME} ${VPSGLOBPATH}/${VPSNUM}/boot/System.map
-ln -s /boot/vmlinuz-${KERNELNAME} ${VPSGLOBPATH}/${VPSNUM}/boot/vmlinuz
-# regen the module dependancies within the chroot (just in case)
-chroot ${VPSGLOBPATH}/${VPSNUM} depmod -a ${KERNELNAME}
-echo "Unmounting..."
-umount ${VPSGLOBPATH}/${VPSNUM}

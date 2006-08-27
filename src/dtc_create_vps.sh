@@ -21,12 +21,6 @@ LVMNAME=lvm1
 VPSGLOBPATH=/xen
 #KERNELNAME="2.6.11.12-xenU"
 KERNELPATH="/boot/vmlinuz-${KERNELNAME}"
-#DEBIAN_BINARCH=i386
-
-# default to i386 if we haven't specified him yet
-if [ -z $DEBIAN_BINARCH ]; then
-	DEBIAN_BINARCH=i386
-fi
 
 # Things that most of then time don't change
 VPSNUM=$1
@@ -35,6 +29,31 @@ VPSHOSTNAME=xen${NODE_NUM}${VPSNUM}
 VPSPACK=$2
 IPADDR=$3
 DISTRO=$4
+
+FOUNDED_ARCH=`uname -m`
+
+case "$FOUNDED_ARCH" in
+	i386)
+		DEBIAN_BINARCH=i386
+		;;
+	i436)
+		DEBIAN_BINARCH=i386
+		;;
+	i586)
+		DEBIAN_BINARCH=i386
+		;;
+	i686)
+		DEBIAN_BINARCH=i386
+		;;
+	x86_64)
+		DEBIAN_BINARCH=amd64
+		;;
+	*)
+		echo "Unrecognized arch: exiting!"
+		exit 1
+		;;
+esac
+
 
 # default distro to debian
 if [ -z $DISTRO ]; then

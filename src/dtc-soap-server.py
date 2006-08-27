@@ -235,6 +235,17 @@ def reinstallVPSos(vpsname,ostype,hddsize,ramsize,ipaddr):
 	else:
 		return "NOTOK"
 
+def setupLVMDisks(vpsname,hddsize,swapsize):
+	username = getUser()
+	if username == dtcxen_user or username == vpsname:
+		print "Starting disk setup for xen%s: %s HHD, %s SWAP" % (vpsname,hddsize,swapsize)
+		cmd = "/usr/sbin/dtc_setup_vps_disk.sh %s %s %s" % (vpsname,hddsize,swapsize)
+		commands.getstatusoutput(cmd)
+		print "Commande: %s" % cmd
+		return "OK"
+	else:
+		return "NOTOK"
+
 def getuserid(user):
     import pwd
     if isinstance(user, int):
@@ -260,25 +271,41 @@ def getVPSState(vpsname):
         	filename = "/var/lib/dtc-xen/states/%s" % vpsname
         	print "Checking %s for getVPSState" % filename
         	try:
+			print "Opening %s" % filename
 	        	fd = open(filename, 'r')
 	        	for line in fd:
+				print "Checking fsck"
 	        		if string.find(line,"fsck") != -1:
+	        			print "Founded running fsck!"
+					fd.close()
 	        			return "fsck"
 				else:
-					if find(line,"mkos"):
+					print "Checking mkos"
+					if string.find(line,"mkos") != -1:
+						print "Founded running mkos!"
+						fd.close()
 						return "mkos"
 			fd.close()
+			print "State file exists, but couldn't find content!"
+			return "Error in state file!"
 		except:
 			print "No semaphore (fsck/mkos): continuing"
 		try:
+			info = xenxm.server.xend.domain(vpsname)
+			return info
+			print "Calling xenxm.server xend_domain"
 			func = getattr(xenxm.server, "xend_domain")
+			print "After xenxm.server"
 			if func:
+				print "Calling xenxm.server.xend.domain(%s)" % vpsname
 				info = xenxm.server.xend_domain(vpsname)
+				return info
 			else:
 				print "Couldn't find xend_domain method"
 		except:
 #			info = xenxm.server.xend.domain(vpsname)
 #			return info
+			print "Inside except!"
 			return "Not running"
 	else:
 		return "NOTOK"
@@ -392,6 +419,7 @@ soapserver.registerFunction(changeVPSsshKey)
 soapserver.registerFunction(reinstallVPSos)
 soapserver.registerFunction(fsckVPSpartition)
 soapserver.registerFunction(changeBSDkernel)
+soapserver.registerFunction(setupLVMDisks)
 print "Starting dtc-xen python SOAP server at https://%s:%s/ ..." % (server_host, server_port)
 while True:
 	try:

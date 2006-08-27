@@ -78,9 +78,9 @@ Description: Gateway to be setup in the VPSes
 
 Template: dtc-xen/conf_linux_kernel_name
 Type: string
-Default: 2.6.11.12-xenU
+Default: 2.6.16.27-xenU
 Description: Xen Kernel release name
  Enter here the kernel version number as it appears in the
  uname -a. A kernel domU with that name must be located in /boot
- (example: vmlinuz-2.6.11.12-xen0) and it's corresponding modules
+ (example: vmlinuz-2.6.16.27-xenU) and it's corresponding modules
  must be in /lib/modules.
