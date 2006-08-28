@@ -1,3 +1,9 @@
+dtc-xen (0.2.1) unstable; urgency=low
+
+  * Added Xen version checking so getVPSState() always work
+
+ -- Thomas GOIRAND <thomas@goirand.fr>  Mon, 28 Aug 2006 13:21:00 +0800
+
 dtc-xen (0.2.0) unstable; urgency=low
 
   * Now all the functions we needed are working for the fist time
