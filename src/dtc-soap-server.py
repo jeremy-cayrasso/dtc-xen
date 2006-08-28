@@ -20,8 +20,17 @@ from Properties import *
 sys.path.append( '/usr/lib/python' ) #Required to import from /usr/lib/python for FC4
 import xen.xm.main as xenxm
 
-# print crypt.crypt('somepw','py')
+# Checking for Xen version
+print "Checking for Xen version"
+xen_version = 2
+try:
+	func = getattr(xenxm.server, "xend_domain")
+	if func:
+		dom = xenxm.server.xend_domain(username)
+except:
+	xen_version = 3
 
+print "Detected Xen vesrion %s" % xen_version
 
 # read config file
 p=Properties()
@@ -291,21 +300,20 @@ def getVPSState(vpsname):
 		except:
 			print "No semaphore (fsck/mkos): continuing"
 		try:
-			info = xenxm.server.xend.domain(vpsname)
-			return info
-			print "Calling xenxm.server xend_domain"
-			func = getattr(xenxm.server, "xend_domain")
-			print "After xenxm.server"
-			if func:
-				print "Calling xenxm.server.xend.domain(%s)" % vpsname
-				info = xenxm.server.xend_domain(vpsname)
+			if xen_version == 3:
+				info = xenxm.server.xend.domain(vpsname)
 				return info
 			else:
-				print "Couldn't find xend_domain method"
+				print "Calling xenxm.server xend_domain"
+				func = getattr(xenxm.server, "xend_domain")
+				print "After xenxm.server"
+				if func:
+					print "Calling xenxm.server.xend.domain(%s)" % vpsname
+					info = xenxm.server.xend_domain(vpsname)
+					return info
+				else:
+					print "Couldn't find xend_domain method"
 		except:
-#			info = xenxm.server.xend.domain(vpsname)
-#			return info
-			print "Inside except!"
 			return "Not running"
 	else:
 		return "NOTOK"
