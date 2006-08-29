@@ -26,7 +26,7 @@ xen_version = 2
 try:
 	func = getattr(xenxm.server, "xend_domain")
 	if func:
-		dom = xenxm.server.xend_domain(username)
+		xen_version = 2
 except:
 	xen_version = 3
 
