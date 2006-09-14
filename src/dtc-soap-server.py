@@ -235,7 +235,7 @@ def reinstallVPSos(vpsname,ostype,hddsize,ramsize,ipaddr):
 				return "Ok, started mkos."
 			else:
 				print "Starting reinstallation of operating system for xen%s" % vpsname
-				cmd = "/usr/sbin/dtc_reinstall_os.sh %s %s %s %s %s" % (vpsname,hddsize,ramsize,ipaddr,ostype)
+				cmd = "/usr/sbin/dtc_reinstall_os.sh %s %s %s '%s' %s" % (vpsname,hddsize,ramsize,ipaddr,ostype)
 				print cmd
 				commands.getstatusoutput(cmd)
 				print "mkos for VPS %s finished: removing file" % vpsname
@@ -256,23 +256,23 @@ def setupLVMDisks(vpsname,hddsize,swapsize):
 		return "NOTOK"
 
 def getuserid(user):
-    import pwd
-    if isinstance(user, int):
-        return user
-    entry = pwd.getpwnam(user)
-    return entry[2]
+	import pwd
+	if isinstance(user, int):
+		return user
+	entry = pwd.getpwnam(user)
+	return entry[2]
 
 def getusergroup(user):
-    import pwd
-    import grp
-    return grp.getgrgid(pwd.getpwnam(user)[3])[2]
+	import pwd
+	import grp
+	return grp.getgrgid(pwd.getpwnam(user)[3])[2]
 
 def getgroupid(group):
-    import grp
-    if isinstance(group, int):
-        return group
-    entry = grp.getgrnam(group)
-    return entry[2]
+	import grp
+	if isinstance(group, int):
+		return group
+	entry = grp.getgrnam(group)
+	return entry[2]
 
 def getVPSState(vpsname):
 	username = getUser()
@@ -333,80 +333,78 @@ Config.simplify_objects = 1
 Config.authMethod = "_authorize"
 
 def getUser():
-  c = GetSOAPContext()
-  # get authorization info from HTTP headers
-  ah = c.httpheaders.get("Authorization","")
+	c = GetSOAPContext()
+	# get authorization info from HTTP headers
+	ah = c.httpheaders.get("Authorization","")
 
-  if ah:
-    # decode and analyze the string for the username and password
-    # (we slice the string from 6 onwards to remove the "Basic ")
-    username, password = base64.decodestring(ah[6:].strip()).split(":")
-    return username
-  else:
-    return 0
+	if ah:
+		# decode and analyze the string for the username and password
+		# (we slice the string from 6 onwards to remove the "Basic ")
+		username, password = base64.decodestring(ah[6:].strip()).split(":")
+		return username
+	else:
+		return 0
 
 def isUserValid(vpsname):
-  username = getUser()    
-  if vpsname == username:
-    print "Valid user: ", username
-    return 1
-  else:
-    return 0
+	username = getUser()    
+	if vpsname == username:
+		print "Valid user: ", username
+		return 1
+	else:
+		return 0
 
 def _authorize(*args, **kw):
-  global Config
-  print "_authorize called..."
+	global Config
+	print "_authorize called..."
 
-  c = kw["_SOAPContext"]
-  print "**kw =%s" % str(kw)
+	c = kw["_SOAPContext"]
+	print "**kw =%s" % str(kw)
 
-  # The socket object, useful for
-  print "Peer connected: ",  c.connection.getpeername()
+	# The socket object, useful for
+	print "Peer connected: ",  c.connection.getpeername()
 
-  # get authorization info from HTTP headers
-  ah = c.httpheaders.get("Authorization","")
+	# get authorization info from HTTP headers
+	ah = c.httpheaders.get("Authorization","")
 
-  if ah:
-    # decode and analyze the string for the username and password
-    # (we slice the string from 6 onwards to remove the "Basic ")
-    username, password = base64.decodestring(ah[6:].strip()).split(":")
-    print "Authorization string: \"%s\"" % (ah,)
-    print "Username: \"%s\" Password: \"%s\"" % (username, password)
+	if ah:
+		# decode and analyze the string for the username and password
+		# (we slice the string from 6 onwards to remove the "Basic ")
+		username, password = base64.decodestring(ah[6:].strip()).split(":")
+		print "Authorization string: \"%s\"" % (ah,)
+		print "Username: \"%s\" Password: \"%s\"" % (username, password)
 
-    print "Loading /etc/dtc-xen/htpasswd..."
-    fd = open('/etc/dtc-xen/htpasswd', 'r') 
+		print "Loading /etc/dtc-xen/htpasswd..."
+		fd = open('/etc/dtc-xen/htpasswd', 'r') 
 
-    for line in fd:
-      u, h = line.strip().split(':')
-      if u == username:
-        print "Found user: ",username
-	print "Password from file: ", h
-        verify_pass = crypt.crypt(password, h[:2])
-        print "Check hash password: ",verify_pass
-	if verify_pass == h:
-	  fd.close()
-          print "Password matches the one in the file!"
-          return 1
-        else:
-	  fd.close()
-          print "Password didn't match the one in .htpasswd"
-          return 0
+		for line in fd:
+			u, h = line.strip().split(':')
+			if u == username:
+				print "Found user: ",username
+				print "Password from file: ", h
+				verify_pass = crypt.crypt(password, h[:2])
+				print "Check hash password: ",verify_pass
+				if verify_pass == h:
+					fd.close()
+					print "Password matches the one in the file!"
+					return 1
+				else:
+					fd.close()
+					print "Password didn't match the one in .htpasswd"
+					return 0
     
-    print "Couldn't find user in password file!"
-    return 0
+		print "Couldn't find user in password file!"
+		return 0
     
-  else:
-    print "NO authorization information in HTTP headers, refusing."
-    return 0
-
-
+	else:
+		print "NO authorization information in HTTP headers, refusing."
+		return 0
 
 def _passphrase(cert):
-  print "Pass phrase faked..."
-  return cert_passphrase
+	print "Pass phrase faked..."
+	return cert_passphrase
 
 if not Config.SSLserver:
-  raise RuntimeError, "this Python installation doesn't have OpenSSL and M2Crypto"
+	raise RuntimeError, "this Python installation doesn't have OpenSSL and M2Crypto"
 
 ssl_context = SSL.Context()
 ssl_context.load_cert('/etc/dtc-xen/dtc-xen.cert.cert', '/etc/dtc-xen/privkey.pem', callback=_passphrase)
@@ -431,9 +429,9 @@ soapserver.registerFunction(setupLVMDisks)
 print "Starting dtc-xen python SOAP server at https://%s:%s/ ..." % (server_host, server_port)
 while True:
 	try:
-	  soapserver.serve_forever()
+		soapserver.serve_forever()
 	except KeyboardInterrupt:
-          print "Shutting down..."
-	  sys.exit(0)
+		print "Shutting down..."
+		sys.exit(0)
 	except Exception, e:
-	  print "Caught exception handling connection: ", e
+		print "Caught exception handling connection: ", e

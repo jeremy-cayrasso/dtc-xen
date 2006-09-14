@@ -30,8 +30,25 @@ VPSNAME=xen${VPSNUM}
 VPSHOSTNAME=xen${NODE_NUM}${VPSNUM}
 VPSHDD=$2
 VPSMEM=$3
-IPADDR=$4
+IPADDRS=$4
 DISTRO=$5
+
+# Configure the first IP only (the user can setup the others)
+IPADDR=`echo ${IPADDRS} | cut -d' ' -f1`
+
+function calcMacAddr {
+	CHARCNT=`echo -n ${NODE_NUM} | wc -m`
+	if [ ""${CHARCNT} = "5" ] ; then
+		MINOR_NUM=`echo ${NODE_NUM} | awk '{print substr($0,4,2)}'`
+		MAJOR_NUM=`echo ${NODE_NUM} | awk '{print substr($0,2,2)}'`
+		MEGA_NUM=`echo ${NODE_NUM} | awk '{print substr($0,1,1)}'`
+	else
+		MINOR_NUM=`echo ${NODE_NUM} | awk '{print substr($0,3,2)}'`
+		MAJOR_NUM=`echo ${NODE_NUM} | awk '{print substr($0,1,2)}'`
+		MEGA_NUM="0"
+	fi
+	MAC_ADDR=`echo 00:00:2$MEGA_NUM:$MAJOR_NUM:$MINOR_NUM:$VPSNUM`
+}
 
 FOUNDED_ARCH=`uname -m`
 
@@ -276,9 +293,7 @@ if [ ""$DISTRO = "netbsd" ] ; then
 	echo "kernel = \"${BSDKERNELPATH}\"
 memory = ${VPSMEM}
 name = \"${VPSNAME}\"
-#cpu = -1   # leave to Xen to pick
-nics=1
-#vif = [ 'mac=aa:00:00:00:00:11, bridge=xen-br0' ]
+vif = [ 'mac=${MACADDR}, ip=${IPADDRS} bridge=xen-br0' ]
 disk = [ 'phy:/dev/mapper/lvm1-xen${VPSNUM},0x3,w' ]
 " >/etc/xen/${VPSNAME}
 else
@@ -286,8 +301,7 @@ else
 memory = ${VPSMEM}
 name = \"${VPSNAME}\"
 #cpu = -1   # leave to Xen to pick
-nics=1
-#vif = [ 'mac=aa:00:00:00:00:11, bridge=xen-br0' ]
+vif = [ 'mac=${MACADDR}, ip=${IPADDRS} bridge=xen-br0' ]
 disk = [ 'phy:/dev/mapper/lvm1-xen${VPSNUM},sda1,w','phy:/dev/mapper/lvm1-xen${VPSNUM}swap,sda2,w' ]
 root = \"/dev/sda1 ro\"
 # Sets runlevel 4.
