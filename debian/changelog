@@ -1,3 +1,9 @@
+dtc-xen (0.2.3) unstable; urgency=low
+
+  * Added anti-spoofing facility (IP addresses in the vif=)
+
+ -- Thomas GOIRAND <thomas@goirand.fr>  Mon, 14 Sep 2006 13:21:00 +0800
+
 dtc-xen (0.2.1) unstable; urgency=low
 
   * Added Xen version checking so getVPSState() always work
