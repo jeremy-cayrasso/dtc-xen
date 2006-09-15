@@ -31,6 +31,22 @@ VPSNAME=${VPSNUM}
 VPSHOSTNAME=xen${NODE_NUM}${VPSNUM}
 RAMSIZE=$2
 KERNEL_TYPE=$3
+ALL_IPADDRS=$4
+
+function calcMacAddr {
+	CHARCNT=`echo -n ${NODE_NUM} | wc -m`
+	if [ ""${CHARCNT} = "5" ] ; then
+		MINOR_NUM=`echo ${NODE_NUM} | awk '{print substr($0,4,2)}'`
+		MAJOR_NUM=`echo ${NODE_NUM} | awk '{print substr($0,2,2)}'`
+		MEGA_NUM=`echo ${NODE_NUM} | awk '{print substr($0,1,1)}'`
+	else
+		MINOR_NUM=`echo ${NODE_NUM} | awk '{print substr($0,3,2)}'`
+		MAJOR_NUM=`echo ${NODE_NUM} | awk '{print substr($0,1,2)}'`
+		MEGA_NUM="0"
+	fi
+	MAC_ADDR=`echo 00:00:2$MEGA_NUM:$MAJOR_NUM:$MINOR_NUM:$VPSNUM`
+}
+calcMacAddr
 
 case "$KERNEL_TYPE" in
 	"install")
@@ -49,9 +65,7 @@ esac
 echo "kernel = \"${KERNELPATH}\"
 memory = ${RAMSIZE}
 name = \"${VPSNAME}\"
-#cpu = -1   # leave to Xen to pick
-nics=1
-#vif = [ 'mac=aa:00:00:00:00:11, bridge=xen-br0' ]
+vif = [ 'mac=${MAC_ADDR}, ip=${ALL_IPADDRS}' ]
 disk = [ 'phy:/dev/mapper/lvm1-${VPSNAME},0x3,w' ]
 " >/etc/xen/${VPSNAME}
 if [ ! -e /etc/xen/auto/${VPSNAME} ] ; then
