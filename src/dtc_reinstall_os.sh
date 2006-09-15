@@ -294,7 +294,7 @@ if [ ""$DISTRO = "netbsd" ] ; then
 	echo "kernel = \"${BSDKERNELPATH}\"
 memory = ${VPSMEM}
 name = \"${VPSNAME}\"
-vif = [ 'mac=${MAC_ADDR}, ip=${ALL_IPADDRS} bridge=xen-br0' ]
+vif = [ 'mac=${MAC_ADDR}, ip=${ALL_IPADDRS}' ]
 disk = [ 'phy:/dev/mapper/lvm1-xen${VPSNUM},0x3,w' ]
 " >/etc/xen/${VPSNAME}
 else
@@ -302,7 +302,7 @@ else
 memory = ${VPSMEM}
 name = \"${VPSNAME}\"
 #cpu = -1   # leave to Xen to pick
-vif = [ 'mac=${MAC_ADDR}, ip=${ALL_IPADDRS} bridge=xen-br0' ]
+vif = [ 'mac=${MAC_ADDR}, ip=${ALL_IPADDRS}' ]
 disk = [ 'phy:/dev/mapper/lvm1-xen${VPSNUM},sda1,w','phy:/dev/mapper/lvm1-xen${VPSNUM}swap,sda2,w' ]
 root = \"/dev/sda1 ro\"
 # Sets runlevel 4.
