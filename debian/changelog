@@ -1,8 +1,20 @@
+dtc-xen (0.2.4) unstable; urgency=low
+
+  * Bugfixed the changeBSDKernel function to setup the xen startup
+
+ -- Thomas GOIRAND <thomas@goirand.fr>  Sun, 17 Sep 2006 13:21:00 +0800
+
 dtc-xen (0.2.3) unstable; urgency=low
 
   * Added anti-spoofing facility (IP addresses in the vif=)
 
  -- Thomas GOIRAND <thomas@goirand.fr>  Mon, 14 Sep 2006 13:21:00 +0800
+
+dtc-xen (0.2.2) unstable; urgency=low
+
+  * Added a physical console check to be sure nobody sends a param
+
+ -- Thomas GOIRAND <thomas@goirand.fr>  Mon, 30 Aug 2006 11:21:00 +0800
 
 dtc-xen (0.2.1) unstable; urgency=low
 
