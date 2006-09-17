@@ -27,7 +27,7 @@ NORMAL_KERNELPATH="/boot/netbsd-XENU"
 
 # Things that most of then time don't change
 VPSNUM=$1
-VPSNAME=${VPSNUM}
+VPSNAME=xen${VPSNUM}
 VPSHOSTNAME=xen${NODE_NUM}${VPSNUM}
 RAMSIZE=$2
 KERNEL_TYPE=$3

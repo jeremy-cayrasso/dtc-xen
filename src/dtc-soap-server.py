@@ -215,6 +215,7 @@ def changeBSDkernel(vpsname,ramsize,kerneltype,allipaddrs):
 	if username == dtcxen_user or username == vpsname:
 		print "Changing kernel of a BSD VM: vps: %s ram: %s kernel: %s" % (vpsname,ramsize,kerneltype)
 		cmd = "dtc_change_bsd_kernel.sh %s %s %s '%s'" % (vpsname,ramsize,kerneltype,allipaddrs)
+		print cmd
 		commands.getstatusoutput(cmd)
 		return "OK"
 
