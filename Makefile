@@ -26,6 +26,8 @@ install:
 	@-cp -rf src/dtc_reinstall_os.sh $(DESTDIR)/usr/sbin/
 	@-cp -rf src/dtc_setup_vps_disk.sh $(DESTDIR)/usr/sbin/
 	@-cp -rf src/dtc_change_bsd_kernel.sh $(DESTDIR)/usr/sbin/
+	@-cp -rf src/xm_info_free_memory $(DESTDIR)/usr/sbin/
+	@-cp -rf src/vgdisplay_free_size $(DESTDIR)/usr/sbin/
 	@-cp -rf src/dtc-soap-server.py $(DESTDIR)/usr/sbin/
 	@-cp src/Properties.py $(DESTDIR)/usr/lib/dtc-xen
 	@-cp -rf debootstrap_scripts/dapper $(DESTDIR)/usr/lib/debootstrap/scripts
