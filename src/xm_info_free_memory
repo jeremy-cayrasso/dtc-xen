@@ -1,0 +1,3 @@
+#!/bin/sh
+
+xm info | grep free_memory | cut -d':' -f2 | cut -d' ' -f2

@@ -1,0 +1,4 @@
+#!/bin/sh
+
+PESIZE=`vgdisplay -c lvm1 | cut -d':' -f13`
+FREEPE=`vgdisplay -c lvm1 | cut -d':' -f16`
