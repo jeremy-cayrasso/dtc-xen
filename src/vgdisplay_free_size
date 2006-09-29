@@ -2,3 +2,8 @@
 
 PESIZE=`vgdisplay -c lvm1 | cut -d':' -f13`
 FREEPE=`vgdisplay -c lvm1 | cut -d':' -f16`
+
+FREESIZE=$((${PESIZE} * ${FREEPE} ))
+FREESIZE_MEG=$((${FREESIZE} / 1024 ))
+
+echo $FREESIZE_MEG
