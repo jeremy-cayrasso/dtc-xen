@@ -120,9 +120,18 @@ $MOUNT ${VPSGLOBPATH}/${VPSNUM}
 
 echo "Bootstraping..."
 if [ ""$DISTRO = "centos" ] ; then
-	if [ ! -e /usr/src/centos3 ] ; then
-		echo "Please install CentOS 3 rpms in /usr/src"
-		echo "This can be done using: rpmstrap --verbose --download-only centos3 /usr/src/centos3"
+	# default CENTOS_RELEASE is centos4
+	CENTOS_RELEASE=centos4
+
+	# first check to see if we have a centos4 archive
+	# if not, revert to centos3 (to maintain backwards compatibility)
+	if [ ! -e /usr/src/$CENTOS_RELEASE ]; then
+		CENTOS_RELEASE=centos3
+	fi
+
+	if [ ! -e /usr/src/$CENTOS_RELEASE ] ; then
+		echo "Please install $CENTOS_RELEASE rpms in /usr/src"
+		echo "This can be done using: rpmstrap --verbose --download-only $CENTOS_RELEASE /usr/src/$CENTOS_RELEASE"
 		exit
 	fi
 	if [ ! -e /usr/bin/rpmstrap ] ; then
@@ -130,9 +139,9 @@ if [ ""$DISTRO = "centos" ] ; then
 		exit
 	fi
 	if [ ""$DEBIAN_BINARCH = "amd64" ] ; then
-		/usr/bin/rpmstrap --verbose --arch x86_64 --local-source /usr/src/centos3 centos3 ${VPSGLOBPATH}/${VPSNUM}
+		/usr/bin/rpmstrap --verbose --arch x86_64 --local-source /usr/src/$CENTOS_RELEASE $CENTOS_RELEASE ${VPSGLOBPATH}/${VPSNUM}
 	else
-		/usr/bin/rpmstrap --verbose --local-source /usr/src/centos3 centos3 ${VPSGLOBPATH}/${VPSNUM}
+		/usr/bin/rpmstrap --verbose --local-source /usr/src/$CENTOS_RELEASE $CENTOS_RELEASE ${VPSGLOBPATH}/${VPSNUM}
 	fi
 elif [ ""$DISTRO = "debian" ] ; then
 	$DEBOOTSTRAP --arch ${DEBIAN_BINARCH} sarge ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
