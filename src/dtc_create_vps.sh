@@ -146,7 +146,7 @@ if [ ""$DISTRO = "centos" ] ; then
 elif [ ""$DISTRO = "debian" ] ; then
 	$DEBOOTSTRAP --arch ${DEBIAN_BINARCH} sarge ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
 elif [ ""$DISTRO = "ubuntu_dapper" ] ; then
-	$DEBOOTSTRAP --arch i386 dapper ${VPSGLOBPATH}/${VPSNUM} http://archive.ubuntu.ocm/ubuntu
+	$DEBOOTSTRAP --arch i386 dapper ${VPSGLOBPATH}/${VPSNUM} http://archive.ubuntu.com/ubuntu
 elif [ ""$DISTRO = "gentoo" ]; then
 	if [ ! -e /usr/src/gentoo/stage3-x86-2006.0.tar.bz2 ]; then
 		echo "Please download the gentoo stage3 from http://mirror.gentoo.gr.jp/releases/x86/2006.0/stages/stage3-x86-2006.0.tar.bz2"
