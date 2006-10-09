@@ -285,7 +285,7 @@ deb-src http://archive.ubuntu.com/ubuntu/ dapper main restricted
 		
 deb http://archive.ubuntu.com/ubuntu/ dapper-updates main restricted
 deb-src http://archive.ubuntu.com/ubuntu/ dapper-updates main restricted
-" >${VPSGLOBPATH}/${VPSNUM}/etc/apt
+" >${VPSGLOBPATH}/${VPSNUM}/etc/apt/sources.list
 		echo "auto lo
 iface lo inet loopback
 
