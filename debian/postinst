@@ -202,4 +202,22 @@ else
 	fi
 fi
 
+echo "Installation of dtc-xen has completed, you will need to download centos, and gentoo archives"
+
+if [ ! -e /usr/src/centos3 ]; then
+	echo "CentOS 3 archive not found, please issue command (if any download errors, please fix suite):"
+	echo "For x86_64:  /usr/bin/rpmstrap --verbose --arch x86_64 --download-only centos3 /usr/src/centos3"
+	echo "For i[3456]86: /usr/bin/rpmstrap --verbose --arch i386 --download-only centos3 /usr/src/centos3"
+fi
+
+if [ ! -e /usr/src/centos4 ]; then
+	echo "CentOS 4 archive not found, please issue command (if any download errors, please fix suite):"
+	echo "For x86_64:  /usr/bin/rpmstrap --verbose --arch x86_64 --download-only centos4 /usr/src/centos4"
+	echo "For i[3456]86: /usr/bin/rpmstrap --verbose --arch i386 --download-only centos4 /usr/src/centos4"
+fi
+
+if [ ! -e /usr/src/gentoo ]; then
+	echo "Gentoo archive not found, please issue command: mkdir -p /usr/src/gentoo; cd /usr/src/gentoo; wget http://mirror.gentoo.gr.jp/releases/x86/2006.0/stages/stage3-x86-2006.0.tar.bz2"
+fi
+
 exit 0;
