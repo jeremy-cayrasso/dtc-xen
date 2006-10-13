@@ -110,9 +110,18 @@ fi
 
 echo "Bootstraping..."
 if [ ""$DISTRO = "centos" ] ; then
-	if [ ! -e /usr/src/centos3 ] ; then
-		echo "Please install CentOS 3 rpms in /usr/src"
-		echo "This can be done using: rpmstrap --verbose --download-only centos3 /usr/src/centos3"
+	# default CENTOS_RELEASE is centos4
+	CENTOS_RELEASE=centos4
+
+	# first check to see if we have a centos4 archive
+	# if not, revert to centos3 (to maintain backwards compatibility)
+	if [ ! -e /usr/src/$CENTOS_RELEASE ]; then
+		CENTOS_RELEASE=centos3
+	fi
+
+	if [ ! -e /usr/src/$CENTOS_RELEASE ] ; then
+		echo "Please install $CENTOS_RELEASE rpms in /usr/src"
+		echo "This can be done using: rpmstrap --verbose --download-only $CENTOS_RELEASE /usr/src/$CENTOS_RELEASE"
 		exit
 	fi
 	if [ ! -e /usr/bin/rpmstrap ] ; then
@@ -120,15 +129,15 @@ if [ ""$DISTRO = "centos" ] ; then
 		exit
 	fi
 	if [ ""$DEBIAN_BINARCH = "amd64" ] ; then
-		/usr/bin/rpmstrap --verbose --arch x86_64 --local-source /usr/src/centos3 centos3 ${VPSGLOBPATH}/${VPSNUM}
+		/usr/bin/rpmstrap --verbose --arch x86_64 --local-source /usr/src/$CENTOS_RELEASE $CENTOS_RELEASE ${VPSGLOBPATH}/${VPSNUM}
 	else
-		/usr/bin/rpmstrap --verbose --local-source /usr/src/centos3 centos3 ${VPSGLOBPATH}/${VPSNUM}
+		/usr/bin/rpmstrap --verbose --local-source /usr/src/$CENTOS_RELEASE $CENTOS_RELEASE ${VPSGLOBPATH}/${VPSNUM}
 	fi
 elif [ ""$DISTRO = "debian" ] ; then
 	echo $DEBOOTSTRAP --arch ${DEBIAN_BINARCH} sarge ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
 	$DEBOOTSTRAP --arch ${DEBIAN_BINARCH} sarge ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
 elif [ ""$DISTRO = "ubuntu_dapper" ] ; then
-	$DEBOOTSTRAP --arch i386 dapper ${VPSGLOBPATH}/${VPSNUM} http://archive.ubuntu.ocm/ubuntu
+	$DEBOOTSTRAP --arch i386 dapper ${VPSGLOBPATH}/${VPSNUM} http://archive.ubuntu.com/ubuntu
 elif [ ""$DISTRO = "gentoo" ]; then
 	if [ ! -e /usr/src/gentoo/stage3-x86-2006.0.tar.bz2 ]; then
 		echo "Please download the gentoo stage3 from http://mirror.gentoo.gr.jp/releases/x86/2006.0/stages/stage3-x86-2006.0.tar.bz2"
@@ -243,7 +252,7 @@ GATEWAY=${GATEWAY}
 	# Set the resolv.conf
 	cp /etc/resolv.conf ${ETC}/resolv.conf
 	# Make the console device
-	/dev/MAKEDEV ${VPSGLOBPATH}/${VPSNUM}/dev/console
+	pushd ${VPSGLOBPATH}/${VPSNUM}/dev/; /sbin/MAKEDEV console; popd
 elif [ ""$DISTRO = "gentoo" ] ; then
 	cp -L /etc/resolv.conf ${ETC}/resolv.conf	
 	echo "config_eth0=( \"${IPADDR} netmask ${NETMASK} broadcast ${BROADCAST}\" )
@@ -273,7 +282,7 @@ deb-src http://archive.ubuntu.com/ubuntu/ dapper main restricted
 		
 deb http://archive.ubuntu.com/ubuntu/ dapper-updates main restricted
 deb-src http://archive.ubuntu.com/ubuntu/ dapper-updates main restricted
-" >${VPSGLOBPATH}/${VPSNUM}/etc/apt
+" >${VPSGLOBPATH}/${VPSNUM}/etc/apt/sources.list
 		echo "auto lo
 iface lo inet loopback
 
