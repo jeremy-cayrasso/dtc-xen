@@ -253,6 +253,8 @@ GATEWAY=${GATEWAY}
 	cp /etc/resolv.conf ${ETC}/resolv.conf
 	# Make the console device
 	pushd ${VPSGLOBPATH}/${VPSNUM}/dev/; /sbin/MAKEDEV console; popd
+	# Make all the generic devices (inclusive of sda1 and sda2)
+	pushd ${VPSGLOBPATH}/${VPSNUM}/dev/; /sbin/MAKEDEV generic; popd
 elif [ ""$DISTRO = "gentoo" ] ; then
 	cp -L /etc/resolv.conf ${ETC}/resolv.conf	
 	echo "config_eth0=( \"${IPADDR} netmask ${NETMASK} broadcast ${BROADCAST}\" )
