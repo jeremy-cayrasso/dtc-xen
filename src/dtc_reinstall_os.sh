@@ -337,6 +337,7 @@ else
 	ln -s /boot/vmlinuz-${KERNELNAME} ${VPSGLOBPATH}/${VPSNUM}/boot/vmlinuz
 	# regen the module dependancies within the chroot (just in case)
 	chroot ${VPSGLOBPATH}/${VPSNUM} depmod -a ${KERNELNAME}
-	echo "Unmounting..."
-	umount ${VPSGLOBPATH}/${VPSNUM}
 fi
+echo "Unmounting proc and filesystem root..."
+umount ${VPSGLOBPATH}/${VPSNUM}/proc
+umount ${VPSGLOBPATH}/${VPSNUM}
