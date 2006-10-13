@@ -1,5 +1,8 @@
 #!/bin/sh
 
+echo "This script [$0] is depecrated, please consider using dtc_reinstall_os.sh"
+exit 1
+
 if [ $# -lt 3 ]; then 
 	echo "Usage: $0 <xen id> <package id> <ip address> [debian/ubuntu_dapper/centos/gentoo/manual]"
 fi
