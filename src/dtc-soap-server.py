@@ -257,7 +257,7 @@ def setupLVMDisks(vpsname,hddsize,swapsize):
 	else:
 		return "NOTOK"
 
-deb getFreeSpace():
+def getFreeSpace():
 	free_space_disk = commands.getstatusoutput('/usr/sbin/vgdisplay_free_size')
 	free_space_mem = commands.getstatusoutput('/usr/sbin/xm_info_free_memory')
 	return (free_space_disk,free_space_mem)
