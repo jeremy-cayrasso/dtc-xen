@@ -217,7 +217,9 @@ if [ ! -e /usr/src/centos4 ]; then
 fi
 
 if [ ! -e /usr/src/gentoo ]; then
-	echo "Gentoo archive not found, please issue command: mkdir -p /usr/src/gentoo; cd /usr/src/gentoo; wget http://mirror.gentoo.gr.jp/releases/x86/2006.0/stages/stage3-x86-2006.0.tar.bz2"
+	echo "Gentoo archive not found, please issue command:"
+	echo "For x86:  mkdir -p /usr/src/gentoo; cd /usr/src/gentoo; wget http://mirror.gentoo.gr.jp/releases/x86/2006.1/stages/stage3-i686-2006.1.tar.bz2"
+	echo "For amd64: mkdir -p /usr/src/gentoo; cd /usr/src/gentoo; wget http://mirror.gentoo.gr.jp/releases/amd64/2006.1/stages/stage3-amd64-2006.1.tar.bz2"
 fi
 
 exit 0;
