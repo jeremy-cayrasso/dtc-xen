@@ -150,7 +150,12 @@ elif [ ""$DISTRO = "gentoo" ]; then
 	if [ ! -e /usr/src/gentoo/$GENTOO_STAGE3_ARCHIVE ]; then
 		echo "Please download the gentoo stage3 from $GENTOO_STAGE3_BASEURL$GENTOO_STAGE3_ARCHIVE"
 		echo "Or another gentoo mirror"
-		exit 
+		if [ -e /usr/src/gentoo/stage3-x86-2006.0.tar.bz2 ]; then
+			# if we find an old archive here, use this as a fall back
+			GENTOO_STAGE3_ARCHIVE=stage3-x86-2006.0.tar.bz2
+		else
+			exit
+		fi
 	fi
 	tar -xvjpf /usr/src/gentoo/$GENTOO_STAGE3_ARCHIVE -C ${VPSGLOBPATH}/${VPSNUM}
 	# grab the latest portage
