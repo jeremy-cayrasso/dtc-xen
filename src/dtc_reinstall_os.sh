@@ -264,10 +264,6 @@ GATEWAY=${GATEWAY}
 " >${ETC}/sysconfig/network
 	# Set the resolv.conf
 	cp /etc/resolv.conf ${ETC}/resolv.conf
-	# Make the console device
-	pushd ${VPSGLOBPATH}/${VPSNUM}/dev/; /sbin/MAKEDEV console; popd
-	# Make all the generic devices (inclusive of sda1 and sda2)
-	pushd ${VPSGLOBPATH}/${VPSNUM}/dev/; /sbin/MAKEDEV generic; popd
 elif [ ""$DISTRO = "gentoo" ] ; then
 	cp -L /etc/resolv.conf ${ETC}/resolv.conf	
 	echo "config_eth0=( \"${IPADDR} netmask ${NETMASK} broadcast ${BROADCAST}\" )
@@ -338,6 +334,10 @@ ln -s ../${VPSNAME} /etc/xen/auto/${VPSNAME}
 if [ ""$DISTRO = "netbsd" ] ; then
 	echo "Not coping modules: it's BSD!"
 else
+
+	# we need to do MAKEDEV for all linux distroes
+	# Make all the generic devices (inclusive of sda1 and sda2)
+	pushd ${VPSGLOBPATH}/${VPSNUM}/dev/; /sbin/MAKEDEV generic; popd
 	echo "Copying modules..."
 	mv ${VPSGLOBPATH}/${VPSNUM}/lib/tls ${VPSGLOBPATH}/${VPSNUM}/lib/tls.disabled
 	# create the /lib/modules if it doesn't exist
