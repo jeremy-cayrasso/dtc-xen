@@ -109,10 +109,9 @@ else
 fi
 
 echo "Bootstraping..."
+# default CENTOS_RELEASE is centos4
+CENTOS_RELEASE=centos4
 if [ ""$DISTRO = "centos" ] ; then
-	# default CENTOS_RELEASE is centos4
-	CENTOS_RELEASE=centos4
-
 	# first check to see if we have a centos4 archive
 	# if not, revert to centos3 (to maintain backwards compatibility)
 	if [ ! -e /usr/src/$CENTOS_RELEASE ]; then
@@ -331,6 +330,7 @@ extra = \"4\"
 fi
 ln -s ../${VPSNAME} /etc/xen/auto/${VPSNAME}
 
+
 if [ ""$DISTRO = "netbsd" ] ; then
 	echo "Not coping modules: it's BSD!"
 else
@@ -353,6 +353,16 @@ else
 	# regen the module dependancies within the chroot (just in case)
 	chroot ${VPSGLOBPATH}/${VPSNUM} depmod -a ${KERNELNAME}
 fi
+
+# need to install 2.6 compat stuff for centos3
+if [ ""$DISTRO = "centos" -a ""$CENTOS_RELEASE="centos3" ]; then
+	mkdir -p ${VPSGLOBPATH}/${VPSNUM}/tmp
+	wget -O ${VPSGLOBPATH}/${VPSNUM}/tmp/yum.conf.mini ftp://ftp.pasteur.fr/pub/BIS/tru/2.6_CentOS-3/yum.conf.mini
+	chroot ${VPSGLOBPATH}/${VPSNUM} yum -c /tmp/yum.conf.mini -y update	
+	chroot ${VPSGLOBPATH}/${VPSNUM} yum -c /tmp/yum.conf.mini install initscripts_26
+fi
+
 echo "Unmounting proc and filesystem root..."
 umount ${VPSGLOBPATH}/${VPSNUM}/proc
 umount ${VPSGLOBPATH}/${VPSNUM}
+
