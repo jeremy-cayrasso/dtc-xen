@@ -221,7 +221,7 @@ def changeBSDkernel(vpsname,ramsize,kerneltype,allipaddrs):
 		return "OK"
 
 # Take care! This time, the vpsname has to be only the number (eg XX and not xenXX)
-def reinstallVPSos(vpsname,ostype,hddsize,ramsize,ipaddr):
+def reinstallVPSos(vpsname,ostype,hddsize,ramsize,ipaddr,imagetype='lvm'):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
 		filename = "/var/lib/dtc-xen/states/xen%s" % vpsname
@@ -238,7 +238,7 @@ def reinstallVPSos(vpsname,ostype,hddsize,ramsize,ipaddr):
 				return "Ok, started mkos."
 			else:
 				print "Starting reinstallation of operating system for xen%s" % vpsname
-				cmd = "/usr/sbin/dtc_reinstall_os.sh %s %s %s '%s' %s" % (vpsname,hddsize,ramsize,ipaddr,ostype)
+				cmd = "/usr/sbin/dtc_reinstall_os.sh %s %s %s '%s' %s %s" % (vpsname,hddsize,ramsize,ipaddr,ostype,imagetype)
 				print cmd
 				commands.getstatusoutput(cmd)
 				print "mkos for VPS %s finished: removing file" % vpsname

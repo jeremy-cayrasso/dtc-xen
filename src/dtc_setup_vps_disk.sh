@@ -1,7 +1,8 @@
 #!/bin/sh
 
 if [ $# -lt 3 ]; then 
-	echo "Usage: $0 <xen id> <hdd size> <swap size>"
+	echo "Usage: $0 <xen id> <hdd size> <swap size> [lvm/vbd]"
+	exit
 fi
 
 # Things that often change
@@ -19,6 +20,11 @@ VPSNAME=xen${VPSNUM}
 VPSHOSTNAME=xen${NODE_NUM}${VPSNUM}
 VPSHDD=$2
 VPSMEM=$3
+IMAGE_TYPE=$4
+
+if [ -z ""$IMAGE_TYPE ]; then
+	IMAGE_TYPE=lvm
+fi
 
 LVCREATE=/sbin/lvcreate
 LVREMOVE=/sbin/lvremove
@@ -29,24 +35,44 @@ MKSWAP=/sbin/mkswap
 echo "Seleted ${VPSNAME}: ${VPSHDD}MB HDD and ${VPSMEM}MB RAM";
 echo "Creating disks..."
 
-# Remove existing partitions if they existed
-if [ -L /dev/${LVMNAME}/${VPSNAME} ] ; then
-	$LVREMOVE -f /dev/${LVMNAME}/${VPSNAME}
-fi
-if [ -L /dev/${LVMNAME}/${VPSNAME}swap ] ; then
-	$LVREMOVE -f /dev/${LVMNAME}/${VPSNAME}swap
-fi
+if [ ""$IMAGE_TYPE = "lvm" ]; then
+	# Remove existing partitions if they existed
+	if [ -L /dev/${LVMNAME}/${VPSNAME} ] ; then
+		$LVREMOVE -f /dev/${LVMNAME}/${VPSNAME}
+	fi
+	if [ -L /dev/${LVMNAME}/${VPSNAME}swap ] ; then
+		$LVREMOVE -f /dev/${LVMNAME}/${VPSNAME}swap
+	fi
 
-# (re)create the partitions
-if [ ! -L /dev/${LVMNAME}/${VPSNAME} ] ; then
-	$LVCREATE -L${VPSHDD} -n${VPSNAME} ${LVMNAME}
-	$MKDIR -p ${VPSGLOBPATH}/${VPSNUM}
-fi
-if [ ! -L /dev/${LVMNAME}/${VPSNAME}swap ] ; then
-	$LVCREATE -L${VPSMEM} -n${VPSNAME}swap ${LVMNAME}
-fi
-if grep ${VPSNAME} /etc/fstab >/dev/null ; then
-	echo "LV already exists in fstab"
+	# (re)create the partitions
+	if [ ! -L /dev/${LVMNAME}/${VPSNAME} ] ; then
+		$LVCREATE -L${VPSHDD} -n${VPSNAME} ${LVMNAME}
+		$MKDIR -p ${VPSGLOBPATH}/${VPSNUM}
+	fi
+	if [ ! -L /dev/${LVMNAME}/${VPSNAME}swap ] ; then
+		$LVCREATE -L${VPSMEM} -n${VPSNAME}swap ${LVMNAME}
+	fi
+	if grep ${VPSNAME} /etc/fstab >/dev/null ; then
+		echo "LV already exists in fstab"
+	else
+		echo "/dev/mapper/${LVMNAME}-${VPSNAME}  ${VPSGLOBPATH}/${VPSNUM} ext3    defaults,noauto 0 0" >>/etc/fstab
+	fi
 else
-	echo "/dev/mapper/${LVMNAME}-${VPSNAME}  ${VPSGLOBPATH}/${VPSNUM} ext3    defaults,noauto 0 0" >>/etc/fstab
+	if [ -e ${VPSGLOBPATH}/${VPSNAME}.img ]; then
+		umount ${VPSGLOBPATH}/${VPSNAME}.img
+		rm ${VPSGLOBPATH}/${VPSNAME}.img
+	fi
+	if [ -e ${VPSGLOBPATH}/${VPSNAME}.swap.img ]; then
+		umount ${VPSGLOBPATH}/${VPSNAME}.swap.img
+		rm ${VPSGLOBPATH}/${VPSNAME}.swap.img
+	fi
+
+	# (re)create the files
+	dd if=/dev/zero of=$VPSGLOBPATH/${VPSNAME}.img bs=1M count=${VPSHDD}
+        dd if=/dev/zero of=$VPSGLOBPATH/${VPSNAME}.swap.img bs=1M count=${VPSMEM}
+	if grep ${VPSNAME} /etc/fstab >/dev/null ; then
+		echo "LoopMount already exists in fstab: skipping"
+	else
+		echo "$VPSGLOBPATH/${VPSNAME}.img  ${VPSGLOBPATH}/${VPSNUM}  ext3       defaults,noauto,loop 0 0" >>/etc/fstab
+	fi
 fi

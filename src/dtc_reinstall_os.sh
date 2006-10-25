@@ -1,7 +1,8 @@
 #!/bin/sh
 
 if [ $# -lt 3 ]; then 
-	echo "Usage: $0 <xen id> <hdd size> <ram size> <ip address> [debian/ubuntu_dapper/centos/gentoo/manual]"
+	echo "Usage: $0 <xen id> <hdd size> <ram size> <ip address> [debian/ubuntu_dapper/centos/gentoo/manual] [lvm/vbd]"
+	exit
 fi
 
 # Things that often change
@@ -32,6 +33,12 @@ VPSHDD=$2
 VPSMEM=$3
 ALL_IPADDRS=$4
 DISTRO=$5
+IMAGE_TYPE=$6
+
+# default to lvm type for backwards compatibility
+if [ -z ""$IMAGE_TYPE ]; then
+	IMAGE_TYPE=lvm
+fi
 
 # Configure the first IP only (the user can setup the others)
 IPADDR=`echo ${ALL_IPADDRS} | cut -d' ' -f1`
@@ -93,18 +100,33 @@ if [ ""$DISTRO = "netbsd" ] ; then
 else
 	echo "Creating disks..."
 
-	$MKFS /dev/${LVMNAME}/${VPSNAME}
-	$MKDIR -p ${VPSGLOBPATH}/${VPSNUM}
-#	$LVCREATE -L${VPSMEM} -n${VPSNAME}swap ${LVMNAME}
-	$MKSWAP /dev/${LVMNAME}/${VPSNAME}swap
+	if [ ""$IMAGE_TYPE = "lvm" ]; then
+		$MKFS /dev/${LVMNAME}/${VPSNAME}
+		$MKDIR -p ${VPSGLOBPATH}/${VPSNUM}
+	#	$LVCREATE -L${VPSMEM} -n${VPSNAME}swap ${LVMNAME}
+		$MKSWAP /dev/${LVMNAME}/${VPSNAME}swap
 
-	if grep ${VPSNAME} /etc/fstab >/dev/null ; then
-		echo "LV already exists in fstab: skiping"
+		if grep ${VPSNAME} /etc/fstab >/dev/null ; then
+			echo "LV already exists in fstab: skipping"
+		else
+			echo "/dev/mapper/${LVMNAME}-${VPSNAME}  ${VPSGLOBPATH}/${VPSNUM} ext3    defaults,noauto 0 0" >>/etc/fstab
+		fi
+
 	else
-		echo "/dev/mapper/${LVMNAME}-${VPSNAME}  ${VPSGLOBPATH}/${VPSNUM} ext3    defaults,noauto 0 0" >>/etc/fstab
+		# support for file backed VPS
+		# Create files for hdd and swap
+		# dd if=/dev/zero of=$VPSGLOBPATH/${VPSNAME}.img bs=1G seek=${VPSHDD} count=1
+		# dd if=/dev/zero of=$VPSGLOBPATH/${VPSNAME}.swap.img bs=1M seek=${VPSMEM} count=1
+		$MKFS -F $VPSGLOBPATH/${VPSNAME}.img
+		$MKSWAP $VPSGLOBPATH/${VPSNAME}.swap.img
+		if grep ${VPSNAME} /etc/fstab >/dev/null ; then
+			echo "LoopMount already exists in fstab: skipping"
+		else
+			echo "$VPSGLOBPATH/${VPSNAME}.img  ${VPSGLOBPATH}/${VPSNUM}  ext3	defaults,noauto,loop 0 0" >>/etc/fstab
+		fi
 	fi
 
-	echo "Mouting..."
+	echo "Mounting..."
 	$MOUNT ${VPSGLOBPATH}/${VPSNUM}
 fi
 
@@ -133,10 +155,14 @@ if [ ""$DISTRO = "centos" ] ; then
 		/usr/bin/rpmstrap --verbose --local-source /usr/src/$CENTOS_RELEASE $CENTOS_RELEASE ${VPSGLOBPATH}/${VPSNUM}
 	fi
 elif [ ""$DISTRO = "debian" ] ; then
-	echo $DEBOOTSTRAP --arch ${DEBIAN_BINARCH} sarge ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
-	$DEBOOTSTRAP --arch ${DEBIAN_BINARCH} sarge ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
+	echo $DEBOOTSTRAP --include=module-init-tools,hotplug,udev --arch ${DEBIAN_BINARCH} sarge ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
+	$DEBOOTSTRAP --include=module-init-tools,hotplug,udev --arch ${DEBIAN_BINARCH} sarge ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
+	if [ $? != 0 ]; then
+		echo "Failed to install debian via bootstrap!!"
+		exit 1
+	fi
 elif [ ""$DISTRO = "ubuntu_dapper" ] ; then
-	$DEBOOTSTRAP --arch i386 dapper ${VPSGLOBPATH}/${VPSNUM} http://archive.ubuntu.com/ubuntu
+	$DEBOOTSTRAP --include=module-init-tools,udev --arch i386 dapper ${VPSGLOBPATH}/${VPSNUM} http://archive.ubuntu.com/ubuntu
 elif [ ""$DISTRO = "gentoo" ]; then
 	GENTOO_STAGE3_ARCHIVE="stage3-i686-2006.1.tar.bz2"
 	GENTOO_STAGE3_BASEURL="http://mirror.gentoo.gr.jp/releases/x86/2006.1/stages/"
@@ -314,20 +340,35 @@ if [ ""$DISTRO = "netbsd" ] ; then
 memory = ${VPSMEM}
 name = \"${VPSNAME}\"
 vif = [ 'mac=${MAC_ADDR}, ip=${ALL_IPADDRS}' ]
-disk = [ 'phy:/dev/mapper/lvm1-xen${VPSNUM},0x3,w' ]
 " >/etc/xen/${VPSNAME}
+	if [ ""$IMAGE_TYPE = "lvm" ]; then
+		echo "disk = [ 'phy:/dev/mapper/lvm1-xen${VPSNUM},0x3,w' ]
+" >>/etc/xen/${VPSNAME}
+	else
+		echo "disk = [ 'file:$VPSGLOBPATH/${VPSNAME}.img,0x301,w' ]
+" >>/etc/xen/${VPSNAME}
+	fi
 else
 	echo "kernel = \"${KERNELPATH}\"
 memory = ${VPSMEM}
 name = \"${VPSNAME}\"
 #cpu = -1   # leave to Xen to pick
 vif = [ 'mac=${MAC_ADDR}, ip=${ALL_IPADDRS}' ]
-disk = [ 'phy:/dev/mapper/lvm1-xen${VPSNUM},sda1,w','phy:/dev/mapper/lvm1-xen${VPSNUM}swap,sda2,w' ]
-root = \"/dev/sda1 ro\"
+" > /etc/xen/${VPSNAME}
+	if [ ""$IMAGE_TYPE = "lvm" ]; then
+		echo "disk = [ 'phy:/dev/mapper/lvm1-xen${VPSNUM},sda1,w','phy:/dev/mapper/lvm1-xen${VPSNUM}swap,sda2,w' ]
+" >> /etc/xen/${VPSNAME}
+	else
+		echo "disk = [ 'file:$VPSGLOBPATH/${VPSNAME}.img,sda1,w','file:$VPSGLOBPATH/${VPSNAME}.swap.img,sda2,w' ]
+" >> /etc/xen/${VPSNAME}
+	fi
+	echo "root = \"/dev/sda1 ro\"
 # Sets runlevel 4.
 extra = \"4\"
-" >/etc/xen/${VPSNAME}
+" >>/etc/xen/${VPSNAME}
 fi
+
+
 ln -s ../${VPSNAME} /etc/xen/auto/${VPSNAME}
 
 
@@ -337,6 +378,7 @@ else
 
 	# we need to do MAKEDEV for all linux distroes
 	# Make all the generic devices (inclusive of sda1 and sda2)
+	mkdir -p ${VPSGLOBPATH}/${VPSNUM}/dev/
 	pushd ${VPSGLOBPATH}/${VPSNUM}/dev/; /sbin/MAKEDEV generic; popd
 	echo "Copying modules..."
 	mv ${VPSGLOBPATH}/${VPSNUM}/lib/tls ${VPSGLOBPATH}/${VPSNUM}/lib/tls.disabled
