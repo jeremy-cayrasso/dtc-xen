@@ -168,7 +168,8 @@ def changeVPSsshKey(vpsname,keystring):
 	if username == dtcxen_user or username == vpsname:
 		try:
 			# create the directory if it doesn't exist
-			os.makedirs("/home/%s/.ssh/" % vpsname)
+			if not os.path.isdir("/home/%s/.ssh/" % vpsname):
+				os.makedirs("/home/%s/.ssh/" % vpsname)
 			os.chown("/home/%s/.ssh/" % vpsname, getuserid(vpsname), getusergroup(vpsname))
 			# open file stream
 			filename = "/home/%s/.ssh/authorized_keys" % vpsname
@@ -280,6 +281,41 @@ def getgroupid(group):
 		return group
 	entry = grp.getgrnam(group)
 	return entry[2]
+
+def getNetworkUsage(vpsname):
+	username = getUser()
+	if username == dtcxen_user or username == vpsname:
+		info = getVPSState(vpsname)
+		id = info[1][1]
+		if vpsname=="Domain-0":
+			devinfo=os.popen2("cat /proc/net/dev | grep ' eth0'")[1].read()
+		else:
+			devinfo=os.popen2("cat /proc/net/dev | grep 'vif"+id+"\.'")[1].read()
+		rows=re.split("\n", devinfo)
+		incount = 0
+		outcount = 0
+		for row in rows:
+			columns=re.split("[\t ]+",row)
+			if (len(columns)==16):
+				one,a,a,a,a,a,a,a,eight,a,a,a,a,a,a,a=columns
+			elif (len(columns)==17):
+				a,one,a,a,a,a,a,a,a,eight,a,a,a,a,a,a,a=columns
+			elif (len(columns)==1):
+				# this is an empty row, continue
+				continue
+			else:
+				# this is an unknown row, continue
+				print str(columns) + str(len(columns))
+				continue
+			# parse away any remaining : in one variable
+			if re.search(":",one):
+				one=re.split(":",one)[1]
+			# print vpsname +' '+ id +' '+ one +' '+ eight
+			incount = incount + int(one)
+			outcount = outcount + int(eight)
+		return "%d,%d" % (incount,outcount)
+        else:
+                return "NOTOK"
 
 def getVPSState(vpsname):
 	username = getUser()
@@ -433,6 +469,7 @@ soapserver.registerFunction(reinstallVPSos)
 soapserver.registerFunction(fsckVPSpartition)
 soapserver.registerFunction(changeBSDkernel)
 soapserver.registerFunction(setupLVMDisks)
+soapserver.registerFunction(getNetworkUsage)
 print "Starting dtc-xen python SOAP server at https://%s:%s/ ..." % (server_host, server_port)
 while True:
 	try:
