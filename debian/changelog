@@ -1,3 +1,9 @@
+dtc-xen (0.2.5) unstable; urgency=low
+
+  * Add getNetworkUsage for each VPS
+
+ -- Damien Mascord <tusker@tusker.org>  Wed, 25 Oct 2006 13:50:00 +0800
+
 dtc-xen (0.2.4) unstable; urgency=low
 
   * Bugfixed the changeBSDKernel function to setup the xen startup
