@@ -22,6 +22,21 @@ VPSHDD=$2
 VPSMEM=$3
 IMAGE_TYPE=$4
 
+# redirect stdout and stderr to log files, so we can see what happened during install
+
+echo "Redirecting standard output to $VPSGLOBPATH/$VPSNUM.stdout..."
+echo "Redirecting standard error to $VPSGLOBPATH/$VPSNUM.stderr..."
+if [ -e $VPSGLOBPATH/$VPSNUM.setuplvm.stdout ]; then
+        mv $VPSGLOBPATH/$VPSNUM.setuplvm.stdout $VPSGLOBPATH/$VPSNUM.setuplvm.stdout.old
+fi
+if [ -e $VPSGLOBPATH/$VPSNUM.setuplvm.stderr ]; then
+        mv $VPSGLOBPATH/$VPSNUM.setuplvm.stderr $VPSGLOBPATH/$VPSNUM.setuplvm.stderr.old
+fi
+
+exec 1>$VPSGLOBPATH/$VPSNUM.setuplvm.stdout
+exec 2>$VPSGLOBPATH/$VPSNUM.setuplvm.stderr
+
+
 if [ -z ""$IMAGE_TYPE ]; then
 	IMAGE_TYPE=lvm
 fi
