@@ -247,11 +247,11 @@ def reinstallVPSos(vpsname,ostype,hddsize,ramsize,ipaddr,imagetype='lvm'):
 	else:
 		return "NOTOK"
 
-def setupLVMDisks(vpsname,hddsize,swapsize):
+def setupLVMDisks(vpsname,hddsize,swapsize,imagetype='lvm'):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
-		print "Starting disk setup for xen%s: %s HHD, %s SWAP" % (vpsname,hddsize,swapsize)
-		cmd = "/usr/sbin/dtc_setup_vps_disk.sh %s %s %s" % (vpsname,hddsize,swapsize)
+		print "Starting disk setup for xen%s: %s HHD, %s SWAP, %s imagetype" % (vpsname,hddsize,swapsize,imagetype)
+		cmd = "/usr/sbin/dtc_setup_vps_disk.sh %s %s %s %s" % (vpsname,hddsize,swapsize,imagetype)
 		commands.getstatusoutput(cmd)
 		print "Commande: %s" % cmd
 		return "OK"

@@ -129,10 +129,14 @@ else
 
 	else
 		# support for file backed VPS
-		# Create files for hdd and swap
-		# dd if=/dev/zero of=$VPSGLOBPATH/${VPSNAME}.img bs=1G seek=${VPSHDD} count=1
-		# dd if=/dev/zero of=$VPSGLOBPATH/${VPSNAME}.swap.img bs=1M seek=${VPSMEM} count=1
+		# Create files for hdd and swap (only if they don't exist)
+		if [ ! -e $VPSGLOBPATH/${VPSNAME}.img ]; then
+			dd if=/dev/zero of=$VPSGLOBPATH/${VPSNAME}.img bs=1G seek=${VPSHDD} count=1
+		fi
 		$MKFS -F $VPSGLOBPATH/${VPSNAME}.img
+		if [ ! -e $MKSWAP $VPSGLOBPATH/${VPSNAME}.swap.img ]; then
+			dd if=/dev/zero of=$VPSGLOBPATH/${VPSNAME}.swap.img bs=1M seek=${VPSMEM} count=1
+		fi
 		$MKSWAP $VPSGLOBPATH/${VPSNAME}.swap.img
 		if grep ${VPSNAME} /etc/fstab >/dev/null ; then
 			echo "LoopMount already exists in fstab: skipping"
