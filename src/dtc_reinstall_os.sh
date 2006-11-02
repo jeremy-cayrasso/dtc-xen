@@ -5,6 +5,7 @@ if [ $# -lt 3 ]; then
 	exit
 fi
 
+
 # Things that often change
 
 # Source the configuration in the config file!
@@ -34,6 +35,20 @@ VPSMEM=$3
 ALL_IPADDRS=$4
 DISTRO=$5
 IMAGE_TYPE=$6
+
+# redirect stdout and stderr to log files, so we can see what happened during install
+
+echo "Redirecting standard output to $VPSGLOBPATH/$VPSNUM.stdout..."
+echo "Redirecting standard error to $VPSGLOBPATH/$VPSNUM.stderr..."
+if [ -e $VPSGLOBPATH/$VPSNUM.stdout ]; then
+	mv $VPSGLOBPATH/$VPSNUM.stdout $VPSGLOBPATH/$VPSNUM.stdout.old
+fi
+if [ -e $VPSGLOBPATH/$VPSNUM.stderr ]; then
+	mv $VPSGLOBPATH/$VPSNUM.stderr $VPSGLOBPATH/$VPSNUM.stderr.old
+fi
+
+exec 1>$VPSGLOBPATH/$VPSNUM.stdout
+exec 2>$VPSGLOBPATH/$VPSNUM.stderr
 
 # default to lvm type for backwards compatibility
 if [ -z ""$IMAGE_TYPE ]; then
