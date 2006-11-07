@@ -2,7 +2,7 @@ default:
 	@-echo "Building... not..."
 
 clean:	
-	if [ -n ""$(DESTDIR) ]; then 	(rm -rf $(DESTDIR)/usr) ;	fi
+	if [ -n ""$(DESTDIR) ]; then 	(rm -rf $(DESTDIR)/) ;	fi
 	@-echo "OK, clean :)"
 
 install:
@@ -14,7 +14,7 @@ install:
 	@-mkdir -p $(DESTDIR)/etc/cron.d
 	@-mkdir -p $(DESTDIR)/etc/init.d
 	@-mkdir -p $(DESTDIR)/usr/sbin
-	@-mkdir -p $(DESTDIR)/usr/lib/debootstrap/scripts
+	# @-mkdir -p $(DESTDIR)/usr/lib/debootstrap/scripts
 	@-mkdir -p $(DESTDIR)/usr/lib/dtc-xen
 	@-mkdir -p $(DESTDIR)/bin
 	@-cp src/dtc-xen_userconsole.sh $(DESTDIR)/bin
@@ -30,7 +30,7 @@ install:
 	@-cp -rf src/vgdisplay_free_size $(DESTDIR)/usr/sbin/
 	@-cp -rf src/dtc-soap-server.py $(DESTDIR)/usr/sbin/
 	@-cp src/Properties.py $(DESTDIR)/usr/lib/dtc-xen
-	@-cp -rf debootstrap_scripts/dapper $(DESTDIR)/usr/lib/debootstrap/scripts
+	# @-cp -rf debootstrap_scripts/dapper $(DESTDIR)/usr/lib/debootstrap/scripts
 	@#now for documentation
 	@-mkdir -p $(DESTDIR)/usr/share/man/man8
 	@-cp doc/dtc_create_vps.sh.8 $(DESTDIR)/usr/share/man/man8
