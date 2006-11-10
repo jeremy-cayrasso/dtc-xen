@@ -1,7 +1,16 @@
-This package was done by:
-Thomas GOIRAND <thomas [ at ] goirand.fr> and
-Damien Mascord <tusker [ at ] tusker.org>
-It's written under the terms of the GNU GPL v1.2
+This package was debianized by Thomas Goirand <thomas@goirand.fr> on
+Sat,  9 Apr 2005 21:54:10 +0200.
+
+It was created by Thomas Goirand & Damien Mascord, the upstream authors.
+
+Copyright Holders:
+	Thomas Goirand <thomas@goirand.fr>
+	Damien Mascord <tusker@tusker.org>
+
+License:
+	Copyright (c) 2006 Thomas Goirand. All rights reserved.
+	Copyright (c) 2006 Damien Mascord. All rights reserved.
+	Copyright (c) 2006 GPLHost LLC. All rights reserved.
 
 See http://www.gplhost.com/software.html for more details
 
