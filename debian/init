@@ -21,7 +21,7 @@ case "$1" in
         $0 start
         ;;
     *)
-        echo 'Usage: /etc/init.d/dtc-xen-soap {start|stop|restart|reload}'
+        echo 'Usage: /etc/init.d/dtc-xen {start|stop|restart|reload}'
         exit 1
 esac
 exit 0

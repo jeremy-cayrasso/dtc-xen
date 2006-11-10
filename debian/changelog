@@ -1,3 +1,9 @@
+dtc-xen (0.2.6) unstable; urgency=low
+
+  * Make it debian standard
+
+ -- Thomas Goirand <thomas@goirand.fr>  Fri, 10 Nov 2006 21:12:00 +0800
+
 dtc-xen (0.2.5) unstable; urgency=low
 
   * Add getNetworkUsage for each VPS
