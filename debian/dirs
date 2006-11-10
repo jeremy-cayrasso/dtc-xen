@@ -1,0 +1,11 @@
+usr/share/dtc-xen
+var/lib/dtc-xen/rrds
+var/lib/dtc-xen/states
+var/www
+etc/cron.d
+etc/init.d
+usr/sbin
+usr/lib/dtc-xen
+bin
+usr/share/man/man8
+usr/share/doc/dtc-xen
