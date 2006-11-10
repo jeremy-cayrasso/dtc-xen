@@ -1,1 +1,2 @@
 /etc/init.d/dtc-xen
+/etc/cron.d/dtc-xen
