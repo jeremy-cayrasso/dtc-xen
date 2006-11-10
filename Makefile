@@ -1,8 +1,18 @@
+#!/usr/bin/make -f
+
+# This makefile is left as-is if somebody wants to write a port
+# for another platform than debian. Under Debian, it's not needed
+# thanks to the dhhelper scripts.
+
+# Set to something else if you want to install elsewhere than /
+# but take care of the effects of the "make clean" !!!
+# DESTDIR=""
+
 default:
 	@-echo "Building... not..."
 
 clean:	
-	if [ -n ""$(DESTDIR) ]; then 	(rm -rf $(DESTDIR)/) ;	fi
+	if [ -n ""$(DESTDIR) -o ! ""$DESTDIR = "/" ]; then 	(rm -rf $(DESTDIR)/) ;	fi
 	@-echo "OK, clean :)"
 
 install:
