@@ -16,8 +16,10 @@ install:
 	install -m 700 src/dtc_reinstall_os.sh debian/tmp/usr/sbin/dtc_reinstall_os
 	install -m 700 src/dtc_setup_vps_disk.sh debian/tmp/usr/sbin/dtc_setup_vps_disk
 	install -m 700 src/dtc_change_bsd_kernel.sh debian/tmp/usr/sbin/dtc_change_bsd_kernel
+
 	install -m 700 src/xm_info_free_memory debian/tmp/usr/sbin/xm_info_free_memory
 	install -m 700 src/vgdisplay_free_size debian/tmp/usr/sbin/vgdisplay_free_size
+
 	install -m 700 src/dtc-soap-server.py debian/tmp/usr/sbin/dtc-soap-server
 	install -m 700 src/Properties.py debian/tmp/usr/lib/dtc-xen/Properties.py
 

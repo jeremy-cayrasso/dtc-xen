@@ -130,12 +130,12 @@ KERNELNAME=$conf_linux_kernel_name
 chmod 600 ${DTCXEN_ETCPATH}/*
 
 # Install and start the python SOAP server
-if [ -x "/etc/init.d/dtc-xen-soap" ] ; then
-	update-rc.d dtc-xen-soap defaults 22 >/dev/null
+if [ -x "/etc/init.d/dtc-xen" ] ; then
+	update-rc.d dtc-xen defaults 22 >/dev/null
 	if [ -x /usr/sbin/invoke-rc.d ] ; then
-		/usr/sbin/invoke-rc.d dtc-xen-soap start
+		/usr/sbin/invoke-rc.d dtc-xen start
 	else
-		/etc/init.d/dtc-xen-soap start
+		/etc/init.d/dtc-xen start
 	fi
 fi
 
