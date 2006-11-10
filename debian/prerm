@@ -2,18 +2,9 @@
 
 set -e
 
-# Debian uninstall bash script for dtc-xen
-# Written by Thomas GOIRAND <thomas@goirand.fr>
-# under LGPL Licence
-
-. /usr/share/debconf/confmodule
-db_version 2.0
-
-db_stop
-
 if [ -x "/etc/init.d/dtc-xen" ] ; then
 	if [ -x /usr/sbin/invoke-rc.d ] ; then
-		/usr/sbin/invoke-rc.d dtc-xen- stop
+		/usr/sbin/invoke-rc.d dtc-xen stop
 	else
 		/etc/init.d/dtc-xen stop
 	fi
