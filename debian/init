@@ -1,27 +1,29 @@
 #!/bin/bash
 
-#echo "Not start/stop doing for debug purpose now!"
-#exit 0
-
 PYTHON=/usr/bin/python
 case "$1" in
-    start)
-        echo -n "Starting python SOAP server: dtc-soap-server "
-	start-stop-daemon --start -b --quiet --pidfile /var/run/dtc-xen-soap-server.pid --make-pidfile --exec $PYTHON /usr/sbin/dtc-soap-server
-        echo "."
+	start)
+		echo -n "Starting python SOAP server: dtc-soap-server "
+		start-stop-daemon --start -b --quiet --pidfile /var/run/dtc-xen-soap-server.pid --make-pidfile --exec $PYTHON /usr/sbin/dtc-soap-server
+		echo "."
         ;;
-    stop)
-    	echo -n "Stoping python SOAP server: dtc-soap-server "
-    	start-stop-daemon --stop --oknodo --pidfile /var/run/dtc-xen-soap-server.pid
-	echo "."
-        ;;
-    restart|reload|force-reload)
-    	$0 stop
-    	sleep 1
-        $0 start
-        ;;
-    *)
-        echo 'Usage: /etc/init.d/dtc-xen {start|stop|restart|reload}'
-        exit 1
+
+	stop)
+		echo -n "Stoping python SOAP server: dtc-soap-server "
+		start-stop-daemon --stop --oknodo --pidfile /var/run/dtc-xen-soap-server.pid
+		echo "."
+	;;
+
+	restart|reload|force-reload)
+		$0 stop
+		sleep 1
+		$0 start
+	;;
+
+	*)
+		echo 'Usage: /etc/init.d/dtc-xen {start|stop|restart|reload}'
+		exit 1
+
 esac
+
 exit 0
