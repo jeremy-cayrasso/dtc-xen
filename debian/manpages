@@ -1,3 +1,7 @@
+doc/dtc-xen_userconsole.8
+doc/vgdisplay_free_size.8
+doc/dtc-soap-server.8
+doc/xm_info_free_memory.8
 doc/dtc_change_bsd_kernel.8 
 doc/dtc_create_vps.8 
 doc/dtc_reinstall_os.8
