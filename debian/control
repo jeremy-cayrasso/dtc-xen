@@ -9,7 +9,7 @@ Package: dtc-xen
 Section: web
 Priority: optional
 Architecture: all
-Depends: debconf, python, rrdtool, apache | apache2, python-soappy, python-crypto, m2crypto, debootstrap, openssl, sudo, debootstrap, rpmstrap
+Depends: debconf, python, rrdtool, apache | apache2, python-soappy, python-crypto, m2crypto, debootstrap, openssl, sudo, rpmstrap
 Description: A control panel to manage Xen VMs
  dtc-xen is a web GUI tool to manage, create and
  destroy your domU under Xen. It's written to
