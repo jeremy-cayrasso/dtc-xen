@@ -19,3 +19,6 @@ if [ -x "/etc/init.d/dtc-xen-soap" ] ; then
 	fi
 fi
 
+#DEBHELPER#
+
+exit 0

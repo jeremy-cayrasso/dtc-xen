@@ -1,55 +1,41 @@
 #!/usr/bin/make -f
-# -*- makefile -*-
-
-configure: configure-stamp
-configure-stamp:
-	dh_testdir
-	touch configure-stamp
-
-build: build-stamp
-
-build-stamp: configure-stamp
-	dh_testdir
-
-	$(MAKE)
-
-	touch build-stamp
 
 clean:
 	dh_testdir
 	dh_testroot
-	rm -f build-stamp configure-stamp
-
-	-$(MAKE) clean DESTDIR=$(CURDIR)/debian/tmp
 	dh_clean
 
-install: build
+install:
 	dh_testdir
 	dh_testroot
 	dh_clean -k
 	dh_installdirs
-	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
+	dh_link
+	install -m 700 src/dtc-xen_userconsole.sh debian/tmp/bin/dtc-xen_userconsole
+	install -m 700 src/dtc_create_vps.sh debian/tmp/usr/sbin/dtc_create_vps
+	install -m 700 src/dtc_reinstall_os.sh debian/tmp/usr/sbin/dtc_reinstall_os
+	install -m 700 src/dtc_setup_vps_disk.sh debian/tmp/usr/sbin/dtc_setup_vps_disk
+	install -m 700 src/dtc_change_bsd_kernel.sh debian/tmp/usr/sbin/dtc_change_bsd_kernel
+	install -m 700 src/xm_info_free_memory debian/tmp/usr/sbin/xm_info_free_memory
+	install -m 700 src/vgdisplay_free_size debian/tmp/usr/sbin/vgdisplay_free_size
+	install -m 700 src/dtc-soap-server.py debian/tmp/usr/sbin/dtc-soap-server
+	install -m 700 src/Properties.py debian/tmp/usr/lib/dtc-xen/Properties.py
 
-binary-indep: build install
-
-binary-arch: build install
+binary-indep: install
+binary-arch: install
 	dh_testdir
 	dh_testroot
 	dh_installchangelogs
-	dh_installdocs
-	dh_installexamples
+	dh_installinit -n
 	dh_installdebconf
 	dh_installman
-	dh_link
-	dh_strip
+	dh_installdocs
+	dh_fixperms
 	dh_compress
 	dh_installdeb
-	dh_shlibdeps
 	dh_gencontrol
 	dh_md5sums
 	dh_builddeb
 
 binary: binary-indep binary-arch
-
 .PHONY: build clean binary-indep binary-arch binary install configure
-

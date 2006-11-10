@@ -215,7 +215,7 @@ def changeBSDkernel(vpsname,ramsize,kerneltype,allipaddrs):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
 		print "Changing kernel of a BSD VM: vps: %s ram: %s kernel: %s" % (vpsname,ramsize,kerneltype)
-		cmd = "dtc_change_bsd_kernel.sh %s %s %s '%s'" % (vpsname,ramsize,kerneltype,allipaddrs)
+		cmd = "dtc_change_bsd_kernel %s %s %s '%s'" % (vpsname,ramsize,kerneltype,allipaddrs)
 		print cmd
 		commands.getstatusoutput(cmd)
 		return "OK"
@@ -238,7 +238,7 @@ def reinstallVPSos(vpsname,ostype,hddsize,ramsize,ipaddr,imagetype='lvm'):
 				return "Ok, started mkos."
 			else:
 				print "Starting reinstallation of operating system for xen%s" % vpsname
-				cmd = "/usr/sbin/dtc_reinstall_os.sh %s %s %s '%s' %s %s" % (vpsname,hddsize,ramsize,ipaddr,ostype,imagetype)
+				cmd = "/usr/sbin/dtc_reinstall_os %s %s %s '%s' %s %s" % (vpsname,hddsize,ramsize,ipaddr,ostype,imagetype)
 				print cmd
 				commands.getstatusoutput(cmd)
 				print "mkos for VPS %s finished: removing file" % vpsname
@@ -251,7 +251,7 @@ def setupLVMDisks(vpsname,hddsize,swapsize,imagetype='lvm'):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
 		print "Starting disk setup for xen%s: %s HHD, %s SWAP, %s imagetype" % (vpsname,hddsize,swapsize,imagetype)
-		cmd = "/usr/sbin/dtc_setup_vps_disk.sh %s %s %s %s" % (vpsname,hddsize,swapsize,imagetype)
+		cmd = "/usr/sbin/dtc_setup_vps_disk %s %s %s %s" % (vpsname,hddsize,swapsize,imagetype)
 		commands.getstatusoutput(cmd)
 		print "Commande: %s" % cmd
 		return "OK"

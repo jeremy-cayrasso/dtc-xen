@@ -222,4 +222,6 @@ if [ ! -e /usr/src/gentoo ]; then
 	echo "For amd64: mkdir -p /usr/src/gentoo; cd /usr/src/gentoo; wget http://mirror.gentoo.gr.jp/releases/amd64/2006.1/stages/stage3-amd64-2006.1.tar.bz2"
 fi
 
-exit 0;
+#DEBHELPER#
+
+exit 0

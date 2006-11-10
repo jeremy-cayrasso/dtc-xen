@@ -17,12 +17,14 @@ install:
 	# @-mkdir -p $(DESTDIR)/usr/lib/debootstrap/scripts
 	@-mkdir -p $(DESTDIR)/usr/lib/dtc-xen
 	@-mkdir -p $(DESTDIR)/bin
+
 	@-cp src/dtc-xen_userconsole.sh $(DESTDIR)/bin
 	@-cp debian/dtc-xen-soap $(DESTDIR)/etc/init.d
 	@-cp debian/dtc-xen $(DESTDIR)/etc/cron.d
 	@-ln -s /usr/share/dtc-xen $(DESTDIR)/var/www/dtc-xen
 	@-cp -rf panel/* $(DESTDIR)/usr/share/dtc-xen
 	@-cp -rf src/dtc_create_vps.sh $(DESTDIR)/usr/sbin/
+
 	@-cp -rf src/dtc_reinstall_os.sh $(DESTDIR)/usr/sbin/
 	@-cp -rf src/dtc_setup_vps_disk.sh $(DESTDIR)/usr/sbin/
 	@-cp -rf src/dtc_change_bsd_kernel.sh $(DESTDIR)/usr/sbin/
