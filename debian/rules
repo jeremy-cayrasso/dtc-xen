@@ -29,6 +29,7 @@ binary-arch: install
 	dh_testroot
 	dh_installchangelogs
 	dh_installinit -n
+	dh_installcron
 	dh_installdebconf
 	dh_installman
 	dh_installdocs
