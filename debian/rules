@@ -22,6 +22,11 @@ install:
 
 	install -m 700 src/dtc-soap-server.py debian/tmp/usr/sbin/dtc-soap-server
 	install -m 700 src/Properties.py debian/tmp/usr/lib/dtc-xen/Properties.py
+	
+	install -m 740 panel/index.html debian/tmp/usr/share/dtc-xen/index.html
+	install -m 740 panel/graph/xencpugraph.py debian/tmp/usr/share/dtc-xen/graph/xencpugraph.py
+	install -m 740 panel/graph/xennetgraph.py debian/tmp/usr/share/dtc-xen/graph/xennetgraph.py
+	install -m 740 panel/graph/xenupdate.py debian/tmp/usr/share/dtc-xen/graph/xenupdate.py
 
 binary-indep: install
 binary-arch: install
