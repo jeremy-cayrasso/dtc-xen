@@ -151,6 +151,11 @@ fi
 function dtcaddxenuser {
 	if grep ${1} /etc/passwd 2>&1 >/dev/null ; then
 		echo "User already exists "${1}
+		# make sure all the settings are correct as per this version of the package
+		usermod -d /home/${1} -m -g xenusers -s /bin/dtc-xen_userconsole ${1}
+		# need to ensure /home/${1} exists
+		mkdir -p /home/${1}/.ssh
+		chown -R ${1}:xenusers /home/${1}
 	else
 		echo "Adding user "${1}
 		useradd -m -g xenusers -p ${RANDOM}${RANDOM} -s /bin/dtc-xen_userconsole ${1}
