@@ -232,7 +232,7 @@ proc            /proc   proc    defaults                0       0
 	echo "127.0.0.1	localhost.localdomain   localhost
 202.124.17.46	dtc.node6503.gplhost.com
 66.251.193.20	dtc.gplhost.com
-${IPADDR}	${VPSHOSTNAME} dtc.${VPSHOSTNAME}.gplhost.com ${VPSHOSTNAME}.gplhost.com
+${IPADDR}	dtc.${VPSHOSTNAME}.gplhost.com ${VPSHOSTNAME}.gplhost.com ${VPSHOSTNAME}
 
 # The following lines are desirable for IPv6 capable hosts
 ::1	ip6-localhost ip6-loopback
