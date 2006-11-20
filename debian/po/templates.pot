@@ -1,0 +1,237 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: thomas@goirand.fr\n"
+"POT-Creation-Date: 2006-11-20 06:59+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Type: string
+#. Default
+#: ../templates:1001
+msgid "node5555.example.com"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:1002
+msgid "Server hostname:"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:1002
+msgid ""
+"What will be the hostname for this dtc-xen server? This will be used as a "
+"part of the URL by the SOAP dtc panel client."
+msgstr ""
+
+#. Type: string
+#. Default
+#: ../templates:2001
+msgid "8089"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:2002
+msgid "Server port:"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:2002
+msgid "What port should it bind to? Default is 8089."
+msgstr ""
+
+#. Type: string
+#. Default
+#. Type: password
+#. Default
+#: ../templates:3001 ../templates:4001
+msgid "dtc-xen"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:3002
+msgid "SOAP server login:"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:3002
+msgid ""
+"dtc-xen will bind a SOAP python server on which a dtc panel can connect to "
+"in order to start, stop create and destroy a VPS. What login do you want to "
+"create on that server."
+msgstr ""
+
+#. Type: password
+#. Description
+#: ../templates:4002
+msgid "SOAP server pass:"
+msgstr ""
+
+#. Type: password
+#. Description
+#: ../templates:4002
+msgid ""
+"dtc-xen will generate a password (in a .htpasswd file) that will hold the "
+"password for the login you have just configured. What password do you want "
+"to have generated in it."
+msgstr ""
+
+#. Type: string
+#. Default
+#: ../templates:5001
+msgid "0101"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:5002
+msgid "VPS Server node number:"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:5002
+msgid ""
+"dtc-xen will use that number as a VPS Server number and will make your VPS "
+"numbering using xenXXXXYY with X being the server number (what it's are "
+"asking you at the moment) and Y being the VPS number itself (xenYY). Note "
+"that this node number has to be between 4 and 5 chars."
+msgstr ""
+
+#. Type: string
+#. Default
+#: ../templates:6001
+msgid "ftp://ftp.us.debian.org/debian"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:6002
+msgid "Debian repository for setting-up VPSes:"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:6002
+msgid ""
+"dtc-xen will use that repository for creating VPSes, and will copy your /etc/"
+"apt/sources.list inside your VPS (so this will be used ONLY durring the "
+"debootstrap stage of the VPS creation)."
+msgstr ""
+
+#. Type: string
+#. Default
+#: ../templates:7001
+msgid "255.255.255.0"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:7002
+msgid "Netmask to be setup in the VPSes:"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:7002
+msgid ""
+"Please enter the Netmask to use when doing the VPS network customization "
+"when dtc-xen creates a VPS."
+msgstr ""
+
+#. Type: string
+#. Default
+#: ../templates:8001
+msgid "192.168.60.0"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:8002
+msgid "Network to be setup in the VPSes:"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:8002
+msgid ""
+"Please neter the Network address to use when doing the VPS network "
+"customization when dtc-xen creates a VPS."
+msgstr ""
+
+#. Type: string
+#. Default
+#: ../templates:9001
+msgid "192.168.60.255"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:9002
+msgid "Broascast to be setup in the VPSes:"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:9002
+msgid ""
+"Please neter the network broadcast address to use when doing the VPS network "
+"customization when dtc-xen creates a VPS."
+msgstr ""
+
+#. Type: string
+#. Default
+#: ../templates:10001
+msgid "192.168.60.254"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:10002
+msgid "Gateway to be setup in the VPSes:"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:10002
+msgid ""
+"Please enter the network gateway address to use when doing the VPS network "
+"customization when dtc-xen creates a VPS."
+msgstr ""
+
+#. Type: string
+#. Default
+#: ../templates:11001
+msgid "2.6.16.27-xenU"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:11002
+msgid "Xen Kernel release name:"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:11002
+msgid ""
+"Enter here the kernel version number as it appears in the uname -a. A kernel "
+"domU with that name must be located in /boot (example: vmlinuz-2.6.16.27-"
+"xenU) and it's corresponding modules must be in /lib/modules."
+msgstr ""

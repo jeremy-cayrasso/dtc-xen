@@ -1,0 +1,240 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.2.6\n"
+"Report-Msgid-Bugs-To: thomas@goirand.fr\n"
+"POT-Creation-Date: 2006-11-20 06:59+0000\n"
+"PO-Revision-Date: 2006-11-20 15:00+0800\n"
+"Last-Translator: Thomas Goirand <thomas@goirand.fr>\n"
+"Language-Team: French <fr@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Type: string
+#. Default
+#: ../templates:1001
+msgid "node5555.example.com"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:1002
+msgid "Nom d'hote du serveur :"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:1002
+msgid ""
+"Quel sera le nom d'hote pour ce serveur dtc-xen ? Cela sera"
+"utilisé comme partie de l'URL par le client SOAP (le panneau de control DTC)"
+"pour se connecter."
+msgstr ""
+
+#. Type: string
+#. Default
+#: ../templates:2001
+msgid "8089"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:2002
+msgid "Numéro de port du server port :"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:2002
+msgid "What port should it bind to? Default is 8089."
+msgstr ""
+
+#. Type: string
+#. Default
+#. Type: password
+#. Default
+#: ../templates:3001 ../templates:4001
+msgid "dtc-xen"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:3002
+msgid "Login pour le serveur SOAP :"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:3002
+msgid ""
+"dtc-xen va éxecuter un serveru SOAP sur lequel un panneau de control DTC"
+"pourra se connecté pour démarrer, arrêter ou détruire un VPS. Rentez ici le nom"
+"d'utilisateur voulez-vous créer sur ce serveur."
+msgstr ""
+
+#. Type: password
+#. Description
+#: ../templates:4002
+msgid "SOAP server pass:"
+msgstr ""
+
+#. Type: password
+#. Description
+#: ../templates:4002
+msgid ""
+"dtc-xen va générer un mot de passe dans un fichier .htpasswd qui va contenir"
+"le login que vous venez de configurer. Entrez ici le mot de passe que vous"
+"voulez voire générer."
+msgstr ""
+
+#. Type: string
+#. Default
+#: ../templates:5001
+msgid "0101"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:5002
+msgid "Numéro de noeud de serveur VPS :"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:5002
+msgid ""
+"dtc-xen va utiliser ce numéro de serveur VPS comme numéro de noeud et"
+"va générer une numérotation de VPS utilisant xenXXXXXYY avec X étant"
+"le numéro de serveur (ce qui vous est demandé actuellement), et Y le"
+"numéro du VPS lui-même. Nottez que ce numéro de noeud doit faire entre"
+"4 et 5 caractères."
+msgstr ""
+
+#. Type: string
+#. Default
+#: ../templates:6001
+msgid "ftp://ftp.us.debian.org/debian"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:6002
+msgid "Repository Debian pour fabriquer les VPS :"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:6002
+msgid ""
+"dtc-xen va utiliser ce repository pour créer des VPS, et va copier votre"
+"fichier /etc/apt/sources.list à l'intérieur des VPS. L'adresse que vous"
+"devez rentrez ici n'est donc utilisé uniquement que pour faire le"
+"debootstrap à la création du VPS."
+msgstr ""
+
+#. Type: string
+#. Default
+#: ../templates:7001
+msgid "255.255.255.0"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:7002
+msgid "Netmask à mettre en place dans les VPS :"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:7002
+msgid ""
+"Veuillez entrer le numéro du Netmask utilisé pour paramétrer le réseau"
+"lorsque dtc-xen fabrique un VPS."
+msgstr ""
+
+#. Type: string
+#. Default
+#: ../templates:8001
+msgid "192.168.60.0"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:8002
+msgid "Adresse de réseau des VPS :"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:8002
+msgid ""
+"Entrez ici l'adresse réseau à mettre en place à la création d'un nouveau VPS."
+msgstr ""
+
+#. Type: string
+#. Default
+#: ../templates:9001
+msgid "192.168.60.255"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:9002
+msgid "Adrese de Broascast des VPSes :"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:9002
+msgid ""
+"Entrez ici l'adresse du broadcast réseau à mettre en place à la création"
+"d'un VPS."
+msgstr ""
+
+#. Type: string
+#. Default
+#: ../templates:10001
+msgid "192.168.60.254"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:10002
+msgid "Adresse de la Gateway des VPSes :"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:10002
+msgid ""
+"Entrez ici l'adresse de la gateway réseau à mettre en place à"
+"la création des VPS."
+msgstr ""
+
+#. Type: string
+#. Default
+#: ../templates:11001
+msgid "2.6.16.27-xenU"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:11002
+msgid "Numéro de version du noyeau Xen :"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:11002
+msgid ""
+"Entez ici le numéro de version de votre noyeau xen, tel qu'il apparait"
+"lorsque vous tappez uname -a. Un noyeau domU doit être présent dans"
+"dans /boot (example: vmlinuz-2.6.16.27-xenU) et ses modules correspondants"
+"doivent être installé dans /lib/modules."
+msgstr ""

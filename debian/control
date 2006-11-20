@@ -10,9 +10,12 @@ Section: web
 Priority: optional
 Architecture: all
 Depends: debconf, python, rrdtool, apache | apache2, python-soappy, python-crypto, m2crypto, debootstrap, openssl, sudo, rpmstrap
-Description: A control panel to manage Xen VMs
- dtc-xen is a web GUI tool to manage, create and
- destroy your domU under Xen. It's written to
- integrate within DTC web hosting control panel.
- See http://www.gplhost.com/software.html for
- more details.
+Description: A SOAP daemon and help scripts so a control panel can manage Xen VMs
+ dtc-xen is a SOAP server running over HTTPS with auth,
+ so a web GUI tool can manage, create and destroy your
+ domU under Xen. This package is to be run in the dom0
+ of your Xen server. It's written to integrate within DTC
+ web hosting control panel.
+ .
+ See http://www.gplhost.com/software-dtc-xen.html and
+ http://www.gplhost.com/software-dtc.html for more details.
