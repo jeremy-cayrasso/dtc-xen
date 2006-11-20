@@ -33,7 +33,7 @@ binary-arch: install
 	dh_testdir
 	dh_testroot
 	dh_installchangelogs
-	dh_installinit -n
+	dh_installinit
 	dh_installcron
 	dh_installdebconf
 	dh_installman

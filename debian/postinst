@@ -127,20 +127,10 @@ KERNELNAME=$conf_linux_kernel_name
 
 chmod 600 ${DTCXEN_ETCPATH}/*
 
-# Install and start the python SOAP server
-if [ -x "/etc/init.d/dtc-xen" ] ; then
-	update-rc.d dtc-xen defaults 22 >/dev/null
-	if [ -x /usr/sbin/invoke-rc.d ] ; then
-		/usr/sbin/invoke-rc.d dtc-xen start
-	else
-		/etc/init.d/dtc-xen start
-	fi
-fi
-
 cd $CWD
 
 # Add the group xenusers
-if grep xenusers /etc/group 2>&1 >/dev/null ; then
+if getent group xenusers >/dev/null ; then
 	echo "Group xenusers already exists in /etc/group"
 else
 	echo "Add group xenusers"
@@ -148,8 +138,8 @@ else
 fi
 
 # Add the 19th users to /etc/passwd with random password if they don't exist
-function dtcaddxenuser {
-	if grep ${1} /etc/passwd 2>&1 >/dev/null ; then
+dtcaddxenuser () {
+	if getent passwd ${1} >/dev/null ; then
 		echo "User already exists "${1}
 		# make sure all the settings are correct as per this version of the package
 		usermod -d /home/${1} -m -g xenusers -s /bin/dtc-xen_userconsole ${1}
@@ -193,6 +183,9 @@ fi
 chown root:xenusers /bin/dtc-xen_userconsole
 chmod -s /bin/dtc-xen_userconsole
 
+# The dh-helper scripst will start the daemon here:
+#DEBHELPER#
+
 if grep "AllowTcpForwarding no" /etc/ssh/sshd_config ; then
 	echo "Port forwarding seems to be disabled already!"
 else
@@ -224,7 +217,5 @@ if [ ! -e /usr/src/gentoo ]; then
 	echo "For x86:  mkdir -p /usr/src/gentoo; cd /usr/src/gentoo; wget http://mirror.gentoo.gr.jp/releases/x86/2006.1/stages/stage3-i686-2006.1.tar.bz2"
 	echo "For amd64: mkdir -p /usr/src/gentoo; cd /usr/src/gentoo; wget http://mirror.gentoo.gr.jp/releases/amd64/2006.1/stages/stage3-amd64-2006.1.tar.bz2"
 fi
-
-#DEBHELPER#
 
 exit 0
