@@ -13,22 +13,22 @@ install:
 	dh_clean -k
 	dh_installdirs
 	dh_link
-	install -D -m 700 src/dtc-xen_userconsole.sh debian/tmp/bin/dtc-xen_userconsole
-	install -D -m 700 src/dtc_create_vps.sh debian/tmp/usr/sbin/dtc_create_vps
-	install -D -m 700 src/dtc_reinstall_os.sh debian/tmp/usr/sbin/dtc_reinstall_os
-	install -D -m 700 src/dtc_setup_vps_disk.sh debian/tmp/usr/sbin/dtc_setup_vps_disk
-	install -D -m 700 src/dtc_change_bsd_kernel.sh debian/tmp/usr/sbin/dtc_change_bsd_kernel
+	install -m 700 src/dtc-xen_userconsole.sh debian/dtc-xen/bin/dtc-xen_userconsole
+	install -m 700 src/dtc_create_vps.sh debian/dtc-xen/usr/sbin/dtc_create_vps
+	install -m 700 src/dtc_reinstall_os.sh debian/dtc-xen/usr/sbin/dtc_reinstall_os
+	install -m 700 src/dtc_setup_vps_disk.sh debian/dtc-xen/usr/sbin/dtc_setup_vps_disk
+	install -m 700 src/dtc_change_bsd_kernel.sh debian/dtc-xen/usr/sbin/dtc_change_bsd_kernel
 
-	install -D -m 700 src/xm_info_free_memory debian/tmp/usr/sbin/xm_info_free_memory
-	install -D -m 700 src/vgdisplay_free_size debian/tmp/usr/sbin/vgdisplay_free_size
+	install -m 700 src/xm_info_free_memory debian/dtc-xen/usr/sbin/xm_info_free_memory
+	install -m 700 src/vgdisplay_free_size debian/dtc-xen/usr/sbin/vgdisplay_free_size
 
-	install -D -m 700 src/dtc-soap-server.py debian/tmp/usr/sbin/dtc-soap-server
-	install -D -m 700 src/Properties.py debian/tmp/usr/lib/dtc-xen/Properties.py
+	install -m 700 src/dtc-soap-server.py debian/dtc-xen/usr/sbin/dtc-soap-server
+	install -m 700 src/Properties.py debian/dtc-xen/usr/lib/dtc-xen/Properties.py
 	
-	install -D -m 740 panel/index.html debian/tmp/usr/share/dtc-xen/index.html
-	install -D -m 740 panel/graph/xencpugraph.py debian/tmp/usr/share/dtc-xen/graph/xencpugraph.py
-	install -D -m 740 panel/graph/xennetgraph.py debian/tmp/usr/share/dtc-xen/graph/xennetgraph.py
-	install -D -m 740 panel/graph/xenupdate.py debian/tmp/usr/share/dtc-xen/graph/xenupdate.py
+	install -m 740 panel/index.html debian/dtc-xen/usr/share/dtc-xen/index.html
+	install -m 740 panel/graph/xencpugraph.py debian/dtc-xen/usr/share/dtc-xen/graph/xencpugraph.py
+	install -m 740 panel/graph/xennetgraph.py debian/dtc-xen/usr/share/dtc-xen/graph/xennetgraph.py
+	install -m 740 panel/graph/xenupdate.py debian/dtc-xen/usr/share/dtc-xen/graph/xenupdate.py
 
 binary-indep: install
 binary-arch: install
