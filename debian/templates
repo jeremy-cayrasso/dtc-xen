@@ -1,7 +1,7 @@
 Template: dtc-xen/conf_soap_hostname
 Type: string
 Default: node5555.example.com
-Description: Server hostname.
+Description: Server hostname:
  What will be the hostname for this dtc-xen
  server? This will be used as a part of the URL
  by the SOAP dtc panel client.
@@ -9,13 +9,13 @@ Description: Server hostname.
 Template: dtc-xen/conf_soap_port
 Type: string
 Default: 8089
-Description: Server port.
+Description: Server port:
  What port should it bind to? Default is 8089.
 
 Template: dtc-xen/conf_soap_login
 Type: string
 Default: dtc-xen
-Description: SOAP server login.
+Description: SOAP server login:
  dtc-xen will bind a SOAP python server on which
  a dtc panel can connect to in order to start, stop
  create and destroy a VPS. What login do you want to
@@ -24,7 +24,7 @@ Description: SOAP server login.
 Template: dtc-xen/conf_soap_pass
 Type: password
 Default: dtc-xen
-Description: SOAP server pass.
+Description: SOAP server pass:
  dtc-xen will generate a password (in a .htpasswd file)
  that will hold the password for the login you have just
  configured. What password do you want to have generated
@@ -33,7 +33,7 @@ Description: SOAP server pass.
 Template: dtc-xen/conf_node_number
 Type: string
 Default: 0101
-Description: VPS Server node number.
+Description: VPS Server node number:
  dtc-xen will use that number as a VPS Server number and
  will make your VPS numbering using xenXXXXYY with X being
  the server number (what we are asking you at the moment)
@@ -43,7 +43,7 @@ Description: VPS Server node number.
 Template: dtc-xen/conf_debian_repository
 Type: string
 Default: ftp://ftp.us.debian.org/debian
-Description: Debian repository for setting-up VPSes
+Description: Debian repository for setting-up VPSes:
  dtc-xen will use that repository for creating VPSes, and will
  copy your /etc/apt/sources.list inside your VPS (so this will
  be used ONLY durring the debootstrap stage of the VPS creation).
@@ -51,35 +51,35 @@ Description: Debian repository for setting-up VPSes
 Template: dtc-xen/conf_netmask
 Type: string
 Default: 255.255.255.0
-Description: Netmask to be setup in the VPSes
+Description: Netmask to be setup in the VPSes:
  Please enter the Netmask to use when doing the VPS network
  customization when dtc-xen creates a VPS.
 
 Template: dtc-xen/conf_network
 Type: string
 Default: 192.168.60.0
-Description: Network to be setup in the VPSes
+Description: Network to be setup in the VPSes:
  Please neter the Network address to use when doing the VPS network
  customization when dtc-xen creates a VPS.
 
 Template: dtc-xen/conf_broadcast
 Type: string
 Default: 192.168.60.255
-Description: Broascast to be setup in the VPSes
+Description: Broascast to be setup in the VPSes:
  Please neter the network broadcast address to use when doing
  the VPS network customization when dtc-xen creates a VPS.
 
 Template: dtc-xen/conf_gateway
 Type: string
 Default: 192.168.60.254
-Description: Gateway to be setup in the VPSes
+Description: Gateway to be setup in the VPSes:
  Please enter the network gateway address to use when doing
  the VPS network customization when dtc-xen creates a VPS.
 
 Template: dtc-xen/conf_linux_kernel_name
 Type: string
 Default: 2.6.16.27-xenU
-Description: Xen Kernel release name
+Description: Xen Kernel release name:
  Enter here the kernel version number as it appears in the
  uname -a. A kernel domU with that name must be located in /boot
  (example: vmlinuz-2.6.16.27-xenU) and it's corresponding modules
