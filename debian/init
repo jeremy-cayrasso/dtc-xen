@@ -14,7 +14,6 @@
 #                    domU under Xen. This package is to be run in the dom0
 #                    of your Xen server. It's written to integrate within DTC
 #                    web hosting control panel.
-#
 ### END INIT INFO
 
 PYTHON=/usr/bin/python
