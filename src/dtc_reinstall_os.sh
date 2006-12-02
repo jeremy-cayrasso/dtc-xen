@@ -201,13 +201,13 @@ elif [ ""$DISTRO = "gentoo" ]; then
 			exit
 		fi
 	fi
-	tar -xvjpf /usr/src/gentoo/$GENTOO_STAGE3_ARCHIVE -C ${VPSGLOBPATH}/${VPSNUM}
+	tar -xjpf /usr/src/gentoo/$GENTOO_STAGE3_ARCHIVE -C ${VPSGLOBPATH}/${VPSNUM}
 	# grab the latest portage
 	pushd /usr/src/gentoo
 	wget -N http://mirror.gentoo.gr.jp/snapshots/portage-latest.tar.bz2.md5sum
 	wget -N http://mirror.gentoo.gr.jp/snapshots/portage-latest.tar.bz2
 	md5sum -c portage-latest.tar.bz2.md5sum
-	tar -xvjpf portage-latest.tar.bz2 -C ${VPSGLOBPATH}/${VPSNUM}/usr/
+	tar -xjpf portage-latest.tar.bz2 -C ${VPSGLOBPATH}/${VPSNUM}/usr/
 	popd
 	# need to reset the root password
 	sed -e 's/root:\*:/root::/' ${VPSGLOBPATH}/${VPSNUM}/etc/shadow > ${VPSGLOBPATH}/${VPSNUM}/etc/shadow.tmp
