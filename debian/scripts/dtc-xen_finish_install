@@ -1,0 +1,86 @@
+#!/bin/sh
+
+set -e
+
+# Modify the sudoers file
+if grep xenusers /etc/sudoers 2>&1 >/dev/null ; then
+	echo "Sudoers already modified"
+else
+	echo "Adding avaibility of dtc-xen_userconsole to xenusers in /etc/sudoers"
+	echo "%xenusers       ALL= NOPASSWD: /usr/sbin/xm console xen*" >>/etc/sudoers
+fi
+
+chown root:xenusers /bin/dtc-xen_userconsole
+chmod -s /bin/dtc-xen_userconsole
+
+if grep "AllowTcpForwarding no" /etc/ssh/sshd_config ; then
+	echo "Port forwarding seems to be disabled already!"
+else
+	if grep "AllowTcpForwarding" /etc/ssh/sshd_config ; then
+		echo "There is a AllowTcpForwarding but not to no: please disable port forwarding NOW!"
+	else
+		echo "AllowTcpForwarding no" >>/etc/ssh/sshd_config
+		echo "Disabling ssh port forwarding for security reasons"
+		echo "Please type: \"killall -HUP sshd\" right after this package is setup!!!"
+	fi
+fi
+
+cd /usr/src
+mkdir centos3
+
+FOUNDED_ARCH=`uname -m`
+case "$FOUNDED_ARCH" in
+	i386)
+		BINARCH=i386
+		;;
+	i436)
+		BINARCH=i386
+		;;
+	i586)
+		BINARCH=i386
+		;;
+	i686)
+		BINARCH=i386
+		;;
+	x86_64)
+		BINARCH=amd64
+		;;
+	*)
+		echo "Unrecognized arch: exiting!"
+		exit 1
+		;;
+esac
+
+
+if [ ! -e /usr/src/centos3 ]; then
+	echo "CentOS 3 archive not found, trying to do it issuing this command:"
+	if [ ""${BINARCH} = "amd64" ] ; then
+		echo "/usr/bin/rpmstrap --verbose --arch x86_64 --download-only centos3 /usr/src/centos3"
+		/usr/bin/rpmstrap --verbose --arch x86_64 --download-only centos3 /usr/src/centos3
+	else
+		echo "For i[3456]86: /usr/bin/rpmstrap --verbose --arch i386 --download-only centos3 /usr/src/centos3"
+	fi
+fi
+
+if [ ! -e /usr/src/centos4 ]; then
+	echo "CentOS 4 archive not found, trying to do it issuing this command:"
+	if [ ""${BINARCH} = "amd64" ] ; then
+		echo "/usr/bin/rpmstrap --verbose --arch x86_64 --download-only centos4 /usr/src/centos4"
+		/usr/bin/rpmstrap --verbose --arch x86_64 --download-only centos4 /usr/src/centos4
+	else
+		echo "/usr/bin/rpmstrap --verbose --arch i386 --download-only centos4 /usr/src/centos4"
+		/usr/bin/rpmstrap --verbose --arch i386 --download-only centos4 /usr/src/centos4
+	fi
+fi
+
+if [ ! -e /usr/src/gentoo ]; then
+	mkdir -p /usr/src/gentoo
+	echo "Gentoo archive not found, trying to do it issuing this command:"
+	if [ ""${BINARCH} = "amd64" ] ; then
+		echo "cd /usr/src/gentoo; wget http://mirror.gentoo.gr.jp/releases/amd64/2006.1/stages/stage3-amd64-2006.1.tar.bz2"
+	else
+		echo "cd /usr/src/gentoo; wget http://mirror.gentoo.gr.jp/releases/x86/2006.1/stages/stage3-i686-2006.1.tar.bz2"
+	fi
+fi
+
+exit 0

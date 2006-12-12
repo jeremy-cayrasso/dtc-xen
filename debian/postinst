@@ -27,6 +27,7 @@ db_get dtc-xen/conf_gateway
 conf_gateway=$RET
 db_get dtc-xen/conf_linux_kernel_name
 conf_linux_kernel_name=$RET
+db_get dtc-xen/conf_info_finish_setup
 
 db_unregister dtc-xen/conf_soap_pass
 db_stop

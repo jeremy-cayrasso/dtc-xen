@@ -29,6 +29,7 @@ install:
 	install -m 740 panel/graph/xencpugraph.py debian/dtc-xen/usr/share/dtc-xen/graph/xencpugraph.py
 	install -m 740 panel/graph/xennetgraph.py debian/dtc-xen/usr/share/dtc-xen/graph/xennetgraph.py
 	install -m 740 panel/graph/xenupdate.py debian/dtc-xen/usr/share/dtc-xen/graph/xenupdate.py
+	install -m 740 debian/scripts/dtc-xen_finish_install debian/dtc-xen/usr/sbin
 
 binary-indep: install
 binary-arch: install
