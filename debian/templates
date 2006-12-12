@@ -83,7 +83,7 @@ _Description: Xen Kernel release name:
 
 Template: dtc-xen/conf_info_finish_setup
 Type: title
-Description: How to finish the install.
+_Description: How to finish the install.
  To finish the installation, you need to launch
  /usr/sbin/dtc-xen_finish_install. This script will remove port forwarding
  from your sshd_config and add the grant of xm console to the group

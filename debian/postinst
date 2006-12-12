@@ -173,50 +173,6 @@ dtcaddxenuser xen17
 dtcaddxenuser xen18
 dtcaddxenuser xen19
 
-# Modify the sudoers file
-if grep xenusers /etc/sudoers 2>&1 >/dev/null ; then
-	echo "Sudoers already modified"
-else
-	echo "Adding avaibility of dtc-xen_userconsole to xenusers in /etc/sudoers"
-	echo "%xenusers       ALL= NOPASSWD: /usr/sbin/xm console xen*" >>/etc/sudoers
-fi
-
-chown root:xenusers /bin/dtc-xen_userconsole
-chmod -s /bin/dtc-xen_userconsole
-
-# The dh-helper scripst will start the daemon here:
 #DEBHELPER#
-
-if grep "AllowTcpForwarding no" /etc/ssh/sshd_config ; then
-	echo "Port forwarding seems to be disabled already!"
-else
-	if grep "AllowTcpForwarding" /etc/ssh/sshd_config ; then
-		echo "There is a AllowTcpForwarding but not to no: please disable port forwarding NOW!"
-	else
-		echo "AllowTcpForwarding no" >>/etc/ssh/sshd_config
-		echo "Disabling ssh port forwarding for security reasons"
-		echo "Please type: \"killall -HUP sshd\" right after this package is setup!!!"
-	fi
-fi
-
-echo "Installation of dtc-xen has completed, you will need to download centos, and gentoo archives"
-
-if [ ! -e /usr/src/centos3 ]; then
-	echo "CentOS 3 archive not found, please issue command (if any download errors, please fix suite):"
-	echo "For x86_64:  /usr/bin/rpmstrap --verbose --arch x86_64 --download-only centos3 /usr/src/centos3"
-	echo "For i[3456]86: /usr/bin/rpmstrap --verbose --arch i386 --download-only centos3 /usr/src/centos3"
-fi
-
-if [ ! -e /usr/src/centos4 ]; then
-	echo "CentOS 4 archive not found, please issue command (if any download errors, please fix suite):"
-	echo "For x86_64:  /usr/bin/rpmstrap --verbose --arch x86_64 --download-only centos4 /usr/src/centos4"
-	echo "For i[3456]86: /usr/bin/rpmstrap --verbose --arch i386 --download-only centos4 /usr/src/centos4"
-fi
-
-if [ ! -e /usr/src/gentoo ]; then
-	echo "Gentoo archive not found, please issue command:"
-	echo "For x86:  mkdir -p /usr/src/gentoo; cd /usr/src/gentoo; wget http://mirror.gentoo.gr.jp/releases/x86/2006.1/stages/stage3-i686-2006.1.tar.bz2"
-	echo "For amd64: mkdir -p /usr/src/gentoo; cd /usr/src/gentoo; wget http://mirror.gentoo.gr.jp/releases/amd64/2006.1/stages/stage3-amd64-2006.1.tar.bz2"
-fi
 
 exit 0
