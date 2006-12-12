@@ -6,3 +6,4 @@ doc/dtc_change_bsd_kernel.8
 doc/dtc_create_vps.8 
 doc/dtc_reinstall_os.8
 doc/dtc_setup_vps_disk.8
+doc/dtc-xen_finish_install.8

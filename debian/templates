@@ -55,14 +55,14 @@ Template: dtc-xen/conf_network
 Type: string
 Default: 192.168.60.0
 _Description: Network to be setup in the VPSes:
- Please neter the Network address to use when doing the VPS network
+ Please enter the Network address to use when doing the VPS network
  customization when dtc-xen creates a VPS.
 
 Template: dtc-xen/conf_broadcast
 Type: string
 Default: 192.168.60.255
-_Description: Broascast to be setup in the VPSes:
- Please neter the network broadcast address to use when doing the VPS
+_Description: Broadcast to be setup in the VPSes:
+ Please enter the network broadcast address to use when doing the VPS
  network customization when dtc-xen creates a VPS.
 
 Template: dtc-xen/conf_gateway
@@ -82,14 +82,14 @@ _Description: Xen Kernel release name:
  /lib/modules.
 
 Template: dtc-xen/conf_info_finish_setup
-Type: title
-_Description: How to finish the install.
+Type: note
+_Description: How to finish the install
  To finish the installation, you need to launch
- /usr/sbin/dtc-xen_finish_install. This script will remove port forwarding
- from your sshd_config and add the grant of xm console to the group
- xenusers so your users can loggin to the physical console. It will then try
- to download the files needed to setup Gentoo and CentOS into your VMs.
- Note that the system is currently safe (nobody can connect to a physical
- console as xenXX, they will be rejected because the /etc/sudoers is not
- changed), but a basic user wont be able to log into his physical console
- using ssh.
+ /usr/sbin/dtc-xen_finish_install. This script will remove port
+ forwarding from your sshd_config and add the grant of xm console
+ to the group xenusers so your users can loggin to the physical
+ console. It will then try to download the files needed to setup
+ Gentoo and CentOS into your VMs. Note that the system is currently
+ safe (nobody can connect to a physical console as xenXX, they will
+ be rejected because the /etc/sudoers is not changed), but a basic
+ user wont be able to log into his physical console using ssh.

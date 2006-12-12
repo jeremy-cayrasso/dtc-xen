@@ -1,3 +1,9 @@
+dtc-xen (0.2.6-2) unstable; urgency=low
+
+  * Now not modifying sudoers and sshd_config (Closes: #402438)
+
+ -- Thomas Goirand <thomas@goirand.fr>  Mon, 11 Dec 2006 21:12:00 +0800
+
 dtc-xen (0.2.6-1) unstable; urgency=low
 
   * Initial release.
