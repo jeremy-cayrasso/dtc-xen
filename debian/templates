@@ -25,7 +25,7 @@ Default: dtc-xen
 _Description: SOAP server pass:
  dtc-xen will generate a password (in a .htpasswd file) that will hold the
  password for the login you have just configured. What password do you want
- to have generated in it.
+ to have generated in it?
 
 Template: dtc-xen/conf_node_number
 Type: string
