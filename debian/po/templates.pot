@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: thomas@goirand.fr\n"
-"POT-Creation-Date: 2006-12-12 09:17+0000\n"
+"POT-Creation-Date: 2006-12-17 09:42+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -69,7 +69,7 @@ msgstr ""
 msgid ""
 "dtc-xen will generate a password (in a .htpasswd file) that will hold the "
 "password for the login you have just configured. What password do you want "
-"to have generated in it."
+"to have generated in it?"
 msgstr ""
 
 #. Type: string
@@ -127,21 +127,21 @@ msgstr ""
 #. Description
 #: ../templates:8001
 msgid ""
-"Please neter the Network address to use when doing the VPS network "
+"Please enter the Network address to use when doing the VPS network "
 "customization when dtc-xen creates a VPS."
 msgstr ""
 
 #. Type: string
 #. Description
 #: ../templates:9001
-msgid "Broascast to be setup in the VPSes:"
+msgid "Broadcast to be setup in the VPSes:"
 msgstr ""
 
 #. Type: string
 #. Description
 #: ../templates:9001
 msgid ""
-"Please neter the network broadcast address to use when doing the VPS network "
+"Please enter the network broadcast address to use when doing the VPS network "
 "customization when dtc-xen creates a VPS."
 msgstr ""
 
@@ -174,13 +174,13 @@ msgid ""
 "xenU) and it's corresponding modules must be in /lib/modules."
 msgstr ""
 
-#. Type: title
+#. Type: note
 #. Description
 #: ../templates:12001
-msgid "How to finish the install."
+msgid "How to finish the install"
 msgstr ""
 
-#. Type: title
+#. Type: note
 #. Description
 #: ../templates:12001
 msgid ""
@@ -193,13 +193,3 @@ msgid ""
 "will be rejected because the /etc/sudoers is not changed), but a basic user "
 "wont be able to log into his physical console using ssh."
 msgstr ""
-"Pour finir l'installation, vous devez lancer /usr/sbin/dtc-xen_finish_install. "
-" Ce script va enlever le support du port forwarding de votre sshd_config "
-"et donner les privileges au groupe xenusers pour lancer xm console, pour que "
-"vos utilisateurs puissent utiliser la console physique. Ce script va aussi "
-"télécharger les fichiers nécessaires à l'installation de Gentoo et CentOS "
-"dans vos VMs. Nottez que le système est pour le moment sûr (personne ne peut "
-"se connecter sur les console physique, ils seront rejetté car le "
-"fichier /etc/sudoers n'a pas été modifié), mais un utilisateur basique ne "
-"pourra pas utiliser la console physique de son VPS via ssh."
-
