@@ -387,9 +387,9 @@ extra = \"4\"
 " >>/etc/xen/${VPSNAME}
 fi
 
-
-ln -s ../${VPSNAME} /etc/xen/auto/${VPSNAME}
-
+if [ ! -e /etc/xen/auto/${VPSNAME} ] ; then
+	ln -s ../${VPSNAME} /etc/xen/auto/${VPSNAME}
+fi
 
 if [ ""$DISTRO = "netbsd" ] ; then
 	echo "Not coping modules: it's BSD!"
