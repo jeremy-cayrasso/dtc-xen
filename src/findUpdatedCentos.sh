@@ -49,7 +49,7 @@ fi
 
 # remove useless HTML file
 rm index.html
-cat .listing | sed -e 's/.* \(.*rpm\)/\1/' > $MIRROR_FILE_LIST
+cat .listing | sed -e 's/.* \(.*rpm\).*/\1/' > $MIRROR_FILE_LIST
 
 # first remove the numbers from our base.rpm.list
 cat $BASE_FILE_LIST_WN | cut -f2 -d: > $BASE_FILE_LIST
