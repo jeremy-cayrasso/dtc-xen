@@ -6,14 +6,19 @@ dtc-soap-server \- This is a SOAP server running over HTTPS with Auth to remotly
 
 .SH DESCRIPTION
 .B dtc-soap-server
-This shell script is a part of the dtc-xen
+This soap server script is a part of the dtc-xen
 package that is to be used by the dtc panel
 to manage a Xen VPS server.
+
+It will bind a soap server with auth using SSL on the
+port defined in /etc/dtc-xen. It's auth users are also defined
+in the /etc/dtc-xen/htpasswd, use the htpasswd utility from
+apache / apache2 to edit it.
 
 .SH "VERSION"
 This documentation describes
 .B dtc-soap-server
-version 0.1.2.
+
 See
 .B http://www.gplhost.com/software-dtc-xen.html
 for updates.
