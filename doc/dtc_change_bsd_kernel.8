@@ -1,8 +1,8 @@
-.TH dtc_change_bsd_kernel.sh 8
+.TH dtc_change_bsd_kernel 8
 .SH NAME
-dtc_change_bsd_kernel.sh \- rewrites the xen startup script with selected kernel
+dtc_change_bsd_kernel \- rewrites the xen startup script with selected kernel
 .SH SYNOPSIS
-.B dtc_change_bsd_kernel.sh
+.B dtc_change_bsd_kernel
 .I VPS_NUMBER
 .I MEMORY_SIZE
 .I normal|install
@@ -13,11 +13,13 @@ This shell script is a part of the dtc-xen
 package that is to be used by the dtc panel
 to manage a Xen VPS server.
 
+This script generate a Xen startup file with the parameters
+given to the script.
+
 .SH "VERSION"
 This documentation describes
 .B dtc_change_bsd_kernel.sh
-version 0.1.2.
+
 See
 .B http://www.gplhost.com/software-dtc-xen.html
 for updates.
-

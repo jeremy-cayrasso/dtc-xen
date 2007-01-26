@@ -6,7 +6,6 @@ dtc_create_vps.sh \- reinstall an operating system in a VM
 .I VPS_NUMBER
 .I HDD_SIZE
 .I MEMORY_SIZE
-.I HDD_SIZE
 .I IP_ADDRESS
 [
 .I DISTRO
@@ -16,6 +15,24 @@ dtc_create_vps.sh \- reinstall an operating system in a VM
 This shell script is a part of the dtc-xen
 package that is to be used by the dtc panel
 to manage a Xen VPS server.
+
+VPS_NUMBER has to be a number between 01 and 19
+
+HDD_SIZE is not really used, but it's keeped to be consistant with dtc_setup_vps_disk
+
+MEMORY_SIZE is the amount of memory in mega bytes that you want to have setup
+in the Xen startup file for this VPS
+
+IP_ADDRESS is a list of IPs that you want to be set in the VM's startup file and
+in the VM's configuration. Note that the IPs have to be separated by spaces,
+and thus you might want to use single quotes like this: '1.2.3.4 1.2.3.5'. Note
+that only the first IP will be set in the VM's configuration, but the list will
+be set in the Xen startup file so you can use the anti-spoofing facilities of
+Xen if you need it (with untrusted users / unknown customers for example).
+
+DISTRO is an optional parameter that can be debian, centos, gentoo or netbsd.
+If ommited it will use debian as default. Note that for centos and gentoo,
+you need to have the install files downloaded in /usr/src.
 
 .SH "VERSION"
 This documentation describes
