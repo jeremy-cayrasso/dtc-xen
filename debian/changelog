@@ -1,3 +1,9 @@
+dtc-xen (0.2.6-5) unstable; urgency=low
+
+  * Added cs.po Czech translation (Closes: #408674)
+
+ -- root <root@mx.xen650403.gplhost.com>  Sun, 28 Jan 2007 10:38:19 +0000
+
 dtc-xen (0.2.6-4) unstable; urgency=low
 
   * Added fr.po corrections (Closes: #404115)
