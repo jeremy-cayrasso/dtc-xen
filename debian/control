@@ -1,6 +1,6 @@
 Source: dtc-xen
 Section: web
-Priority: optional
+Priority: extra
 Maintainer: Thomas Goirand <thomas@goirand.fr>
 Build-Depends: debhelper (>= 4), po-debconf
 Standards-Version: 3.7.2
