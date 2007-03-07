@@ -428,3 +428,5 @@ echo "Unmounting proc and filesystem root..."
 umount ${VPSGLOBPATH}/${VPSNUM}/proc
 umount ${VPSGLOBPATH}/${VPSNUM}
 
+echo "Install script finished"
+exit 0
