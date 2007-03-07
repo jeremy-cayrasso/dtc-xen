@@ -398,6 +398,7 @@ else
 	# we need to do MAKEDEV for all linux distroes
 	# Make all the generic devices (inclusive of sda1 and sda2)
 	mkdir -p ${VPSGLOBPATH}/${VPSNUM}/dev/
+	echo "Making VPS devices with MAKEDEV generic"
 	pushd ${VPSGLOBPATH}/${VPSNUM}/dev/; /sbin/MAKEDEV generic; popd
 	echo "Copying modules..."
 	mv ${VPSGLOBPATH}/${VPSNUM}/lib/tls ${VPSGLOBPATH}/${VPSNUM}/lib/tls.disabled
