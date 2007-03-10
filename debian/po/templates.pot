@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-03-10 21:56+0800\n"
+"POT-Creation-Date: 2007-03-10 22:05+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -195,19 +195,19 @@ msgid ""
 "dtc-xen creates physical partitions in a lvm volume group that you have to "
 "name here. This volume group has to be big enough to hold all the VMs you "
 "will setup later on this server. If you don't want to use lvm (because you "
-"don't care if loopback is slower), leave this as default and it wont use it "
-"anyway."
+"don't care if loopback is slower), leave this as default and dtc-xen wont "
+"use it anyway."
 msgstr ""
 
 #. Type: note
 #. Description
-#: ../templates:95
+#: ../templates:96
 msgid "How to finish the install"
 msgstr ""
 
 #. Type: note
 #. Description
-#: ../templates:95
+#: ../templates:96
 msgid ""
 "To finish the installation, you need to launch /usr/sbin/dtc-"
 "xen_finish_install. This script will remove port forwarding from your "

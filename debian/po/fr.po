@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dtc-xen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-03-10 21:56+0800\n"
+"POT-Creation-Date: 2007-03-10 22:05+0800\n"
 "PO-Revision-Date: 2006-12-21 20:32+0100\n"
 "Last-Translator: Florentin Duneau <fduneau@gmail.com>\n"
 "Language-Team:  <debian-l10n-french@lists.debian.org>\n"
@@ -206,7 +206,7 @@ msgstr ""
 #. Description
 #: ../templates:87
 msgid "Volume group where to create VPS:"
-msgstr ""
+msgstr "Groupe de volume où créer les VDS :"
 
 #. Type: string
 #. Description
@@ -215,19 +215,25 @@ msgid ""
 "dtc-xen creates physical partitions in a lvm volume group that you have to "
 "name here. This volume group has to be big enough to hold all the VMs you "
 "will setup later on this server. If you don't want to use lvm (because you "
-"don't care if loopback is slower), leave this as default and it wont use it "
-"anyway."
+"don't care if loopback is slower), leave this as default and dtc-xen wont "
+"use it anyway."
 msgstr ""
+"dtc-xen fabrique des partitions physiques sur un groupe de volume que vous "
+"devez nommer ici. Ce groupe de volume doit être assez gros pour contenir "
+"toutes les machines virtuels que vous allez installé sur ce serveur. Si vous "
+"ne voulez pas utiliser LVM (car vous n'avez pas besoin de bonne performances,
+"et que le loopback vous convient), laissez cette valeur par défaut, et dtc-xen "
+"ne va pas l'utiliser de toutes façons."
 
 #. Type: note
 #. Description
-#: ../templates:95
+#: ../templates:96
 msgid "How to finish the install"
 msgstr "Terminer l'installation"
 
 #. Type: note
 #. Description
-#: ../templates:95
+#: ../templates:96
 msgid ""
 "To finish the installation, you need to launch /usr/sbin/dtc-"
 "xen_finish_install. This script will remove port forwarding from your "
