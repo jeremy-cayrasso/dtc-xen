@@ -19,7 +19,7 @@ fi
 #GATEWAY=202.124.18.1
 
 # Things that might change
-LVMNAME=lvm1
+#LVMNAME=lvm1
 VPSGLOBPATH=/xen
 #KERNELNAME="2.6.11.12-xenU"
 KERNELPATH="/boot/vmlinuz-${KERNELNAME}"
@@ -361,7 +361,7 @@ name = \"${VPSNAME}\"
 vif = [ 'mac=${MAC_ADDR}, ip=${ALL_IPADDRS}' ]
 " >/etc/xen/${VPSNAME}
 	if [ ""$IMAGE_TYPE = "lvm" ]; then
-		echo "disk = [ 'phy:/dev/mapper/lvm1-xen${VPSNUM},0x3,w' ]
+		echo "disk = [ 'phy:/dev/mapper/${LVMNAME}-xen${VPSNUM},0x3,w' ]
 " >>/etc/xen/${VPSNAME}
 	else
 		echo "disk = [ 'file:$VPSGLOBPATH/${VPSNAME}.img,0x301,w' ]
@@ -375,7 +375,7 @@ name = \"${VPSNAME}\"
 vif = [ 'mac=${MAC_ADDR}, ip=${ALL_IPADDRS}' ]
 " > /etc/xen/${VPSNAME}
 	if [ ""$IMAGE_TYPE = "lvm" ]; then
-		echo "disk = [ 'phy:/dev/mapper/lvm1-xen${VPSNUM},sda1,w','phy:/dev/mapper/lvm1-xen${VPSNUM}swap,sda2,w' ]
+		echo "disk = [ 'phy:/dev/mapper/${LVMNAME}-xen${VPSNUM},sda1,w','phy:/dev/mapper/${LVMNAME}-xen${VPSNUM}swap,sda2,w' ]
 " >> /etc/xen/${VPSNAME}
 	else
 		echo "disk = [ 'file:$VPSGLOBPATH/${VPSNAME}.img,sda1,w','file:$VPSGLOBPATH/${VPSNAME}.swap.img,sda2,w' ]

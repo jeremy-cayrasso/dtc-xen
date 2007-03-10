@@ -23,6 +23,7 @@ db_input high dtc-xen/conf_network
 db_input high dtc-xen/conf_broadcast
 db_input high dtc-xen/conf_gateway
 db_input high dtc-xen/conf_linux_kernel_name
+db_input high dtc-xen/conf_lvm_name
 db_input high dtc-xen/conf_info_finish_setup
 db_go
 

@@ -11,7 +11,7 @@ fi
 . /etc/dtc-xen/dtc_create_vps.conf.sh
 
 # Things that might change
-LVMNAME=lvm1
+# LVMNAME=lvm1
 VPSGLOBPATH=/xen
 
 # Things that most of then time don't change

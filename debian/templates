@@ -81,6 +81,15 @@ _Description: Xen Kernel release name:
  vmlinuz-2.6.16.27-xenU) and it's corresponding modules must be in
  /lib/modules.
 
+Template: dtc-xen/conf_lvm_name
+Type: string
+Default: lvm1
+_Description: Volume group where to create VPS:
+ dtc-xen creates physical partitions in a lvm volume group that you have to
+ name here. This volume group has to be big enough to hold all the VMs you will
+ setup later on this server. If you don't want to use lvm (because you don't
+ care if loopback is slower), leave this as default and it wont use it anyway.
+
 Template: dtc-xen/conf_info_finish_setup
 Type: note
 _Description: How to finish the install

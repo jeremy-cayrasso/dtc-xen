@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: dtc-xen_0.2.6-4_cs-utf8\n"
-"Report-Msgid-Bugs-To: thomas@goirand.fr\n"
-"POT-Creation-Date: 2006-12-17 09:42+0000\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-03-10 21:56+0800\n"
 "PO-Revision-Date: 2007-01-27 19:22+0100\n"
 "Last-Translator: Jakub Kasparec <mr.k@centrum.cz>\n"
 "Language-Team: czech <debian-l10n-czech@lists.debian.org>\n"
@@ -18,171 +18,214 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:1001
+#: ../templates:4
 msgid "Server hostname:"
 msgstr "Jméno serveru:"
 
 #. Type: string
 #. Description
-#: ../templates:1001
+#: ../templates:4
 msgid ""
 "What will be the hostname for this dtc-xen server? This will be used as a "
 "part of the URL by the SOAP dtc panel client."
-msgstr "Jaké bude jméno tohoto dtc-xen serveru? Toto jméno bude používat SOAP klient dtc panel jako část URL adresy."
+msgstr ""
+"Jaké bude jméno tohoto dtc-xen serveru? Toto jméno bude používat SOAP klient "
+"dtc panel jako část URL adresy."
 
 #. Type: string
 #. Description
-#: ../templates:2001
+#: ../templates:11
 msgid "Server port:"
 msgstr "Port serveru:"
 
 #. Type: string
 #. Description
-#: ../templates:2001
+#: ../templates:11
 msgid "What port should it bind to? Default is 8089."
 msgstr "Na který port se navázat? Výchozí je 8089."
 
 #. Type: string
 #. Description
-#: ../templates:3001
+#: ../templates:17
 msgid "SOAP server login:"
 msgstr "Login do SOAP serveru:"
 
 #. Type: string
 #. Description
-#: ../templates:3001
+#: ../templates:17
 msgid ""
 "dtc-xen will bind a SOAP python server on which a dtc panel can connect to "
 "in order to start, stop create and destroy a VPS. What login do you want to "
 "create on that server."
-msgstr "dtc-xen si naváže SOAP python server, na který se bude moci připojovat klient dtc panel za účelem spuštění, zastavení, vytvoření a zrušení VPS. Jaký login chcete na tomto serveru vytvořit?"
+msgstr ""
+"dtc-xen si naváže SOAP python server, na který se bude moci připojovat "
+"klient dtc panel za účelem spuštění, zastavení, vytvoření a zrušení VPS. "
+"Jaký login chcete na tomto serveru vytvořit?"
 
 #. Type: password
 #. Description
-#: ../templates:4001
+#: ../templates:25
 msgid "SOAP server pass:"
 msgstr "Heslo SOAP serveru:"
 
 #. Type: password
 #. Description
-#: ../templates:4001
+#: ../templates:25
 msgid ""
 "dtc-xen will generate a password (in a .htpasswd file) that will hold the "
 "password for the login you have just configured. What password do you want "
 "to have generated in it?"
-msgstr "dtc-xen vygeneruje heslo pro účet, který jste právě vytvořili. Toto heslo bude uloženo v souboru .htpasswd. Jaké heslo si přejete vygenerovat?"
+msgstr ""
+"dtc-xen vygeneruje heslo pro účet, který jste právě vytvořili. Toto heslo "
+"bude uloženo v souboru .htpasswd. Jaké heslo si přejete vygenerovat?"
 
 #. Type: string
 #. Description
-#: ../templates:5001
+#: ../templates:33
 msgid "VPS Server node number:"
 msgstr "Číslo uzlu VPS serveru:"
 
 #. Type: string
 #. Description
-#: ../templates:5001
+#: ../templates:33
 msgid ""
 "dtc-xen will use that number as a VPS Server number and will make your VPS "
 "numbering using xenXXXXYY with X being the server number (what it's are "
 "asking you at the moment) and Y being the VPS number itself (xenYY). Note "
 "that this node number has to be between 4 and 5 chars."
-msgstr "dtc-xen bude toto číslo používat jako číslo VPS serveru. Číslování vašich VPS serverů bude xenXXXXYY, kde X je číslo serveru (na které jste právě dotazováni) a Y je číslo samotného VPS (xenYY). Mějte prosím na paměti, že toto číslo uzlu musí být v rozmezí 4 až 5 znaků."
+msgstr ""
+"dtc-xen bude toto číslo používat jako číslo VPS serveru. Číslování vašich "
+"VPS serverů bude xenXXXXYY, kde X je číslo serveru (na které jste právě "
+"dotazováni) a Y je číslo samotného VPS (xenYY). Mějte prosím na paměti, že "
+"toto číslo uzlu musí být v rozmezí 4 až 5 znaků."
 
 #. Type: string
 #. Description
-#: ../templates:6001
+#: ../templates:42
 msgid "Debian repository for setting-up VPSes:"
 msgstr "Repozitář Debianu pro vytvoření VPS:"
 
 #. Type: string
 #. Description
-#: ../templates:6001
+#: ../templates:42
 msgid ""
 "dtc-xen will use that repository for creating VPSes, and will copy your /etc/"
 "apt/sources.list inside your VPS (so this will be used ONLY durring the "
 "debootstrap stage of the VPS creation)."
-msgstr "dtc-xen bude používat tento repozitář k vytváření VPS (virtuálních privátních serverů). Dovnitř samotných VPS se zkopíruje soubor /etc/apt/sources.list z hostitele (tudíž právě zadávaný repositář se bude používat POUZE během debootstrap fáze vytváření VPS)."
+msgstr ""
+"dtc-xen bude používat tento repozitář k vytváření VPS (virtuálních "
+"privátních serverů). Dovnitř samotných VPS se zkopíruje soubor /etc/apt/"
+"sources.list z hostitele (tudíž právě zadávaný repositář se bude používat "
+"POUZE během debootstrap fáze vytváření VPS)."
 
 #. Type: string
 #. Description
-#: ../templates:7001
+#: ../templates:50
 msgid "Netmask to be setup in the VPSes:"
 msgstr "Síťová maska (netmask), která se použije ve VPS:"
 
 #. Type: string
 #. Description
-#: ../templates:7001
+#: ../templates:50
 msgid ""
 "Please enter the Netmask to use when doing the VPS network customization "
 "when dtc-xen creates a VPS."
-msgstr "Zadejte prosím síťovou masku, která se použije při nastavování sítě VPS, v době, kdy dtc-xen vytváří VPS."
+msgstr ""
+"Zadejte prosím síťovou masku, která se použije při nastavování sítě VPS, v "
+"době, kdy dtc-xen vytváří VPS."
 
 #. Type: string
 #. Description
-#: ../templates:8001
+#: ../templates:57
 msgid "Network to be setup in the VPSes:"
 msgstr "Síť (network), která se použije ve VPS:"
 
 #. Type: string
 #. Description
-#: ../templates:8001
+#: ../templates:57
 msgid ""
 "Please enter the Network address to use when doing the VPS network "
 "customization when dtc-xen creates a VPS."
-msgstr "Zadejte prosím síťovou adresu, která se použije při nastavování sítě VPS, v době, kdy dtc-xen vytváří VPS."
+msgstr ""
+"Zadejte prosím síťovou adresu, která se použije při nastavování sítě VPS, v "
+"době, kdy dtc-xen vytváří VPS."
 
 #. Type: string
 #. Description
-#: ../templates:9001
+#: ../templates:64
 msgid "Broadcast to be setup in the VPSes:"
 msgstr "Všesměrová adresa (broadcast), která se použije ve VPS:"
 
 #. Type: string
 #. Description
-#: ../templates:9001
+#: ../templates:64
 msgid ""
 "Please enter the network broadcast address to use when doing the VPS network "
 "customization when dtc-xen creates a VPS."
-msgstr "Zadejte prosím síťovou všesměrovou adresu (broadcast), která se použije při nastavování sítě VPS, v době, kdy dtc-xen vytváří VPS."
+msgstr ""
+"Zadejte prosím síťovou všesměrovou adresu (broadcast), která se použije při "
+"nastavování sítě VPS, v době, kdy dtc-xen vytváří VPS."
 
 #. Type: string
 #. Description
-#: ../templates:10001
+#: ../templates:71
 msgid "Gateway to be setup in the VPSes:"
 msgstr "Brána (gateway), která se použije ve VPS:"
 
 #. Type: string
 #. Description
-#: ../templates:10001
+#: ../templates:71
 msgid ""
 "Please enter the network gateway address to use when doing the VPS network "
 "customization when dtc-xen creates a VPS."
-msgstr "Zadejte prosím bránu (gateway), která se použije při nastavování sítě VPS, v době, kdy dtc-xen vytváří VPS."
+msgstr ""
+"Zadejte prosím bránu (gateway), která se použije při nastavování sítě VPS, v "
+"době, kdy dtc-xen vytváří VPS."
 
 #. Type: string
 #. Description
-#: ../templates:11001
+#: ../templates:78
 msgid "Xen Kernel release name:"
 msgstr "Jméno Xen jádra:"
 
 #. Type: string
 #. Description
-#: ../templates:11001
+#: ../templates:78
 msgid ""
 "Enter here the kernel version number as it appears in the uname -a. A kernel "
 "domU with that name must be located in /boot (example: vmlinuz-2.6.16.27-"
 "xenU) and it's corresponding modules must be in /lib/modules."
-msgstr "Zde uveďte jméno jádra tak, jak jej vypíše uname -a. domU jádro tohoto jména se musí nacházet v /boot (např.: vmlinuz-2.6.16.27-xenU) a moduly odpovídající tomuto jádru musí být v /lib/modules."
+msgstr ""
+"Zde uveďte jméno jádra tak, jak jej vypíše uname -a. domU jádro tohoto jména "
+"se musí nacházet v /boot (např.: vmlinuz-2.6.16.27-xenU) a moduly "
+"odpovídající tomuto jádru musí být v /lib/modules."
+
+#. Type: string
+#. Description
+#: ../templates:87
+msgid "Volume group where to create VPS:"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:87
+msgid ""
+"dtc-xen creates physical partitions in a lvm volume group that you have to "
+"name here. This volume group has to be big enough to hold all the VMs you "
+"will setup later on this server. If you don't want to use lvm (because you "
+"don't care if loopback is slower), leave this as default and it wont use it "
+"anyway."
+msgstr ""
 
 #. Type: note
 #. Description
-#: ../templates:12001
+#: ../templates:95
 msgid "How to finish the install"
 msgstr "Jak ukončit instalaci"
 
 #. Type: note
 #. Description
-#: ../templates:12001
+#: ../templates:95
 msgid ""
 "To finish the installation, you need to launch /usr/sbin/dtc-"
 "xen_finish_install. This script will remove port forwarding from your "
@@ -192,5 +235,13 @@ msgid ""
 "is currently safe (nobody can connect to a physical console as xenXX, they "
 "will be rejected because the /etc/sudoers is not changed), but a basic user "
 "wont be able to log into his physical console using ssh."
-msgstr "K dokončení instalace musíte spustit skript /usr/sbin/dtc-xen_finish_install. Tento skript z vašeho sshd_config odebere forwardování portů a skupině xenusers zajistí přístup k xm konzoli, takže uživatelé se budou moci přihlásit k fyzické konzoli. Poté se skript pokusí stáhnout soubory potřebné pro nastavení Gentoo a CentOS do vašich VM. Mějte prosím na paměti, že systém je momentálně bezpečný (nikdo se nemůže připojit k fyzické konzoli jako xenXX. Takoví uživatelé budou odpojeni, neboť nejsou provedeny potřebné úpravy v /etc/sudoers). Běžný uživatel by ale neměl být schopen se připojit k jeho fyzické konzoli přes ssh."
-
+msgstr ""
+"K dokončení instalace musíte spustit skript /usr/sbin/dtc-"
+"xen_finish_install. Tento skript z vašeho sshd_config odebere forwardování "
+"portů a skupině xenusers zajistí přístup k xm konzoli, takže uživatelé se "
+"budou moci přihlásit k fyzické konzoli. Poté se skript pokusí stáhnout "
+"soubory potřebné pro nastavení Gentoo a CentOS do vašich VM. Mějte prosím na "
+"paměti, že systém je momentálně bezpečný (nikdo se nemůže připojit k fyzické "
+"konzoli jako xenXX. Takoví uživatelé budou odpojeni, neboť nejsou provedeny "
+"potřebné úpravy v /etc/sudoers). Běžný uživatel by ale neměl být schopen se "
+"připojit k jeho fyzické konzoli přes ssh."
