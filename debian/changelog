@@ -1,3 +1,15 @@
+dtc-xen (0.2.7-2) unstable; urgency=low
+
+  * Added umask to protect against race attack in the /etc/dtc-xen folder
+    (Closes: #414482)
+  * Added pt.po portuguese translation for debconf messages thanks to
+    Ricardo Silva <ardoric@gmail.com> (Closes: #415074).
+  * TO BE DONE: Moved away the xenXX users to /var/lib/dtc-xen/home (Closes: #414482)
+  * TO BE DONE: Removed the use of ${RANDOM}, now using ???? (Closes: #414480)
+  * TO BE DONE: Now reading previous values of /etc/dtc-xen in postinst (Closes: #414483)
+
+ -- Thomas GOIRAND <zigo@mx.example.com>  Mon, 12 Mar 2007 18:45:45 +0800
+
 dtc-xen (0.2.7-1) unstable; urgency=low
 
   * Added the configuration possibilities for the lvm volume group.
