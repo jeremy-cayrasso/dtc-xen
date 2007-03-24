@@ -168,11 +168,11 @@ def changeVPSsshKey(vpsname,keystring):
 	if username == dtcxen_user or username == vpsname:
 		try:
 			# create the directory if it doesn't exist
-			if not os.path.isdir("/home/%s/.ssh/" % vpsname):
-				os.makedirs("/home/%s/.ssh/" % vpsname)
-			os.chown("/home/%s/.ssh/" % vpsname, getuserid(vpsname), getusergroup(vpsname))
+			if not os.path.isdir("/var/lib/dtc-xen/ttyssh_home/%s/.ssh/" % vpsname):
+				os.makedirs("/var/lib/dtc-xen/ttyssh_home/%s/.ssh/" % vpsname)
+			os.chown("/var/lib/dtc-xen/ttyssh_home/%s/.ssh/" % vpsname, getuserid(vpsname), getusergroup(vpsname))
 			# open file stream
-			filename = "/home/%s/.ssh/authorized_keys" % vpsname
+			filename = "/var/lib/dtc-xen/ttyssh_home/%s/.ssh/authorized_keys" % vpsname
 			file = open(filename, "w")
 			file.write(keystring)
 			file.close()

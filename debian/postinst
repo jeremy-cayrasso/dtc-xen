@@ -36,8 +36,7 @@ db_stop
 
 VERBOSE_INSTALL=yes
 
-XEN_USER_HOME=/var/lib/dtc-xen/home
-
+XEN_USER_HOME=/var/lib/dtc-xen/ttyssh_home
 MKTEMP="mktemp -t"
 OPENSSL=/usr/bin/openssl
 if [ -e "/usr/bin/htpasswd" ] ;then
@@ -146,22 +145,21 @@ else
 	groupadd xenusers
 fi
 
-# Add the 19th users to /etc/passwd with random password if they don't exist
+# Add the 19 users to /etc/passwd with random password if they don't exist
+# Use /var/lib/dtc-xen/ttyssh_home as the homedir so problems of nsf mounted
+# homes goes away.
 dtcaddxenuser () {
 	if getent passwd ${1} >/dev/null ; then
 		echo "User already exists "${1}
-		# make sure all the settings are correct as per this version of the package
-		usermod -d /home/${1} -m -g xenusers -s /bin/dtc-xen_userconsole ${1}
-		# need to ensure /home/${1} exists
-		mkdir -p /home/${1}/.ssh
-		chown -R ${1}:xenusers /home/${1}
 	else
 		echo "Adding user "${1}
-		GEN_RANDOM_PASS=`dd if=/dev/random bs=64 count=1 2>|/dev/null | md5sum | cut -d' ' -f1`
-# Something like that should be made, but it doesn't work:
-#		useradd -b /var/lib/dtc-xen -m -g xenusers -p ${GEN_RANDOM_PASS} -s /bin/dtc-xen_userconsole ${1}
-		useradd -m -g xenusers -p ${GEN_RANDOM_PASS} -s /bin/dtc-xen_userconsole ${1}
+		adduser --disabled-password --ingroup xenusers --home /var/lib/dtc-xen/ttyssh_home/${1} --shell /bin/dtc-xen_userconsole --gecos dtc-xen-user ${1}
 	fi
+	# make sure all the settings are correct as per this version of the package, and create the .ssh dir for uploading the ssh public key file
+	mkdir -p "${XEN_USER_HOME}/${1}/.ssh"
+	usermod -d "${XEN_USER_HOME}/${1}" -m -g xenusers -s /bin/dtc-xen_userconsole ${1}
+	# need to ensure /home/${1} exists
+	chown -R ${1}:xenusers "${XEN_USER_HOME}/${1}"
 }
 
 mkdir -p $XEN_USER_HOME
