@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-03-10 22:05+0800\n"
+"POT-Creation-Date: 2007-03-24 19:03+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,38 +27,24 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../templates:4
-msgid "Server hostname:"
-msgstr ""
-
-#. Type: string
-#. Description
-#: ../templates:4
-msgid ""
-"What will be the hostname for this dtc-xen server? This will be used as a "
-"part of the URL by the SOAP dtc panel client."
-msgstr ""
-
-#. Type: string
-#. Description
-#: ../templates:11
 msgid "Server port:"
 msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:11
+#: ../templates:4
 msgid "What port should it bind to? Default is 8089."
 msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:17
+#: ../templates:10
 msgid "SOAP server login:"
 msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:17
+#: ../templates:10
 msgid ""
 "dtc-xen will bind a SOAP python server on which a dtc panel can connect to "
 "in order to start, stop create and destroy a VPS. What login do you want to "
@@ -67,17 +53,31 @@ msgstr ""
 
 #. Type: password
 #. Description
-#: ../templates:25
+#: ../templates:18
 msgid "SOAP server pass:"
 msgstr ""
 
 #. Type: password
 #. Description
-#: ../templates:25
+#: ../templates:18
 msgid ""
 "dtc-xen will generate a password (in a .htpasswd file) that will hold the "
 "password for the login you have just configured. What password do you want "
 "to have generated in it?"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:26
+msgid "Server hostname:"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../templates:26
+msgid ""
+"What will be the domain name for this dtc-xen server? This will be used as a "
+"part of the URL by the SOAP dtc panel client."
 msgstr ""
 
 #. Type: string
@@ -93,18 +93,20 @@ msgid ""
 "dtc-xen will use that number as a VPS Server number and will make your VPS "
 "numbering using xenXXXXYY with X being the server number (what it's are "
 "asking you at the moment) and Y being the VPS number itself (xenYY). Note "
-"that this node number has to be between 4 and 5 chars."
+"that this node number has to be between 4 and 5 chars, and that it will "
+"create something like nodeXXXX.example.com that will be your server hostname "
+"(which you can later add in your DTC control panel)."
 msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:42
+#: ../templates:44
 msgid "Debian repository for setting-up VPSes:"
 msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:42
+#: ../templates:44
 msgid ""
 "dtc-xen will use that repository for creating VPSes, and will copy your /etc/"
 "apt/sources.list inside your VPS (so this will be used ONLY durring the "
@@ -113,13 +115,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:50
+#: ../templates:52
 msgid "Netmask to be setup in the VPSes:"
 msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:50
+#: ../templates:52
 msgid ""
 "Please enter the Netmask to use when doing the VPS network customization "
 "when dtc-xen creates a VPS."
@@ -127,13 +129,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:57
+#: ../templates:59
 msgid "Network to be setup in the VPSes:"
 msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:57
+#: ../templates:59
 msgid ""
 "Please enter the Network address to use when doing the VPS network "
 "customization when dtc-xen creates a VPS."
@@ -141,13 +143,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:64
+#: ../templates:66
 msgid "Broadcast to be setup in the VPSes:"
 msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:64
+#: ../templates:66
 msgid ""
 "Please enter the network broadcast address to use when doing the VPS network "
 "customization when dtc-xen creates a VPS."
@@ -155,13 +157,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:71
+#: ../templates:73
 msgid "Gateway to be setup in the VPSes:"
 msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:71
+#: ../templates:73
 msgid ""
 "Please enter the network gateway address to use when doing the VPS network "
 "customization when dtc-xen creates a VPS."
@@ -169,13 +171,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:78
+#: ../templates:80
 msgid "Xen Kernel release name:"
 msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:78
+#: ../templates:80
 msgid ""
 "Enter here the kernel version number as it appears in the uname -a. A kernel "
 "domU with that name must be located in /boot (example: vmlinuz-2.6.16.27-"
@@ -184,13 +186,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:87
+#: ../templates:89
 msgid "Volume group where to create VPS:"
 msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:87
+#: ../templates:89
 msgid ""
 "dtc-xen creates physical partitions in a lvm volume group that you have to "
 "name here. This volume group has to be big enough to hold all the VMs you "
@@ -201,13 +203,13 @@ msgstr ""
 
 #. Type: note
 #. Description
-#: ../templates:96
+#: ../templates:98
 msgid "How to finish the install"
 msgstr ""
 
 #. Type: note
 #. Description
-#: ../templates:96
+#: ../templates:98
 msgid ""
 "To finish the installation, you need to launch /usr/sbin/dtc-"
 "xen_finish_install. This script will remove port forwarding from your "
