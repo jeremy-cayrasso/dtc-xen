@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dtc-xen_0.2.6-4_cs-utf8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-03-24 19:03+0800\n"
+"POT-Creation-Date: 2007-03-24 19:19+0800\n"
 "PO-Revision-Date: 2007-01-27 19:22+0100\n"
 "Last-Translator: Jakub Kasparec <mr.k@centrum.cz>\n"
 "Language-Team: czech <debian-l10n-czech@lists.debian.org>\n"
@@ -37,10 +37,10 @@ msgstr "Login do SOAP serveru:"
 #. Type: string
 #. Description
 #: ../templates:10
+#, fuzzy
 msgid ""
 "dtc-xen will bind a SOAP python server on which a dtc panel can connect to "
-"in order to start, stop create and destroy a VPS. What login do you want to "
-"create on that server."
+"in order to start, stop create and destroy a VPS."
 msgstr ""
 "dtc-xen si naváže SOAP python server, na který se bude moci připojovat "
 "klient dtc panel za účelem spuštění, zastavení, vytvoření a zrušení VPS. "
@@ -48,47 +48,47 @@ msgstr ""
 
 #. Type: password
 #. Description
-#: ../templates:18
+#: ../templates:17
 msgid "SOAP server pass:"
 msgstr "Heslo SOAP serveru:"
 
 #. Type: password
 #. Description
-#: ../templates:18
+#: ../templates:17
+#, fuzzy
 msgid ""
 "dtc-xen will generate a password (in a .htpasswd file) that will hold the "
-"password for the login you have just configured. What password do you want "
-"to have generated in it?"
+"password for the login you have just configured."
 msgstr ""
 "dtc-xen vygeneruje heslo pro účet, který jste právě vytvořili. Toto heslo "
 "bude uloženo v souboru .htpasswd. Jaké heslo si přejete vygenerovat?"
 
 #. Type: string
 #. Description
-#: ../templates:26
+#: ../templates:24
 msgid "Server hostname:"
 msgstr "Jméno serveru:"
 
 #. Type: string
 #. Description
-#: ../templates:26
+#: ../templates:24
 #, fuzzy
 msgid ""
 "What will be the domain name for this dtc-xen server? This will be used as a "
-"part of the URL by the SOAP dtc panel client."
+"part of the URL by the SOAP dtc panel client like nodeXXXX.example.com."
 msgstr ""
 "Jaké bude jméno tohoto dtc-xen serveru? Toto jméno bude používat SOAP klient "
 "dtc panel jako část URL adresy."
 
 #. Type: string
 #. Description
-#: ../templates:33
+#: ../templates:31
 msgid "VPS Server node number:"
 msgstr "Číslo uzlu VPS serveru:"
 
 #. Type: string
 #. Description
-#: ../templates:33
+#: ../templates:31
 #, fuzzy
 msgid ""
 "dtc-xen will use that number as a VPS Server number and will make your VPS "
@@ -105,16 +105,17 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:44
+#: ../templates:42
 msgid "Debian repository for setting-up VPSes:"
 msgstr "Repozitář Debianu pro vytvoření VPS:"
 
 #. Type: string
 #. Description
-#: ../templates:44
+#: ../templates:42
+#, fuzzy
 msgid ""
 "dtc-xen will use that repository for creating VPSes, and will copy your /etc/"
-"apt/sources.list inside your VPS (so this will be used ONLY durring the "
+"apt/sources.list inside your VPS (so this will be used only durring the "
 "debootstrap stage of the VPS creation)."
 msgstr ""
 "dtc-xen bude používat tento repozitář k vytváření VPS (virtuálních "
@@ -124,13 +125,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:52
+#: ../templates:50
 msgid "Netmask to be setup in the VPSes:"
 msgstr "Síťová maska (netmask), která se použije ve VPS:"
 
 #. Type: string
 #. Description
-#: ../templates:52
+#: ../templates:50
 msgid ""
 "Please enter the Netmask to use when doing the VPS network customization "
 "when dtc-xen creates a VPS."
@@ -140,13 +141,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:59
+#: ../templates:57
 msgid "Network to be setup in the VPSes:"
 msgstr "Síť (network), která se použije ve VPS:"
 
 #. Type: string
 #. Description
-#: ../templates:59
+#: ../templates:57
 msgid ""
 "Please enter the Network address to use when doing the VPS network "
 "customization when dtc-xen creates a VPS."
@@ -156,13 +157,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:66
+#: ../templates:64
 msgid "Broadcast to be setup in the VPSes:"
 msgstr "Všesměrová adresa (broadcast), která se použije ve VPS:"
 
 #. Type: string
 #. Description
-#: ../templates:66
+#: ../templates:64
 msgid ""
 "Please enter the network broadcast address to use when doing the VPS network "
 "customization when dtc-xen creates a VPS."
@@ -172,13 +173,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:73
+#: ../templates:71
 msgid "Gateway to be setup in the VPSes:"
 msgstr "Brána (gateway), která se použije ve VPS:"
 
 #. Type: string
 #. Description
-#: ../templates:73
+#: ../templates:71
 msgid ""
 "Please enter the network gateway address to use when doing the VPS network "
 "customization when dtc-xen creates a VPS."
@@ -188,13 +189,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:80
+#: ../templates:78
 msgid "Xen Kernel release name:"
 msgstr "Jméno Xen jádra:"
 
 #. Type: string
 #. Description
-#: ../templates:80
+#: ../templates:78
 msgid ""
 "Enter here the kernel version number as it appears in the uname -a. A kernel "
 "domU with that name must be located in /boot (example: vmlinuz-2.6.16.27-"
@@ -206,13 +207,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:89
+#: ../templates:87
 msgid "Volume group where to create VPS:"
 msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:89
+#: ../templates:87
 msgid ""
 "dtc-xen creates physical partitions in a lvm volume group that you have to "
 "name here. This volume group has to be big enough to hold all the VMs you "
@@ -223,13 +224,13 @@ msgstr ""
 
 #. Type: note
 #. Description
-#: ../templates:98
+#: ../templates:96
 msgid "How to finish the install"
 msgstr "Jak ukončit instalaci"
 
 #. Type: note
 #. Description
-#: ../templates:98
+#: ../templates:96
 msgid ""
 "To finish the installation, you need to launch /usr/sbin/dtc-"
 "xen_finish_install. This script will remove port forwarding from your "
