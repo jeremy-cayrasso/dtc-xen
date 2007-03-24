@@ -9,7 +9,7 @@ Package: dtc-xen
 Section: web
 Priority: optional
 Architecture: all
-Depends: debconf, python, rrdtool, apache | apache2, python-soappy, python-crypto, m2crypto, debootstrap, openssl, sudo, rpmstrap
+Depends: debconf, python, rrdtool, apache | apache2, python-soappy, python-crypto, m2crypto, debootstrap, openssl, sudo, rpmstrap, adduser
 Description: A SOAP daemon and help scripts so a control panel can manage Xen VMs
  dtc-xen is a SOAP server running over HTTPS with auth,
  so a web GUI tool can manage, create and destroy your
