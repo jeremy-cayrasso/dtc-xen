@@ -1,14 +1,16 @@
-dtc-xen (0.2.7-2) unstable; urgency=low
+dtc-xen (0.2.8-1) unstable; urgency=low
 
   * Added umask to protect against race attack in the /etc/dtc-xen folder
     (Closes: #414482)
   * Added pt.po portuguese translation for debconf messages thanks to
     Ricardo Silva <ardoric@gmail.com> (Closes: #415074).
   * Removed the use of ${RANDOM}, now using /dev/random (Closes: #414480)
-  * Moved away the xenXX users to /var/lib/dtc-xen/ttyssh_home (Closes: #414482)
-  * Now reading previous values of /etc/dtc-xen in the config script (Closes: #414483)
+  * Moved away the xenXX users to /var/lib/dtc-xen/ttyssh_home
+    (Closes: #414482)
+  * Now reading previous values of /etc/dtc-xen in the config script
+    (Closes: #414483)
 
- -- Thomas GOIRAND <zigo@mx.example.com>  Mon, 12 Mar 2007 18:45:45 +0800
+ -- Thomas GOIRAND <thomas@goirand.fr>  Mon, 12 Mar 2007 18:45:45 +0800
 
 dtc-xen (0.2.7-1) unstable; urgency=low
 
