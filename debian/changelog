@@ -6,7 +6,7 @@ dtc-xen (0.2.7-2) unstable; urgency=low
     Ricardo Silva <ardoric@gmail.com> (Closes: #415074).
   * Removed the use of ${RANDOM}, now using /dev/random (Closes: #414480)
   * Moved away the xenXX users to /var/lib/dtc-xen/ttyssh_home (Closes: #414482)
-  * TO BE DONE: Now reading previous values of /etc/dtc-xen in postinst (Closes: #414483)
+  * Now reading previous values of /etc/dtc-xen in the config script (Closes: #414483)
 
  -- Thomas GOIRAND <zigo@mx.example.com>  Mon, 12 Mar 2007 18:45:45 +0800
 

@@ -5,16 +5,17 @@ set -e
 . /usr/share/debconf/confmodule
 db_version 2.0
 
-db_get dtc-xen/conf_soap_hostname
-conf_soap_hostname=$RET
 db_get dtc-xen/conf_soap_port
 conf_soap_port=$RET
 db_get dtc-xen/conf_soap_login
 conf_soap_login=$RET
 db_get dtc-xen/conf_soap_pass
 conf_soap_pass=$RET
+db_get dtc-xen/conf_soap_domain_name
+conf_soap_domain_name=$RET
 db_get dtc-xen/conf_node_number
 conf_node_number=$RET
+conf_soap_hostname="node${conf_node_number}.conf_soap_domain_name"
 db_get dtc-xen/conf_debian_repository
 conf_debian_repository=$RET
 db_get dtc-xen/conf_netmask
@@ -111,17 +112,21 @@ fi
 $HTPASSWD -cb $DTCXEN_ETCPATH/htpasswd ${conf_soap_login} ${conf_soap_pass}
 
 # Create the python config file
-echo "# This is a generated file, don't edit it, do a dpkg-reconfigure dtc-xen instead!
-soap_server_host=${conf_soap_hostname}
+echo "# This is the configuration file for the DTC soap server dtc-xen
+# Please make soap_server_host correspond to NODE_NUM and NODE_DOMAIN_NAME in
+# dtc_create_vps.conf.sh as the postinst of dtc-xen might overwrite the value
+# this way
+soap_server_host=node${conf_node_number}.${conf_soap_domain_name}
 soap_server_port=${conf_soap_port}
 soap_server_pass_phrase=${conf_ssl_passphrase}
 soap_server_dtcxen_user=${conf_soap_login}
 " >${DTCXEN_ETCPATH}/soap.conf
 
 echo "#!/bin/sh
-# This is a generated file, don't edit it, do a dpkg-reconfigure dtc-xen instead!
+# This the configuration file for dtc-xen setup scripts (called uppon VM reinstallation)
 
 NODE_NUM=$conf_node_number
+NODE_DOMAIN_NAME=$conf_soap_domain_name
 DEBIAN_REPOS=\"$conf_debian_repository\"
 NETMASK=$conf_netmask
 NETWORK=$conf_network
@@ -130,7 +135,6 @@ GATEWAY=$conf_gateway
 LVMNAME=$conf_lvm_name
 
 KERNELNAME=$conf_linux_kernel_name
-
 " > ${DTCXEN_ETCPATH}/dtc_create_vps.conf.sh
 
 chmod 600 ${DTCXEN_ETCPATH}/*

@@ -5,18 +5,8 @@ if [ $# -lt 3 ]; then
 	exit
 fi
 
-
-# Things that often change
-
 # Source the configuration in the config file!
 . /etc/dtc-xen/dtc_create_vps.conf.sh
-
-#NODE_NUM=6501
-#DEBIAN_REPOS="http://65.apt-proxy.gplhost.com:9999/debian"
-#NETMASK=255.255.255.0
-#NETWORK=202.124.18.0
-#BROADCAST=202.124.18.255
-#GATEWAY=202.124.18.1
 
 # Things that might change
 #LVMNAME=lvm1
@@ -229,8 +219,8 @@ proc            /proc   proc    defaults                0       0
 /dev/sda2       none    swap    sw                      0       0
 " >${ETC}/fstab
 	echo "${VPSHOSTNAME}" >${ETC}/hostname
-	echo "127.0.0.1	localhost.localdomain   localhost
-${IPADDR}	dtc.${VPSHOSTNAME}.gplhost.com ${VPSHOSTNAME}.gplhost.com ${VPSHOSTNAME}
+	echo "127.0.0.1	localhost.localdomain	localhost
+${IPADDR}	dtc.${VPSHOSTNAME}.${NODE_DOMAIN_NAME} ${VPSHOSTNAME}.${NODE_DOMAIN_NAME} ${VPSHOSTNAME}
 
 # The following lines are desirable for IPv6 capable hosts
 ::1	ip6-localhost ip6-loopback
