@@ -402,6 +402,16 @@ else
 	ln -s /boot/vmlinuz-${KERNELNAME} ${VPSGLOBPATH}/${VPSNUM}/boot/vmlinuz
 	# regen the module dependancies within the chroot (just in case)
 	chroot ${VPSGLOBPATH}/${VPSNUM} depmod -a ${KERNELNAME}
+
+	# Copy an eventual /etc/dtc-xen/authorized_keys2 file
+	if [ -f /etc/dtc-xen/authorized_keys2 ] ; then
+		if [ ! -d "${VPSGLOBPATH}/${VPSNUM}/root/.ssh" ] ; then
+			mkdir -p "${VPSGLOBPATH}/${VPSNUM}/root/.ssh"
+		fi
+		if [ -d "${VPSGLOBPATH}/${VPSNUM}/root/.ssh" -a ! -e "${VPSGLOBPATH}/${VPSNUM}/root/.ssh/authorized_keys2" ] ; then
+			cp /etc/dtc-xen/authorized_keys2 "${VPSGLOBPATH}/${VPSNUM}/root/.ssh/authorized_keys2"
+		fi
+	fi
 fi
 
 # need to install 2.6 compat stuff for centos3
