@@ -157,6 +157,7 @@ dtcaddxenuser () {
 		echo "User already exists "${1}
 	else
 		echo "Adding user "${1}
+		# Should be using $XEN_USER_HOME ...
 		adduser --quiet --disabled-password --ingroup xenusers --home /var/lib/dtc-xen/ttyssh_home/${1} --shell /bin/dtc-xen_userconsole --gecos dtc-xen-user ${1}
 	fi
 	# make sure all the settings are correct as per this version of the package, and create the .ssh dir for uploading the ssh public key file
@@ -167,6 +168,7 @@ dtcaddxenuser () {
 }
 
 mkdir -p $XEN_USER_HOME
+# To be replaced by: `seq -w 1 19`; do dtcaddxenuser xen$i; done
 dtcaddxenuser xen01
 dtcaddxenuser xen02
 dtcaddxenuser xen03

@@ -9,23 +9,21 @@ Type: string
 Default: dtc-xen
 _Description: SOAP server login:
  dtc-xen will bind a SOAP python server on which a dtc panel can connect to
- in order to start, stop create and destroy a VPS. What login do you want
- to create on that server.
+ in order to start, stop create and destroy a VPS.
 
 Template: dtc-xen/conf_soap_pass
 Type: password
 Default: dtc-xen
 _Description: SOAP server pass:
  dtc-xen will generate a password (in a .htpasswd file) that will hold the
- password for the login you have just configured. What password do you want
- to have generated in it?
+ password for the login you have just configured.
 
 Template: dtc-xen/conf_soap_domain_name
 Type: string
 Default: example.com
 _Description: Server hostname:
  What will be the domain name for this dtc-xen server? This will be used as a
- part of the URL by the SOAP dtc panel client.
+ part of the URL by the SOAP dtc panel client like nodeXXXX.example.com.
 
 Template: dtc-xen/conf_node_number
 Type: string
@@ -43,7 +41,7 @@ Type: string
 Default: ftp://ftp.us.debian.org/debian
 _Description: Debian repository for setting-up VPSes:
  dtc-xen will use that repository for creating VPSes, and will copy your
- /etc/apt/sources.list inside your VPS (so this will be used ONLY durring
+ /etc/apt/sources.list inside your VPS (so this will be used only durring
  the debootstrap stage of the VPS creation).
 
 Template: dtc-xen/conf_netmask
