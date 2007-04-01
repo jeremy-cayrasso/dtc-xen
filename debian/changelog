@@ -11,7 +11,7 @@ dtc-xen (0.2.8-1) unstable; urgency=low
     (Closes: #414483)
   * Added the configuration possibilities for the lvm volume group.
 
- -- Thomas GOIRAND <thomas@goirand.fr>  Sat, 10 Mar 2007 21:58:03 +0800
+ -- Thomas Goirand <thomas@goirand.fr>  Sat, 10 Mar 2007 21:58:03 +0800
 
 dtc-xen (0.2.6-5) unstable; urgency=low
 
