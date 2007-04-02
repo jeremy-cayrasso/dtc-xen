@@ -1,3 +1,9 @@
+dtc-xen (0.2.9-1) unstable; urgency=low
+
+  * Upstream release correcting a problem with Xen 3.0.4 py libs
+
+ -- Thomas Goirand <thomas@goirand.fr>  Mon,  2 Apr 2007 12:05:02 +0100
+
 dtc-xen (0.2.8-1) unstable; urgency=low
 
   * Added umask to protect against race attack in the /etc/dtc-xen folder
