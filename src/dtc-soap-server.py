@@ -19,6 +19,10 @@ from Properties import *
 # import xm stuff
 sys.path.append( '/usr/lib/python' ) #Required to import from /usr/lib/python for FC4
 import xen.xm.main as xenxm
+try:
+	from xen.xend.XendClient import server
+except:
+	pass
 
 # Checking for Xen version
 print "Checking for Xen version"
@@ -344,7 +348,10 @@ def getVPSState(vpsname):
 			print "No semaphore (fsck/mkos): continuing"
 		try:
 			if xen_version == 3:
-				info = xenxm.server.xend.domain(vpsname)
+				try:
+					info = server.xend.domain(vpsname)
+				except:
+					info = xenxm.server.xend.domain(vpsname)
 				return info
 			else:
 				print "Calling xenxm.server xend_domain"
