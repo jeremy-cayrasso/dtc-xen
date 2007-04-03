@@ -30,6 +30,8 @@ db_get dtc-xen/conf_linux_kernel_name
 conf_linux_kernel_name=$RET
 db_get dtc-xen/conf_lvm_name
 conf_lvm_name=$RET
+db_get dtc-xen/conf_vps_mountpoint
+conf_vps_mountpoint=$RET
 db_get dtc-xen/conf_info_finish_setup
 
 db_unregister dtc-xen/conf_soap_pass
@@ -133,6 +135,7 @@ NETWORK=$conf_network
 BROADCAST=$conf_broadcast
 GATEWAY=$conf_gateway
 LVMNAME=$conf_lvm_name
+VPS_MOUNTPOINT=$conf_vps_mountpoint
 
 KERNELNAME=$conf_linux_kernel_name
 " > ${DTCXEN_ETCPATH}/dtc_create_vps.conf.sh
