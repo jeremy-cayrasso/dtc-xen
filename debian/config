@@ -17,34 +17,34 @@ if [ -f /etc/dtc-xen/soap.conf ] ; then
 fi
 
 # Set the debconf values according to what was saved in the config files
-if [ -z "${soap_server_port}" ] ; then
+if [ ! -z "${soap_server_port}" ] ; then
 	db_set dtc-xen/conf_node_number ${soap_server_port}
 fi
-if [ -z "${soap_server_dtcxen_user}" ] ; then
+if [ ! -z "${soap_server_dtcxen_user}" ] ; then
 	db_set dtc-xen/conf_soap_login ${soap_server_dtcxen_user}
 fi
-if [ -z "${NODE_DOMAIN_NAME}" ] ; then
+if [ ! -z "${NODE_DOMAIN_NAME}" ] ; then
 	db_set dtc-xen/conf_soap_domain_name ${NODE_DOMAIN_NAME}
 fi
-if [ -z "${NODE_NUM}" ] ; then
+if [ ! -z "${NODE_NUM}" ] ; then
 	db_set dtc-xen/conf_node_number ${NODE_NUM}
 fi
-if [ -z "${NETMASK}" ] ; then
+if [ ! -z "${NETMASK}" ] ; then
 	db_set dtc-xen/conf_netmask ${NETMASK}
 fi
-if [ -z "${NETWORK}" ] ; then
+if [ ! -z "${NETWORK}" ] ; then
 	db_set dtc-xen/conf_network ${NETWORK}
 fi
-if [ -z "${BROADCAST}" ] ; then
+if [ ! -z "${BROADCAST}" ] ; then
 	db_set dtc-xen/conf_broadcast ${BROADCAST}
 fi
-if [ -z "${GATEWAY}" ] ; then
+if [ ! -z "${GATEWAY}" ] ; then
 	db_set dtc-xen/conf_gateway ${GATEWAY}
 fi
-if [ -z "${KERNELNAME}" ] ; then
+if [ ! -z "${KERNELNAME}" ] ; then
 	db_set dtc-xen/conf_linux_kernel_name ${KERNELNAME}
 fi
-if [ -z "${LVMNAME}" ] ; then
+if [ ! -z "${LVMNAME}" ] ; then
 	db_set dtc-xen/conf_lvm_name ${LVMNAME}
 fi
 
