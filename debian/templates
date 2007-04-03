@@ -21,7 +21,7 @@ _Description: SOAP server pass:
 Template: dtc-xen/conf_soap_domain_name
 Type: string
 Default: example.com
-_Description: Server hostname:
+_Description: Server domain name:
  What will be the domain name for this dtc-xen server? This will be used as a
  part of the URL by the SOAP dtc panel client like nodeXXXX.example.com.
 
