@@ -1,0 +1,273 @@
+# Translation of dtc-xen_0.2.8-1_es.po to Spanish
+# Copyright (C) 2007 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the dtc-xen package.
+#
+#  Traductores, si no conocen el formato PO, merece la pena leer la
+#  documentación de gettext, especialmente las secciones dedicadas a este
+#  formato, por ejemplo ejecutando:
+#         info -n '(gettext)PO Files'
+#         info -n '(gettext)Header Entry'
+#
+# Equipo de traducción al español, por favor lean antes de traducir
+# los siguientes documentos:
+#
+# - El proyecto de traducción de Debian al español
+#   http://www.debian.org/intl/spanish/
+#   especialmente las notas y normas de traducción en
+#   http://www.debian.org/intl/spanish/notas
+#
+# - La guía de traducción de po's de debconf:
+#   /usr/share/doc/po-debconf/README-trans
+#   o http://www.debian.org/intl/l10n/po-debconf/README-trans
+#
+# Si tiene dudas o consultas sobre esta traducción consulte con el último
+# traductor (campo Last-Translator) y ponga en copia a la lista de
+# traducción de Debian al español (<debian-l10n-spanish@lists.debian.org>)
+#
+# Enrique Matias Sanchez (aka Quique) <cronopios@gmail.com>, 2007.
+msgid ""
+msgstr ""
+"Project-Id-Version: dtc-xen_0.2.8-1_es\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-04-02 04:30+0200\n"
+"PO-Revision-Date: 2007-04-14 14:18+0200\n"
+"Last-Translator: Enrique Matias Sanchez (aka Quique) <cronopios@gmail.com>\n"
+"Language-Team: Spanish <debian-l10n-spanish@lists.debian.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.4\n"
+
+#. Type: string
+#. Description
+#: ../templates:1001
+msgid "Server port:"
+msgstr "Puerto del servidor:"
+
+#. Type: string
+#. Description
+#: ../templates:1001
+msgid "What port should it bind to? Default is 8089."
+msgstr "¿A qué puerto debe asociarse el programa? El predefinido es el 8089."
+
+#. Type: string
+#. Description
+#: ../templates:2001
+msgid "SOAP server login:"
+msgstr "Nombre de usuario para el servidor SOAP:"
+
+#. Type: string
+#. Description
+#: ../templates:2001
+msgid ""
+"dtc-xen will bind a SOAP python server on which a dtc panel can connect to "
+"in order to start, stop create and destroy a VPS. What login do you want to "
+"create on that server."
+msgstr ""
+"dtc-xen utiliza un servidor SOAP escrito en Python, al cual se conectará un "
+"panel de control de dtc para iniciar, detener, crear y destruir servidores "
+"privados virtuales (VPS). ¿Qué nombre de usuario desea crear en el servidor "
+"SOAP?"
+
+#. Type: password
+#. Description
+#: ../templates:3001
+msgid "SOAP server pass:"
+msgstr "Contraseña del servidor SOAP:"
+
+#. Type: password
+#. Description
+#: ../templates:3001
+msgid ""
+"dtc-xen will generate a password (in a .htpasswd file) that will hold the "
+"password for the login you have just configured. What password do you want "
+"to have generated in it?"
+msgstr ""
+"dtc-xen generará un fichero «.htpasswd» que guardará la contraseña del "
+"usuario que acaba de configurar. ¿Qué contraseña desea que tenga este "
+"usuario?"
+
+#. Type: string
+#. Description
+#: ../templates:4001
+msgid "Server hostname:"
+msgstr "Nombre de máquina del servidor:"
+
+#. Type: string
+#. Description
+#: ../templates:4001
+msgid ""
+"What will be the domain name for this dtc-xen server? This will be used as a "
+"part of the URL by the SOAP dtc panel client."
+msgstr ""
+"¿Cuál va a ser el nombre de dominio de este servidor dtc-xen? El panel de "
+"cliente SOAP de dtc lo usará como parte del URL."
+
+#. Type: string
+#. Description
+#: ../templates:5001
+msgid "VPS Server node number:"
+msgstr "Número de nodo del servidor VPS:"
+
+#. Type: string
+#. Description
+#: ../templates:5001
+msgid ""
+"dtc-xen will use that number as a VPS Server number and will make your VPS "
+"numbering using xenXXXXYY with X being the server number (what it's are "
+"asking you at the moment) and Y being the VPS number itself (xenYY). Note "
+"that this node number has to be between 4 and 5 chars, and that it will "
+"create something like nodeXXXX.example.com that will be your server hostname "
+"(which you can later add in your DTC control panel)."
+msgstr ""
+"dtc-xen usará ese número como número de un servidor VPS. dtc numera cada "
+"VPS con el esquema «xenXXXXYY», donde X es el número de servidor (el que se le está pidiendo en este momento), e Y es el propio número de VPS (xenYY). "
+"Tenga en cuenta que este número de nodo debe tener entre 4 y 5 caracteres, y que creará algo así como nodoXXXX.ejemplo.com que será el nombre de máquina de su servidor (que posteriormente puede añadir al panel de control de DTC)."
+
+#. Type: string
+#. Description
+#: ../templates:6001
+msgid "Debian repository for setting-up VPSes:"
+msgstr "Repositorio Debian para configurar los VPS:"
+
+#. Type: string
+#. Description
+#: ../templates:6001
+msgid ""
+"dtc-xen will use that repository for creating VPSes, and will copy your /etc/"
+"apt/sources.list inside your VPS (so this will be used ONLY durring the "
+"debootstrap stage of the VPS creation)."
+msgstr ""
+"dtc-xen utilizará ese repositorio para crear los VPS, y copiará su «/etc/apt/"
+"sources.list» en el VPS (de modo que esto SÓLO se usará durante la etapa de "
+"«debootstrap» de la creación del VPS)."
+
+#. Type: string
+#. Description
+#: ../templates:7001
+msgid "Netmask to be setup in the VPSes:"
+msgstr "Máscara de red de los VPS:"
+
+#. Type: string
+#. Description
+#: ../templates:7001
+msgid ""
+"Please enter the Netmask to use when doing the VPS network customization "
+"when dtc-xen creates a VPS."
+msgstr ""
+"Introduzca la máscara de red a usar durante la configuración de la red de "
+"los VPS cuando dtx-xen crea uno."
+
+#. Type: string
+#. Description
+#: ../templates:8001
+msgid "Network to be setup in the VPSes:"
+msgstr "Red a configurar en los VPS:"
+
+#. Type: string
+#. Description
+#: ../templates:8001
+msgid ""
+"Please enter the Network address to use when doing the VPS network "
+"customization when dtc-xen creates a VPS."
+msgstr ""
+"Introduzca la dirección de red a usar durante la configuración de la red de "
+"los VPS cuando dtc-xen crea uno."
+
+#. Type: string
+#. Description
+#: ../templates:9001
+msgid "Broadcast to be setup in the VPSes:"
+msgstr "Dirección de difusión de los VPS:"
+
+#. Type: string
+#. Description
+#: ../templates:9001
+msgid ""
+"Please enter the network broadcast address to use when doing the VPS network "
+"customization when dtc-xen creates a VPS."
+msgstr ""
+"Introduzca la dirección de difusión de red a usar durante la configuración "
+"de la red de los VPS cuando dtc-xen crea uno."
+
+#. Type: string
+#. Description
+#: ../templates:10001
+msgid "Gateway to be setup in the VPSes:"
+msgstr "Pasarela de los VPS:"
+
+#. Type: string
+#. Description
+#: ../templates:10001
+msgid ""
+"Please enter the network gateway address to use when doing the VPS network "
+"customization when dtc-xen creates a VPS."
+msgstr ""
+"Introduzca la dirección de la pasarela de red a usar durante la "
+"configuración de la red de los VPS cuando dtc-xen crea uno."
+
+#. Type: string
+#. Description
+#: ../templates:11001
+msgid "Xen Kernel release name:"
+msgstr "Nombre de la versión del núcleo Xen:"
+
+#. Type: string
+#. Description
+#: ../templates:11001
+msgid ""
+"Enter here the kernel version number as it appears in the uname -a. A kernel "
+"domU with that name must be located in /boot (example: vmlinuz-2.6.16.27-"
+"xenU) and it's corresponding modules must be in /lib/modules."
+msgstr ""
+"Introduzca aquí el número de versión del núcleo, tal y como lo muestra la "
+"orden «uname -a». Debe haber un núcleo domU con ese nombre en «/boot» (por "
+"ejemplo: vmlinuz-2.6.16.27-xenU), y sus módulos correspondientes deben estar "
+"en «/lib/modules»."
+
+#. Type: string
+#. Description
+#: ../templates:12001
+msgid "Volume group where to create VPS:"
+msgstr "Grupo de volúmenes en el que crear VPS:"
+
+#. Type: string
+#. Description
+#: ../templates:12001
+msgid ""
+"dtc-xen creates physical partitions in a lvm volume group that you have to "
+"name here. This volume group has to be big enough to hold all the VMs you "
+"will setup later on this server. If you don't want to use lvm (because you "
+"don't care if loopback is slower), leave this as default and dtc-xen wont "
+"use it anyway."
+msgstr "dtc-xen crea particiones físicas en un grupo de volúmenes LVM al que tiene que dar nombre aquí. Este grupo de volúmenes tiene que ser suficientemente grande como para tener todas las máquinas virtuales que vaya a configurar más adelante en este servidor. Si no desea usar LVM (porque no le preocupa si el «loopback» es más lento), déjelo de la forma predefinida y dtc-xen no lo usará."
+
+#. Type: note
+#. Description
+#: ../templates:13001
+msgid "How to finish the install"
+msgstr "Cómo finalizar la instalación"
+
+#. Type: note
+#. Description
+#: ../templates:13001
+msgid ""
+"To finish the installation, you need to launch /usr/sbin/dtc-"
+"xen_finish_install. This script will remove port forwarding from your "
+"sshd_config and add the grant of xm console to the group xenusers so your "
+"users can loggin to the physical console. It will then try to download the "
+"files needed to setup Gentoo and CentOS into your VMs. Note that the system "
+"is currently safe (nobody can connect to a physical console as xenXX, they "
+"will be rejected because the /etc/sudoers is not changed), but a basic user "
+"wont be able to log into his physical console using ssh."
+msgstr ""
+"Para terminar la instalación, debe lanzar «/usr/sbin/dtc-"
+"xen_finish_install». Este programa eliminará la redirección de puertos de "
+"sshd_config y autorizará al grupo «xenusers» a usar la consola «xm», a fin "
+"de que los usuarios puedan ingresar al sistema en la consola física. Después "
+"intentará descargar los ficheros necesarios para configurar Gentoo y CentOS "
+"en sus máquinas virtuales. Observe que actualmente el sistema es seguro "
+"(nadie puede conectarse a una consola física como xenXX, serán rechazados "
+"porque no se modifica «/etc/sudoers»), pero un usuario básico no podrá "
+"ingresar en su consola física usando ssh."
+
