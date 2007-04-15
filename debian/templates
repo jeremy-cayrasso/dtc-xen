@@ -103,3 +103,12 @@ _Description: How to finish the install
  safe (nobody can connect to a physical console as xenXX, they will
  be rejected because the /etc/sudoers is not changed), but a basic
  user wont be able to log into his physical console using ssh.
+
+Template: dtc-xen/conf_vps_mountpoint
+Type: string
+Default: /var/lib/dtc-xen/mnt
+_Description: VPS mountpoint:
+ In order to do the setup of the VPS it's managing, dtc-xen will mount LVM or
+ file loopback partition on the dom0 of your Xen server. This will also be used
+ to automaticaly set your /etc/fstab mount points so you can do maintenance and
+ mount VPSes faster. Enter here the path to this mount points.

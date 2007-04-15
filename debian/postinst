@@ -38,6 +38,7 @@ db_unregister dtc-xen/conf_soap_pass
 db_stop
 
 VERBOSE_INSTALL=yes
+DTCXEN_ETCPATH=/etc/dtc-xen
 
 XEN_USER_HOME=/var/lib/dtc-xen/ttyssh_home
 MKTEMP="mktemp -t"
@@ -53,8 +54,7 @@ else
 	fi
 fi
 
-DTCXEN_ETCPATH=/etc/dtc-xen
-
+mkdir -p ${XEN_USER_HOME}
 mkdir -p $DTCXEN_ETCPATH
 CWD=`pwd`
 cd $DTCXEN_ETCPATH
@@ -76,7 +76,7 @@ fi
 
 # Check if we have an old passphrase stored!
 if [ -e ${DTCXEN_ETCPATH}/soap.conf ] ; then
-	conf_ssl_passphrase=`grep soap_server_pass_phrase /etc/dtc-xen/soap.conf | cut -d"=" -f 2`
+	conf_ssl_passphrase=`grep soap_server_pass_phrase ${DTCXEN_ETCPATH}/soap.conf | cut -d"=" -f 2`
 	if [ -z ""$conf_ssl_passphrase ] ; then
 		echo "Detected empty password: regenerating it!"
 		conf_ssl_passphrase=`dd if=/dev/random bs=64 count=1 2>|/dev/null | md5sum | cut -d' ' -f1`
@@ -124,6 +124,7 @@ soap_server_pass_phrase=${conf_ssl_passphrase}
 soap_server_dtcxen_user=${conf_soap_login}
 " >${DTCXEN_ETCPATH}/soap.conf
 
+# Create the sh config file for dtc_reinstall_os and dtc_setup_disk
 echo "#!/bin/sh
 # This the configuration file for dtc-xen setup scripts (called uppon VM reinstallation)
 
@@ -144,7 +145,6 @@ chmod 600 ${DTCXEN_ETCPATH}/*
 
 cd $CWD
 
-# Add the group xenusers
 if getent group xenusers >/dev/null ; then
 	echo "Group xenusers already exists in /etc/group"
 else
@@ -160,37 +160,18 @@ dtcaddxenuser () {
 		echo "User already exists "${1}
 	else
 		echo "Adding user "${1}
-		# Should be using $XEN_USER_HOME ...
-		adduser --quiet --disabled-password --ingroup xenusers --home /var/lib/dtc-xen/ttyssh_home/${1} --shell /bin/dtc-xen_userconsole --gecos dtc-xen-user ${1}
+		adduser --quiet --disabled-password --ingroup xenusers --home ${XEN_USER_HOME}/${1} --shell /bin/dtc-xen_userconsole --gecos dtc-xen-user ${1}
 	fi
 	# make sure all the settings are correct as per this version of the package, and create the .ssh dir for uploading the ssh public key file
 	mkdir -p "${XEN_USER_HOME}/${1}/.ssh"
 	chown -R ${1}:xenusers "${XEN_USER_HOME}/${1}"
 	usermod -d "${XEN_USER_HOME}/${1}" -g xenusers -s /bin/dtc-xen_userconsole ${1}
-	# need to ensure /home/${1} exists
 }
 
 mkdir -p $XEN_USER_HOME
-# To be replaced by: `seq -w 1 19`; do dtcaddxenuser xen$i; done
-dtcaddxenuser xen01
-dtcaddxenuser xen02
-dtcaddxenuser xen03
-dtcaddxenuser xen04
-dtcaddxenuser xen05
-dtcaddxenuser xen06
-dtcaddxenuser xen07
-dtcaddxenuser xen08
-dtcaddxenuser xen09
-dtcaddxenuser xen10
-dtcaddxenuser xen11
-dtcaddxenuser xen12
-dtcaddxenuser xen13
-dtcaddxenuser xen14
-dtcaddxenuser xen15
-dtcaddxenuser xen16
-dtcaddxenuser xen17
-dtcaddxenuser xen18
-dtcaddxenuser xen19
+for i in `seq -w 1 19`; do
+	dtcaddxenuser xen$i
+done
 
 #DEBHELPER#
 
