@@ -8,6 +8,14 @@ if len(sys.argv)!=2:
     print "Syntax: %s <rrdbasename>"%sys.argv[0]
     sys.exit(1)
 
+# first check for running xm list, and abort if there is one running already
+status=os.system("/usr/bin/pgrep -f \"xm list\"")
+# status will be 1 (ie, it couldn't find an xm list running)
+# status will be 0 (if there is one already running)
+if status == 0:
+        print "xm list is already running, bail out here"
+        sys.exit(1)
+
 now=str(int(time.time()))
 basename=sys.argv[1]
 data=os.popen2("/usr/sbin/xm list")[1].read()
