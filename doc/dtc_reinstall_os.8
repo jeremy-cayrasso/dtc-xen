@@ -10,6 +10,10 @@ dtc_create_vps.sh \- reinstall an operating system in a VM
 [
 .I DISTRO
 ]
+[
+.I lvm|loopback
+]
+
 .SH DESCRIPTION
 .B dtc_reinstall_os.sh
 This shell script is a part of the dtc-xen
@@ -33,6 +37,10 @@ Xen if you need it (with untrusted users / unknown customers for example).
 DISTRO is an optional parameter that can be debian, centos, gentoo or netbsd.
 If ommited it will use debian as default. Note that for centos and gentoo,
 you need to have the install files downloaded in /usr/src.
+
+You can then specify lvm or loopback. Currently the only value the script compares
+to is lvm (or anything else), but this might change in the future. If ommited, then
+lvm loopback is used.
 
 .SH "VERSION"
 This documentation describes
