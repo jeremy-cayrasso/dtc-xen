@@ -302,8 +302,12 @@ def getNetworkUsage(vpsname):
 			devinfoFile=open("/proc/net/dev", 'r')
 			try:
 				for line in devinfoFile:
+					line=line.strip()
 					# split the line into device, and the rest
-					device,stats=line.split(':')
+					columns=line.split(':')
+					if len(columns) == 1:
+						continue
+					device,stats=columns
 					# strip off whitespace so we can match
 					device = device.strip()
 					if device.startswith(networkDeviceName):
@@ -359,7 +363,7 @@ def getCPUUsage(vpsname):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:	
 		info = getVPSState(vpsname)
-		return info['domain']['cpu_time']
+		return xenxm.sxp.child_value(info, 'cpu_time', '0')
 	return "NOTOK"		
 
 def getVPSState(vpsname):
