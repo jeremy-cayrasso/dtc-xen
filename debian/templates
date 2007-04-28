@@ -6,7 +6,6 @@
 #
 # Even minor modifications require translation updates and such
 # changes should be coordinated with translators and reviewers.
-
 Template: dtc-xen/conf_soap_port
 Type: string
 Default: 8089
@@ -99,7 +98,7 @@ _Description: Xen kernel release name:
  .
  A kernel domU with that name must be located in /boot (example:
  vmlinuz-2.6.16.27-xenU) and its corresponding modules must be in
-  /lib/modules.
+ /lib/modules.
 
 Template: dtc-xen/conf_lvm_name
 Type: string
