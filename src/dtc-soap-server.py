@@ -291,35 +291,76 @@ def getNetworkUsage(vpsname):
 	if username == dtcxen_user or username == vpsname:
 		info = getVPSState(vpsname)
 		id = info[1][1]
+		networkDeviceName="eth0"
 		if vpsname=="Domain-0":
-			devinfo=os.popen2("cat /proc/net/dev | grep ' eth0'")[1].read()
+			networkDeviceName="eth0"
 		else:
-			devinfo=os.popen2("cat /proc/net/dev | grep 'vif"+id+"\.'")[1].read()
-		rows=re.split("\n", devinfo)
+			networkDeviceName="vif%s" % id
 		incount = 0
 		outcount = 0
-		for row in rows:
-			columns=re.split("[\t ]+",row)
-			if (len(columns)==16):
-				one,a,a,a,a,a,a,a,eight,a,a,a,a,a,a,a=columns
-			elif (len(columns)==17):
-				a,one,a,a,a,a,a,a,a,eight,a,a,a,a,a,a,a=columns
-			elif (len(columns)==1):
-				# this is an empty row, continue
-				continue
-			else:
-				# this is an unknown row, continue
-				print str(columns) + str(len(columns))
-				continue
-			# parse away any remaining : in one variable
-			if re.search(":",one):
-				one=re.split(":",one)[1]
-			# print vpsname +' '+ id +' '+ one +' '+ eight
-			incount = incount + int(one)
-			outcount = outcount + int(eight)
-		return "%d,%d" % (incount,outcount)
-        else:
-                return "NOTOK"
+		if os.path.exists("/proc/net/dev"):
+			devinfoFile=open("/proc/net/dev", 'r')
+			try:
+				for line in devinfoFile:
+					# split the line into device, and the rest
+					device,stats=line.split(':')
+					# strip off whitespace so we can match
+					device = device.strip()
+					if device.startswith(networkDeviceName):
+						columns=stats.split()
+						incount = incount + int(columns[0])
+						outcount = outcount + int(columns[8])
+			finally:
+				devinfoFile.close()
+			return "%d,%d" % (incount,outcount)
+		else:
+			return "NOTOK"
+			
+# return the accumulated IO stat of a VPS disk and swap
+def getIOUsage(vpsname):
+	username = getUser()
+	if username == dtcxen_user or username == vpsname:	
+		disk="/dev/mapper/lvm1-%s" % vpsname
+		swap="/dev/mapper/lvm1-%sswap" % vpsname
+		
+		if os.path.exists(disk):
+			diskStat = os.stat(disk)
+			swapStat = os.stat(swap)
+			diskMinor=os.minor(diskStat.st_rdev)
+			swapMinor=os.minor(swapStat.st_rdev)
+	
+			diskBlock="/sys/block/dm-%s/stat" % diskMinor
+			diskBlockFile=open(diskBlock,'r')
+			diskIOStat=0
+			try:
+				blockStats = diskBlockFile.readline()
+				columns=blockStats.split()
+				# read the disk IO total from column 11
+				diskIOStat=columns[10]
+			finally:
+			  diskBlockFile.close()
+			        
+			swapBlock="/sys/block/dm-%s/stat" % swapMinor
+			swapBlockFile=open(swapBlock)
+			swapIOStat=0
+			try:
+				blockStats = swapBlockFile.readline()
+				columns=blockStats.split()
+        # read the swap IO total from column 11
+				swapIOStat=columns[10]
+			finally:
+			  swapBlockFile.close()
+			        
+			return diskIOStat,swapIOStat
+	return "NOTOK"		
+	
+# return the accumulated IO stat of a VPS disk and swap
+def getCPUUsage(vpsname):
+	username = getUser()
+	if username == dtcxen_user or username == vpsname:	
+		info = getVPSState(vpsname)
+		return info['domain']['cpu_time']
+	return "NOTOK"		
 
 def getVPSState(vpsname):
 	username = getUser()
@@ -477,6 +518,8 @@ soapserver.registerFunction(fsckVPSpartition)
 soapserver.registerFunction(changeBSDkernel)
 soapserver.registerFunction(setupLVMDisks)
 soapserver.registerFunction(getNetworkUsage)
+soapserver.registerFunction(getIOUsage)
+soapserver.registerFunction(getCPUUsage)
 print "Starting dtc-xen python SOAP server at https://%s:%s/ ..." % (server_host, server_port)
 while True:
 	try:
