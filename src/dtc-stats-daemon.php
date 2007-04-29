@@ -179,7 +179,12 @@ if (!connect2base())
 				$cpu_diff = 0;
 				if ($vps_last_cpu > 0)
 				{
-					$cpu_diff = $cpu_usage - $vps_last_cpu;
+					if ($vps_last_cpu < $cpu_usage)
+					{
+						$cpu_diff = $cpu_usage - $vps_last_cpu;
+					} else {
+						$cpu_diff = $cpu_usage;
+					}
 				}
 				echo "Used $cpu_diff CPU time over $time_diff seconds...\n";
 				
@@ -189,7 +194,12 @@ if (!connect2base())
 				$network_in_diff = 0;
 				if ($vps_last_network_in > 0)
 				{
-					$network_in_diff = $network_usage_in - $vps_last_network_in;
+					if ($vps_last_network_in < $network_usage_in)
+					{
+						$network_in_diff = $network_usage_in - $vps_last_network_in;
+					} else {
+						$network_in_diff = $network_usage_in;
+					}
 				}
 				
 				echo "Used $network_in_diff network incoming over $time_diff seconds...\n";
@@ -197,7 +207,12 @@ if (!connect2base())
 				$network_out_diff = 0;
 				if ($vps_last_network_out > 0)
 				{
-					$network_out_diff = $network_usage_out - $vps_last_network_out;
+					if ($vps_last_network_out < $network_usage_out)
+					{
+						$network_out_diff = $network_usage_out - $vps_last_network_out;
+					} else {
+						$network_out_diff = $network_usage_out;
+					}
 				}
 				
 				echo "Used $network_out_diff network outgoing over $time_diff seconds...\n";
@@ -206,14 +221,24 @@ if (!connect2base())
 				$diskio_diff = 0;
 				if ($vps_last_diskio > 0)
 				{
-					$diskio_diff = $io_usage_disk - $vps_last_diskio;
+					if ($vps_last_diskio < $io_usage_disk)
+					{
+						$diskio_diff = $io_usage_disk - $vps_last_diskio;
+					} else {
+						$diskio_diff = $io_usage_disk;
+					}
 				}
 				
 				echo "Used $diskio_diff disk IO over $time_diff seconds...\n";
 				$swapio_diff = 0;
 				if ($vps_last_swapio > 0)
 				{
-					$swapio_diff = $io_usage_swap - $vps_last_swapio;
+					if ($vps_last_swapio < $io_usage_swap)
+					{
+						$swapio_diff = $io_usage_swap - $vps_last_swapio;
+					} else {
+						$swapio_diff = $io_usage_swap;
+					}
 				}
 				
 				echo "Used $swapio_diff swap IO over $time_diff seconds...\n";
