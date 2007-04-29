@@ -290,7 +290,7 @@ def getNetworkUsage(vpsname):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
 		info = getVPSState(vpsname)
-		id = info[1][1]
+		id = int(xenxm.sxp.child_value(info, 'id', '-1'))
 		networkDeviceName="eth0"
 		if vpsname=="Domain-0":
 			networkDeviceName="eth0"
