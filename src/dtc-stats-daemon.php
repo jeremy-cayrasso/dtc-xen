@@ -171,7 +171,7 @@ if (!connect2base())
 				
 			$current_time = time();
 			// if we have actually run before, then we can calculate stats since last run
-			if (isset($vps_last_run))
+			if (isset($vps_last_run) && $vps_last_run > 0)
 			{
 				echo "We have a last run...\n";
 				// ignore anything that has a last run of zero		
