@@ -36,7 +36,7 @@ $conf_mysql_login="root";
 $conf_mysql_pass="MYSQL_ROOT_PASSWORD";
 $conf_mysql_db="dtc";
 #$conf_time_delay_in_seconds=10*60;
-$conf_time_delay_in_seconds=20;
+$conf_time_delay_in_seconds=60;
 
 // TODO: need to pull this from dtc config
 $pro_mysql_vps_server_table="vps_server";
@@ -80,15 +80,19 @@ if (!connect2base())
 		}
 		$last_loop = time();
 		
-		$query = "SELECT * FROM vps;";
-		$result = mysql_query($query)or die("Cannot query $query !!!".mysql_error());
-		$num_rows = mysql_num_rows($result);
-		for ($i = 0; $i < $num_rows; $i++)
+		$vps_query = "SELECT * FROM vps;";
+		$vps_result = mysql_query($vps_query)or die("Cannot query $query !!!".mysql_error());
+		$vps_num_rows = mysql_num_rows($vps_result);
+		echo "We have to process $vps_num_rows VPS accounts...\n";
+		for ($i = 0; $i < $vps_num_rows; $i++)
 		{
-			$row = mysql_fetch_array($result);
+			// sleep 5 seconds between every soap call, we don't want to kill the soap servers
+			sleep (5);
+			echo "$i/$vps_num_rows\n";
+			$vps_row = mysql_fetch_array($vps_result);
 			// print_r ($row);
-			$vps_server = $row['vps_server_hostname'];
-			$vps_name = "xen" . $row['vps_xen_name'];
+			$vps_server = $vps_row['vps_server_hostname'];
+			$vps_name = "xen" . $vps_row['vps_xen_name'];
 			$cpu_usage = 0;
 			$io_usage_disk = 0;
 			$io_usage_swap = 0;
@@ -142,33 +146,35 @@ if (!connect2base())
 			$current_month = date("m");
 			$current_year = date("Y");
 			
-			$query = "SELECT * from vps_stats where vps_server_hostname='$vps_server' and vps_xen_name='$vps_name' and month='$current_month' and year='$current_year';";
-			$result = mysql_query($query)or print("Cannot query $query !!!".mysql_error());
-			$num_rows = mysql_num_rows($result);
+			$last_query = "SELECT * from vps_stats where vps_server_hostname='$vps_server' and vps_xen_name='$vps_name' and month='$current_month' and year='$current_year';";
+			$last_result = mysql_query($last_query)or print("Cannot query $query !!!".mysql_error());
+			$last_num_rows = mysql_num_rows($last_result);
+			// reset this variable
+			$vps_last_run = 0;
 			
 			// we need to insert a row here if it doesn't exist yet
-			if ($num_rows == 0)
+			if ($last_num_rows == 0)
 			{
-					$query = "INSERT INTO vps_stats (vps_server_hostname,vps_xen_name,month,year) values ('$vps_server','$vps_name','$current_month','$current_year');";
-					$result = mysql_query($query)or print("Cannot query $query !!!".mysql_error());
-			} else if ($num_rows == 1) {
-				$row = mysql_fetch_array($result);
-				$vps_last_run = $row['last_run'];
-				$vps_last_cpu = $row['cputime_last'];
-				$vps_last_network_in = $row['network_in_last'];
-				$vps_last_network_out = $row['network_out_last'];
-				$vps_last_diskio = $row['diskio_last'];
-				$vps_last_swapio = $row['swapio_last'];
+					$insert_query = "INSERT INTO vps_stats (vps_server_hostname,vps_xen_name,month,year) values ('$vps_server','$vps_name','$current_month','$current_year');";
+					$insert_result = mysql_query($insert_query)or print("Cannot query $query !!!".mysql_error());
+			} else if ($last_num_rows == 1) {
+				$last_row = mysql_fetch_array($last_result);
+				$vps_last_run = $last_row['last_run'];
+				$vps_last_cpu = $last_row['cputime_last'];
+				$vps_last_network_in = $last_row['network_in_last'];
+				$vps_last_network_out = $last_row['network_out_last'];
+				$vps_last_diskio = $last_row['diskio_last'];
+				$vps_last_swapio = $last_row['swapio_last'];
 			} else {
 				echo "Corrupt vps_stats table, please check...\n";
 			}
 				
+			$current_time = time();
 			// if we have actually run before, then we can calculate stats since last run
 			if (isset($vps_last_run))
 			{
 				echo "We have a last run...\n";
 				// ignore anything that has a last run of zero		
-				$current_time = time();
 				$time_now = $current_time;		
 				echo "Time now $time_now\n";
 				echo "Time last run $vps_last_run\n";
@@ -244,17 +250,17 @@ if (!connect2base())
 				echo "Used $swapio_diff swap IO over $time_diff seconds...\n";
 				
 				// finally populate the details into the table
-				$query = "UPDATE vps_stats set last_run='$current_time',cputime_last='$cpu_usage',cpu_usage=cpu_usage + '$cpu_diff',network_in_last='$network_usage_in',network_out_last='$network_usage_out',";
-				$query .= "network_in_count=network_in_count+'$network_in_diff',network_out_count=network_out_count+'$network_out_diff',diskio_last='$io_usage_disk',swapio_last='$io_usage_swap',diskio_count=diskio_count + '$diskio_diff',swapio_count=swapio_count + '$swapio_diff'";
-				$query .= " where vps_server_hostname='$vps_server' and vps_xen_name='$vps_name' and month='$current_month' and year='$current_year';";
-				$result = mysql_query($query)or print("Cannot query $query !!!".mysql_error());
+				$update_query = "UPDATE vps_stats set last_run='$current_time',cputime_last='$cpu_usage',cpu_usage=cpu_usage + '$cpu_diff',network_in_last='$network_usage_in',network_out_last='$network_usage_out',";
+				$update_query .= "network_in_count=network_in_count+'$network_in_diff',network_out_count=network_out_count+'$network_out_diff',diskio_last='$io_usage_disk',swapio_last='$io_usage_swap',diskio_count=diskio_count + '$diskio_diff',swapio_count=swapio_count + '$swapio_diff'";
+				$update_query .= " where vps_server_hostname='$vps_server' and vps_xen_name='$vps_name' and month='$current_month' and year='$current_year';";
+				$update_result = mysql_query($update_query)or print("Cannot query $query !!!".mysql_error());
 			} else {
 				echo "We don't have a last run...\n";
 				// otherwise we just need to zero out the count columns, and have the last columns updated
-				$query = "UPDATE vps_stats set last_run='$current_time',cputime_last='$cpu_usage',cpu_usage='0',network_in_last='$network_usage_in',network_out_last='$network_usage_out',";
-				$query .= "network_in_count='0',network_out_count='0',diskio_last='$io_usage_disk',swapio_last='$io_usage_swap',diskio_count='0',swapio_count='0'";
-				$query .= " where vps_server_hostname='$vps_server' and vps_xen_name='$vps_name' and month='$current_month' and year='$current_year';";
-				$result = mysql_query($query)or print("Cannot query $query !!!".mysql_error());
+				$update_query = "UPDATE vps_stats set last_run='$current_time',cputime_last='$cpu_usage',cpu_usage='0',network_in_last='$network_usage_in',network_out_last='$network_usage_out',";
+				$update_query .= "network_in_count='0',network_out_count='0',diskio_last='$io_usage_disk',swapio_last='$io_usage_swap',diskio_count='0',swapio_count='0'";
+				$update_query .= " where vps_server_hostname='$vps_server' and vps_xen_name='$vps_name' and month='$current_month' and year='$current_year';";
+				$update_result = mysql_query($update_query)or print("Cannot query $query !!!".mysql_error());
 			}
 			
 		}
