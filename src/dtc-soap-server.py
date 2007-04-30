@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import sys
+import sys, traceback
 import os
 import SOAPpy
 import commands
@@ -154,7 +154,7 @@ def listStartedVPS():
 def changeVPSxmPassword(vpsname,password):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
-		commands.getstatusoutput("(echo %s; sleep 1; echo %s;) | passwd %s" % (password,password,vpsname))
+		output = commands.getstatusoutput("(echo %s; sleep 1; echo %s;) | passwd %s" % (password,password,vpsname))
 		return "OK"
 	else:
 		return "NOTOK"
@@ -162,7 +162,7 @@ def changeVPSxmPassword(vpsname,password):
 def changeVPSsoapPassword(vpsname,password):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
-		commands.getstatusoutput("htpasswd -b /etc/dtc-xen/htpasswd %s %s" % (vpsname,password))
+		output = commands.getstatusoutput("htpasswd -b /etc/dtc-xen/htpasswd %s %s" % (vpsname,password))
 		return "OK"
 	else:
 		return "NOTOK"
@@ -191,29 +191,21 @@ def fsckVPSpartition(vpsname):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
 		filename = "/var/lib/dtc-xen/states/%s" % vpsname
-		try:
-			fd = open(filename, 'r')
-			return "NOTOK"
-		except:
-			# Write the semaphore file before proceeding
-			fd2 = open(filename, 'w')
-			fd2.write("fsck\n")
-			fd2.close()
-			# Fork the daemon
-			pid = os.fork()
-			if pid > 0:
-				return "Ok, started fsck."
-			else:
-				# Do the fsck
-				print "Starting file system check for %s" % vpsname
-				commands.getstatusoutput("/sbin/fsck.ext3 -p /dev/lvm1/%s" %vpsname)
-				print "fsck for VPS %s finished" % vpsname
-				# Delete the semaphore file
-				os.remove(filename)
-				os._exit(0)
-#				sys.exit(0)
-	else:
-		return "NOTOK"
+		status = getVPSState(vpsname)
+		if status != "Not running":
+			print "Status isn't good, we are already in process, or actually live"
+			return "NOTOK, %s" % status
+		# Write the semaphore file before proceeding
+		fd2 = open(filename, 'w')
+		fd2.write("fsck\n")
+		print "Starting file system check for %s" % vpsname
+		cmd = "/sbin/fsck.ext3"
+		args = [cmd, "-p","/dev/lvm1/%s" % vpsname ]
+		spawnedpid = os.spawnv(os.P_NOWAIT, cmd, args ) 
+		fd2.write("%s\n" % spawnedpid)
+		fd2.close()
+		return "OK"
+	return "NOTOK"
 
 def changeBSDkernel(vpsname,ramsize,kerneltype,allipaddrs):
 	username = getUser()
@@ -221,42 +213,38 @@ def changeBSDkernel(vpsname,ramsize,kerneltype,allipaddrs):
 		print "Changing kernel of a BSD VM: vps: %s ram: %s kernel: %s" % (vpsname,ramsize,kerneltype)
 		cmd = "dtc_change_bsd_kernel %s %s %s '%s'" % (vpsname,ramsize,kerneltype,allipaddrs)
 		print cmd
-		commands.getstatusoutput(cmd)
+		output = commands.getstatusoutput(cmd)
 		return "OK"
 
 # Take care! This time, the vpsname has to be only the number (eg XX and not xenXX)
 def reinstallVPSos(vpsname,ostype,hddsize,ramsize,ipaddr,imagetype='lvm'):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
-		filename = "/var/lib/dtc-xen/states/xen%s" % vpsname
+		filename = "/var/lib/dtc-xen/states/%s" % vpsname
 		print "Checking %s for mkos" % vpsname
-		try:
-			print "Semaphore file existed: abording"
-			fd = open(filename, 'r')
-			return "NOTOK"
-		except:
-			fd2 = open(filename, 'w')
-			fd2.write("mkos\n")
-			pid = os.fork()
-			if pid > 0:
-				return "Ok, started mkos."
-			else:
-				print "Starting reinstallation of operating system for xen%s" % vpsname
-				cmd = "/usr/sbin/dtc_reinstall_os %s %s %s '%s' %s %s" % (vpsname,hddsize,ramsize,ipaddr,ostype,imagetype)
-				print cmd
-				commands.getstatusoutput(cmd)
-				print "mkos for VPS %s finished: removing file" % vpsname
-				os.remove(filename)
-				os._exit(0)
-	else:
-		return "NOTOK"
+		status = getVPSState(vpsname)
+		if status != "Not running":
+			return "NOTOK, %s" % status
+		# Write the semaphore file before proceeding
+		fd2 = open(filename, 'w')
+		fd2.write("mkos\n")
+		print "Starting reinstallation of operating system for xen%s" % vpsname
+		cmd = "/usr/sbin/dtc_reinstall_os"
+		args = [cmd, vpsname, hddsize, ramsize, "'%s'" % ipaddr, ostype, imagetype]
+		print cmd
+		print args
+		spawnedpid = os.spawnv(os.P_NOWAIT, cmd, args )
+		fd2.write("%s\n" % spawnedpid)
+		fd2.close()
+		return "OK, started mkos."
+	return "NOTOK"
 
 def setupLVMDisks(vpsname,hddsize,swapsize,imagetype='lvm'):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
 		print "Starting disk setup for xen%s: %s HHD, %s SWAP, %s imagetype" % (vpsname,hddsize,swapsize,imagetype)
 		cmd = "/usr/sbin/dtc_setup_vps_disk %s %s %s %s" % (vpsname,hddsize,swapsize,imagetype)
-		commands.getstatusoutput(cmd)
+		output = commands.getstatusoutput(cmd)
 		print "Commande: %s" % cmd
 		return "OK"
 	else:
@@ -374,21 +362,40 @@ def getVPSState(vpsname):
         	try:
 			print "Opening %s" % filename
 	        	fd = open(filename, 'r')
-	        	for line in fd:
-				print "Checking fsck"
-	        		if string.find(line,"fsck") != -1:
-	        			print "Founded running fsck!"
-					fd.close()
-	        			return "fsck"
-				else:
-					print "Checking mkos"
-					if string.find(line,"mkos") != -1:
-						print "Founded running mkos!"
+			command = fd.readline()
+			print "Checking fsck"
+			if string.find(command,"fsck") != -1:
+				fsckpid = int(fd.readline())
+				print "fsck process meant to be at %s" % fsckpid
+				try:
+					returnstatus = os.waitpid(fsckpid, os.WNOHANG)			
+					if returnstatus == 0:
+						print "Founded running fsck!"
 						fd.close()
-						return "mkos"
-			fd.close()
-			print "State file exists, but couldn't find content!"
-			return "Error in state file!"
+						return "fsck"
+				except:
+					print "Failed to find running process... delete state file..."
+				fd.close()
+				os.remove(filename)
+			else:			
+				print "Checking mkos"
+				if string.find(command,"mkos") != -1:
+					mkospid = int(fd.readline())
+					print "mkos process meant to be at %s" % mkospid
+					try:
+						returnstatus = os.waitpid(mkospid, os.WNOHANG)			
+						if returnstatus == 0:
+							print "Founded running mkos!"
+							fd.close()
+							return "mkos"
+					except:
+						print "Failed to find running process... delete state file..."
+					fd.close()
+					os.remove(filename)
+				else:
+					print "Invalid state file..."
+					fd.close()
+					return "NOTOK, invalid state file"
 		except:
 			print "No semaphore (fsck/mkos): continuing"
 		try:
@@ -530,6 +537,7 @@ while True:
 		soapserver.serve_forever()
 	except KeyboardInterrupt:
 		print "Shutting down..."
+		sys.stdout.flush()
 		sys.exit(0)
 	except Exception, e:
 		print "Caught exception handling connection: ", e
