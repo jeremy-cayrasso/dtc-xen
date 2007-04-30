@@ -2,6 +2,8 @@ dtc-xen (0.2.9-1) unstable; urgency=low
 
   * Upstream release correcting a problem with Xen 3.0.4 py libs
   * Now Recommends: xen-utils-common (Closes: #418254)
+  * Added brasilian portugese debconf po template thanks to André Luís Lopes
+    <andrelop@debian.org> (Closes: #421517)
   * Added spanish debconf po template thanks to Enrique Matias Sanchez (aka
     Quique) <cronopios@gmail.com> (Closes: #419213)
 
