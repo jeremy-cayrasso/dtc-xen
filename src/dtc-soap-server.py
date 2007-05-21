@@ -220,9 +220,9 @@ def changeBSDkernel(vpsname,ramsize,kerneltype,allipaddrs):
 def reinstallVPSos(vpsname,ostype,hddsize,ramsize,ipaddr,imagetype='lvm'):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
-		filename = "/var/lib/dtc-xen/states/%s" % vpsname
+		filename = "/var/lib/dtc-xen/states/xen%s" % vpsname
 		print "Checking %s for mkos" % vpsname
-		status = getVPSState(vpsname)
+		status = getVPSState("xen%s" % vpsname)
 		if status != "Not running":
 			return "NOTOK, %s" % status
 		# Write the semaphore file before proceeding
@@ -369,10 +369,12 @@ def getVPSState(vpsname):
 				print "fsck process meant to be at %s" % fsckpid
 				try:
 					returnstatus = os.waitpid(fsckpid, os.WNOHANG)			
-					if returnstatus == 0:
+					if returnstatus[1] == 0:
 						print "Founded running fsck!"
 						fd.close()
 						return "fsck"
+					else:
+						print "Status is %s" % returnstatus[1]
 				except:
 					print "Failed to find running process... delete state file..."
 				fd.close()
@@ -384,10 +386,12 @@ def getVPSState(vpsname):
 					print "mkos process meant to be at %s" % mkospid
 					try:
 						returnstatus = os.waitpid(mkospid, os.WNOHANG)			
-						if returnstatus == 0:
+						if returnstatus[1] == 0:
 							print "Founded running mkos!"
 							fd.close()
 							return "mkos"
+						else:
+							print "Status is %s" % returnstatus[1]
 					except:
 						print "Failed to find running process... delete state file..."
 					fd.close()
