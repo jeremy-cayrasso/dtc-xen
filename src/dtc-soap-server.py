@@ -230,7 +230,7 @@ def reinstallVPSos(vpsname,ostype,hddsize,ramsize,ipaddr,imagetype='lvm'):
 		fd2.write("mkos\n")
 		print "Starting reinstallation of operating system for xen%s" % vpsname
 		cmd = "/usr/sbin/dtc_reinstall_os"
-		args = [cmd, vpsname, hddsize, ramsize, "'%s'" % ipaddr, ostype, imagetype]
+		args = [cmd, vpsname, hddsize, ramsize, "%s" % ipaddr, ostype, imagetype]
 		print cmd
 		print args
 		spawnedpid = os.spawnv(os.P_NOWAIT, cmd, args )
