@@ -164,8 +164,8 @@ if [ ""$DISTRO = "centos" ] ; then
 		/usr/bin/rpmstrap --verbose --local-source /usr/src/$CENTOS_RELEASE $CENTOS_RELEASE ${VPSGLOBPATH}/${VPSNUM}
 	fi
 elif [ ""$DISTRO = "debian" ] ; then
-	echo $DEBOOTSTRAP --include=module-init-tools,hotplug,udev --arch ${DEBIAN_BINARCH} sarge ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
-	$DEBOOTSTRAP --include=module-init-tools,hotplug,udev --arch ${DEBIAN_BINARCH} sarge ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
+	echo $DEBOOTSTRAP --include=module-init-tools --arch ${DEBIAN_BINARCH} sarge ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
+	$DEBOOTSTRAP --include=module-init-tools --arch ${DEBIAN_BINARCH} sarge ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
 	if [ $? != 0 ]; then
 		echo "Failed to install debian via bootstrap!!"
 		exit 1

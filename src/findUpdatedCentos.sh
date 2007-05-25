@@ -16,7 +16,9 @@ UPDATED_FILE_LIST=updated.rpm.list
 if [ $CENTOS_VERSION == "centos3" ]; then
 MIRROR_URL=ftp://mirror.averse.net/pub/centos/3/os/$ARCH/RedHat/RPMS/
 elif [ $CENTOS_VERSION == "centos4" ]; then
-MIRROR_URL=ftp://mirror.averse.net/pub/centos/4/os/$ARCH/CentOS/RPMS/
+MIRROR_URL=ftp://anorien.csc.warwick.ac.uk/CentOS/4/os/x86_64/CentOS/RPMS/
+#MIRROR_URL=ftp://mirror.averse.net/pub/centos/4/os/$ARCH/CentOS/RPMS/
+#MIRROR_URL=ftp://mirror.centos.org/centos/4/os/x86_64/CentOS/RPMS/
 fi
 
 . $SCRIPT_SOURCE
