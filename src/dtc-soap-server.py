@@ -43,6 +43,7 @@ server_host=p.getProperty("soap_server_host");
 server_port=int(p.getProperty("soap_server_port"));
 cert_passphrase=p.getProperty("soap_server_pass_phrase");
 dtcxen_user=p.getProperty("soap_server_dtcxen_user");
+server_lvmname=p.getProperty("soap_server_lvmname");
 
 # server_host = "mirror.tusker.net"
 # server_host = "dtc.xen650202.gplhost.com"
@@ -284,6 +285,8 @@ def getNetworkUsage(vpsname):
 			networkDeviceName="eth0"
 		else:
 			networkDeviceName="vif%s" % id
+			networkDeviceName=networkDeviceName.replace("-","")
+			# Rudd-O: added workaround for device matching vif-1 -> vif1 -- Damien: is this okay?
 		incount = 0
 		outcount = 0
 		if os.path.exists("/proc/net/dev"):
@@ -297,8 +300,8 @@ def getNetworkUsage(vpsname):
 						continue
 					device,stats=columns
 					# strip off whitespace so we can match
-					device = device.strip()
-					if device.startswith(networkDeviceName):
+					device = device.strip().split(".")[0]
+					if device == networkDeviceName:
 						columns=stats.split()
 						incount = incount + int(columns[0])
 						outcount = outcount + int(columns[8])
@@ -312,8 +315,8 @@ def getNetworkUsage(vpsname):
 def getIOUsage(vpsname):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:	
-		disk="/dev/mapper/lvm1-%s" % vpsname
-		swap="/dev/mapper/lvm1-%sswap" % vpsname
+		disk="/dev/mapper/%s-%s" % (server_lvmname,vpsname)
+		swap="/dev/mapper/%s-%sswap" % (server_lvmname,vpsname)
 		
 		if os.path.exists(disk):
 			diskStat = os.stat(disk)
