@@ -1,11 +1,6 @@
 dtc-xen (0.3.0-1) unstable; urgency=low
 
   * Fixed some bad problems with the new statistics things.
-
- -- Thomas Goirand <thomas@goirand.fr>  Sat,  2 Jun 2007 19:24:43 +0100
-
-dtc-xen (0.2.9-1) unstable; urgency=low
-
   * Upstream release correcting a problem with Xen 3.0.4 py libs
   * Now Recommends: xen-utils-common (Closes: #418254)
   * Added Malayalam debconf po templates thanks to Praveen A
