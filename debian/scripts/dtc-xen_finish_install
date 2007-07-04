@@ -77,9 +77,9 @@ if [ ! -e /usr/src/gentoo ]; then
 	mkdir -p /usr/src/gentoo
 	echo "Gentoo archive not found, trying to do it issuing this command:"
 	if [ ""${BINARCH} = "amd64" ] ; then
-		echo "cd /usr/src/gentoo; wget http://mirror.gentoo.gr.jp/releases/amd64/2006.1/stages/stage3-amd64-2006.1.tar.bz2"
+		echo "cd /usr/src/gentoo; wget http://gentoo.osuosl.org/releases/amd64/2006.1/stages/stage3-amd64-2006.1.tar.bz2"
 	else
-		echo "cd /usr/src/gentoo; wget http://mirror.gentoo.gr.jp/releases/x86/2006.1/stages/stage3-i686-2006.1.tar.bz2"
+		echo "cd /usr/src/gentoo; wget http://gentoo.osuosl.org/releases/x86/2006.1/stages/stage3-i686-2006.1.tar.bz2"
 	fi
 fi
 

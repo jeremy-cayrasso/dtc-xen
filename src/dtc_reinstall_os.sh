@@ -174,11 +174,11 @@ elif [ ""$DISTRO = "ubuntu_dapper" ] ; then
 	$DEBOOTSTRAP --include=module-init-tools,udev --arch i386 dapper ${VPSGLOBPATH}/${VPSNUM} http://archive.ubuntu.com/ubuntu
 elif [ ""$DISTRO = "gentoo" ]; then
 	GENTOO_STAGE3_ARCHIVE="stage3-i686-2006.1.tar.bz2"
-	GENTOO_STAGE3_BASEURL="http://mirror.gentoo.gr.jp/releases/x86/2006.1/stages/"
+	GENTOO_STAGE3_BASEURL="http://gentoo.osuosl.org/releases/x86/2006.1/stages/"
 	# detect if it requires an amd64 distro
 	if [ ""${DEBIAN_BINARCH} = "amd64" ]; then
 		GENTOO_STAGE3_ARCHIVE="stage3-amd64-2006.1.tar.bz2"
-		GENTOO_STAGE3_BASEURL="http://mirror.gentoo.gr.jp/releases/amd64/2006.1/stages/"
+		GENTOO_STAGE3_BASEURL="http://gentoo.osuosl.org/releases/amd64/2006.1/stages/"
 	fi
 
 	if [ ! -e /usr/src/gentoo/$GENTOO_STAGE3_ARCHIVE ]; then
@@ -194,8 +194,8 @@ elif [ ""$DISTRO = "gentoo" ]; then
 	tar -xjpf /usr/src/gentoo/$GENTOO_STAGE3_ARCHIVE -C ${VPSGLOBPATH}/${VPSNUM}
 	# grab the latest portage
 	pushd /usr/src/gentoo
-	wget -N http://mirror.gentoo.gr.jp/snapshots/portage-latest.tar.bz2.md5sum
-	wget -N http://mirror.gentoo.gr.jp/snapshots/portage-latest.tar.bz2
+	wget -N http://gentoo.osuosl.org/snapshots/portage-latest.tar.bz2.md5sum
+	wget -N http://gentoo.osuosl.org/snapshots/portage-latest.tar.bz2
 	md5sum -c portage-latest.tar.bz2.md5sum
 	tar -xjpf portage-latest.tar.bz2 -C ${VPSGLOBPATH}/${VPSNUM}/usr/
 	popd

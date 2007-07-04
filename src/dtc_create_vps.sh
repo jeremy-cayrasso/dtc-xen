@@ -152,15 +152,15 @@ elif [ ""$DISTRO = "ubuntu_dapper" ] ; then
 	$DEBOOTSTRAP --arch i386 dapper ${VPSGLOBPATH}/${VPSNUM} http://archive.ubuntu.com/ubuntu
 elif [ ""$DISTRO = "gentoo" ]; then
 	if [ ! -e /usr/src/gentoo/stage3-x86-2006.0.tar.bz2 ]; then
-		echo "Please download the gentoo stage3 from http://mirror.gentoo.gr.jp/releases/x86/2006.0/stages/stage3-x86-2006.0.tar.bz2"
+		echo "Please download the gentoo stage3 from http://gentoo.osuosl.org/releases/x86/2006.0/stages/stage3-x86-2006.0.tar.bz2"
 		echo "Or another gentoo mirror"
 		exit 
 	fi
 	tar -xvjpf /usr/src/gentoo/stage3-x86-2006.0.tar.bz2 -C ${VPSGLOBPATH}/${VPSNUM}
 	# grab the latest portage
 	pushd /usr/src/gentoo
-	wget -N http://mirror.gentoo.gr.jp/snapshots/portage-latest.tar.bz2.md5sum
-	wget -N http://mirror.gentoo.gr.jp/snapshots/portage-latest.tar.bz2
+	wget -N http://gentoo.osuosl.org/snapshots/portage-latest.tar.bz2.md5sum
+	wget -N http://gentoo.osuosl.org/snapshots/portage-latest.tar.bz2
 	md5sum -c portage-latest.tar.bz2.md5sum
 	tar -xvjpf portage-latest.tar.bz2 -C ${VPSGLOBPATH}/${VPSNUM}/usr/
 	popd
