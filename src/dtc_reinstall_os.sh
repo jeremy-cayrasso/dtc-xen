@@ -1,8 +1,10 @@
 #!/bin/sh
 
 if [ $# -lt 3 ]; then 
-	echo "Usage: $0 <xen id> <hdd size> <ram size> <ip address> [debian/ubuntu_dapper/centos/gentoo/manual] [lvm/vbd]"
-	exit
+	echo "Usage: $0 <xen id> <hdd size MB> <ram size MB> <ip address> < debian | ubuntu_dapper | centos| gentoo| manual > [ lvm | vbd ]" > /dev/stderr
+	echo "" > /dev/stderr
+	echo "Example: $0 09 3072 64 1.2.3.4 debian" > /dev/stderr
+	exit 1
 fi
 
 # Source the configuration in the config file!
