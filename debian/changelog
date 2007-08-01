@@ -17,7 +17,7 @@ dtc-xen (0.3.0-1) unstable; urgency=low
     <cabaco@skolelinux.no> (Closes: #422332)
   * Added russian debconf po template thanks to Yuri Kozlov
     <kozlov.y@gmail.com> (Closes: #422126)
-  * Added brasilian portugese debconf po template thanks to Andre Luís Lopes
+  * Added brasilian portugese debconf po template thanks to Andre Luis Lopes
     <andrelop@debian.org> (Closes: #421517)
   * Added spanish debconf po template thanks to Enrique Matias Sanchez (aka
     Quique) <cronopios@gmail.com> (Closes: #419213)
