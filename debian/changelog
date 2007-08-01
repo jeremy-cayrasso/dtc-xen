@@ -1,5 +1,6 @@
 dtc-xen (0.3.0-1) unstable; urgency=low
 
+  * New upstream release
   * Fixed some bad problems with the new statistics things.
   * Upstream release correcting a problem with Xen 3.0.4 py libs
   * Now Recommends: xen-utils-common (Closes: #418254)
@@ -15,12 +16,15 @@ dtc-xen (0.3.0-1) unstable; urgency=low
     <cabaco@skolelinux.no> (Closes: #422332)
   * Added russian debconf po template thanks to Yuri Kozlov
     <kozlov.y@gmail.com> (Closes: #422126)
-  * Added brasilian portugese debconf po template thanks to André Luís Lopes
+  * Added brasilian portugese debconf po template thanks to Andre Luís Lopes
     <andrelop@debian.org> (Closes: #421517)
   * Added spanish debconf po template thanks to Enrique Matias Sanchez (aka
     Quique) <cronopios@gmail.com> (Closes: #419213)
+  * Added Recommends: sysfsutils
+  * Now using lsb-base for the init script
+  * Removed dependency to apache, changed to apache2 | httpd
 
- -- Thomas Goirand <thomas@goirand.fr>  Mon,  2 Apr 2007 12:05:02 +0100
+ -- Thomas Goirand <thomas@goirand.fr>  Thu,  2 Aug 2007 02:48:59 +0800
 
 dtc-xen (0.2.8-1) unstable; urgency=low
 

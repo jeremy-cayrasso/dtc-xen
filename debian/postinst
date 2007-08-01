@@ -111,6 +111,13 @@ if [ ""$VERBOSE_INSTALL = "yes" ] ;then
 	echo "===> Generating $DTCXEN_ETCPATH/htpasswd file for the SOAP python server"
 #	echo "$HTPASSWD -cb $DTCXEN_ETCPATH/htpasswd ${conf_soap_login} ${conf_soap_pass}"
 fi
+# Just in case there's no password set (which is the case if running debconf in non-interactive), generate a random one
+if [ -z ${conf_soap_pass} ] ; then
+	echo "WARNING: No password set durring debconf, will pickup a random one."
+	echo "Issue a dpkg-reconfigure dtc-xen to setup a real password."
+	conf_soap_pass=`dd if=/dev/random bs=64 count=1 2>|/dev/null | md5sum | cut -d' ' -f1`
+	conf_soap_pass=${conf_soap_pass:0:16}
+fi
 $HTPASSWD -cb $DTCXEN_ETCPATH/htpasswd ${conf_soap_login} ${conf_soap_pass}
 
 # Create the python config file
