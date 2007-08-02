@@ -1,10 +1,19 @@
 #!/bin/sh
 
+set -e # DIE on errors
+
 if [ $# -lt 3 ]; then 
-	echo "Usage: $0 <xen id> <hdd size MB> <ram size MB> <ip address> < debian | ubuntu_dapper | centos| gentoo| manual > [ lvm | vbd ]" > /dev/stderr
+	echo "Usage: $0 [-v] <xen id> <hdd size MB> <ram size MB> <ip address> < debian | ubuntu_dapper | centos| gentoo| manual > [ lvm | vbd ]" > /dev/stderr
 	echo "" > /dev/stderr
 	echo "Example: $0 09 3072 64 1.2.3.4 debian" > /dev/stderr
 	exit 1
+fi
+
+if [ "$1" = "-v" ] ; then
+	REDIRECTOUTPUT=false
+	shift
+else
+	REDIRECTOUTPUT=true
 fi
 
 # Source the configuration in the config file!
@@ -30,20 +39,23 @@ IMAGE_TYPE=$6
 
 # redirect stdout and stderr to log files, so we can see what happened during install
 
-echo "Redirecting standard output to $VPSGLOBPATH/$VPSNUM.stdout..."
-echo "Redirecting standard error to $VPSGLOBPATH/$VPSNUM.stderr..."
-if [ -e $VPSGLOBPATH/$VPSNUM.stdout ]; then
-	mv $VPSGLOBPATH/$VPSNUM.stdout $VPSGLOBPATH/$VPSNUM.stdout.old
-fi
-if [ -e $VPSGLOBPATH/$VPSNUM.stderr ]; then
-	mv $VPSGLOBPATH/$VPSNUM.stderr $VPSGLOBPATH/$VPSNUM.stderr.old
+if [ "$REDIRECTOUTPUT" == "true" ] ; then
+	echo "Redirecting standard output to $VPSGLOBPATH/$VPSNUM.stdout..."
+	echo "Redirecting standard error to $VPSGLOBPATH/$VPSNUM.stderr..."
+	if [ -e $VPSGLOBPATH/$VPSNUM.stdout ]; then
+		mv $VPSGLOBPATH/$VPSNUM.stdout $VPSGLOBPATH/$VPSNUM.stdout.old
+	fi
+	if [ -e $VPSGLOBPATH/$VPSNUM.stderr ]; then
+		mv $VPSGLOBPATH/$VPSNUM.stderr $VPSGLOBPATH/$VPSNUM.stderr.old
+	fi
+	
+	exec 1>$VPSGLOBPATH/$VPSNUM.stdout
+	exec 2>$VPSGLOBPATH/$VPSNUM.stderr
 fi
 
-exec 1>$VPSGLOBPATH/$VPSNUM.stdout
-exec 2>$VPSGLOBPATH/$VPSNUM.stderr
 
 # default to lvm type for backwards compatibility
-if [ -z ""$IMAGE_TYPE ]; then
+if [ -z "$IMAGE_TYPE" ]; then
 	IMAGE_TYPE=lvm
 fi
 
@@ -52,7 +64,7 @@ IPADDR=`echo ${ALL_IPADDRS} | cut -d' ' -f1`
 
 function calcMacAddr {
 	CHARCNT=`echo -n ${NODE_NUM} | wc -m`
-	if [ ""${CHARCNT} = "5" ] ; then
+	if [ "${CHARCNT}" = "5" ] ; then
 		MINOR_NUM=`echo ${NODE_NUM} | awk '{print substr($0,4,2)}'`
 		MAJOR_NUM=`echo ${NODE_NUM} | awk '{print substr($0,2,2)}'`
 		MEGA_NUM=`echo ${NODE_NUM} | awk '{print substr($0,1,1)}'`
@@ -90,7 +102,7 @@ case "$FOUNDED_ARCH" in
 esac
 
 # default distro to debian
-if [ -z ""$DISTRO ]; then
+if [ -z "$DISTRO" ]; then
 	DISTRO=debian
 fi
 
@@ -99,15 +111,21 @@ MKFS=/sbin/mkfs.ext3
 MKDIR=/bin/mkdir
 MKSWAP=/sbin/mkswap
 MOUNT=/bin/mount
+UMOUNT=/bin/umount
 DEBOOTSTRAP=/usr/sbin/debootstrap
 
 echo "Seleted ${VPSNAME}: ${VPSHDD}G HDD and ${VPSMEM}MB RAM";
-if [ ""$DISTRO = "netbsd" ] ; then
+if [ "$DISTRO" = "netbsd" ] ; then
 	echo "Not creating disks: NetBSD!"
 else
 	echo "Creating disks..."
 
-	if [ ""$IMAGE_TYPE = "lvm" ]; then
+	set +e
+	$UMOUNT ${VPSGLOBPATH}/${VPSNUM} 2> /dev/null
+	rmdir ${VPSGLOBPATH}/${VPSNUM} 2> /dev/null
+	set -e
+
+	if [ "$IMAGE_TYPE" = "lvm" ]; then
 		$MKFS /dev/${LVMNAME}/${VPSNAME}
 		$MKDIR -p ${VPSGLOBPATH}/${VPSNUM}
 	#	$LVCREATE -L${VPSMEM} -n${VPSNAME}swap ${LVMNAME}
@@ -143,42 +161,43 @@ fi
 
 echo "Bootstraping..."
 # default CENTOS_RELEASE is centos4
-CENTOS_RELEASE=centos4
-if [ ""$DISTRO = "centos" ] ; then
+
+# get the most recent centos release.  it WILL FAIL once centos version hits 10.  But, hell, I'm a hacky hack.
+CENTOS_DIR=`ls -d /usr/src/centos* 2> /dev/null | tr ' ' '\n' | sort -r | head -1`
+if [ "$DISTRO" = "centos" ] ; then
 	# first check to see if we have a centos4 archive
 	# if not, revert to centos3 (to maintain backwards compatibility)
-	if [ ! -e /usr/src/$CENTOS_RELEASE ]; then
-		CENTOS_RELEASE=centos3
-	fi
-
-	if [ ! -e /usr/src/$CENTOS_RELEASE ] ; then
-		echo "Please install $CENTOS_RELEASE rpms in /usr/src"
-		echo "This can be done using: rpmstrap --verbose --download-only $CENTOS_RELEASE /usr/src/$CENTOS_RELEASE"
-		exit
-	fi
-	if [ ! -e /usr/bin/rpmstrap ] ; then
+	if [ ! -x /usr/bin/rpmstrap ] ; then
 		echo "Please install rpmstrap from http://rpmstrap.pimpscript.net/"
-		exit
+		exit 1
 	fi
-	if [ ""$DEBIAN_BINARCH = "amd64" ] ; then
-		/usr/bin/rpmstrap --verbose --arch x86_64 --local-source /usr/src/$CENTOS_RELEASE $CENTOS_RELEASE ${VPSGLOBPATH}/${VPSNUM}
-	else
-		/usr/bin/rpmstrap --verbose --local-source /usr/src/$CENTOS_RELEASE $CENTOS_RELEASE ${VPSGLOBPATH}/${VPSNUM}
+	if [ -z "$CENTOS_DIR" ] ; then
+		echo "Please install a CentOS release RPM set in /usr/src/centos<version>"
+		echo "This can be done using: rpmstrap --verbose --download-only centos<version> /usr/src/centos<version>"
+		exit 1
 	fi
-elif [ ""$DISTRO = "debian" ] ; then
-	echo $DEBOOTSTRAP --include=module-init-tools --arch ${DEBIAN_BINARCH} etch ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
-	$DEBOOTSTRAP --include=module-init-tools --arch ${DEBIAN_BINARCH} etch ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
+	CENTOS_RELEASE=`basename "$CENTOS_DIR"`
+	if [ ! -d "/usr/src/$CENTOS_RELEASE" ] ; then
+		echo "CentOS release $CENTOS_RELEASE could not be found in $CENTOS_DIR"
+		exit 1
+	fi
+	[ "$DEBIAN_BINARCH" = "amd64" ] && ARCH="--arch x86_64"
+	/usr/bin/rpmstrap $ARCH --local-source "$CENTOS_DIR" "$CENTOS_RELEASE" "$VPSGLOBPATH/$VPSNUM"
+elif [ "$DISTRO" = "debian" ] ; then
+	DEBIAN_RELEASE="stable"
+	echo $DEBOOTSTRAP --include=module-init-tools --arch ${DEBIAN_BINARCH} "$DEBIAN_RELEASE" ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
+	$DEBOOTSTRAP --include=module-init-tools --arch ${DEBIAN_BINARCH} "$DEBIAN_RELEASE" ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
 	if [ $? != 0 ]; then
 		echo "Failed to install debian via bootstrap!!"
 		exit 1
 	fi
-elif [ ""$DISTRO = "ubuntu_dapper" ] ; then
+elif [ "$DISTRO" = "ubuntu_dapper" ] ; then
 	$DEBOOTSTRAP --include=module-init-tools,udev --arch i386 dapper ${VPSGLOBPATH}/${VPSNUM} http://archive.ubuntu.com/ubuntu
-elif [ ""$DISTRO = "gentoo" ]; then
+elif [ "$DISTRO" = "gentoo" ]; then
 	GENTOO_STAGE3_ARCHIVE="stage3-i686-2006.1.tar.bz2"
 	GENTOO_STAGE3_BASEURL="http://gentoo.osuosl.org/releases/x86/2006.1/stages/"
 	# detect if it requires an amd64 distro
-	if [ ""${DEBIAN_BINARCH} = "amd64" ]; then
+	if [ "$DEBIAN_BINARCH" = "amd64" ]; then
 		GENTOO_STAGE3_ARCHIVE="stage3-amd64-2006.1.tar.bz2"
 		GENTOO_STAGE3_BASEURL="http://gentoo.osuosl.org/releases/amd64/2006.1/stages/"
 	fi
@@ -190,7 +209,7 @@ elif [ ""$DISTRO = "gentoo" ]; then
 			# if we find an old archive here, use this as a fall back
 			GENTOO_STAGE3_ARCHIVE=stage3-x86-2006.0.tar.bz2
 		else
-			exit
+			exit 1
 		fi
 	fi
 	tar -xjpf /usr/src/gentoo/$GENTOO_STAGE3_ARCHIVE -C ${VPSGLOBPATH}/${VPSNUM}
@@ -211,7 +230,7 @@ else
 	echo "Cheers!"
 	exit
 fi
-if [ ""$DISTRO = "netbsd" ] ; then
+if [ "$DISTRO" = "netbsd" ] ; then
 	echo "Nothing to do: it's BSD"
 else
 	echo "Customizing vps..."
@@ -279,9 +298,9 @@ exit 0
 fi
 
 # handle the network setup
-if [ ""$DISTRO = "netbsd" ] ; then
+if [ "$DISTRO" = "netbsd" ] ; then
 	echo "Nothing to do: it's BSD!"
-elif [ ""$DISTRO = "centos" ] ; then
+elif [ "$DISTRO" = "centos" ] ; then
 	# Configure the eth0
 	echo "DEVICE=eth0
 BOOTPROTO=static
@@ -298,7 +317,7 @@ GATEWAY=${GATEWAY}
 " >${ETC}/sysconfig/network
 	# Set the resolv.conf
 	cp /etc/resolv.conf ${ETC}/resolv.conf
-elif [ ""$DISTRO = "gentoo" ] ; then
+elif [ "$DISTRO" = "gentoo" ] ; then
 	cp -L /etc/resolv.conf ${ETC}/resolv.conf	
 	echo "config_eth0=( \"${IPADDR} netmask ${NETMASK} broadcast ${BROADCAST}\" )
 routes_eth0=(
@@ -308,7 +327,7 @@ routes_eth0=(
 
 chroot ${VPSGLOBPATH}/${VPSNUM} rc-update add net.eth0 default
 
-elif [ ""$DISTRO = "debian" ] ; then
+elif [ "$DISTRO" = "debian" ] ; then
 		cp /etc/apt/sources.list ${VPSGLOBPATH}/${VPSNUM}/etc/apt
 		echo "auto lo
 iface lo inet loopback
@@ -321,7 +340,7 @@ iface eth0 inet static
 	broadcast ${BROADCAST}
 	gateway ${GATEWAY}
 " >${ETC}/network/interfaces
-elif [ ""$DISTRO = "ubuntu_dapper" ] ; then
+elif [ "$DISTRO" = "ubuntu_dapper" ] ; then
 	echo "deb http://archive.ubuntu.com/ubuntu/ dapper main restricted
 deb-src http://archive.ubuntu.com/ubuntu/ dapper main restricted
 		
@@ -341,16 +360,16 @@ iface eth0 inet static
 " >${ETC}/network/interfaces
 else
 	echo "Not implemented for other distros yet"
-	exit
+	exit 1
 fi
 
-if [ ""$DISTRO = "netbsd" ] ; then
+if [ "$DISTRO" = "netbsd" ] ; then
 	echo "kernel = \"${BSDKERNELPATH}\"
 memory = ${VPSMEM}
 name = \"${VPSNAME}\"
 vif = [ 'mac=${MAC_ADDR}, ip=${ALL_IPADDRS}' ]
 " >/etc/xen/${VPSNAME}
-	if [ ""$IMAGE_TYPE = "lvm" ]; then
+	if [ "$IMAGE_TYPE" = "lvm" ]; then
 		echo "disk = [ 'phy:/dev/mapper/${LVMNAME}-xen${VPSNUM},0x3,w' ]
 " >>/etc/xen/${VPSNAME}
 	else
@@ -364,7 +383,7 @@ name = \"${VPSNAME}\"
 #cpu = -1   # leave to Xen to pick
 vif = [ 'mac=${MAC_ADDR}, ip=${ALL_IPADDRS}' ]
 " > /etc/xen/${VPSNAME}
-	if [ ""$IMAGE_TYPE = "lvm" ]; then
+	if [ "$IMAGE_TYPE" = "lvm" ]; then
 		echo "disk = [ 'phy:/dev/mapper/${LVMNAME}-xen${VPSNUM},sda1,w','phy:/dev/mapper/${LVMNAME}-xen${VPSNUM}swap,sda2,w' ]
 " >> /etc/xen/${VPSNAME}
 	else
@@ -381,7 +400,7 @@ if [ ! -e /etc/xen/auto/${VPSNAME} ] ; then
 	ln -s ../${VPSNAME} /etc/xen/auto/${VPSNAME}
 fi
 
-if [ ""$DISTRO = "netbsd" ] ; then
+if [ "$DISTRO" = "netbsd" ] ; then
 	echo "Not coping modules: it's BSD!"
 else
 
@@ -390,43 +409,56 @@ else
 	mkdir -p ${VPSGLOBPATH}/${VPSNUM}/dev/
 	echo "Making VPS devices with MAKEDEV generic"
 	pushd ${VPSGLOBPATH}/${VPSNUM}/dev/; /sbin/MAKEDEV generic; popd
-	echo "Copying modules..."
-	mv ${VPSGLOBPATH}/${VPSNUM}/lib/tls ${VPSGLOBPATH}/${VPSNUM}/lib/tls.disabled
+	if [ -d "${VPSGLOBPATH}/${VPSNUM}/lib/tls" ] ; then
+		echo "Disabling lib/tls"
+		mv "${VPSGLOBPATH}/${VPSNUM}/lib/tls" "${VPSGLOBPATH}/${VPSNUM}/lib/tls.disabled"
+	fi
 	# create the /lib/modules if it doesn't exist
+	echo "Copying modules..."
 	if [ ! -e ${VPSGLOBPATH}/${VPSNUM}/lib/modules ]; then 
 		$MKDIR -p ${VPSGLOBPATH}/${VPSNUM}/lib/modules
 	fi
-	cp -auxvf /lib/modules/${KERNELNAME} ${VPSGLOBPATH}/${VPSNUM}/lib/modules
+	cp -auxf /lib/modules/${KERNELNAME} ${VPSGLOBPATH}/${VPSNUM}/lib/modules
 	cp -L ${KERNELPATH} ${VPSGLOBPATH}/${VPSNUM}/boot
 	cp -L /boot/System.map-${KERNELNAME} ${VPSGLOBPATH}/${VPSNUM}/boot
 	# symlink the System.map and kernel
 	ln -s /boot/System.map-${KERNELNAME} ${VPSGLOBPATH}/${VPSNUM}/boot/System.map
 	ln -s /boot/vmlinuz-${KERNELNAME} ${VPSGLOBPATH}/${VPSNUM}/boot/vmlinuz
 	# regen the module dependancies within the chroot (just in case)
-	chroot ${VPSGLOBPATH}/${VPSNUM} depmod -a ${KERNELNAME}
+	chroot ${VPSGLOBPATH}/${VPSNUM} /sbin/depmod -a ${KERNELNAME}
 
 	# Copy an eventual /etc/dtc-xen/authorized_keys2 file
 	if [ -f /etc/dtc-xen/authorized_keys2 ] ; then
 		if [ ! -d "${VPSGLOBPATH}/${VPSNUM}/root/.ssh" ] ; then
 			mkdir -p "${VPSGLOBPATH}/${VPSNUM}/root/.ssh"
+			chmod 700 "${VPSGLOBPATH}/${VPSNUM}/root/.ssh"
 		fi
 		if [ -d "${VPSGLOBPATH}/${VPSNUM}/root/.ssh" -a ! -e "${VPSGLOBPATH}/${VPSNUM}/root/.ssh/authorized_keys2" ] ; then
 			cp /etc/dtc-xen/authorized_keys2 "${VPSGLOBPATH}/${VPSNUM}/root/.ssh/authorized_keys2"
+			chmod 600 "${VPSGLOBPATH}/${VPSNUM}/root/.ssh/authorized_keys2"
 		fi
 	fi
 fi
 
 # need to install 2.6 compat stuff for centos3
-if [ ""$DISTRO = "centos" -a ""$CENTOS_RELEASE="centos3" ]; then
+if [ "$DISTRO" = "centos" -a "$CENTOS_RELEASE" = "centos3" ]; then
 	mkdir -p ${VPSGLOBPATH}/${VPSNUM}/tmp
 	wget -O ${VPSGLOBPATH}/${VPSNUM}/tmp/yum.conf.mini ftp://ftp.pasteur.fr/pub/BIS/tru/2.6_CentOS-3/yum.conf.mini
 	chroot ${VPSGLOBPATH}/${VPSNUM} yum -c /tmp/yum.conf.mini -y update	
 	chroot ${VPSGLOBPATH}/${VPSNUM} yum -c /tmp/yum.conf.mini install initscripts_26
+	chroot ${VPSGLOBPATH}/${VPSNUM} rm /tmp/yum.conf.mini
+fi
+
+# nuke the root password in CentOS 5 and above
+# WARNING: for some reason CentOS is not using shadow passwords
+if [ "$DISTRO" = "centos" ] ; then
+	chroot ${VPSGLOBPATH}/${VPSNUM} usermod -p "" root
 fi
 
 echo "Unmounting proc and filesystem root..."
-umount ${VPSGLOBPATH}/${VPSNUM}/proc
-umount ${VPSGLOBPATH}/${VPSNUM}
+$UMOUNT ${VPSGLOBPATH}/${VPSNUM}/proc 2> /dev/null || /bin/true
+$UMOUNT ${VPSGLOBPATH}/${VPSNUM}
+rmdir ${VPSGLOBPATH}/${VPSNUM}
 
 echo "Install script finished"
 exit 0
