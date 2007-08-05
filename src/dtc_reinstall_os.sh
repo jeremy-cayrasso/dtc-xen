@@ -184,7 +184,7 @@ if [ "$DISTRO" = "centos" ] ; then
 	[ "$DEBIAN_BINARCH" = "amd64" ] && ARCH="--arch x86_64"
 	/usr/bin/rpmstrap $ARCH --local-source "$CENTOS_DIR" "$CENTOS_RELEASE" "$VPSGLOBPATH/$VPSNUM"
 elif [ "$DISTRO" = "debian" ] ; then
-	DEBIAN_RELEASE="stable"
+	DEBIAN_RELEASE="etch"
 	echo $DEBOOTSTRAP --include=module-init-tools --arch ${DEBIAN_BINARCH} "$DEBIAN_RELEASE" ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
 	$DEBOOTSTRAP --include=module-init-tools --arch ${DEBIAN_BINARCH} "$DEBIAN_RELEASE" ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
 	if [ $? != 0 ]; then
