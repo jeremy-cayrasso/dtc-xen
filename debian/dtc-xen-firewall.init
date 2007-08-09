@@ -22,7 +22,7 @@ accept-localhost-traffic () {
 }
 
 port25-reject () {
-	iptables -A INPUT -p tcp -j REJECT
+	iptables -A INPUT -p tcp --dport 25 -j REJECT
 }
 
 flush-input-chain () {
