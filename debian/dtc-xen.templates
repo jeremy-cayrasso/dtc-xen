@@ -136,3 +136,11 @@ _Description: VPS mountpoint:
  file loopback partition on the dom0 of your Xen server. This will also be used
  to automaticaly set your /etc/fstab mount points so you can do maintenance and
  mount VPSes faster. Enter here the path to this mount points.
+
+Template: dtc-xen/conf_debian_setup_type
+Type: select
+Choices: sarge, etch, lenny, sid
+Default: lenny
+_Description: Debian os to setup:
+ Select the debian operating system that you want to have setup when dtc-xen
+ creates a new VM instance.

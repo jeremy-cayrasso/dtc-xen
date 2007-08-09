@@ -50,6 +50,9 @@ fi
 if [ ! -z "${VPS_MOUNTPOINT}" ] ; then
 	db_set dtc-xen/conf_vps_mountpoint ${VPS_MOUNTPOINT}
 fi
+if [ ! -z "${DEBIAN_RELEASE}" ] ; then
+	db_set dtc-xen/conf_debian_release ${DEBIAN_RELEASE}
+fi
 
 db_input low dtc-xen/conf_soap_port || true
 db_input medium dtc-xen/conf_soap_login || true
@@ -65,6 +68,7 @@ db_input high dtc-xen/conf_linux_kernel_name || true
 db_input high dtc-xen/conf_lvm_name || true
 db_input high dtc-xen/conf_info_finish_setup || true
 db_input low dtc-xen/conf_vps_mountpoint || true
+db_input medium dtc-xen/conf_debian_release || true
 db_go
 
 exit 0;

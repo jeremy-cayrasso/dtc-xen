@@ -1,8 +1,11 @@
 .TH dtc_reinstall_os.sh 8
 .SH NAME
-dtc_create_vps.sh \- reinstall an operating system in a VM
+dtc_reinstall_os \- reinstall an operating system in a VM
 .SH SYNOPSIS
-.B dtc_reinstall_os.sh
+.B dtc_reinstall_os
+[
+.I -v
+]
 .I VPS_NUMBER
 .I HDD_SIZE
 .I MEMORY_SIZE
@@ -15,38 +18,63 @@ dtc_create_vps.sh \- reinstall an operating system in a VM
 ]
 
 .SH DESCRIPTION
-.B dtc_reinstall_os.sh
+.B dtc_reinstall_os
 This shell script is a part of the dtc-xen
 package that is to be used by the dtc panel
 to manage a Xen VPS server.
 
-VPS_NUMBER has to be a number between 01 and 19
+.B VPS_NUMBER
+has to be a number between 01 and 19
 
-HDD_SIZE is not really used, but it's keeped to be consistant with dtc_setup_vps_disk
+.B HDD_SIZE
+is not really used, but it's keeped to be consistant with dtc_setup_vps_disk
 
-MEMORY_SIZE is the amount of memory in mega bytes that you want to have setup
+.B MEMORY_SIZE
+is the amount of memory in mega bytes that you want to have setup
 in the Xen startup file for this VPS
 
-IP_ADDRESS is a list of IPs that you want to be set in the VM's startup file and
+.B IP_ADDRESS
+is a list of IPs that you want to be set in the VM's startup file and
 in the VM's configuration. Note that the IPs have to be separated by spaces,
 and thus you might want to use single quotes like this: '1.2.3.4 1.2.3.5'. Note
 that only the first IP will be set in the VM's configuration, but the list will
 be set in the Xen startup file so you can use the anti-spoofing facilities of
 Xen if you need it (with untrusted users / unknown customers for example).
 
-DISTRO is an optional parameter that can be debian, centos, gentoo or netbsd.
+.B [ DISTRO ]
+is an optional parameter that can be debian, centos, gentoo or netbsd.
 If ommited it will use debian as default. Note that for centos and gentoo,
 you need to have the install files downloaded in /usr/src.
 
+.B [ lvm | loopback ]
 You can then specify lvm or loopback. Currently the only value the script compares
 to is lvm (or anything else), but this might change in the future. If ommited, then
 lvm loopback is used.
 
+.SH "OPTION"
+
+For the moment only the option -v is used. Without -v, dtc_reinstall_os normally
+outputs everything in /xen/XX.stderr and /xen/XX.stdout to keep a log of the
+installation. With -v, the redirection of standard output and error is not done.
+
+.SH "EXAMPLE"
+
+.B dtc_reinstall_os 16 15360 256 '66.2.45.2 66.2.45.3' debian lvm
+
+This will setup the VM called xen16, build it's startup file in /etc/xen/xen16 with
+a vif containing ip=66.2.45.2 66.2.45.3 and 256 MB of RAM, setting-up a debian
+stable operating system with 66.2.45.2 setup as eth0 IP address (66.2.45.3 is to
+be added later on manually in /etc/network/interfaces later).
+
+.SH "SEE ALSO"
+
+dtc_setup_vps_disk(8)
+
 .SH "VERSION"
 This documentation describes
-.B dtc_reinstall_os.sh
-version 0.1.2.
+.B dtc_reinstall_os
+version 0.3.0.
+
 See
 .B http://www.gplhost.com/software-dtc-xen.html
 for updates.
-
