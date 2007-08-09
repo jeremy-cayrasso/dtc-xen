@@ -1,0 +1,53 @@
+#!/bin/bash
+
+### BEGIN INIT INFO
+# Provides:          dtc-xen-firewall
+# Required-Start:    $all
+# Required-Stop:
+# Should-Start:      $local_fs
+# Should-Stop:       $local_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: A small firewall script for your dom0
+# Description:       If running in a production environment, you might want
+#                    to have a basic firewall running on your dom0 to avoid
+#                    having DoS attack. This is not the state-of-the-art, but
+#                    just another attempt to make things a bit more smooth.
+### END INIT INFO
+
+IPTABLES=/sbin/iptables
+
+port25-but-localhost () {
+	$IPTABLES -A INPUT -p tcp --dport 25 -j DROP
+	$IPTABLES -I INPUT -p tcp -s 127.0.0.1 --dport 25 -j ACCEPT
+	$IPTABLES -I INPUT -p tcp -d 127.0.0.1 --dport 25 -j ACCEPT
+}
+
+
+
+flush-input-chain () {
+	$IPTABLES -F INPUT
+}
+
+case "${1}" in
+	start)
+		flush-input-chain
+		port25-but-localhost
+        ;;
+
+	stop)
+	;;
+
+	restart|reload|force-reload)
+		${0} stop
+		sleep 1
+		${0} start
+	;;
+
+	*)
+		echo "Usage: ${0} "'{start|stop|restart|reload}'
+		exit 1
+
+esac
+
+exit 0
