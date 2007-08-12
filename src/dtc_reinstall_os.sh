@@ -269,6 +269,8 @@ ${VPSHOSTNAME}
 MODPROBE=/sbin/modprobe
 case \"\$1\" in
 	start)
+		echo \"Reducing swapiness\"
+		echo 10 >/proc/sys/vm/swappiness
 		echo \"Adding linux default capabilities module\"
 		\$MODPROBE capability
 		echo \"done!\"
