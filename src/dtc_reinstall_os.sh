@@ -269,8 +269,6 @@ ${VPSHOSTNAME}
 MODPROBE=/sbin/modprobe
 case \"\$1\" in
 	start)
-		echo \"Reducing swapiness\"
-		echo 10 >/proc/sys/vm/swappiness
 		echo \"Adding linux default capabilities module\"
 		\$MODPROBE capability
 		echo \"done!\"
@@ -297,6 +295,9 @@ exit 0
 	ln -s ../init.d/capabilities ${ETC}/rc3.d/S19capabilities
 	ln -s ../init.d/capabilities ${ETC}/rc4.d/S19capabilities
 	ln -s ../init.d/capabilities ${ETC}/rc5.d/S19capabilities
+
+	# This will reduce swappiness
+	echo "sys.vm.swappiness=10" >> /etc/sysctl.conf
 fi
 
 # handle the network setup
