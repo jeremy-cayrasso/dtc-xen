@@ -3,7 +3,7 @@
 set -e # DIE on errors
 
 if [ $# -lt 3 ]; then 
-	echo "Usage: $0 [-v] <xen id> <hdd size MB> <ram size MB> <ip address> < debian | ubuntu_dapper | centos| gentoo| manual > [ lvm | vbd ]" > /dev/stderr
+	echo "Usage: $0 [-v] <xen id> <hdd size MB> <ram size MB> <ip address> < debian | ubuntu_dapper | centos | centos42 | gentoo | manual > [ lvm | vbd ]" > /dev/stderr
 	echo "" > /dev/stderr
 	echo "Example: $0 09 3072 64 1.2.3.4 debian" > /dev/stderr
 	exit 1
@@ -82,18 +82,23 @@ FOUNDED_ARCH=`uname -m`
 case "$FOUNDED_ARCH" in
 	i386)
 		DEBIAN_BINARCH=i386
+		CENTOS_BINARCH=i386
 		;;
 	i436)
 		DEBIAN_BINARCH=i386
+		CENTOS_BINARCH=i386
 		;;
 	i586)
 		DEBIAN_BINARCH=i386
+		CENTOS_BINARCH=i386
 		;;
 	i686)
 		DEBIAN_BINARCH=i386
+		CENTOS_BINARCH=i386
 		;;
 	x86_64)
 		DEBIAN_BINARCH=amd64
+		CENTOS_BINARCH=x86_64
 		;;
 	*)
 		echo "Unrecognized arch: exiting!"
@@ -182,7 +187,14 @@ if [ "$DISTRO" = "centos" ] ; then
 		exit 1
 	fi
 	[ "$DEBIAN_BINARCH" = "amd64" ] && ARCH="--arch x86_64"
-	/usr/bin/rpmstrap $ARCH --local-source "$CENTOS_DIR" "$CENTOS_RELEASE" "$VPSGLOBPATH/$VPSNUM"
+	/usr/bin/rpmstrap --arch ${CENTOS_BINARCH} --local-source "$CENTOS_DIR" "$CENTOS_RELEASE" "$VPSGLOBPATH/$VPSNUM"
+elif [ "$DISTRO" = "centos42" ] ; then
+	CENTOS_RELEASE=4
+	if ! [ -d /usr/share/dtc-xen-os/centos42/${CENTOS_BINARCH} ] ; then
+		echo "Please apt-get install dtc-xen-os-centos42-${CENTOS_BINARCH}"
+		exit 1
+	fi
+	/usr/bin/rpmstrap --arch ${CENTOS_BINARCH} --local-source /usr/share/dtc-xen-os/centos42/${CENTOS_BINARCH} centos42 "$VPSGLOBPATH/$VPSNUM"
 elif [ "$DISTRO" = "debian" ] ; then
 	DEBIAN_RELEASE="etch"
 	echo $DEBOOTSTRAP --include=module-init-tools --arch ${DEBIAN_BINARCH} "$DEBIAN_RELEASE" ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
@@ -303,7 +315,7 @@ fi
 # handle the network setup
 if [ "$DISTRO" = "netbsd" ] ; then
 	echo "Nothing to do: it's BSD!"
-elif [ "$DISTRO" = "centos" ] ; then
+elif [ "$DISTRO" = "centos" -o "$DISTRO" = "centos42" ] ; then
 	# Configure the eth0
 	echo "DEVICE=eth0
 BOOTPROTO=static
