@@ -453,6 +453,12 @@ else
 			chmod 600 "${VPSGLOBPATH}/${VPSNUM}/root/.ssh/authorized_keys2"
 		fi
 	fi
+	# Ask the VPS not to swap too much. This at east works with Debian.
+	if [ -e "${VPSGLOBPATH}/${VPSNUM}/etc/sysctl.conf" ] ; then
+		if ! grep "vm.swapiness" "${VPSGLOBPATH}/${VPSNUM}/etc/sysctl.conf" 2>&1 >/dev/null ; then
+			echo "vm.swappiness=10" >>"${VPSGLOBPATH}/${VPSNUM}/etc/sysctl.conf"
+		fi
+	fi
 fi
 
 # need to install 2.6 compat stuff for centos3
