@@ -426,6 +426,12 @@ def getVPSState(vpsname):
 			return "Not running"
 	else:
 		return "NOTOK"
+
+def getInstallableOS():
+	folderlist = os.listdir('/usr/share/dtc-xen-os/')
+	folderlist = filter(os.path.isdir, folderlist)
+	return folderlist
+
 #	d = {}
 #	d['dom'] = int(xenxm.sxp.child_value(info, 'id', '-1'))
 #	d['name'] = xenxm.sxp.child_value(info, 'name', '??')
@@ -538,6 +544,7 @@ soapserver.registerFunction(setupLVMDisks)
 soapserver.registerFunction(getNetworkUsage)
 soapserver.registerFunction(getIOUsage)
 soapserver.registerFunction(getCPUUsage)
+soapserver.registerFunction(getInstallableOS)
 print "Starting dtc-xen python SOAP server at https://%s:%s/ ..." % (server_host, server_port)
 while True:
 	try:

@@ -137,7 +137,7 @@ _Description: VPS mountpoint:
  to automaticaly set your /etc/fstab mount points so you can do maintenance and
  mount VPSes faster. Enter here the path to this mount points.
 
-Template: dtc-xen/conf_debian_setup_type
+Template: dtc-xen/conf_debian_release
 Type: select
 Choices: sarge, etch, lenny, sid
 Default: lenny
