@@ -196,9 +196,8 @@ elif [ "$DISTRO" = "centos42" ] ; then
 	fi
 	/usr/bin/rpmstrap --arch ${CENTOS_BINARCH} --local-source /usr/share/dtc-xen-os/centos42/${CENTOS_BINARCH} centos42 "$VPSGLOBPATH/$VPSNUM"
 elif [ "$DISTRO" = "debian" ] ; then
-	DEBIAN_RELEASE="etch"
-	echo $DEBOOTSTRAP --include=module-init-tools --arch ${DEBIAN_BINARCH} "$DEBIAN_RELEASE" ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
-	$DEBOOTSTRAP --include=module-init-tools --arch ${DEBIAN_BINARCH} "$DEBIAN_RELEASE" ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
+	echo $DEBOOTSTRAP --include=module-init-tools --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
+	$DEBOOTSTRAP --include=module-init-tools --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
 	if [ $? != 0 ]; then
 		echo "Failed to install debian via bootstrap!!"
 		exit 1
