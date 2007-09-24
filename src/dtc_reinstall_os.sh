@@ -130,9 +130,9 @@ else
 	rmdir ${VPSGLOBPATH}/${VPSNUM} 2> /dev/null
 	set -e
 
+	$MKDIR -p ${VPSGLOBPATH}/${VPSNUM}
 	if [ "$IMAGE_TYPE" = "lvm" ]; then
 		$MKFS /dev/${LVMNAME}/${VPSNAME}
-		$MKDIR -p ${VPSGLOBPATH}/${VPSNUM}
 	#	$LVCREATE -L${VPSMEM} -n${VPSNAME}swap ${LVMNAME}
 		$MKSWAP /dev/${LVMNAME}/${VPSNAME}swap
 
@@ -149,7 +149,7 @@ else
 			dd if=/dev/zero of=$VPSGLOBPATH/${VPSNAME}.img bs=1G seek=${VPSHDD} count=1
 		fi
 		$MKFS -F $VPSGLOBPATH/${VPSNAME}.img
-		if [ ! -e $MKSWAP $VPSGLOBPATH/${VPSNAME}.swap.img ]; then
+		if [ ! -e $VPSGLOBPATH/${VPSNAME}.swap.img ]; then
 			dd if=/dev/zero of=$VPSGLOBPATH/${VPSNAME}.swap.img bs=1M seek=${VPSMEM} count=1
 		fi
 		$MKSWAP $VPSGLOBPATH/${VPSNAME}.swap.img
@@ -198,6 +198,13 @@ elif [ "$DISTRO" = "centos42" ] ; then
 elif [ "$DISTRO" = "debian" ] ; then
 	echo $DEBOOTSTRAP --include=module-init-tools --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
 	$DEBOOTSTRAP --include=module-init-tools --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
+	if [ $? != 0 ]; then
+		echo "Failed to install debian via bootstrap!!"
+		exit 1
+	fi
+elif [ "$DISTRO" = "debian-etch" -a -e "/usr/share/dtc-xen-os/debian-etch/"${DEBIAN_BINARCH} ] ; then
+	echo $DEBOOTSTRAP --include=module-init-tools --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} "file:///usr/share/dtc-xen-os/debian-etch/"${DEBIAN_BINARCH}
+	$DEBOOTSTRAP --include=module-init-tools --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} "file:///usr/share/dtc-xen-os/debian-etch/"${DEBIAN_BINARCH}
 	if [ $? != 0 ]; then
 		echo "Failed to install debian via bootstrap!!"
 		exit 1

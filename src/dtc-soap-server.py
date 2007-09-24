@@ -429,7 +429,6 @@ def getVPSState(vpsname):
 
 def getInstallableOS():
 	folderlist = os.listdir('/usr/share/dtc-xen-os/')
-	folderlist = filter(os.path.isdir, folderlist)
 	return folderlist
 
 #	d = {}
