@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dtc-xen\n"
 "Report-Msgid-Bugs-To: thomas@goirand.fr\n"
-"POT-Creation-Date: 2007-04-21 09:29+0200\n"
+"POT-Creation-Date: 2007-09-25 00:07+0800\n"
 "PO-Revision-Date: 2007-05-06 17:39+0200\n"
 "Last-Translator: Jacobo Tarrio <jtarrio@debian.org>\n"
 "Language-Team: Galician <proxecto@trasno.net>\n"
@@ -16,47 +16,51 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:2001
+#: ../dtc-xen.templates:1001
 msgid "Server port:"
 msgstr "Porto do servidor:"
 
 #. Type: string
 #. Description
-#: ../templates:2001
-msgid "Please enter the port the server will bind to."
+#: ../dtc-xen.templates:1001
+#, fuzzy
+msgid ""
+"What port should it bind to? Default is 8089. Please enter the port the "
+"server will bind to."
 msgstr "Introduza o porto ao que se ha vincular o servidor."
 
 #. Type: string
 #. Description
-#: ../templates:3001
+#: ../dtc-xen.templates:2001
 msgid "SOAP server login:"
 msgstr "Usuario do servidor SOAP:"
 
 #. Type: string
 #. Description
-#: ../templates:3001
+#: ../dtc-xen.templates:2001
+#, fuzzy
 msgid ""
 "Dtc-xen will bind a SOAP Python server (to which a dtc panel can connect, in "
-"order to start, stop, create and destroy a Virtual Private Server)."
+"order to start, stop, create and destroy a VPS)."
 msgstr ""
 "Dtc-xen ha fornecer un servidor SOAP en Python (ao que un panel dtc se pode "
 "conectar para iniciar, deter, crear e destruír servidores privados virtuais)."
 
 #. Type: string
 #. Description
-#: ../templates:3001
+#: ../dtc-xen.templates:2001
 msgid "Please enter the login name to connect to the server."
 msgstr "Introduza o nome do usuario co que se conectar ao servidor."
 
 #. Type: password
 #. Description
-#: ../templates:4001
+#: ../dtc-xen.templates:3001
 msgid "SOAP server pass:"
 msgstr "Contrasinal do servidor SOAP:"
 
 #. Type: password
 #. Description
-#: ../templates:4001
+#: ../dtc-xen.templates:3001
 msgid ""
 "Dtc-xen will generate a .htpasswd file for the login you have just "
 "configured."
@@ -66,45 +70,46 @@ msgstr ""
 
 #. Type: password
 #. Description
-#: ../templates:4001
+#: ../dtc-xen.templates:3001
 msgid "Please enter the password to use in that file."
 msgstr "Introduza o contrasinal a empregar nese ficheiro.."
 
 #. Type: string
 #. Description
-#: ../templates:5001
-msgid "Server hostname:"
+#: ../dtc-xen.templates:4001
+#, fuzzy
+msgid "Server domain name:"
 msgstr "Nome do servidor:"
 
 #. Type: string
 #. Description
-#: ../templates:5001
+#: ../dtc-xen.templates:4001
+#, fuzzy
 msgid ""
 "Please enter the domain name for the dtc-xen server. This will be used as a "
-"part of the URL by the SOAP dtc panel client."
+"part of the URL by the SOAP dtc panel client like nodeXXXX.example.com."
 msgstr ""
 "Introduza o nome de dominio do servidor dtc-xen. Este nome hase empregar no "
 "URL por parte do cliente do panel SOAP dtc."
 
 #. Type: string
 #. Description
-#: ../templates:6001
+#: ../dtc-xen.templates:5001
 msgid "VPS Server node number:"
 msgstr "Número de nodo do servidor VPS."
 
 #. Type: string
 #. Description
-#: ../templates:6001
-msgid ""
-"Please enter the value to use to set up VPS (Virtual Private Server) "
-"numbering."
+#: ../dtc-xen.templates:5001
+#, fuzzy
+msgid "Please enter the value to use to set up VPS numbering."
 msgstr ""
 "Introduza o valor a empregar para configurar a numeración de VPS (servidores "
 "privados virtuais)."
 
 #. Type: string
 #. Description
-#: ../templates:6001
+#: ../dtc-xen.templates:5001
 msgid ""
 "Assuming this value is 'XXXX', the node number will be 'xenXXXXYY', YY being "
 "the VPS number itself (xenYY). This node number must be 4 or 5 characters "
@@ -116,7 +121,7 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:6001
+#: ../dtc-xen.templates:5001
 msgid ""
 "As a consequence of this choice, the server's hostname will be nodeXXXX."
 "example.com (which you can later add in your DTC control panel)."
@@ -126,17 +131,18 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:7001
+#: ../dtc-xen.templates:6001
 msgid "Debian repository for VPS creation:"
 msgstr "Repositorio Debian para a creación de VPS:"
 
 #. Type: string
 #. Description
-#: ../templates:7001
+#: ../dtc-xen.templates:6001
+#, fuzzy
 msgid ""
 "Please enter the repository to use for creating the VPS (Virtual Private "
-"Server). The current /etc/apt/sources.list file will be copied the created "
-"VPS so the repository you enter here will be used only during the "
+"Server). The current /etc/apt/sources.list file will be copied to the "
+"created VPS so the repository you enter here will be used only during the "
 "debootstrap stage of the VPS creation."
 msgstr ""
 "Introduza o repositorio a empregar para crear o VPS (servidor privado "
@@ -146,13 +152,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:8001
+#: ../dtc-xen.templates:7001
 msgid "Network mask for the VPS:"
 msgstr "Máscara de rede para o VPS:"
 
 #. Type: string
 #. Description
-#: ../templates:8001
+#: ../dtc-xen.templates:7001
 msgid ""
 "Please enter the network mask to use in the created Virtual Private Server's "
 "network settings."
@@ -162,13 +168,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:9001
+#: ../dtc-xen.templates:8001
 msgid "Network address for the VPS:"
 msgstr "Enderezo de rede para o VPS:"
 
 #. Type: string
 #. Description
-#: ../templates:9001
+#: ../dtc-xen.templates:8001
 msgid ""
 "Please enter the network address to use in the created Virtual Private "
 "Server's network settings."
@@ -178,13 +184,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:10001
+#: ../dtc-xen.templates:9001
 msgid "Broadcast address for the VPS:"
 msgstr "Enderezo \"broadcast\" para o VPS:"
 
 #. Type: string
 #. Description
-#: ../templates:10001
+#: ../dtc-xen.templates:9001
 msgid ""
 "Please enter the network broadcast address to use in the created Virtual "
 "Private Server's network settings."
@@ -194,13 +200,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:11001
+#: ../dtc-xen.templates:10001
 msgid "Gateway address for the VPS:"
 msgstr "Enderezo da pasarela para o VPS:"
 
 #. Type: string
 #. Description
-#: ../templates:11001
+#: ../dtc-xen.templates:10001
 msgid ""
 "Please enter the network gateway address to use in the created Virtual "
 "Private Server's network settings."
@@ -210,13 +216,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:12001
+#: ../dtc-xen.templates:11001
 msgid "Xen kernel release name:"
 msgstr "Nome da versión do núcleo Xen:"
 
 #. Type: string
 #. Description
-#: ../templates:12001
+#: ../dtc-xen.templates:11001
 msgid ""
 "Please enter the kernel version number as it appears with the 'uname -a' "
 "command."
@@ -226,7 +232,7 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:12001
+#: ../dtc-xen.templates:11001
 msgid ""
 "A kernel domU with that name must be located in /boot (example: vmlinuz-"
 "2.6.16.27-xenU) and its corresponding modules must be in /lib/modules."
@@ -237,19 +243,19 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:13001
+#: ../dtc-xen.templates:12001
 msgid "Volume group to create VPS in:"
 msgstr "Grupo de volumes no que crear VPS:"
 
 #. Type: string
 #. Description
-#: ../templates:13001
+#: ../dtc-xen.templates:12001
 msgid "Dtc-xen creates physical partitions in an existing LVM volume group"
 msgstr "Dtc-xen crea particións físicas nun grupo de volumes LVM existente"
 
 #. Type: string
 #. Description
-#: ../templates:13001
+#: ../dtc-xen.templates:12001
 msgid ""
 "Please enter that volume group name. The volume group size must fit all the "
 "virtual machiness you will set up later on this server. If you don't want to "
@@ -263,13 +269,13 @@ msgstr ""
 
 #. Type: note
 #. Description
-#: ../templates:14001
-msgid "Installation completion"
-msgstr "Completar a instalación"
+#: ../dtc-xen.templates:13001
+msgid "How to finish the install"
+msgstr ""
 
 #. Type: note
 #. Description
-#: ../templates:14001
+#: ../dtc-xen.templates:13001
 msgid ""
 "To finish the installation, you need to launch /usr/sbin/dtc-"
 "xen_finish_install."
@@ -279,7 +285,7 @@ msgstr ""
 
 #. Type: note
 #. Description
-#: ../templates:14001
+#: ../dtc-xen.templates:13001
 msgid ""
 "This script will remove port forwarding from the current sshd_config file "
 "and add the grant of xm console to the group xenusers so that users can "
@@ -293,7 +299,7 @@ msgstr ""
 
 #. Type: note
 #. Description
-#: ../templates:14001
+#: ../dtc-xen.templates:13001
 msgid ""
 "Please note that the system is currently safe (connections to a physical "
 "console as xenXX will be rejected because the /etc/sudoers is not changed), "
@@ -306,33 +312,51 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../templates:15001
+#: ../dtc-xen.templates:14001
 msgid "VPS mountpoint:"
 msgstr "Punto de montaxe do VPS:"
 
 #. Type: string
 #. Description
-#: ../templates:15001
+#: ../dtc-xen.templates:14001
 msgid ""
-"In order to setup the managed Virtual Private Server (VPS), dtc-xen will "
-"mount the LVM or file loopback partition on the dom0 of the Xen server."
+"In order to do the setup of the VPS it's managing, dtc-xen will mount LVM or "
+"file loopback partition on the dom0 of your Xen server. This will also be "
+"used to automaticaly set your /etc/fstab mount points so you can do "
+"maintenance and mount VPSes faster. Enter here the path to this mount points."
 msgstr ""
-"Para configurar o servidor privado virtual xestionado, dtc-xen ha montar a "
-"partición LVM ou \"loopback\" no dom0 do servidor Xen."
 
-#. Type: string
+#. Type: select
 #. Description
-#: ../templates:15001
-msgid "Please enter the path to the mount point."
-msgstr "Introduza a ruta ata o punto de montaxe."
+#: ../dtc-xen.templates:15001
+msgid "Debian os to setup:"
+msgstr ""
 
-#. Type: string
+#. Type: select
 #. Description
-#: ../templates:15001
+#: ../dtc-xen.templates:15001
 msgid ""
-"This information will also be used to automatically set the /etc/fstab mount "
-"points, allowing faster mounting and maintenance of the VPS."
+"Select the debian operating system that you want to have setup when dtc-xen "
+"creates a new VM instance."
 msgstr ""
-"Esta información tamén se ha empregar para configurar automaticamente os "
-"puntos de montaxe de /etc/fstab, o que permite montar e manter máis rápido o "
-"VPS."
+
+#~ msgid "Installation completion"
+#~ msgstr "Completar a instalación"
+
+#~ msgid ""
+#~ "In order to setup the managed Virtual Private Server (VPS), dtc-xen will "
+#~ "mount the LVM or file loopback partition on the dom0 of the Xen server."
+#~ msgstr ""
+#~ "Para configurar o servidor privado virtual xestionado, dtc-xen ha montar "
+#~ "a partición LVM ou \"loopback\" no dom0 do servidor Xen."
+
+#~ msgid "Please enter the path to the mount point."
+#~ msgstr "Introduza a ruta ata o punto de montaxe."
+
+#~ msgid ""
+#~ "This information will also be used to automatically set the /etc/fstab "
+#~ "mount points, allowing faster mounting and maintenance of the VPS."
+#~ msgstr ""
+#~ "Esta información tamén se ha empregar para configurar automaticamente os "
+#~ "puntos de montaxe de /etc/fstab, o que permite montar e manter máis "
+#~ "rápido o VPS."
