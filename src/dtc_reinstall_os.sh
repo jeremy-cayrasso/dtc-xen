@@ -20,7 +20,7 @@ fi
 . /etc/dtc-xen/dtc_create_vps.conf.sh
 
 # Things that might change
-#LVMNAME=lvm1
+if [ "$LVMNAME" = "" ] ; then LVMNAME=lvm1 ; fi
 VPSGLOBPATH=/xen
 #KERNELNAME="2.6.11.12-xenU"
 KERNELPATH="/boot/vmlinuz-${KERNELNAME}"
