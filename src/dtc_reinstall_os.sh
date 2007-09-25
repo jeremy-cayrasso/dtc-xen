@@ -21,6 +21,7 @@ fi
 
 # Things that might change
 if [ "$LVMNAME" = "" ] ; then LVMNAME=lvm1 ; fi
+if [ "$DEBIAN_RELEASE" = "" ] ; then DEBIAN_RELEASE=etch ; fi
 VPSGLOBPATH=/xen
 #KERNELNAME="2.6.11.12-xenU"
 KERNELPATH="/boot/vmlinuz-${KERNELNAME}"
