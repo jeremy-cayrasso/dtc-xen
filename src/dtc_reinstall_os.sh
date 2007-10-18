@@ -40,7 +40,7 @@ IMAGE_TYPE=$6
 
 # redirect stdout and stderr to log files, so we can see what happened during install
 
-if [ "$REDIRECTOUTPUT" == "true" ] ; then
+if [ "$REDIRECTOUTPUT" = "true" ] ; then
 	echo "Redirecting standard output to $VPSGLOBPATH/$VPSNUM.stdout..."
 	echo "Redirecting standard error to $VPSGLOBPATH/$VPSNUM.stderr..."
 	if [ -e $VPSGLOBPATH/$VPSNUM.stdout ]; then
