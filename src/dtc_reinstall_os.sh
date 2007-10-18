@@ -258,9 +258,9 @@ else
 proc            /proc   proc    defaults                0       0
 /dev/sda2       none    swap    sw                      0       0
 " >${ETC}/fstab
-	echo "${VPSHOSTNAME}" >${ETC}/hostname
+	echo "mx.${VPSHOSTNAME}.${NODE_DOMAIN_NAME}" >${ETC}/hostname
 	echo "127.0.0.1	localhost.localdomain	localhost
-${IPADDR}	dtc.${VPSHOSTNAME}.${NODE_DOMAIN_NAME} ${VPSHOSTNAME}.${NODE_DOMAIN_NAME} ${VPSHOSTNAME}
+${IPADDR}	mx.${VPSHOSTNAME}.${NODE_DOMAIN_NAME} dtc.${VPSHOSTNAME}.${NODE_DOMAIN_NAME} ${VPSHOSTNAME}.${NODE_DOMAIN_NAME} ${VPSHOSTNAME}
 
 # The following lines are desirable for IPv6 capable hosts
 ::1	ip6-localhost ip6-loopback
@@ -281,7 +281,8 @@ ff02::3	ip6-allhosts
 ${VPSHOSTNAME}
 
 " >${ETC}/motd
-	cp /root/.bashrc ${VPSGLOBPATH}/${VPSNUM}/root
+	sed "s/VPS_HOSTNAME/${VPSHOSTNAME}/" /etc/dtc-xen/bashrc
+	cp /root/.bashrc ${VPSGLOBPATH}/${VPSNUM}/root/.bashrc
 
 	echo "#!/bin/bash
 
