@@ -1,1 +1,2 @@
-src/bashrc		/etc/dtc-xen
+src/bashrc	/etc/dtc-xen
+src/motd	/etc/dtc-xen

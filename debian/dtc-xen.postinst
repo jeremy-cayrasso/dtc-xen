@@ -182,6 +182,9 @@ for i in `seq -w 1 19`; do
 	dtcaddxenuser xen$i
 done
 
+# Touch this file just to show that it's possible to edit it
+touch /etc/dtc-xen/authorized_keys2
+
 #DEBHELPER#
 
 exit 0

@@ -258,6 +258,8 @@ else
 proc            /proc   proc    defaults                0       0
 /dev/sda2       none    swap    sw                      0       0
 " >${ETC}/fstab
+
+	# We set the default needed by DTC as hostname, so DTC can be setup quite fast
 	echo "mx.${VPSHOSTNAME}.${NODE_DOMAIN_NAME}" >${ETC}/hostname
 	echo "127.0.0.1	localhost.localdomain	localhost
 ${IPADDR}	mx.${VPSHOSTNAME}.${NODE_DOMAIN_NAME} dtc.${VPSHOSTNAME}.${NODE_DOMAIN_NAME} ${VPSHOSTNAME}.${NODE_DOMAIN_NAME} ${VPSHOSTNAME}
@@ -270,17 +272,7 @@ ff02::1	ip6-allnodes
 ff02::2	ip6-allrouters
 ff02::3	ip6-allhosts
 " >${ETC}/hosts
-	echo "
-  ______    ___________________     GPL.Host_____    ____ ___|   .__
- (  ___/___(____     /  |______|   |_______(    /___(  _/_\___   __/
- |  \___  \_  |/    /   |\    \_   ____  \_   ___ \_______  \|   |
- |   |/    /  _____/    |/     /   |  /   /   |/   /  s!|/   /   |
- |_________\  |    |__________/|___| /   /|________\_________\GPL|
- Opensource dr|ven hosting worldwide____/http://gplhost.com  |HOST
-
-${VPSHOSTNAME}
-
-" >${ETC}/motd
+	sed "s/VPS_HOSTNAME/${VPSHOSTNAME}/" /etc/dtc-xen/motd >${VPSGLOBPATH}/${VPSNUM}/etc/motd
 	sed "s/VPS_HOSTNAME/${VPSHOSTNAME}/" /etc/dtc-xen/bashrc >${VPSGLOBPATH}/${VPSNUM}/root/.bashrc
 
 	echo "#!/bin/bash
@@ -307,15 +299,21 @@ exit 0
 
  " >${ETC}/init.d/capabilities
 	chmod +x ${ETC}/init.d/capabilities
-	ln -s ../init.d/capabilities ${ETC}/rc0.d/K19capabilities
-	ln -s ../init.d/capabilities ${ETC}/rc1.d/K19capabilities
-	ln -s ../init.d/capabilities ${ETC}/rc6.d/K19capabilities
-	ln -s ../init.d/capabilities ${ETC}/rc2.d/S19capabilities
-	ln -s ../init.d/capabilities ${ETC}/rc3.d/S19capabilities
-	ln -s ../init.d/capabilities ${ETC}/rc4.d/S19capabilities
-	ln -s ../init.d/capabilities ${ETC}/rc5.d/S19capabilities
+	# Gentoo runlevels are a bit different, this has to be fixed!
+	if [ "$DISTRO" = "gentoo" ] ; then
+		echo "FIX ME! Gentoo runlevel needs capabilities script!"
+	else
+		ln -s ../init.d/capabilities ${ETC}/rc0.d/K19capabilities
+		ln -s ../init.d/capabilities ${ETC}/rc1.d/K19capabilities
+		ln -s ../init.d/capabilities ${ETC}/rc6.d/K19capabilities
+		ln -s ../init.d/capabilities ${ETC}/rc2.d/S19capabilities
+		ln -s ../init.d/capabilities ${ETC}/rc3.d/S19capabilities
+		ln -s ../init.d/capabilities ${ETC}/rc4.d/S19capabilities
+		ln -s ../init.d/capabilities ${ETC}/rc5.d/S19capabilities
+	fi
 
-	# This will reduce swappiness
+	# This will reduce swappiness and makes the overall VPS server faster. Increase
+	# slowness when swapping, which is after all, not a bad thing so customers notice it swaps.
 	echo "sys.vm.swappiness=10" >> /etc/sysctl.conf
 fi
 
