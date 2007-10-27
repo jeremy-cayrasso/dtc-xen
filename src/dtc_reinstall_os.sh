@@ -272,7 +272,11 @@ ff02::1	ip6-allnodes
 ff02::2	ip6-allrouters
 ff02::3	ip6-allhosts
 " >${ETC}/hosts
-	sed "s/VPS_HOSTNAME/${VPSHOSTNAME}/" /etc/dtc-xen/motd >${VPSGLOBPATH}/${VPSNUM}/etc/motd
+	if [ -h /etc/motd -a -f /var/run/motd ] ; then
+		sed "s/VPS_HOSTNAME/${VPSHOSTNAME}/" /etc/dtc-xen/motd >${VPSGLOBPATH}/${VPSNUM}/var/run/motd
+	else
+		sed "s/VPS_HOSTNAME/${VPSHOSTNAME}/" /etc/dtc-xen/motd >${VPSGLOBPATH}/${VPSNUM}/etc/motd
+	fi
 	sed "s/VPS_HOSTNAME/${VPSHOSTNAME}/" /etc/dtc-xen/bashrc >${VPSGLOBPATH}/${VPSNUM}/root/.bashrc
 
 	echo "#!/bin/bash
