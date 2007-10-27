@@ -1,4 +1,4 @@
-dtc-xen (0.3.3-1) unstable; urgency=low
+dtc-xen (0.3.4-1) unstable; urgency=low
 
   * New upstream release (correcting a problem with Xen 3.0.4 py libs plus
     adding some SOAP statistics remote methods)
