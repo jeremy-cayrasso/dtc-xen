@@ -1,4 +1,1 @@
-src/dtc-xen_userconsole.sh	/bin
-panel/graph		/usr/share/dtc-xen
-panel/index.html	/usr/share/dtc-xen
 src/bashrc		/etc/dtc-xen
