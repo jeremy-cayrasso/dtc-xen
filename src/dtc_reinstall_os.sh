@@ -281,8 +281,7 @@ ff02::3	ip6-allhosts
 ${VPSHOSTNAME}
 
 " >${ETC}/motd
-	sed "s/VPS_HOSTNAME/${VPSHOSTNAME}/" /etc/dtc-xen/bashrc
-	cp /root/.bashrc ${VPSGLOBPATH}/${VPSNUM}/root/.bashrc
+	sed "s/VPS_HOSTNAME/${VPSHOSTNAME}/" /etc/dtc-xen/bashrc >${VPSGLOBPATH}/${VPSNUM}/root/.bashrc
 
 	echo "#!/bin/bash
 
@@ -487,7 +486,6 @@ fi
 echo "Unmounting proc and filesystem root..."
 $UMOUNT ${VPSGLOBPATH}/${VPSNUM}/proc 2> /dev/null || /bin/true
 $UMOUNT ${VPSGLOBPATH}/${VPSNUM}
-rmdir ${VPSGLOBPATH}/${VPSNUM}
 
 echo "Install script finished"
 exit 0
