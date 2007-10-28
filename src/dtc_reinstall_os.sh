@@ -39,7 +39,6 @@ DISTRO=$5
 IMAGE_TYPE=$6
 
 # redirect stdout and stderr to log files, so we can see what happened during install
-
 if [ "$REDIRECTOUTPUT" = "true" ] ; then
 	echo "Redirecting standard output to $VPSGLOBPATH/$VPSNUM.stdout..."
 	echo "Redirecting standard error to $VPSGLOBPATH/$VPSNUM.stderr..."
@@ -53,7 +52,6 @@ if [ "$REDIRECTOUTPUT" = "true" ] ; then
 	exec 1>$VPSGLOBPATH/$VPSNUM.stdout
 	exec 2>$VPSGLOBPATH/$VPSNUM.stderr
 fi
-
 
 # default to lvm type for backwards compatibility
 if [ -z "$IMAGE_TYPE" ]; then
