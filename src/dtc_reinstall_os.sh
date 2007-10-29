@@ -271,7 +271,7 @@ ff02::2	ip6-allrouters
 ff02::3	ip6-allhosts
 " >${ETC}/hosts
 	# Under Debian /etc/motd is a symlink to /var/run/motd, so we need to take care of this fact.
-	[ "$DISTRO" = "debian" ] ; then
+	if [ "$DISTRO" = "debian" ] ; then
 		sed "s/VPS_HOSTNAME/${VPSHOSTNAME}/" /etc/dtc-xen/motd >${VPSGLOBPATH}/${VPSNUM}/etc/motd.tail
 	else
 		sed "s/VPS_HOSTNAME/${VPSHOSTNAME}/" /etc/dtc-xen/motd >${VPSGLOBPATH}/${VPSNUM}/etc/motd
