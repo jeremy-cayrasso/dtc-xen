@@ -6,9 +6,32 @@ import commands
 #import sqlite
 from StringIO import StringIO
 from SOAPpy import *
+import logging
+import threading
+import subprocess # FIXME maybe this wont work on older pythons?
 
 # debug
 SOAPpy.Config.debug=1
+# FIXME
+# this could probably use a bit of help when run in the console instead of daemonized
+# by the way, this script seems not to be detaching from the controlling pty or daemonizing itself properly.  it's WRONG.
+# and it shouldn't even run as root!
+logging.basicConfig(filename="/var/log/dtc-soap-server.log",level=logging.DEBUG)
+logging.info("Starting DTC SOAP server...")
+
+# A generalized decorator for logging exceptions
+def log_exceptions(f):
+   def func(*args,**kwargs):
+      try:
+           logging.debug("Calling function %s(%s,%s)",f.func_name,args,kwargs)
+           ret = f(*args,**kwargs)
+           logging.debug("Function returned %s",ret)
+           return ret
+      except Exception,e:
+           logging.exception("Trapped exception in function call")
+           raise
+   func.func_name = f.func_name
+   return func
 
 from M2Crypto import SSL
 
@@ -23,9 +46,10 @@ try:
 	from xen.xend.XendClient import server
 except:
 	pass
+# FIXME WHY ARE WE SILENCING THIS EXCEPTION?
 
 # Checking for Xen version
-print "Checking for Xen version"
+logging.debug("Checking for Xen version")
 xen_version = 2
 try:
 	func = getattr(xenxm.server, "xend_domain")
@@ -34,7 +58,7 @@ try:
 except:
 	xen_version = 3
 
-print "Detected Xen vesrion %s" % xen_version
+logging.debug("Detected Xen version %s",xen_version)
 
 # read config file
 p=Properties()
@@ -52,40 +76,46 @@ server_lvmname=p.getProperty("soap_server_lvmname");
 def testVPSServer():
 	  return "OK"
 
+@log_exceptions
 def startVPS(vpsname):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
 		# Lookup the database to see if we are running a process (mkfs/fsck/etc...) on the VM instance...
 		xmargs=['foo', 'create', vpsname]
-		print "Starting %s..." % vpsname
+		logging.info("Starting VPS %s",vpsname)
 		localsysout = StringIO()
 		localsyserr = StringIO()
 		sys.stdout = localsysout
 		sys.stderr = localsyserr
 		try:
 			xenxm.main(xmargs)
+			logging.info("VPS %s started",vpsname)
 			return "OK","Started %s" % vpsname
 		except:
+			# this is a HACK.  It should also not capture BaseException.
 			sys.stdout = sys.__stdout__
 			sys.stderr = sys.__stderr__
 			returnString =  "NOTOK - %s %s" % (localsyserr.getvalue(), localsysout.getvalue())
 			localsyserr.close()
 			localsysout.close()
+			logging.exception("VPS %s failed to start",vpsname)
 			return returnString
 	else:
 		return "NOTOK"
 
+@log_exceptions
 def destroyVPS(vpsname):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
 		xmargs=['foo','destroy',vpsname]
-		print "Destroying %s..." % vpsname
+		logging.info("Destroying VPS %s", vpsname)
 		localsysout = StringIO()
                 localsyserr = StringIO()
                 sys.stdout = localsysout
                 sys.stderr = localsyserr
 		try:
 			xenxm.main(xmargs)
+			logging.info("VPS %s destroyed",vpsname)
 			return "OK","Destroyed %s" % vpsname
 		except:
 			sys.stdout = sys.__stdout__
@@ -93,6 +123,7 @@ def destroyVPS(vpsname):
 			returnString =  "NOTOK - %s %s" % (localsyserr.getvalue(), localsysout.getvalue())
 			localsyserr.close()
 			localsysout.close()
+			logging.exception("VPS %s failed to be destroyed",vpsname)
 			return returnString
 	else:
 		return "NOTOK"
@@ -101,20 +132,22 @@ def shutdownVPS(vpsname):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
 		xmargs=['foo','shutdown',vpsname]
-		print "Shutting down %s..." % vpsname
+		logging.info("Shutting VPS %s down", vpsname)
 		localsysout = StringIO()
                 localsyserr = StringIO()
                 sys.stdout = localsysout
                 sys.stderr = localsyserr
 		try:
 			xenxm.main(xmargs)
-			return "OK","Shutdown %s" % vpsname
+			logging.info("VPS %s shut down",vpsname)
+			return "OK","Shut down %s" % vpsname
 		except:
                         sys.stdout = sys.__stdout__
                         sys.stderr = sys.__stderr__
                         returnString =  "NOTOK - %s %s" % (localsyserr.getvalue(), localsysout.getvalue())
-                        localsyserr.close()
-                        localsysout.close()
+                        localsyserr.close() # FIXME not really needed to close the fds
+                        localsysout.close() # reference count drops to zero -> boom they're closed.
+			logging.exception("VPS %s failed to shut down",vpsname)
                         return returnString
 	else:
 		return "NOTOK"
@@ -136,7 +169,7 @@ def listStartedVPS():
 			if func:
 				doms = xenxm.server.xend_domains()
 			else:
-				print "Couldn't find xend_domains method"
+				logging.warn("Couldn't find xend_domains method")
 		except:
 			doms = xenxm.server.xend.domains(1)
 		doms.sort()
@@ -147,7 +180,7 @@ def listStartedVPS():
 			if func:
 				dom = xenxm.server.xend_domain(username)
 			else:
-				print "Couldn't find xend_domain method"
+				logging.warn("Couldn't find xend_domain method")
 		except:
 			dom = xenxm.server.xend.domain(username)
 		return dom
@@ -194,12 +227,12 @@ def fsckVPSpartition(vpsname):
 		filename = "/var/lib/dtc-xen/states/%s" % vpsname
 		status = getVPSState(vpsname)
 		if status != "Not running":
-			print "Status isn't good, we are already in process, or actually live"
+			logging.warn("Status isn't good, we are already in process, or actually live")
 			return "NOTOK, %s" % status
 		# Write the semaphore file before proceeding
 		fd2 = open(filename, 'w')
 		fd2.write("fsck\n")
-		print "Starting file system check for %s" % vpsname
+		logging.info("Starting file system check for %s",vpsname)
 		cmd = "/sbin/fsck.ext3"
 		args = [cmd, "-p","/dev/lvm1/%s" % vpsname ]
 		spawnedpid = os.spawnv(os.P_NOWAIT, cmd, args ) 
@@ -211,42 +244,64 @@ def fsckVPSpartition(vpsname):
 def changeBSDkernel(vpsname,ramsize,kerneltype,allipaddrs):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
-		print "Changing kernel of a BSD VM: vps: %s ram: %s kernel: %s" % (vpsname,ramsize,kerneltype)
+		logging.info("Changing kernel of a BSD VM: vps: %s ram: %s kernel: %s",vpsname,ramsize,kerneltype)
 		cmd = "dtc_change_bsd_kernel %s %s %s '%s'" % (vpsname,ramsize,kerneltype,allipaddrs)
 		print cmd
 		output = commands.getstatusoutput(cmd)
 		return "OK"
 
 # Take care! This time, the vpsname has to be only the number (eg XX and not xenXX)
+@log_exceptions
 def reinstallVPSos(vpsname,ostype,hddsize,ramsize,ipaddr,imagetype='lvm'):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
+		logging.info("Reinstalling %s on VPS %s",ostype,vpsname)  #maybe these should be notices if notices are below info severity
 		filename = "/var/lib/dtc-xen/states/xen%s" % vpsname
-		print "Checking %s for mkos" % vpsname
+		logging.debug("Checking %s for mkos",vpsname)
 		status = getVPSState("xen%s" % vpsname)
 		if status != "Not running":
 			return "NOTOK, %s" % status
 		# Write the semaphore file before proceeding
 		fd2 = open(filename, 'w')
 		fd2.write("mkos\n")
-		print "Starting reinstallation of operating system for xen%s" % vpsname
-		cmd = "/usr/sbin/dtc_reinstall_os"
-		args = [cmd, vpsname, hddsize, ramsize, "%s" % ipaddr, ostype, imagetype]
-		print cmd
-		print args
-		spawnedpid = os.spawnv(os.P_NOWAIT, cmd, args )
+
+		log = file("/xen/%s.log"%vpsname,"w") # FIXME use basename() to quote vpsname
+		# FIXME idea: we could reuse the log isntead of a file, a stringio or something that reflects all the log activity into the logging module
+		# that way everything goes into /var/log/dtc-soap-server.log
+		# brilliant? you be the judge
+		args = ["/usr/sbin/dtc_reinstall_os", "-v", vpsname, hddsize,
+			ramsize, "%s" % ipaddr, ostype, imagetype]
+		logging.debug("Running %s in subprocess",args)
+		proc = subprocess.Popen(args,stdout=log,stderr=log,close_fds=True,cwd="/")
+		spawnedpid = proc.pid
+		def wait_for_child(): # watcher thread target
+		    try:
+			proc.wait()
+			if proc.returncode != 0: level = logging.warn
+			else: level = logging.debug
+			level("Subprocess %s (PID %s) is done -- return code: %s",
+				threading.currentThread().getName(),proc.pid,proc.returncode)
+		    except:
+			logging.exception("Watcher thread %s died because of exception",threading.currentThread().getName())
+			raise
+		watcher = threading.Thread(target=wait_for_child,name="dtc_reinstall_os watcher for xen%s"%vpsname)
+		watcher.setDaemon(True)
+		watcher.start()
+		logging.debug("Subprocess %s (PID %s) started and being watched",watcher.getName(),spawnedpid)
+
 		fd2.write("%s\n" % spawnedpid)
 		fd2.close()
+		logging.info("Reinstallation process launched")
 		return "OK, started mkos."
 	return "NOTOK"
 
 def setupLVMDisks(vpsname,hddsize,swapsize,imagetype='lvm'):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
-		print "Starting disk setup for xen%s: %s HHD, %s SWAP, %s imagetype" % (vpsname,hddsize,swapsize,imagetype)
+		logging.info("Starting disk setup for xen%s: %s HHD, %s SWAP, %s imagetype",vpsname,hddsize,swapsize,imagetype)
 		cmd = "/usr/sbin/dtc_setup_vps_disk %s %s %s %s" % (vpsname,hddsize,swapsize,imagetype)
-		output = commands.getstatusoutput(cmd)
-		print "Commande: %s" % cmd
+		output = commands.getstatusoutput(cmd) # FIXME THIS IS FAIL -- it doesnt get stderr
+		logging.debug("Command stdout: %s",cmd)
 		return "OK"
 	else:
 		return "NOTOK"
@@ -357,54 +412,55 @@ def getCPUUsage(vpsname):
 		return xenxm.sxp.child_value(info, 'cpu_time', '0')
 	return "NOTOK"		
 
+@log_exceptions
 def getVPSState(vpsname):
 	username = getUser()
         if username == dtcxen_user or username == vpsname:
         	filename = "/var/lib/dtc-xen/states/%s" % vpsname
-        	print "Checking %s for getVPSState" % filename
+        	logging.debug("Checking %s for getVPSState", filename)
         	try:
-			print "Opening %s" % filename
+			logging.debug("Opening %s" , filename)
 	        	fd = open(filename, 'r')
 			command = fd.readline()
-			print "Checking fsck"
+			logging.debug( "Checking fsck")
 			if string.find(command,"fsck") != -1:
 				fsckpid = int(fd.readline())
-				print "fsck process meant to be at %s" % fsckpid
+				logging.debug( "fsck process meant to be at %s" , fsckpid)
 				try:
 					returnstatus = os.waitpid(fsckpid, os.WNOHANG)			
 					if returnstatus[1] == 0:
-						print "Founded running fsck!"
+						logging.debug( "Founded running fsck!")
 						fd.close()
 						return "fsck"
 					else:
-						print "Status is %s" % returnstatus[1]
+						logging.debug( "Status is %s" , returnstatus[1])
 				except:
-					print "Failed to find running process... delete state file..."
+					logging.debug( "Failed to find running process... delete state file...")
 				fd.close()
 				os.remove(filename)
 			else:			
-				print "Checking mkos"
+				logging.debug( "Checking mkos")
 				if string.find(command,"mkos") != -1:
 					mkospid = int(fd.readline())
-					print "mkos process meant to be at %s" % mkospid
+					logging.debug( "mkos process meant to be at %s" , mkospid)
 					try:
 						returnstatus = os.waitpid(mkospid, os.WNOHANG)			
 						if returnstatus[1] == 0:
-							print "Founded running mkos!"
+							logging.debug( "Founded running mkos!")
 							fd.close()
 							return "mkos"
 						else:
-							print "Status is %s" % returnstatus[1]
+							logging.debug( "Status is %s" , returnstatus[1])
 					except:
-						print "Failed to find running process... delete state file..."
+						logging.debug( "Failed to find running process... delete state file...")
 					fd.close()
 					os.remove(filename)
 				else:
-					print "Invalid state file..."
+					logging.debug( "Invalid state file...")
 					fd.close()
 					return "NOTOK, invalid state file"
-		except:
-			print "No semaphore (fsck/mkos): continuing"
+		except: # FIXME WHY is this trapped?
+			logging.exception("No semaphore (fsck/mkos): continuing")
 		try:
 			if xen_version == 3:
 				try:
@@ -413,15 +469,15 @@ def getVPSState(vpsname):
 					info = xenxm.server.xend.domain(vpsname)
 				return info
 			else:
-				print "Calling xenxm.server xend_domain"
+				logging.debug( "Calling xenxm.server xend_domain")
 				func = getattr(xenxm.server, "xend_domain")
-				print "After xenxm.server"
+				logging.debug("After xenxm.server")
 				if func:
-					print "Calling xenxm.server.xend.domain(%s)" % vpsname
+					logging.debug("Calling xenxm.server.xend.domain(%s)" , vpsname)
 					info = xenxm.server.xend_domain(vpsname)
 					return info
 				else:
-					print "Couldn't find xend_domain method"
+					logging.debug("Couldn't find xend_domain method")
 		except:
 			return "Not running"
 	else:
@@ -429,7 +485,6 @@ def getVPSState(vpsname):
 
 def getInstallableOS():
 	folderlist = os.listdir('/usr/share/dtc-xen-os/')
-	folderlist = filter(os.path.isdir, folderlist)
 	return folderlist
 
 #	d = {}
@@ -463,20 +518,20 @@ def getUser():
 def isUserValid(vpsname):
 	username = getUser()    
 	if vpsname == username:
-		print "Valid user: ", username
+		logging.debug( "Valid user: %s", username)
 		return 1
 	else:
 		return 0
 
 def _authorize(*args, **kw):
 	global Config
-	print "_authorize called..."
+	logging.debug( "_authorize called..." )
 
 	c = kw["_SOAPContext"]
-	print "**kw =%s" % str(kw)
+	logging.debug( "**kw =%s" , str(kw) )
 
 	# The socket object, useful for
-	print "Peer connected: ",  c.connection.getpeername()
+	logging.debug( "Peer connected: ",  c.connection.getpeername() )
 
 	# get authorization info from HTTP headers
 	ah = c.httpheaders.get("Authorization","")
@@ -485,40 +540,42 @@ def _authorize(*args, **kw):
 		# decode and analyze the string for the username and password
 		# (we slice the string from 6 onwards to remove the "Basic ")
 		username, password = base64.decodestring(ah[6:].strip()).split(":")
-		print "Authorization string: \"%s\"" % (ah,)
-		print "Username: \"%s\" Password: \"%s\"" % (username, password)
+		logging.debug( "Authorization string: \"%s\"" , ah )
+		# FIXME the pw should never end up the log
+		logging.debug( "Username: \"%s\" Password: \"%s\"" , username, password )
 
-		print "Loading /etc/dtc-xen/htpasswd..."
+		logging.debug("Loading /etc/dtc-xen/htpasswd...")
 		fd = open('/etc/dtc-xen/htpasswd', 'r') 
 
 		for line in fd:
 			u, h = line.strip().split(':')
 			if u == username:
-				print "Found user: ",username
-				print "Password from file: ", h
+				logging.debug( "Found user: %s",username)
+				logging.debug( "Password from file: %s", h)
 				verify_pass = crypt.crypt(password, h[:2])
-				print "Check hash password: ",verify_pass
+				logging.debug( "Check hash password: %s",verify_pass)
 				if verify_pass == h:
 					fd.close()
-					print "Password matches the one in the file!"
+					logging.debug( "Password matches the one in the file!")
 					return 1
 				else:
 					fd.close()
-					print "Password didn't match the one in .htpasswd"
+					logging.debug("Password didn't match the one in .htpasswd")
 					return 0
     
-		print "Couldn't find user in password file!"
+		logging.debug("Couldn't find user in password file!")
 		return 0
     
 	else:
-		print "NO authorization information in HTTP headers, refusing."
+		logging.debug("NO authorization information in HTTP headers, refusing.")
 		return 0
 
 def _passphrase(cert):
-	print "Pass phrase faked..."
+	logging.debug("Pass phrase faked...")
 	return cert_passphrase
 
 if not Config.SSLserver:
+	### This is wrong.  IT should just raise Import Error.  FIXME
 	raise RuntimeError, "this Python installation doesn't have OpenSSL and M2Crypto"
 
 ssl_context = SSL.Context()
@@ -545,13 +602,16 @@ soapserver.registerFunction(getNetworkUsage)
 soapserver.registerFunction(getIOUsage)
 soapserver.registerFunction(getCPUUsage)
 soapserver.registerFunction(getInstallableOS)
-print "Starting dtc-xen python SOAP server at https://%s:%s/ ..." % (server_host, server_port)
+logging.info("Started dtc-xen python SOAP server at https://%s:%s/ ..." , server_host, server_port)
 while True:
 	try:
 		soapserver.serve_forever()
 	except KeyboardInterrupt:
-		print "Shutting down..."
+		logging.info("Shutting down due to SIGINT...")
+		#FIXME this program needs to capture and handle SIGTERM gracefully as well
 		sys.stdout.flush()
 		sys.exit(0)
 	except Exception, e:
-		print "Caught exception handling connection: ", e
+		logging.exception("Caught exception handling connection")
+
+logging.info("DTC SOAP server shut down")
