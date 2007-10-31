@@ -1,7 +1,8 @@
-dtc-xen (0.3.4-1) unstable; urgency=low
+dtc-xen (0.3.5-1) unstable; urgency=low
 
   * New upstream release (correcting a problem with Xen 3.0.4 py libs plus
     adding some SOAP statistics remote methods)
+  * Now logging using /var/log/dtc-xen.log and using logrotate
   * Added the packaging of dtc-xen-firewall
   * Fixes the non-interactive setup of dtc-xen that was failing due to the
     password for the htpasswd file not entered by user (Closes: #431705)
