@@ -47,10 +47,6 @@ try:
 except:
 	pass
 # FIXME WHY ARE WE SILENCING THIS EXCEPTION?
-# Thomas: Because it's just a check for xen2 vs xen3
-# Extra useless git comment: to be removed.
-# And another one.
-# And again...
 
 # Checking for Xen version
 logging.debug("Checking for Xen version")
@@ -276,7 +272,7 @@ def reinstallVPSos(vpsname,ostype,hddsize,ramsize,ipaddr,imagetype='lvm'):
 		args = ["/usr/sbin/dtc_reinstall_os", "-v", vpsname, hddsize,
 			ramsize, "%s" % ipaddr, ostype, imagetype]
 		logging.debug("Running %s in subprocess",args)
-		proc = subprocess.Popen(args,stdout=log,stderr=log,close_fds=True,cwd="/")
+		proc = subprocess.Popen(args,stdout=log,stderr=subprocess.STDOUT,close_fds=True,cwd="/")
 		spawnedpid = proc.pid
 		def wait_for_child(): # watcher thread target
 		    try:
