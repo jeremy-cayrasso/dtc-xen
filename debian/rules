@@ -35,12 +35,14 @@ binary-indep: install
 binary-arch: install
 	dh_testdir
 	dh_testroot
+	dh_install
 	dh_installchangelogs doc/changelog
 	dh_installinit
 	dh_installcron
 	dh_installdebconf
 	dh_installman
 	dh_installdocs
+	dh_installlogrotate
 	dh_fixperms
 	dh_compress
 	dh_installdeb

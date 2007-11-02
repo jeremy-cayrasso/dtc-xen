@@ -19,9 +19,13 @@ dtc_reinstall_os \- reinstall an operating system in a VM
 
 .SH DESCRIPTION
 .B dtc_reinstall_os
-This shell script is a part of the dtc-xen
-package that is to be used by the dtc panel
-to manage a Xen VPS server.
+This shell script is a part of the dtc-xen package that is to be used by the
+dtc panel to manage a Xen VPS server.
+
+When doing it's setup, dtc_reinstall_os will copy the file
+/etc/dtc-xen/authorized_keys2 into the VPS's /root/.ssh/authorized_keys2, so
+the administrator has access to the VPS without the need of shutting it down.
+So it's a good idea to copy your shh public key in /etc/dtc-xen/authorized_keys2.
 
 .B VPS_NUMBER
 has to be a number between 01 and 19

@@ -16,7 +16,7 @@ SOAPpy.Config.debug=1
 # this could probably use a bit of help when run in the console instead of daemonized
 # by the way, this script seems not to be detaching from the controlling pty or daemonizing itself properly.  it's WRONG.
 # and it shouldn't even run as root!
-logging.basicConfig(filename="/var/log/dtc-soap-server.log",level=logging.DEBUG)
+logging.basicConfig(filename="/var/log/dtc-xen.log",level=logging.DEBUG)
 logging.info("Starting DTC SOAP server...")
 
 # A generalized decorator for logging exceptions
@@ -335,6 +335,8 @@ def getNetworkUsage(vpsname):
 	if username == dtcxen_user or username == vpsname:
 		info = getVPSState(vpsname)
 		id = int(xenxm.sxp.child_value(info, 'id', '-1'))
+		if id == -1:
+			id = int(xenxm.sxp.child_value(info, 'domid', '-1'))
 		networkDeviceName="eth0"
 		if vpsname=="Domain-0":
 			networkDeviceName="eth0"

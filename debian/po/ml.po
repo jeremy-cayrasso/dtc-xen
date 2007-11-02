@@ -9,192 +9,220 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dtc-xen 20070422\n"
 "Report-Msgid-Bugs-To: thomas@goirand.fr\n"
-"POT-Creation-Date: 2007-04-21 09:29+0200\n"
+"POT-Creation-Date: 2007-09-25 00:07+0800\n"
 "PO-Revision-Date: 2007-04-22 00:52-0600\n"
 "Last-Translator: Praveen|പ്രവീണ്‍ A|എ <pravi.a@gmail.com>\n"
-"Language-Team: Swathanthra|സ്വതന്ത്ര Malayalam|മലയാളം Computing|കമ്പ്യൂട്ടിങ്ങ് <smc-discuss@googlegroups.com>\n"
+"Language-Team: Swathanthra|സ്വതന്ത്ര Malayalam|മലയാളം Computing|കമ്പ്യൂട്ടിങ്ങ് <smc-"
+"discuss@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit"
+"Content-Transfer-Encoding: 8bit\n"
 
 #. Type: string
 #. Description
-#: ../templates:2001
+#: ../dtc-xen.templates:1001
 msgid "Server port:"
 msgstr "സേവക പോര്‍ട്ട്:"
 
 #. Type: string
 #. Description
-#: ../templates:2001
-msgid "Please enter the port the server will bind to."
+#: ../dtc-xen.templates:1001
+#, fuzzy
+msgid ""
+"What port should it bind to? Default is 8089. Please enter the port the "
+"server will bind to."
 msgstr "ദയവായി സേവകന്‍ ഏത് പോര്‍ട്ടിലേയ്ക്കാണുറപ്പിയ്ക്കാന്‍ പോകുന്നതെന്ന് നല്‍കുക."
 
 #. Type: string
 #. Description
-#: ../templates:3001
+#: ../dtc-xen.templates:2001
 msgid "SOAP server login:"
 msgstr "സോപ് സേവക ലോഗിന്‍:"
 
 #. Type: string
 #. Description
-#: ../templates:3001
+#: ../dtc-xen.templates:2001
+#, fuzzy
 msgid ""
 "Dtc-xen will bind a SOAP Python server (to which a dtc panel can connect, in "
-"order to start, stop, create and destroy a Virtual Private Server)."
-msgstr "ഡിടിസി-സെന്‍ (സ്വകാര്യ മായാ സേവകനെ തുടങ്ങാനും നിര്‍ത്താനും നശിപ്പിയ്ക്കാനുമായി ഒരു ഡിടിസി പാനലിന് ബന്ധപ്പെടാവുന്ന) ഒരു സോപ് പൈത്തണ്‍ സേവകനെ ഉറപ്പിയ്ക്കും."
+"order to start, stop, create and destroy a VPS)."
+msgstr ""
+"ഡിടിസി-സെന്‍ (സ്വകാര്യ മായാ സേവകനെ തുടങ്ങാനും നിര്‍ത്താനും നശിപ്പിയ്ക്കാനുമായി ഒരു ഡിടിസി "
+"പാനലിന് ബന്ധപ്പെടാവുന്ന) ഒരു സോപ് പൈത്തണ്‍ സേവകനെ ഉറപ്പിയ്ക്കും."
 
 #. Type: string
 #. Description
-#: ../templates:3001
+#: ../dtc-xen.templates:2001
 msgid "Please enter the login name to connect to the server."
 msgstr "ദയവായി സേവകനുമായി ബന്ധപ്പെടാനുള്ള ലോഗിന്‍ നാമം നല്‍കുക."
 
 #. Type: password
 #. Description
-#: ../templates:4001
+#: ../dtc-xen.templates:3001
 msgid "SOAP server pass:"
 msgstr "സോപ് സേവക അടയാളം:"
 
 #. Type: password
 #. Description
-#: ../templates:4001
+#: ../dtc-xen.templates:3001
 msgid ""
 "Dtc-xen will generate a .htpasswd file for the login you have just "
 "configured."
-msgstr "ഡിടിസി-സെന്‍ നിങ്ങള്‍ തൊട്ടു മുന്‍പേ ക്രമീകരിച്ച ലോഗിന് വേണ്ടി ഒരു .htpasswd ഫയല്‍ ഉണ്ടാക്കും."
+msgstr ""
+"ഡിടിസി-സെന്‍ നിങ്ങള്‍ തൊട്ടു മുന്‍പേ ക്രമീകരിച്ച ലോഗിന് വേണ്ടി ഒരു .htpasswd ഫയല്‍ ഉണ്ടാക്കും."
 
 #. Type: password
 #. Description
-#: ../templates:4001
+#: ../dtc-xen.templates:3001
 msgid "Please enter the password to use in that file."
 msgstr "ദയവായി ആ ഫയലിലുപയോഗിയ്ക്കേണ്ട അടയാളവാക്ക് നല്‍കുക."
 
 #. Type: string
 #. Description
-#: ../templates:5001
-msgid "Server hostname:"
+#: ../dtc-xen.templates:4001
+#, fuzzy
+msgid "Server domain name:"
 msgstr "സേവക ഹോസ്റ്റ്നാമം:"
 
 #. Type: string
 #. Description
-#: ../templates:5001
+#: ../dtc-xen.templates:4001
+#, fuzzy
 msgid ""
 "Please enter the domain name for the dtc-xen server. This will be used as a "
-"part of the URL by the SOAP dtc panel client."
-msgstr "ദയവായി ഡിടിസി-സെന്‍ സേവകന്റെ ഡൊമൈന്‍ നാമം നല്‍കുക. സോപ് ഡിടിസി പാനല്‍ ക്ലയന്റ് ഇത് യുആര്‍എല്ലിന്റെ ഭാഗമായി ഉപയോഗിയ്ക്കുന്നതായിരിയ്ക്കും."
+"part of the URL by the SOAP dtc panel client like nodeXXXX.example.com."
+msgstr ""
+"ദയവായി ഡിടിസി-സെന്‍ സേവകന്റെ ഡൊമൈന്‍ നാമം നല്‍കുക. സോപ് ഡിടിസി പാനല്‍ ക്ലയന്റ് ഇത് "
+"യുആര്‍എല്ലിന്റെ ഭാഗമായി ഉപയോഗിയ്ക്കുന്നതായിരിയ്ക്കും."
 
 #. Type: string
 #. Description
-#: ../templates:6001
+#: ../dtc-xen.templates:5001
 msgid "VPS Server node number:"
 msgstr "വിപിഎസ് സേവക നോഡ് സംഖ്യ:"
 
 #. Type: string
 #. Description
-#: ../templates:6001
-msgid ""
-"Please enter the value to use to set up VPS (Virtual Private Server) "
-"numbering."
+#: ../dtc-xen.templates:5001
+#, fuzzy
+msgid "Please enter the value to use to set up VPS numbering."
 msgstr "ദയവായി വിപിഎസ്  (മായാ സ്വകാര്യ സെര്‍വര്‍) നമ്പറിങ്ങ് ഒരുക്കാനുപയോഗിയ്ക്കേണ്ട വില നല്‍കുക."
 
 #. Type: string
 #. Description
-#: ../templates:6001
+#: ../dtc-xen.templates:5001
 msgid ""
 "Assuming this value is 'XXXX', the node number will be 'xenXXXXYY', YY being "
 "the VPS number itself (xenYY). This node number must be 4 or 5 characters "
 "long."
-msgstr "ഈ വില 'XXXX'ആണെന്ന് വിചാരിച്ചാല്‍, നോഡ് സംഖ്യ 'xenXXXXYY' ആയിരിയ്ക്കും, വിപിഎസ് സംഖ്യ തന്നെയാണ് YY (xenYY). ഈ നോഡ് സംഖ്യ നാലോ അഞ്ചോ അക്ഷരങ്ങള്‍ നീളമുള്ളതാകണമെന്ന് നിര്‍ബന്ധമുണ്ട്."
+msgstr ""
+"ഈ വില 'XXXX'ആണെന്ന് വിചാരിച്ചാല്‍, നോഡ് സംഖ്യ 'xenXXXXYY' ആയിരിയ്ക്കും, വിപിഎസ് സംഖ്യ "
+"തന്നെയാണ് YY (xenYY). ഈ നോഡ് സംഖ്യ നാലോ അഞ്ചോ അക്ഷരങ്ങള്‍ നീളമുള്ളതാകണമെന്ന് നിര്‍ബന്ധമുണ്ട്."
 
 #. Type: string
 #. Description
-#: ../templates:6001
+#: ../dtc-xen.templates:5001
 msgid ""
 "As a consequence of this choice, the server's hostname will be nodeXXXX."
 "example.com (which you can later add in your DTC control panel)."
-msgstr "ഈ തിരഞ്ഞെടുപ്പിന്റെ പരിണിതഫലമായി സെര്‍വറിന്റെ ഹോസ്റ്റ്നാമം nodeXXXX.example.com (അത് നിങ്ങള്‍ക്ക് നിങ്ങളുടെ ഡിടിസി നിയന്ത്രണ പാനലില്‍ പിന്നീട് കൂട്ടിച്ചേര്‍ക്കാവുന്നതാണ്)എന്നായിരിയ്ക്കും."
+msgstr ""
+"ഈ തിരഞ്ഞെടുപ്പിന്റെ പരിണിതഫലമായി സെര്‍വറിന്റെ ഹോസ്റ്റ്നാമം nodeXXXX.example.com (അത് "
+"നിങ്ങള്‍ക്ക് നിങ്ങളുടെ ഡിടിസി നിയന്ത്രണ പാനലില്‍ പിന്നീട് കൂട്ടിച്ചേര്‍ക്കാവുന്നതാണ്)എന്നായിരിയ്ക്കും."
 
 #. Type: string
 #. Description
-#: ../templates:7001
+#: ../dtc-xen.templates:6001
 msgid "Debian repository for VPS creation:"
 msgstr "വിപിഎസ് സൃഷ്ടിയ്ക്കാന്‍ വേണ്ട് ഡെബിയന്‍ ശേഖരം:"
 
 #. Type: string
 #. Description
-#: ../templates:7001
+#: ../dtc-xen.templates:6001
+#, fuzzy
 msgid ""
 "Please enter the repository to use for creating the VPS (Virtual Private "
-"Server). The current /etc/apt/sources.list file will be copied the created "
-"VPS so the repository you enter here will be used only during the "
+"Server). The current /etc/apt/sources.list file will be copied to the "
+"created VPS so the repository you enter here will be used only during the "
 "debootstrap stage of the VPS creation."
-msgstr "ദയവായി വിപിഎസ്  (മായാ സ്വകാര്യ സെര്‍വര്‍) സൃഷ്ടിയ്ക്കാനുപയോഗിയ്ക്കേണ്ട ശേഖരം നല്‍കുക. ഇപ്പോഴത്തെ /etc/apt/sources.listഫയല്‍ സൃഷ്ടിച്ച വിപിഎസിലേയ്ക്ക് പകര്‍ത്തപ്പെടുന്നതായിരിയ്ക്കുമെന്നതിനാല്‍ നിങ്ങളിവിടെ നല്‍കുന്ന ശേഖരം വിപിഎസ് സൃഷ്ടിയുടെ ഡിബൂട്ട്സ്ട്രാപ് ഘട്ടത്തില്‍ മാത്രമേ ഉപയഗിയ്ക്കുകയുള്ളൂ."
+msgstr ""
+"ദയവായി വിപിഎസ്  (മായാ സ്വകാര്യ സെര്‍വര്‍) സൃഷ്ടിയ്ക്കാനുപയോഗിയ്ക്കേണ്ട ശേഖരം നല്‍കുക. "
+"ഇപ്പോഴത്തെ /etc/apt/sources.listഫയല്‍ സൃഷ്ടിച്ച വിപിഎസിലേയ്ക്ക് "
+"പകര്‍ത്തപ്പെടുന്നതായിരിയ്ക്കുമെന്നതിനാല്‍ നിങ്ങളിവിടെ നല്‍കുന്ന ശേഖരം വിപിഎസ് സൃഷ്ടിയുടെ "
+"ഡിബൂട്ട്സ്ട്രാപ് ഘട്ടത്തില്‍ മാത്രമേ ഉപയഗിയ്ക്കുകയുള്ളൂ."
 
 #. Type: string
 #. Description
-#: ../templates:8001
+#: ../dtc-xen.templates:7001
 msgid "Network mask for the VPS:"
 msgstr "വിപിഎസിന് വേണ്ട ശൃംഘലാ മാസ്ക്:"
 
 #. Type: string
 #. Description
-#: ../templates:8001
+#: ../dtc-xen.templates:7001
 msgid ""
 "Please enter the network mask to use in the created Virtual Private Server's "
 "network settings."
-msgstr "ദയവായി സൃഷ്ടിച്ച മായാ സ്വകാര്യ സേവകന്റെ ശൃംഘലാ സജ്ജീകരണങ്ങളിലുപയോഗിയ്ക്കേണ്ട ശൃംഘലാ മാസ്ക് നല്‍കുക."
+msgstr ""
+"ദയവായി സൃഷ്ടിച്ച മായാ സ്വകാര്യ സേവകന്റെ ശൃംഘലാ സജ്ജീകരണങ്ങളിലുപയോഗിയ്ക്കേണ്ട ശൃംഘലാ മാസ്ക് "
+"നല്‍കുക."
 
 #. Type: string
 #. Description
-#: ../templates:9001
+#: ../dtc-xen.templates:8001
 msgid "Network address for the VPS:"
 msgstr "വിപിഎസിന് വേണ്ട ശൃംഘലാ വിലാസം:"
 
 #. Type: string
 #. Description
-#: ../templates:9001
+#: ../dtc-xen.templates:8001
 msgid ""
 "Please enter the network address to use in the created Virtual Private "
 "Server's network settings."
-msgstr "ദയവായി സൃഷ്ടിച്ച മായാ സ്വകാര്യ സേവകന്റെ ശൃംഘലാ സജ്ജീകരണങ്ങളിലുപയോഗിയ്ക്കേണ്ട ശൃംഘലാ വിലാസം നല്‍കുക."
+msgstr ""
+"ദയവായി സൃഷ്ടിച്ച മായാ സ്വകാര്യ സേവകന്റെ ശൃംഘലാ സജ്ജീകരണങ്ങളിലുപയോഗിയ്ക്കേണ്ട ശൃംഘലാ വിലാസം "
+"നല്‍കുക."
 
 #. Type: string
 #. Description
-#: ../templates:10001
+#: ../dtc-xen.templates:9001
 msgid "Broadcast address for the VPS:"
 msgstr "വിപിഎസിന് വേണ്ട പ്രക്ഷേപണ വിലാസം:"
 
 #. Type: string
 #. Description
-#: ../templates:10001
+#: ../dtc-xen.templates:9001
 msgid ""
 "Please enter the network broadcast address to use in the created Virtual "
 "Private Server's network settings."
-msgstr "ദയവായി സൃഷ്ടിച്ച മായാ സ്വകാര്യ സേവകന്റെ ശൃംഘലാ സജ്ജീകരണങ്ങളിലുപയോഗിയ്ക്കേണ്ട പ്രക്ഷേപണ വിലാസം നല്‍കുക."
+msgstr ""
+"ദയവായി സൃഷ്ടിച്ച മായാ സ്വകാര്യ സേവകന്റെ ശൃംഘലാ സജ്ജീകരണങ്ങളിലുപയോഗിയ്ക്കേണ്ട പ്രക്ഷേപണ "
+"വിലാസം നല്‍കുക."
 
 #. Type: string
 #. Description
-#: ../templates:11001
+#: ../dtc-xen.templates:10001
 msgid "Gateway address for the VPS:"
 msgstr "വിപിഎസിന് വേണ്ട ഗേയ്റ്റ്‌വേ വിലാസം"
 
 #. Type: string
 #. Description
-#: ../templates:11001
+#: ../dtc-xen.templates:10001
 msgid ""
 "Please enter the network gateway address to use in the created Virtual "
 "Private Server's network settings."
-msgstr "ദയവായി സൃഷ്ടിച്ച മായാ സ്വകാര്യ സേവകന്റെ ശൃംഘലാ സജ്ജീകരണങ്ങളിലുപയോഗിയ്ക്കേണ്ട ഗേയ്റ്റ്‌വേ വിലാസം നല്‍കുക."
+msgstr ""
+"ദയവായി സൃഷ്ടിച്ച മായാ സ്വകാര്യ സേവകന്റെ ശൃംഘലാ സജ്ജീകരണങ്ങളിലുപയോഗിയ്ക്കേണ്ട ഗേയ്റ്റ്‌വേ "
+"വിലാസം നല്‍കുക."
 
 #. Type: string
 #. Description
-#: ../templates:12001
+#: ../dtc-xen.templates:11001
 msgid "Xen kernel release name:"
 msgstr "സെന്‍ കെര്‍ണല്‍ റിലീസ് നാമം:"
 
 #. Type: string
 #. Description
-#: ../templates:12001
+#: ../dtc-xen.templates:11001
 msgid ""
 "Please enter the kernel version number as it appears with the 'uname -a' "
 "command."
@@ -202,92 +230,128 @@ msgstr "ദയവായി 'uname -a'എന്ന് ആജ്ഞയില്‍
 
 #. Type: string
 #. Description
-#: ../templates:12001
+#: ../dtc-xen.templates:11001
 msgid ""
 "A kernel domU with that name must be located in /boot (example: vmlinuz-"
 "2.6.16.27-xenU) and its corresponding modules must be in /lib/modules."
-msgstr "ആ പേരിലുള്ള ഒരു കെര്‍ണല്‍ domU (ഉദാഹരണം: vmlinuz-2.6.16.27-xenU) /boot ല്‍ കണ്ടുപിടിയ്ക്കാനും അതിന് ചേര്‍ന്ന മൊഡ്യൂളുകള്‍ /lib/modules ല്‍ ഉണ്ടായിരിയ്ക്കുകയും വേണം."
+msgstr ""
+"ആ പേരിലുള്ള ഒരു കെര്‍ണല്‍ domU (ഉദാഹരണം: vmlinuz-2.6.16.27-xenU) /boot ല്‍ "
+"കണ്ടുപിടിയ്ക്കാനും അതിന് ചേര്‍ന്ന മൊഡ്യൂളുകള്‍ /lib/modules ല്‍ ഉണ്ടായിരിയ്ക്കുകയും വേണം."
 
 #. Type: string
 #. Description
-#: ../templates:13001
+#: ../dtc-xen.templates:12001
 msgid "Volume group to create VPS in:"
 msgstr "വിപിഎസ് സൃഷ്ടിയ്ക്കാനുള്ള വാള്യം ഗ്രൂപ്പ്:"
 
 #. Type: string
 #. Description
-#: ../templates:13001
+#: ../dtc-xen.templates:12001
 msgid "Dtc-xen creates physical partitions in an existing LVM volume group"
 msgstr "Dtc-xen നിലവിലുള്ള എല്‍വിഎം വാള്യം ഗ്രൂപ്പില്‍ ഭൌതിക ഭാഗങ്ങള്‍ സൃഷ്ടിയ്ക്കും"
 
 #. Type: string
 #. Description
-#: ../templates:13001
+#: ../dtc-xen.templates:12001
 msgid ""
 "Please enter that volume group name. The volume group size must fit all the "
 "virtual machiness you will set up later on this server. If you don't want to "
 "use LVM (because you don't care if loopback is slower), leave this setting "
 "to the default value."
-msgstr "ദയവായി വാള്യം ഗ്രൂപ്പ് നാമം നല്‍കുക. വാള്യം ഗ്രൂപ്പ് വലിപ്പം ഈ സെര്‍വറില്‍ നിങ്ങള്‍ പിന്നീട് സജ്ജീകരിയ്ക്കാന്‍ പോകുന്ന എല്ലാ മായാ മഷീനുകളേയും ഉള്‍ക്കൊള്ളാന്‍ പറ്റിയതാകണം. (ലൂപ്ബാക്ക് വേഗത കുറഞ്ഞതാണ് എന്നത് നിങ്ങള്‍ കാര്യമാക്കത്തത് കൊണ്ട്) നിങ്ങള്‍ എല്‍വിഎം ഉപയോഗിയ്ക്കാന്‍ ആഗ്രഹിയ്ക്കുന്നില്ലെങ്കില്‍ ഇത് ഡിഫാള്‍ട്ട് വിലയില്‍ തന്നെയിടുക."
+msgstr ""
+"ദയവായി വാള്യം ഗ്രൂപ്പ് നാമം നല്‍കുക. വാള്യം ഗ്രൂപ്പ് വലിപ്പം ഈ സെര്‍വറില്‍ നിങ്ങള്‍ പിന്നീട് "
+"സജ്ജീകരിയ്ക്കാന്‍ പോകുന്ന എല്ലാ മായാ മഷീനുകളേയും ഉള്‍ക്കൊള്ളാന്‍ പറ്റിയതാകണം. (ലൂപ്ബാക്ക് വേഗത "
+"കുറഞ്ഞതാണ് എന്നത് നിങ്ങള്‍ കാര്യമാക്കത്തത് കൊണ്ട്) നിങ്ങള്‍ എല്‍വിഎം ഉപയോഗിയ്ക്കാന്‍ "
+"ആഗ്രഹിയ്ക്കുന്നില്ലെങ്കില്‍ ഇത് ഡിഫാള്‍ട്ട് വിലയില്‍ തന്നെയിടുക."
 
 #. Type: note
 #. Description
-#: ../templates:14001
-msgid "Installation completion"
-msgstr "ഇന്‍സ്റ്റളേഷന്‍ പൂര്‍ത്തിയായി"
+#: ../dtc-xen.templates:13001
+msgid "How to finish the install"
+msgstr ""
 
 #. Type: note
 #. Description
-#: ../templates:14001
+#: ../dtc-xen.templates:13001
 msgid ""
 "To finish the installation, you need to launch /usr/sbin/dtc-"
 "xen_finish_install."
-msgstr "ഇന്‍സ്റ്റളേഷന്‍ പൂര്‍ത്തിയാക്കാനായി നിങ്ങള്‍ /usr/sbin/dtc-xen_finish_install തുടങ്ങേണ്ടതുണ്ട്."
+msgstr ""
+"ഇന്‍സ്റ്റളേഷന്‍ പൂര്‍ത്തിയാക്കാനായി നിങ്ങള്‍ /usr/sbin/dtc-xen_finish_install തുടങ്ങേണ്ടതുണ്ട്."
 
 #. Type: note
 #. Description
-#: ../templates:14001
+#: ../dtc-xen.templates:13001
 msgid ""
 "This script will remove port forwarding from the current sshd_config file "
 "and add the grant of xm console to the group xenusers so that users can "
 "login to the physical console. It will then try to download the files needed "
 "to setup Gentoo and CentOS into the virtual machines."
-msgstr "ഈ സ്ക്രിപ്റ്റ് ഇപ്പോഴുള്ള sshd_config ഫയലില്‍ നിന്നും പോര്‍ട്ട് ഫോര്‍വാര്‍ഡിങ്ങ് നീക്കം ചെയ്യുകയും ഉപഭോക്താക്കള്‍ക്ക് ഭൌതിക കണ്‍സോളിലേയ്ക്ക് കടക്കാന്‍ xenusers എന്ന ഗ്രൂപ്പിന് xm console അനുമതി കൂട്ടിച്ചേര്‍ക്കുകയും ചെയ്യും. Gentoo CentOS എന്നിവ മായാ മഷീനുകളില്‍ സജ്ജീകരിയ്ക്കാന്‍ ആവശ്യമായ ഫയലുകള്‍ ഡൌണ്‍ലോഡ് ചെയ്യാന്‍ അതിന് ശേഷം ശ്രമിയ്ക്കും."
+msgstr ""
+"ഈ സ്ക്രിപ്റ്റ് ഇപ്പോഴുള്ള sshd_config ഫയലില്‍ നിന്നും പോര്‍ട്ട് ഫോര്‍വാര്‍ഡിങ്ങ് നീക്കം ചെയ്യുകയും "
+"ഉപഭോക്താക്കള്‍ക്ക് ഭൌതിക കണ്‍സോളിലേയ്ക്ക് കടക്കാന്‍ xenusers എന്ന ഗ്രൂപ്പിന് xm console അനുമതി "
+"കൂട്ടിച്ചേര്‍ക്കുകയും ചെയ്യും. Gentoo CentOS എന്നിവ മായാ മഷീനുകളില്‍ സജ്ജീകരിയ്ക്കാന്‍ ആവശ്യമായ "
+"ഫയലുകള്‍ ഡൌണ്‍ലോഡ് ചെയ്യാന്‍ അതിന് ശേഷം ശ്രമിയ്ക്കും."
 
 #. Type: note
 #. Description
-#: ../templates:14001
+#: ../dtc-xen.templates:13001
 msgid ""
 "Please note that the system is currently safe (connections to a physical "
 "console as xenXX will be rejected because the /etc/sudoers is not changed), "
 "but a basic user won't be able to log into his physical console using ssh."
-msgstr "സിിസ്റ്റം ഇപ്പോള്‍ സുരക്ഷിതമാണെന്നും (ഭൌതിക കണ്‍സോളിലേയ്ക്കുള്ള xenXX ആയുള്ള ബന്ധം /etc/sudoers മാറ്റിയിട്ടില്ലാത്തതിനാല്‍ തള്ളിക്കളയുന്നതായിരിയ്ക്കും) പക്ഷേ ഒരു സാധാരണ ഉപയോക്താവിന് ssh ഉപയോഗിച്ച് സ്വന്തം ഭൌതിക കണ്‍സോളിലേയ്ക്ക് കയറാന്‍ സാധ്യമാകുന്നതല്ല എന്നും പ്രത്യേകം ശ്രദ്ധിയ്ക്കുക. "
+msgstr ""
+"സിിസ്റ്റം ഇപ്പോള്‍ സുരക്ഷിതമാണെന്നും (ഭൌതിക കണ്‍സോളിലേയ്ക്കുള്ള xenXX ആയുള്ള ബന്ധം /etc/"
+"sudoers മാറ്റിയിട്ടില്ലാത്തതിനാല്‍ തള്ളിക്കളയുന്നതായിരിയ്ക്കും) പക്ഷേ ഒരു സാധാരണ ഉപയോക്താവിന് "
+"ssh ഉപയോഗിച്ച് സ്വന്തം ഭൌതിക കണ്‍സോളിലേയ്ക്ക് കയറാന്‍ സാധ്യമാകുന്നതല്ല എന്നും പ്രത്യേകം "
+"ശ്രദ്ധിയ്ക്കുക. "
 
 #. Type: string
 #. Description
-#: ../templates:15001
+#: ../dtc-xen.templates:14001
 msgid "VPS mountpoint:"
 msgstr "വിപിഎസ് മൌണ്ട്പോയിന്റ്:"
 
 #. Type: string
 #. Description
-#: ../templates:15001
+#: ../dtc-xen.templates:14001
 msgid ""
-"In order to setup the managed Virtual Private Server (VPS), dtc-xen will "
-"mount the LVM or file loopback partition on the dom0 of the Xen server."
-msgstr "മാനേജ് ചെയ്ത മായാ കാര്യ സെര്‍വര്‍ (വിപിഎസ്) സജ്ജീകരിയ്ക്കാനായി dtc-xen എല്‍വിഎം അല്ലെങ്കില്‍ ഫയല്‍ ലൂപ്ബാക്ക് ഭാഗം സെന്‍ സെര്‍വറിന്റെ dom0യില്‍ മൌണ്ട് ചെയ്യും."
+"In order to do the setup of the VPS it's managing, dtc-xen will mount LVM or "
+"file loopback partition on the dom0 of your Xen server. This will also be "
+"used to automaticaly set your /etc/fstab mount points so you can do "
+"maintenance and mount VPSes faster. Enter here the path to this mount points."
+msgstr ""
 
-#. Type: string
+#. Type: select
 #. Description
-#: ../templates:15001
-msgid "Please enter the path to the mount point."
-msgstr "മൌണ്ട് പോയിന്റിലേയ്ക്കുള്ള വഴി നല്‍കുക."
+#: ../dtc-xen.templates:15001
+msgid "Debian os to setup:"
+msgstr ""
 
-#. Type: string
+#. Type: select
 #. Description
-#: ../templates:15001
+#: ../dtc-xen.templates:15001
 msgid ""
-"This information will also be used to automatically set the /etc/fstab mount "
-"points, allowing faster mounting and maintenance of the VPS."
-msgstr "ഈ വിവരം /etc/fstab മൌണ്ട് പോയിന്റുകള്‍ സ്വതവേ സജ്ജീകരിയ്ക്കാനും ഉപയോഗിയ്ക്കും, അത് വിപിഎസിന്റെ പെട്ടെന്നുള്ള മൌണ്ടിങിനും അറ്റകുറ്റ പണികള്‍ക്കും എളുപ്പമാക്കും."
+"Select the debian operating system that you want to have setup when dtc-xen "
+"creates a new VM instance."
+msgstr ""
 
+#~ msgid "Installation completion"
+#~ msgstr "ഇന്‍സ്റ്റളേഷന്‍ പൂര്‍ത്തിയായി"
+
+#~ msgid ""
+#~ "In order to setup the managed Virtual Private Server (VPS), dtc-xen will "
+#~ "mount the LVM or file loopback partition on the dom0 of the Xen server."
+#~ msgstr ""
+#~ "മാനേജ് ചെയ്ത മായാ കാര്യ സെര്‍വര്‍ (വിപിഎസ്) സജ്ജീകരിയ്ക്കാനായി dtc-xen എല്‍വിഎം "
+#~ "അല്ലെങ്കില്‍ ഫയല്‍ ലൂപ്ബാക്ക് ഭാഗം സെന്‍ സെര്‍വറിന്റെ dom0യില്‍ മൌണ്ട് ചെയ്യും."
+
+#~ msgid "Please enter the path to the mount point."
+#~ msgstr "മൌണ്ട് പോയിന്റിലേയ്ക്കുള്ള വഴി നല്‍കുക."
+
+#~ msgid ""
+#~ "This information will also be used to automatically set the /etc/fstab "
+#~ "mount points, allowing faster mounting and maintenance of the VPS."
+#~ msgstr ""
+#~ "ഈ വിവരം /etc/fstab മൌണ്ട് പോയിന്റുകള്‍ സ്വതവേ സജ്ജീകരിയ്ക്കാനും ഉപയോഗിയ്ക്കും, അത് "
+#~ "വിപിഎസിന്റെ പെട്ടെന്നുള്ള മൌണ്ടിങിനും അറ്റകുറ്റ പണികള്‍ക്കും എളുപ്പമാക്കും."

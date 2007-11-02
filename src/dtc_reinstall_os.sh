@@ -39,7 +39,6 @@ DISTRO=$5
 IMAGE_TYPE=$6
 
 # redirect stdout and stderr to log files, so we can see what happened during install
-
 if [ "$REDIRECTOUTPUT" = "true" ] ; then
 	echo "Redirecting standard output to $VPSGLOBPATH/$VPSNUM.stdout..."
 	echo "Redirecting standard error to $VPSGLOBPATH/$VPSNUM.stderr..."
@@ -53,7 +52,6 @@ if [ "$REDIRECTOUTPUT" = "true" ] ; then
 	exec 1>$VPSGLOBPATH/$VPSNUM.stdout
 	exec 2>$VPSGLOBPATH/$VPSNUM.stderr
 fi
-
 
 # default to lvm type for backwards compatibility
 if [ -z "$IMAGE_TYPE" ]; then
@@ -131,9 +129,9 @@ else
 	rmdir ${VPSGLOBPATH}/${VPSNUM} 2> /dev/null
 	set -e
 
+	$MKDIR -p ${VPSGLOBPATH}/${VPSNUM}
 	if [ "$IMAGE_TYPE" = "lvm" ]; then
 		$MKFS /dev/${LVMNAME}/${VPSNAME}
-		$MKDIR -p ${VPSGLOBPATH}/${VPSNUM}
 	#	$LVCREATE -L${VPSMEM} -n${VPSNAME}swap ${LVMNAME}
 		$MKSWAP /dev/${LVMNAME}/${VPSNAME}swap
 
@@ -150,7 +148,7 @@ else
 			dd if=/dev/zero of=$VPSGLOBPATH/${VPSNAME}.img bs=1G seek=${VPSHDD} count=1
 		fi
 		$MKFS -F $VPSGLOBPATH/${VPSNAME}.img
-		if [ ! -e $MKSWAP $VPSGLOBPATH/${VPSNAME}.swap.img ]; then
+		if [ ! -e $VPSGLOBPATH/${VPSNAME}.swap.img ]; then
 			dd if=/dev/zero of=$VPSGLOBPATH/${VPSNAME}.swap.img bs=1M seek=${VPSMEM} count=1
 		fi
 		$MKSWAP $VPSGLOBPATH/${VPSNAME}.swap.img
@@ -203,6 +201,13 @@ elif [ "$DISTRO" = "debian" ] ; then
 		echo "Failed to install debian via bootstrap!!"
 		exit 1
 	fi
+elif [ "$DISTRO" = "debian-etch" -a -e "/usr/share/dtc-xen-os/debian-etch/"${DEBIAN_BINARCH} ] ; then
+	echo $DEBOOTSTRAP --include=module-init-tools --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} "file:///usr/share/dtc-xen-os/debian-etch/"${DEBIAN_BINARCH}
+	$DEBOOTSTRAP --include=module-init-tools --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} "file:///usr/share/dtc-xen-os/debian-etch/"${DEBIAN_BINARCH}
+	if [ $? != 0 ]; then
+		echo "Failed to install debian via bootstrap!!"
+		exit 1
+	fi
 elif [ "$DISTRO" = "ubuntu_dapper" ] ; then
 	$DEBOOTSTRAP --include=module-init-tools,udev --arch i386 dapper ${VPSGLOBPATH}/${VPSNUM} http://archive.ubuntu.com/ubuntu
 elif [ "$DISTRO" = "gentoo" ]; then
@@ -251,9 +256,11 @@ else
 proc            /proc   proc    defaults                0       0
 /dev/sda2       none    swap    sw                      0       0
 " >${ETC}/fstab
-	echo "${VPSHOSTNAME}" >${ETC}/hostname
+
+	# We set the default needed by DTC as hostname, so DTC can be setup quite fast
+	echo "mx.${VPSHOSTNAME}.${NODE_DOMAIN_NAME}" >${ETC}/hostname
 	echo "127.0.0.1	localhost.localdomain	localhost
-${IPADDR}	dtc.${VPSHOSTNAME}.${NODE_DOMAIN_NAME} ${VPSHOSTNAME}.${NODE_DOMAIN_NAME} ${VPSHOSTNAME}
+${IPADDR}	mx.${VPSHOSTNAME}.${NODE_DOMAIN_NAME} dtc.${VPSHOSTNAME}.${NODE_DOMAIN_NAME} ${VPSHOSTNAME}.${NODE_DOMAIN_NAME} ${VPSHOSTNAME}
 
 # The following lines are desirable for IPv6 capable hosts
 ::1	ip6-localhost ip6-loopback
@@ -263,18 +270,13 @@ ff02::1	ip6-allnodes
 ff02::2	ip6-allrouters
 ff02::3	ip6-allhosts
 " >${ETC}/hosts
-	echo "
-  ______    ___________________     GPL.Host_____    ____ ___|   .__
- (  ___/___(____     /  |______|   |_______(    /___(  _/_\___   __/
- |  \___  \_  |/    /   |\    \_   ____  \_   ___ \_______  \|   |
- |   |/    /  _____/    |/     /   |  /   /   |/   /  s!|/   /   |
- |_________\  |    |__________/|___| /   /|________\_________\GPL|
- Opensource dr|ven hosting worldwide____/http://gplhost.com  |HOST
-
-${VPSHOSTNAME}
-
-" >${ETC}/motd
-	cp /root/.bashrc ${VPSGLOBPATH}/${VPSNUM}/root
+	# Under Debian /etc/motd is a symlink to /var/run/motd, so we need to take care of this fact.
+	if [ "$DISTRO" = "debian" ] ; then
+		sed "s/VPS_HOSTNAME/${VPSHOSTNAME}/" /etc/dtc-xen/motd >${VPSGLOBPATH}/${VPSNUM}/etc/motd.tail
+	else
+		sed "s/VPS_HOSTNAME/${VPSHOSTNAME}/" /etc/dtc-xen/motd >${VPSGLOBPATH}/${VPSNUM}/etc/motd
+	fi
+	sed "s/VPS_HOSTNAME/${VPSHOSTNAME}/" /etc/dtc-xen/bashrc >${VPSGLOBPATH}/${VPSNUM}/root/.bashrc
 
 	echo "#!/bin/bash
 
@@ -300,15 +302,21 @@ exit 0
 
  " >${ETC}/init.d/capabilities
 	chmod +x ${ETC}/init.d/capabilities
-	ln -s ../init.d/capabilities ${ETC}/rc0.d/K19capabilities
-	ln -s ../init.d/capabilities ${ETC}/rc1.d/K19capabilities
-	ln -s ../init.d/capabilities ${ETC}/rc6.d/K19capabilities
-	ln -s ../init.d/capabilities ${ETC}/rc2.d/S19capabilities
-	ln -s ../init.d/capabilities ${ETC}/rc3.d/S19capabilities
-	ln -s ../init.d/capabilities ${ETC}/rc4.d/S19capabilities
-	ln -s ../init.d/capabilities ${ETC}/rc5.d/S19capabilities
+	# Gentoo runlevels are a bit different, this has to be fixed!
+	if [ "$DISTRO" = "gentoo" ] ; then
+		echo "FIX ME! Gentoo runlevel needs capabilities script!"
+	else
+		ln -s ../init.d/capabilities ${ETC}/rc0.d/K19capabilities
+		ln -s ../init.d/capabilities ${ETC}/rc1.d/K19capabilities
+		ln -s ../init.d/capabilities ${ETC}/rc6.d/K19capabilities
+		ln -s ../init.d/capabilities ${ETC}/rc2.d/S19capabilities
+		ln -s ../init.d/capabilities ${ETC}/rc3.d/S19capabilities
+		ln -s ../init.d/capabilities ${ETC}/rc4.d/S19capabilities
+		ln -s ../init.d/capabilities ${ETC}/rc5.d/S19capabilities
+	fi
 
-	# This will reduce swappiness
+	# This will reduce swappiness and makes the overall VPS server faster. Increase
+	# slowness when swapping, which is after all, not a bad thing so customers notice it swaps.
 	echo "sys.vm.swappiness=10" >> /etc/sysctl.conf
 fi
 
@@ -479,7 +487,6 @@ fi
 echo "Unmounting proc and filesystem root..."
 $UMOUNT ${VPSGLOBPATH}/${VPSNUM}/proc 2> /dev/null || /bin/true
 $UMOUNT ${VPSGLOBPATH}/${VPSNUM}
-rmdir ${VPSGLOBPATH}/${VPSNUM}
 
 echo "Install script finished"
 exit 0
