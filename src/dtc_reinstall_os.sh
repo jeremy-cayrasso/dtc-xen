@@ -196,20 +196,20 @@ elif [ "$DISTRO" = "centos42" ] ; then
 	/usr/bin/rpmstrap --arch ${CENTOS_BINARCH} --local-source /usr/share/dtc-xen-os/centos42/${CENTOS_BINARCH} centos42 "$VPSGLOBPATH/$VPSNUM"
 elif [ "$DISTRO" = "debian" ] ; then
 	echo $DEBOOTSTRAP --include=module-init-tools --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
-	$DEBOOTSTRAP --include=module-init-tools --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
+	$DEBOOTSTRAP --verbose --include=module-init-tools --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
 	if [ $? != 0 ]; then
 		echo "Failed to install debian via bootstrap!!"
 		exit 1
 	fi
 elif [ "$DISTRO" = "debian-etch" -a -e "/usr/share/dtc-xen-os/debian-etch/"${DEBIAN_BINARCH} ] ; then
 	echo $DEBOOTSTRAP --include=module-init-tools --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} "file:///usr/share/dtc-xen-os/debian-etch/"${DEBIAN_BINARCH}
-	$DEBOOTSTRAP --include=module-init-tools --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} "file:///usr/share/dtc-xen-os/debian-etch/"${DEBIAN_BINARCH}
+	$DEBOOTSTRAP --verbose --include=module-init-tools --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} "file:///usr/share/dtc-xen-os/debian-etch/"${DEBIAN_BINARCH}
 	if [ $? != 0 ]; then
 		echo "Failed to install debian via bootstrap!!"
 		exit 1
 	fi
 elif [ "$DISTRO" = "ubuntu_dapper" ] ; then
-	$DEBOOTSTRAP --include=module-init-tools,udev --arch i386 dapper ${VPSGLOBPATH}/${VPSNUM} http://archive.ubuntu.com/ubuntu
+	$DEBOOTSTRAP --verbose --include=module-init-tools,udev --arch i386 dapper ${VPSGLOBPATH}/${VPSNUM} http://archive.ubuntu.com/ubuntu
 elif [ "$DISTRO" = "gentoo" ]; then
 	GENTOO_STAGE3_ARCHIVE="stage3-i686-2006.1.tar.bz2"
 	GENTOO_STAGE3_BASEURL="http://gentoo.osuosl.org/releases/x86/2006.1/stages/"
