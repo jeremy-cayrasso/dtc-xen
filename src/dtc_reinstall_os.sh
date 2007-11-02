@@ -1,6 +1,7 @@
 #!/bin/sh
 
 set -e # DIE on errors
+#set > /tmp/env # temp log environ
 
 if [ $# -lt 3 ]; then 
 	echo "Usage: $0 [-v] <xen id> <hdd size MB> <ram size MB> <ip address> < debian | ubuntu_dapper | centos | centos42 | gentoo | manual > [ lvm | vbd ]" > /dev/stderr
@@ -195,21 +196,26 @@ elif [ "$DISTRO" = "centos42" ] ; then
 	fi
 	/usr/bin/rpmstrap --arch ${CENTOS_BINARCH} --local-source /usr/share/dtc-xen-os/centos42/${CENTOS_BINARCH} centos42 "$VPSGLOBPATH/$VPSNUM"
 elif [ "$DISTRO" = "debian" ] ; then
-	echo $DEBOOTSTRAP --include=module-init-tools --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
-	$DEBOOTSTRAP --verbose --include=module-init-tools --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
-	if [ $? != 0 ]; then
-		echo "Failed to install debian via bootstrap!!"
-		exit 1
+	echo $DEBOOTSTRAP --verbose --include=module-init-tools --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
+	$DEBOOTSTRAP --verbose --include=module-init-tools --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS} || debret=$?
+	if [ "$debret" != "" ]; then
+		echo "Failed to install $DISTRO via bootstrap!!"
+		exit $debret
 	fi
 elif [ "$DISTRO" = "debian-etch" -a -e "/usr/share/dtc-xen-os/debian-etch/"${DEBIAN_BINARCH} ] ; then
-	echo $DEBOOTSTRAP --include=module-init-tools --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} "file:///usr/share/dtc-xen-os/debian-etch/"${DEBIAN_BINARCH}
-	$DEBOOTSTRAP --verbose --include=module-init-tools --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} "file:///usr/share/dtc-xen-os/debian-etch/"${DEBIAN_BINARCH}
-	if [ $? != 0 ]; then
-		echo "Failed to install debian via bootstrap!!"
-		exit 1
+	echo $DEBOOTSTRAP --verbose --include=module-init-tools --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} "file:///usr/share/dtc-xen-os/debian-etch/"${DEBIAN_BINARCH}
+	$DEBOOTSTRAP --verbose --include=module-init-tools --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} "file:///usr/share/dtc-xen-os/debian-etch/"${DEBIAN_BINARCH} || debret=$?
+	if [ "$debret" != "" ]; then
+		echo "Failed to install $DISTRO via bootstrap!!"
+		exit $debret
 	fi
 elif [ "$DISTRO" = "ubuntu_dapper" ] ; then
-	$DEBOOTSTRAP --verbose --include=module-init-tools,udev --arch i386 dapper ${VPSGLOBPATH}/${VPSNUM} http://archive.ubuntu.com/ubuntu
+	echo $DEBOOTSTRAP --verbose --include=module-init-tools,udev --arch i386 dapper ${VPSGLOBPATH}/${VPSNUM} http://archive.ubuntu.com/ubuntu
+	$DEBOOTSTRAP --verbose --include=module-init-tools,udev --arch i386 dapper ${VPSGLOBPATH}/${VPSNUM} http://archive.ubuntu.com/ubuntu || debret=$?
+	if [ "$debret" != "" ]; then
+		echo "Failed to install $DISTRO via bootstrap!!"
+		exit $debret
+	fi
 elif [ "$DISTRO" = "gentoo" ]; then
 	GENTOO_STAGE3_ARCHIVE="stage3-i686-2006.1.tar.bz2"
 	GENTOO_STAGE3_BASEURL="http://gentoo.osuosl.org/releases/x86/2006.1/stages/"

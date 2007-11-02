@@ -461,8 +461,9 @@ def getVPSState(vpsname):
 					logging.debug( "Invalid state file...")
 					fd.close()
 					return "NOTOK, invalid state file"
-		except: # FIXME WHY is this trapped?
-			logging.exception("No semaphore (fsck/mkos): continuing")
+		except IOError,e: # FIXME WHY is this trapped?
+			if e.errno == 2: logging.debug("No semaphore (fsck/mkos): continuing")
+			else: raise
 		try:
 			if xen_version == 3:
 				try:
