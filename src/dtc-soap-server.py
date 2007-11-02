@@ -266,7 +266,7 @@ def reinstallVPSos(vpsname,ostype,hddsize,ramsize,ipaddr,imagetype='lvm'):
 		fd2 = open(filename, 'w')
 		fd2.write("mkos\n")
 
-		log = file("/xen/%s.log"%vpsname,"w") # FIXME use basename() to quote vpsname
+		log = file("/xen/%s.log"%os.path.basename(vpsname),"w",0)
 		# FIXME idea: we could reuse the log isntead of a file, a stringio or something that reflects all the log activity into the logging module
 		# that way everything goes into /var/log/dtc-soap-server.log
 		# brilliant? you be the judge
