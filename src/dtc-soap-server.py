@@ -50,6 +50,7 @@ except:
 # Thomas: Because it's just a check for xen2 vs xen3
 # Extra useless git comment: to be removed.
 # And another one.
+# And again...
 
 # Checking for Xen version
 logging.debug("Checking for Xen version")
