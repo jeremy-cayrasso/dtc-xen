@@ -47,6 +47,7 @@ try:
 except:
 	pass
 # FIXME WHY ARE WE SILENCING THIS EXCEPTION?
+# Thomas: Because it's just a check for xen2 vs xen3
 
 # Checking for Xen version
 logging.debug("Checking for Xen version")
