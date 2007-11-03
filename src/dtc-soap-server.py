@@ -8,7 +8,8 @@ from StringIO import StringIO
 from SOAPpy import *
 import logging
 import threading
-import subprocess # FIXME maybe this wont work on older pythons?
+try: import subprocess # FIXME maybe this wont work on older pythons?
+except ImportError: subprocess = False
 
 # debug
 SOAPpy.Config.debug=1
@@ -76,7 +77,6 @@ server_lvmname=p.getProperty("soap_server_lvmname");
 def testVPSServer():
 	  return "OK"
 
-@log_exceptions
 def startVPS(vpsname):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
@@ -103,7 +103,6 @@ def startVPS(vpsname):
 	else:
 		return "NOTOK"
 
-@log_exceptions
 def destroyVPS(vpsname):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
@@ -251,7 +250,6 @@ def changeBSDkernel(vpsname,ramsize,kerneltype,allipaddrs):
 		return "OK"
 
 # Take care! This time, the vpsname has to be only the number (eg XX and not xenXX)
-@log_exceptions
 def reinstallVPSos(vpsname,ostype,hddsize,ramsize,ipaddr,imagetype='lvm'):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
@@ -271,23 +269,27 @@ def reinstallVPSos(vpsname,ostype,hddsize,ramsize,ipaddr,imagetype='lvm'):
 		# brilliant? you be the judge
 		args = ["/usr/sbin/dtc_reinstall_os", "-v", vpsname, hddsize,
 			ramsize, "%s" % ipaddr, ostype, imagetype]
+			
 		logging.debug("Running %s in subprocess",args)
-		proc = subprocess.Popen(args,stdout=log,stderr=subprocess.STDOUT,close_fds=True,cwd="/")
-		spawnedpid = proc.pid
-		def wait_for_child(): # watcher thread target
-		    try:
-			proc.wait()
-			if proc.returncode != 0: level = logging.warn
-			else: level = logging.debug
-			level("Subprocess %s (PID %s) is done -- return code: %s",
-				threading.currentThread().getName(),proc.pid,proc.returncode)
-		    except:
-			logging.exception("Watcher thread %s died because of exception",threading.currentThread().getName())
-			raise
-		watcher = threading.Thread(target=wait_for_child,name="dtc_reinstall_os watcher for xen%s"%vpsname)
-		watcher.setDaemon(True)
-		watcher.start()
-		logging.debug("Subprocess %s (PID %s) started and being watched",watcher.getName(),spawnedpid)
+		if subprocess:
+			proc = subprocess.Popen(args,stdout=log,stderr=subprocess.STDOUT,close_fds=True,cwd="/")
+			spawnedpid = proc.pid
+			def wait_for_child(): # watcher thread target
+				try:
+					proc.wait()
+					if proc.returncode != 0: level = logging.warn
+					else: level = logging.debug
+					level("Subprocess %s (PID %s) is done -- return code: %s",
+						threading.currentThread().getName(),proc.pid,proc.returncode)
+				except:
+					logging.exception("Watcher thread %s died because of exception",threading.currentThread().getName())
+					raise
+			watcher = threading.Thread(target=wait_for_child,name="dtc_reinstall_os watcher for xen%s"%vpsname)
+			watcher.setDaemon(True)
+			watcher.start()
+			logging.debug("Subprocess %s (PID %s) started and being watched",watcher.getName(),spawnedpid)
+		else:
+			spawnedpid = os.spawnv(os.P_NOWAIT, cmd, args )
 
 		fd2.write("%s\n" % spawnedpid)
 		fd2.close()
@@ -414,7 +416,6 @@ def getCPUUsage(vpsname):
 		return xenxm.sxp.child_value(info, 'cpu_time', '0')
 	return "NOTOK"		
 
-@log_exceptions
 def getVPSState(vpsname):
 	username = getUser()
         if username == dtcxen_user or username == vpsname:
@@ -587,6 +588,11 @@ ssl_context.load_cert('/etc/dtc-xen/dtc-xen.cert.cert', '/etc/dtc-xen/privkey.pe
 soapserver = SOAPpy.SOAPServer((server_host, server_port), ssl_context = ssl_context)
 # No ssl 
 # soapserver = SOAPpy.SOAPServer((server_host, server_port))
+
+#let's make some functions log exceptions, arguments and retvalues
+for f in [startVPS,destroyVPS,reinstallVPSos,getVPSState]: f = log_exceptions(f)
+# this is required because really really really old python versions don't support decorators
+
 soapserver.registerFunction(_authorize)
 soapserver.registerFunction(testVPSServer)
 soapserver.registerFunction(startVPS)
