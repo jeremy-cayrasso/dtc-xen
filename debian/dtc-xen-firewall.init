@@ -17,51 +17,66 @@
 
 IPTABLES=/sbin/iptables
 
+
+flush-input-chain () {
+	${IPTABLES} -F dtc-xen-input
+}
+
+create-dtc-xen-forward-chain () {
+	# Create the chain (if it doesn't exists, then it should be inserted in the INPUT or FORWARD chain)
+	if ${IPTABLES} --new-chain dtc-xen-in 2&>1 >/dev/null ; then
+		${IPTABLES} -I INPUT -j dtc-xen-in
+	fi
+	if ${IPTABLES} --new-chain dtc-xen-fw 2&>1 >/dev/null ; then
+		${IPTABLES} -I FORWARD -j dtc-xen-fw
+	fi
+	# If the chains already existed, flush them
+	${IPTABLES} -F dtc-xen-fw
+	${IPTABLES} -F dtc-xen-in
+}
+
 accept-localhost-traffic () {
-	iptables -A INPUT -i lo -j ACCEPT
+	${IPTABLES} -A dtc-xen-in -i lo -j ACCEPT
 }
 
 port25-reject () {
-	iptables -A INPUT -p tcp --dport 25 -j REJECT
-}
-
-flush-input-chain () {
-	iptables -F INPUT
+	${IPTABLES} -A dtc-xen-in -p tcp --dport 25 -j REJECT
 }
 
 limit-ssh-login-rate () {
 	# Anti DoS SSH : deny ssh for 300 seconds after 4 attempts
 	# This can't be too high because of the use of scp
-	iptables -A INPUT -p tcp --dport 22 -i eth0 -m state --state NEW -m recent --set 
-	iptables -A INPUT -p tcp --dport 22 -i eth0 -m state --state NEW -m recent --update --seconds 300 --hitcount 10 -j REJECT
+	${IPTABLES} -A dtc-xen-in -p tcp --dport 22 -i eth0 -m state --state NEW -m recent --set 
+	${IPTABLES} -A dtc-xen-in -p tcp --dport 22 -i eth0 -m state --state NEW -m recent --update --seconds 300 --hitcount 10 -j REJECT
 }
 
 ping-flood-protect () {
 	# Limit for dom0
-	iptables -A INPUT -p icmp --icmp-type echo-request -m limit --limit 5/s -j ACCEPT
-	iptables -A INPUT -p icmp --icmp-type echo-request -j DROP
+	${IPTABLES} -A dtc-xen-in -p icmp --icmp-type echo-request -m limit --limit 5/s -j ACCEPT
+	${IPTABLES} -A dtc-xen-in -p icmp --icmp-type echo-request -j DROP
 	# There is no reason why a 20 VPS would be ping more than 50 times per seconds
-	iptables -A FORWARD -p icmp --icmp-type echo-request -m limit --limit 50/s -j ACCEPT
-	iptables -A FORWARD -p icmp --icmp-type echo-request -j DROP
+	${IPTABLES} -A dtc-xen-fw -p icmp --icmp-type echo-request -m limit --limit 50/s -j ACCEPT
+	${IPTABLES} -A dtc-xen-fw -p icmp --icmp-type echo-request -j DROP
 }
 syn-flood-protect () {
 	# For dom0
-	iptables -A INPUT -p tcp --syn -m limit --limit 10/s -j ACCEPT
-	iptables -A INPUT -p tcp --syn -j DROP
+	${IPTABLES} -A dtc-xen-in -p tcp --syn -m limit --limit 10/s -j ACCEPT
+	${IPTABLES} -A dtc-xen-in -p tcp --syn -j DROP
 	# For VPS
-	iptables -A FORWARD -p tcp --syn -m limit --limit 100/s -j ACCEPT
-	iptables -A FORWARD -p tcp --syn -j DROP
+	${IPTABLES} -A dtc-xen-fw -p tcp --syn -m limit --limit 100/s -j ACCEPT
+	${IPTABLES} -A dtc-xen-fw -p tcp --syn -j DROP
 }
 
 port-scanner-limitation () {
 	#Furtive port scanner a bit more annoying...
-	iptables -A INPUT -p tcp -i eth0 --tcp-flags SYN,ACK,FIN,RST RST -m limit --limit 5/s -j ACCEPT
-	iptables -A INPUT -p tcp -i eth0 --tcp-flags SYN,ACK,FIN,RST RST -j DROP
+	${IPTABLES} -A dtc-xen-in -p tcp -i eth0 --tcp-flags SYN,ACK,FIN,RST RST -m limit --limit 5/s -j ACCEPT
+	${IPTABLES} -A dtc-xen-in -p tcp -i eth0 --tcp-flags SYN,ACK,FIN,RST RST -j DROP
 }
 
 case "${1}" in
 	start)
-		flush-input-chain
+		# flush-input-chain
+		create-dtc-xen-forward-chain
 		accept-localhost-traffic
 		port25-reject
 		limit-ssh-login-rate
