@@ -4,7 +4,7 @@ set -e # DIE on errors
 #set > /tmp/env # temp log environ
 
 if [ $# -lt 3 ]; then 
-	echo "Usage: $0 [-v] <xen id> <hdd size MB> <ram size MB> <ip address> < debian | ubuntu_dapper | centos | centos42 | gentoo | manual > [ lvm | vbd ]" > /dev/stderr
+	echo "Usage: $0 [-v] <xen id> <hdd size MB> <ram size MB> <ip address> < debian | ubuntu_dapper | centos | centos42 | gentoo | slackware | manual > [ lvm | vbd ]" > /dev/stderr
 	echo "" > /dev/stderr
 	echo "Example: $0 09 3072 64 1.2.3.4 debian" > /dev/stderr
 	exit 1
@@ -246,6 +246,32 @@ elif [ "$DISTRO" = "gentoo" ]; then
 	# need to reset the root password
 	sed -e 's/root:\*:/root::/' ${VPSGLOBPATH}/${VPSNUM}/etc/shadow > ${VPSGLOBPATH}/${VPSNUM}/etc/shadow.tmp
 	mv ${VPSGLOBPATH}/${VPSNUM}/etc/shadow.tmp ${VPSGLOBPATH}/${VPSNUM}/etc/shadow
+elif [ "$DISTRO" = "slackware" ]; then
+	JAILTIME_IMAGE="slackware.11-0.20061220.img.tar.bz2"
+	# create our slackware directory if it doesn't exist
+	if [ ! -e /usr/src/slackware ]; then
+		$MKDIR -p /usr/src/slackware
+	fi
+	# download the image if it doesn't exist yet
+	if [ ! -e /usr/src/slackware/$JAILTIME_IMAGE ]; then
+		pushd /usr/src/slackware
+		wget -N "http://www.jailtime.org/lib/exe/fetch.php?cache=cache&media=download%3Aslackware%3Aslackware.11-0.20061220.img.tar.bz2"
+		popd
+	fi
+	# if the internal image isn't present, extract it
+	if [ ! -e /usr/src/slackware/slackware.11-0.img ]; then
+		tar -xjpf "/usr/src/slackware/$JAILTIME_IMAGE" -C /usr/src/slackware/
+	fi
+	# if the mnt point doesn't exist, create it
+	if [ ! -e /usr/src/slackware/mnt ]; then
+		$MKDIR -p /usr/src/slackware/mnt
+	fi
+	umount /usr/src/slackware/mnt || true
+	mount -o loop /usr/src/slackware/slackware.11-0.img /usr/src/slackware/mnt
+	cp -ax /usr/src/slackware/mnt/* ${VPSGLOBPATH}/${VPSNUM}/
+	umount /usr/src/slackware/mnt || true
+	# reset root password back to empty
+	sed -i 's/root:[^:]*:/root::/' ${VPSGLOBPATH}/${VPSNUM}/etc/shadow
 else
 	echo "Currently, you will have to manually install your distro... sorry :)"
 	echo "The filesystem is mounted on ${VPSGLOBPATH}/${VPSNUM}"
@@ -387,6 +413,33 @@ iface eth0 inet static
 	broadcast ${BROADCAST}
 	gateway ${GATEWAY}
 " >${ETC}/network/interfaces
+elif [ "$DISTRO" = "slackware" ]; then
+	echo "Customizing slackware image..."
+
+cat <<EOF> ${ETC}/rc.d/rc.inet1.conf
+# /etc/rc.d/rc.inet1.conf
+#
+# This file contains the configuration settings for network interfaces.
+# If USE_DHCP[interface] is set to "yes", this overrides any other settings.
+# If you don't have an interface, leave the settings null ("").
+
+# Config information for eth0:
+IPADDR[0]="${IPADDR}"
+NETMASK[0]="${NETMASK}"
+USE_DHCP[0]="no"
+DHCP_HOSTNAME[0]=""
+
+# Default gateway IP address:
+GATEWAY="${GATEWAY}"
+
+# Change this to "yes" for debugging output to stdout.  Unfortunately,
+# /sbin/hotplug seems to disable stdout so you'll only see debugging output
+# when rc.inet1 is called directly.
+DEBUG_ETH_UP="no"
+cp -L /etc/resolv.conf ${ETC}/resolv.conf
+
+EOF
+
 else
 	echo "Not implemented for other distros yet"
 	exit 1
@@ -419,11 +472,17 @@ vif = [ 'mac=${MAC_ADDR}, ip=${ALL_IPADDRS}' ]
 		echo "disk = [ 'file:$VPSGLOBPATH/${VPSNAME}.img,sda1,w','file:$VPSGLOBPATH/${VPSNAME}.swap.img,sda2,w' ]
 " >> /etc/xen/${VPSNAME}
 	fi
-	echo "root = \"/dev/sda1 ro\"
+	if [ "$DISTRO" = "slackware" ]; then
+		echo "root = \"/dev/sda1 ro\"
+# Sets runlevel 3.
+extra = \"3\"
+" >>/etc/xen/${VPSNAME}
+	else
+		echo "root = \"/dev/sda1 ro\"
 # Sets runlevel 4.
 extra = \"4\"
 " >>/etc/xen/${VPSNAME}
-fi
+	fi
 
 if [ ! -e /etc/xen/auto/${VPSNAME} ] ; then
 	ln -s ../${VPSNAME} /etc/xen/auto/${VPSNAME}
