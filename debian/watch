@@ -1,1 +1,2 @@
-ftp://ftp.gplhost.com/debian/dists/etch/main/binary-i386/dtc-xen_(.*).dsc
+version=3
+ftp://ftp.gplhost.com/debian/dists/stable/main/source/dtc-xen_(.*).dsc
