@@ -1,6 +1,9 @@
 When the package is setup in non-interactive mode, the password for
 /etc/dtc-xen/htpasswd is set randomly. In that case, you will need to setup
-a new password by running dpkg-reconfigure dtc-xen. Note also that if the
-package is not configured correctly, then the SOAP server wont be able to bind
-as the hostname will be wrong. Once again, dpkg-reconfigure dtc-xen will solve
-this problem.
+a new password by running dpkg-reconfigure dtc-xen.
+
+Note also that if the package is not configured correctly, then the SOAP server
+wont be able to bind as the hostname will be wrong. Once again,
+dpkg-reconfigure dtc-xen will solve this problem. Of course, making this
+hostname resolvable for example by editing your /etc/hosts or your DNS IS
+mandatory.
