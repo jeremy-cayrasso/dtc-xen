@@ -13,6 +13,8 @@ fi
 chown root:xenusers /bin/dtc-xen_userconsole
 chmod -s /bin/dtc-xen_userconsole
 
+mkdir -p /xen
+
 if grep "AllowTcpForwarding no" /etc/ssh/sshd_config ; then
 	echo "Port forwarding seems to be disabled already!"
 else
