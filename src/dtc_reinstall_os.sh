@@ -483,7 +483,7 @@ extra = \"3\"
 extra = \"4\"
 " >>/etc/xen/${VPSNAME}
 	fi
-
+fi
 if [ ! -e /etc/xen/auto/${VPSNAME} ] ; then
 	ln -s ../${VPSNAME} /etc/xen/auto/${VPSNAME}
 fi
