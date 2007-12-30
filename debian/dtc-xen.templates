@@ -10,8 +10,7 @@ Template: dtc-xen/conf_soap_port
 Type: string
 Default: 8089
 _Description: Server port:
- What port should it bind to? Default is 8089.
- Please enter the port the server will bind to.
+ Default is 8089. Please enter the port the dtc-xen SOAP server will bind to.
 
 Template: dtc-xen/conf_soap_login
 Type: string
