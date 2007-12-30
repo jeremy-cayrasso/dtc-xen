@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dtc-xen_0.2.6-4_cs-utf8\n"
 "Report-Msgid-Bugs-To: thomas@goirand.fr\n"
-"POT-Creation-Date: 2007-09-25 00:07+0800\n"
+"POT-Creation-Date: 2007-12-30 13:34+0800\n"
 "PO-Revision-Date: 2007-01-27 19:22+0100\n"
 "Last-Translator: Jakub Kasparec <mr.k@centrum.cz>\n"
 "Language-Team: czech <debian-l10n-czech@lists.debian.org>\n"
@@ -27,8 +27,7 @@ msgstr "Port serveru:"
 #: ../dtc-xen.templates:1001
 #, fuzzy
 msgid ""
-"What port should it bind to? Default is 8089. Please enter the port the "
-"server will bind to."
+"Default is 8089. Please enter the port the dtc-xen SOAP server will bind to."
 msgstr "Na který port se navázat? Výchozí je 8089."
 
 #. Type: string

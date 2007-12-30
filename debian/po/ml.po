@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dtc-xen 20070422\n"
 "Report-Msgid-Bugs-To: thomas@goirand.fr\n"
-"POT-Creation-Date: 2007-09-25 00:07+0800\n"
+"POT-Creation-Date: 2007-12-30 13:34+0800\n"
 "PO-Revision-Date: 2007-04-22 00:52-0600\n"
 "Last-Translator: Praveen|പ്രവീണ്‍ A|എ <pravi.a@gmail.com>\n"
 "Language-Team: Swathanthra|സ്വതന്ത്ര Malayalam|മലയാളം Computing|കമ്പ്യൂട്ടിങ്ങ് <smc-"
@@ -29,8 +29,7 @@ msgstr "സേവക പോര്‍ട്ട്:"
 #: ../dtc-xen.templates:1001
 #, fuzzy
 msgid ""
-"What port should it bind to? Default is 8089. Please enter the port the "
-"server will bind to."
+"Default is 8089. Please enter the port the dtc-xen SOAP server will bind to."
 msgstr "ദയവായി സേവകന്‍ ഏത് പോര്‍ട്ടിലേയ്ക്കാണുറപ്പിയ്ക്കാന്‍ പോകുന്നതെന്ന് നല്‍കുക."
 
 #. Type: string
