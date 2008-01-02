@@ -187,7 +187,25 @@ if [ "$DISTRO" = "centos" ] ; then
 		exit 1
 	fi
 	[ "$DEBIAN_BINARCH" = "amd64" ] && ARCH="--arch x86_64"
+
+	# create pre-deps for RPMs (so we have less failures on install)
+        mkdir -p ${VPSGLOBPATH}/${VPSNUM}/etc
+        mkdir -p ${VPSGLOBPATH}/${VPSNUM}/dev
+        mkdir -p ${VPSGLOBPATH}/${VPSNUM}/var/lib/rpm
+        touch ${VPSGLOBPATH}/${VPSNUM}/etc/fstab
+        touch ${VPSGLOBPATH}/${VPSNUM}/etc/hosts
+        mknod ${VPSGLOBPATH}/${VPSNUM}/dev/null c 1 3
+        chmod 666 ${VPSGLOBPATH}/${VPSNUM}/dev/null
+
 	/usr/bin/rpmstrap --arch ${CENTOS_BINARCH} --local-source "$CENTOS_DIR" "$CENTOS_RELEASE" "$VPSGLOBPATH/$VPSNUM"
+
+	# fix rpmdb since it often fails to create the rpmdb properly due to db4.3 vs db4.4 issues
+        mkdir -p ${VPSGLOBPATH}/${VPSNUM}/rpms
+        mount -o bind /usr/src/$CENTOS_RELEASE ${VPSGLOBPATH}/${VPSNUM}/rpms
+        chroot ${VPSGLOBPATH}/${VPSNUM} /bin/rpm -i -v --nodeps --noscripts --notriggers --excludepath / /rpms/*
+        umount ${VPSGLOBPATH}/${VPSNUM}/rpms
+        rmdir ${VPSGLOBPATH}/${VPSNUM}/rpms
+
 elif [ "$DISTRO" = "centos42" ] ; then
 	CENTOS_RELEASE=4
 	if ! [ -d /usr/share/dtc-xen-os/centos42/${CENTOS_BINARCH} ] ; then
