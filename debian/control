@@ -5,6 +5,9 @@ Maintainer: Thomas Goirand <thomas@goirand.fr>
 Build-Depends: debhelper (>= 5)
 Build-Depends-Indep: po-debconf
 Standards-Version: 3.7.3
+Dm-Upload-Allowed: yes
+Vcs-Browser: http://git.gplhost.com/gitweb/?p=dtc-xen.git
+Vcs-Git: http://git.gplhost.com/dtc-xen.git
 Homepage: http://www.gplhost.com/software-dtc-xen.html
 
 Package: dtc-xen
