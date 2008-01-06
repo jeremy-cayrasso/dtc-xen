@@ -1,4 +1,6 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
+# automated bashrc for VPS users
+# www.gplhost.com
 
   BLUE="\[\033[1;34m\]"
  LGRAY="\[\033[0;37m\]"
