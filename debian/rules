@@ -32,7 +32,6 @@ install:
 	install -D -m 740 debian/scripts/dtc-xen_finish_install debian/dtc-xen/usr/sbin/dtc-xen_finish_install
 
 binary-indep: install
-binary-arch: install
 	dh_testdir
 	dh_testroot
 	dh_install
@@ -49,6 +48,8 @@ binary-arch: install
 	dh_gencontrol
 	dh_md5sums
 	dh_builddeb
+
+binary-arch: install
 
 binary: binary-indep binary-arch
 .PHONY: build clean binary-indep binary-arch binary install

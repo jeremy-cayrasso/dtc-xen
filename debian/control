@@ -2,8 +2,10 @@ Source: dtc-xen
 Section: web
 Priority: extra
 Maintainer: Thomas Goirand <thomas@goirand.fr>
-Build-Depends: debhelper (>= 4), po-debconf
+Build-Depends: debhelper (>= 5)
+Build-Depends-Indep: po-debconf
 Standards-Version: 3.7.3
+Homepage: http://www.gplhost.com/software-dtc-xen.html
 
 Package: dtc-xen
 Section: web
@@ -17,8 +19,6 @@ Description: SOAP daemon and scripts to allow control panel management for Xen V
  GUI tool can manage, create and destroy domUs under Xen. This package should
  be used in the dom0 of a Xen server. It integrates itself within the DTC web
  hosting control panel.
- .
-  Homepage: <http://www.gplhost.com/software-dtc-xen.html>
 
 Package: dtc-xen-firewall
 Section: web
@@ -30,5 +30,3 @@ Description: A small firewall script for your dom0
  firewall running on your dom0 to avoid having DoS attack. This is not the
  state-of-the-art, but just another attempt to make things a bit more smooth.
  Comments and contribution are more than welcome!
- .
-  Homepage: <http://www.gplhost.com/software-dtc-xen.html>
