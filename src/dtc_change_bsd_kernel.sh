@@ -33,7 +33,7 @@ RAMSIZE=$2
 KERNEL_TYPE=$3
 ALL_IPADDRS=$4
 
-function calcMacAddr {
+calcMacAddr () {
 	CHARCNT=`echo -n ${NODE_NUM} | wc -m`
 	if [ ""${CHARCNT} = "5" ] ; then
 		MINOR_NUM=`echo ${NODE_NUM} | awk '{print substr($0,4,2)}'`

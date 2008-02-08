@@ -62,7 +62,7 @@ fi
 # Configure the first IP only (the user can setup the others)
 IPADDR=`echo ${ALL_IPADDRS} | cut -d' ' -f1`
 
-function calcMacAddr {
+calcMacAddr () {
 	CHARCNT=`echo -n ${NODE_NUM} | wc -m`
 	if [ "${CHARCNT}" = "5" ] ; then
 		MINOR_NUM=`echo ${NODE_NUM} | awk '{print substr($0,4,2)}'`
