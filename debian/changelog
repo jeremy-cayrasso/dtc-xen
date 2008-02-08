@@ -1,5 +1,7 @@
-dtc-xen (0.3.9-2) unstable; urgency=low
+dtc-xen (0.3.10-1) unstable; urgency=low
 
+  * Removed some bashism in both dtc_reinstall_os and dtc_change_bsd_kernel
+    when declaring the calcMacAddr function (Closes: #464644)
   * Now rpmstrap is set to be in the Suggests: and not in the Depends: any more
     so I can close the bug (Closes: #444212)
   * Added German de.po debconf transation thanks to Helge Kreutzmann
