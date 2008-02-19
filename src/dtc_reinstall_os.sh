@@ -493,12 +493,12 @@ vif = [ 'mac=${MAC_ADDR}, ip=${ALL_IPADDRS}' ]
 	if [ "$DISTRO" = "slackware" ]; then
 		echo "root = \"/dev/sda1 ro\"
 # Sets runlevel 3.
-extra = \"3\"
+extra = \"3 TERM=xterm xencons=tty console=tty1\"
 " >>/etc/xen/${VPSNAME}
 	else
 		echo "root = \"/dev/sda1 ro\"
 # Sets runlevel 4.
-extra = \"4\"
+extra = \"4 TERM=xterm xencons=tty console=tty1\"
 " >>/etc/xen/${VPSNAME}
 	fi
 fi
