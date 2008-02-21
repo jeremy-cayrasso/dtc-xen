@@ -487,6 +487,17 @@ def getVPSState(vpsname):
 	else:
 		return "NOTOK"
 
+def getVPSInstallLog(vpsname,numlines):
+	username = getUser()
+        if username == dtcxen_user or username == vpsname:
+		log = file("/xen/%s.log"%os.path.basename(vpsname),"r").readlines()
+		numlines = int(numlines)
+		if not numlines or numlines < 0: lastlines = "\n".join(log)
+		else: lastlines = "\n".join(log[-numlines:])
+		return lastlines
+	else:
+		return "NOTOK"
+
 def getInstallableOS():
 	folderlist = os.listdir('/usr/share/dtc-xen-os/')
 	return folderlist
