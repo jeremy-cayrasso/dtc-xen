@@ -1,3 +1,13 @@
+dtc-xen (0.3.11-1) unstable; urgency=low
+
+  * New upstream release.
+  * This version adds support for Xen 3.2.0 (the console was not showing
+    because TERM=xterm xencons=tty console=tty1 was missing as boot parameter
+    for the domUs), and adds support for retrying the log file of the domUs
+    install log.
+
+ -- Thomas Goirand <thomas@goirand.fr>  Fri, 22 Feb 2008 20:03:26 +0800
+
 dtc-xen (0.3.10-1) unstable; urgency=low
 
   * Removed some bashism in both dtc_reinstall_os and dtc_change_bsd_kernel
