@@ -1,4 +1,4 @@
-dtc-xen (0.3.11-1) unstable; urgency=low
+dtc-xen (0.3.12-1) unstable; urgency=low
 
   * New upstream release.
   * This version adds support for Xen 3.2.0 (the console was not showing
