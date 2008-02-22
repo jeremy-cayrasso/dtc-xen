@@ -622,6 +622,7 @@ soapserver.registerFunction(getNetworkUsage)
 soapserver.registerFunction(getIOUsage)
 soapserver.registerFunction(getCPUUsage)
 soapserver.registerFunction(getInstallableOS)
+soapserver.registerFunction(getVPSInstallLog)
 logging.info("Started dtc-xen python SOAP server at https://%s:%s/ ..." , server_host, server_port)
 while True:
 	try:
