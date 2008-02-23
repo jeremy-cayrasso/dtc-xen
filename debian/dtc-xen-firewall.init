@@ -24,10 +24,10 @@ flush-input-chain () {
 
 create-dtc-xen-forward-chain () {
 	# Create the chain (if it doesn't exists, then it should be inserted in the INPUT or FORWARD chain)
-	if ${IPTABLES} --new-chain dtc-xen-in 2&>1 >/dev/null ; then
+	if ${IPTABLES} --new-chain dtc-xen-in ; then
 		${IPTABLES} -I INPUT -j dtc-xen-in
 	fi
-	if ${IPTABLES} --new-chain dtc-xen-fw 2&>1 >/dev/null ; then
+	if ${IPTABLES} --new-chain dtc-xen-fw ; then
 		${IPTABLES} -I FORWARD -j dtc-xen-fw
 	fi
 	# If the chains already existed, flush them
@@ -86,6 +86,8 @@ case "${1}" in
         ;;
 
 	stop)
+		while iptables -D dtc-xen-fw 1 ; do echo -n "" ; done
+		while iptables -D dtc-xen-in 1 ; do echo -n "" ; done
 	;;
 
 	restart|reload|force-reload)
