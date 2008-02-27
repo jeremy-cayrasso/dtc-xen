@@ -16,8 +16,10 @@ Template: dtc-xen/conf_soap_login
 Type: string
 Default: dtc-xen
 _Description: SOAP server login:
- Dtc-xen will bind a SOAP Python server (to which a dtc panel can connect, in
- order to start, stop, create and destroy a VPS).
+ Dtc-xen will start it's Python based SOAP server to listen for incoming
+ requests over a TCP socket. A remote application (like the dtc web hosting
+ control panel) can then connect to it in order to start, stop, create and
+ destroy a VPS.
  .
  Please enter the login name to connect to the server.
 
@@ -43,9 +45,9 @@ Default: 0101
 _Description: VPS Server node number:
  Please enter the value to use to set up VPS numbering.
  .
- Assuming this value is 'XXXX', the node number will be 'xenXXXXYY',
- YY being the VPS number itself (xenYY). This node number must be 4
- or 5 characters long.
+ Assuming this value is 'XXXX', the VPS numbers will be 'xenXXXXYY',
+ YY being the VPS number itself (xenYY), and XXXX being the Xen server number.
+ This node number must be 4 or 5 characters long.
  .
  As a consequence of this choice, the server's hostname will be
  nodeXXXX.example.com (which you can later add in your DTC control
@@ -118,9 +120,7 @@ _Description: How to finish the install
  .
  This script will remove port forwarding from the current sshd_config
  file and add the grant of xm console to the group xenusers so that
- users can login to the physical console. It will then try to
- download the files needed to setup Gentoo and CentOS into the
- virtual machines. 
+ users can login to the physical console.
  .
  Please note that the system is currently safe (connections to a
  physical console as xenXX will be rejected because the /etc/sudoers
@@ -131,10 +131,13 @@ Template: dtc-xen/conf_vps_mountpoint
 Type: string
 Default: /var/lib/dtc-xen/mnt
 _Description: VPS mountpoint:
- In order to do the setup of the VPS it's managing, dtc-xen will mount LVM or
- file loopback partition on the dom0 of your Xen server. This will also be used
- to automaticaly set your /etc/fstab mount points so you can do maintenance and
- mount VPSes faster. Enter here the path to this mount points.
+ In order to do the setup of the VPS it's managing, dtc-xen will mount an LVM
+ device or a file loopback on the dom0 of your Xen server, and then use it as a
+ partition for your VPS. Loopback mounts by default are limited to a small
+ number, and since LVM is also faster to access, it is the much preferred
+ option. This will also be used to automatically set your /etc/fstab mount
+ points so you can do maintenance and mount VPSes with less hassle. Enter the
+ desired path prefix for these mount points.
 
 Template: dtc-xen/conf_debian_release
 Type: select
@@ -142,4 +145,4 @@ Choices: sarge, etch, lenny, sid
 Default: lenny
 _Description: Debian os to setup:
  Select the debian operating system that you want to have setup when dtc-xen
- creates a new VM instance.
+ creates a new VM instance with debootstrap.
