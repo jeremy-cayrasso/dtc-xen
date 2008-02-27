@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dtc-xen 20070422\n"
 "Report-Msgid-Bugs-To: thomas@goirand.fr\n"
-"POT-Creation-Date: 2007-12-30 13:34+0800\n"
+"POT-Creation-Date: 2008-02-27 11:37+0800\n"
 "PO-Revision-Date: 2007-04-22 00:52-0600\n"
 "Last-Translator: Praveen|പ്രവീണ്‍ A|എ <pravi.a@gmail.com>\n"
 "Language-Team: Swathanthra|സ്വതന്ത്ര Malayalam|മലയാളം Computing|കമ്പ്യൂട്ടിങ്ങ് <smc-"
@@ -43,8 +43,10 @@ msgstr "സോപ് സേവക ലോഗിന്‍:"
 #: ../dtc-xen.templates:2001
 #, fuzzy
 msgid ""
-"Dtc-xen will bind a SOAP Python server (to which a dtc panel can connect, in "
-"order to start, stop, create and destroy a VPS)."
+"Dtc-xen will start it's Python based SOAP server to listen for incoming "
+"requests over a TCP socket. A remote application (like the dtc web hosting "
+"control panel) can then connect to it in order to start, stop, create and "
+"destroy a VPS."
 msgstr ""
 "ഡിടിസി-സെന്‍ (സ്വകാര്യ മായാ സേവകനെ തുടങ്ങാനും നിര്‍ത്താനും നശിപ്പിയ്ക്കാനുമായി ഒരു ഡിടിസി "
 "പാനലിന് ബന്ധപ്പെടാവുന്ന) ഒരു സോപ് പൈത്തണ്‍ സേവകനെ ഉറപ്പിയ്ക്കും."
@@ -110,10 +112,11 @@ msgstr "ദയവായി വിപിഎസ്  (മായാ സ്വകാ�
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:5001
+#, fuzzy
 msgid ""
-"Assuming this value is 'XXXX', the node number will be 'xenXXXXYY', YY being "
-"the VPS number itself (xenYY). This node number must be 4 or 5 characters "
-"long."
+"Assuming this value is 'XXXX', the VPS numbers will be 'xenXXXXYY', YY being "
+"the VPS number itself (xenYY), and XXXX being the Xen server number. This "
+"node number must be 4 or 5 characters long."
 msgstr ""
 "ഈ വില 'XXXX'ആണെന്ന് വിചാരിച്ചാല്‍, നോഡ് സംഖ്യ 'xenXXXXYY' ആയിരിയ്ക്കും, വിപിഎസ് സംഖ്യ "
 "തന്നെയാണ് YY (xenYY). ഈ നോഡ് സംഖ്യ നാലോ അഞ്ചോ അക്ഷരങ്ങള്‍ നീളമുള്ളതാകണമെന്ന് നിര്‍ബന്ധമുണ്ട്."
@@ -281,11 +284,11 @@ msgstr ""
 #. Type: note
 #. Description
 #: ../dtc-xen.templates:13001
+#, fuzzy
 msgid ""
 "This script will remove port forwarding from the current sshd_config file "
 "and add the grant of xm console to the group xenusers so that users can "
-"login to the physical console. It will then try to download the files needed "
-"to setup Gentoo and CentOS into the virtual machines."
+"login to the physical console."
 msgstr ""
 "ഈ സ്ക്രിപ്റ്റ് ഇപ്പോഴുള്ള sshd_config ഫയലില്‍ നിന്നും പോര്‍ട്ട് ഫോര്‍വാര്‍ഡിങ്ങ് നീക്കം ചെയ്യുകയും "
 "ഉപഭോക്താക്കള്‍ക്ക് ഭൌതിക കണ്‍സോളിലേയ്ക്ക് കടക്കാന്‍ xenusers എന്ന ഗ്രൂപ്പിന് xm console അനുമതി "
@@ -315,10 +318,13 @@ msgstr "വിപിഎസ് മൌണ്ട്പോയിന്റ്:"
 #. Description
 #: ../dtc-xen.templates:14001
 msgid ""
-"In order to do the setup of the VPS it's managing, dtc-xen will mount LVM or "
-"file loopback partition on the dom0 of your Xen server. This will also be "
-"used to automaticaly set your /etc/fstab mount points so you can do "
-"maintenance and mount VPSes faster. Enter here the path to this mount points."
+"In order to do the setup of the VPS it's managing, dtc-xen will mount an LVM "
+"device or a file loopback on the dom0 of your Xen server, and then use it as "
+"a partition for your VPS. Loopback mounts by default are limited to a small "
+"number, and since LVM is also faster to access, it is the much preferred "
+"option. This will also be used to automatically set your /etc/fstab mount "
+"points so you can do maintenance and mount VPSes with less hassle. Enter the "
+"desired path prefix for these mount points."
 msgstr ""
 
 #. Type: select
@@ -332,7 +338,7 @@ msgstr ""
 #: ../dtc-xen.templates:15001
 msgid ""
 "Select the debian operating system that you want to have setup when dtc-xen "
-"creates a new VM instance."
+"creates a new VM instance with debootstrap."
 msgstr ""
 
 #~ msgid "Installation completion"

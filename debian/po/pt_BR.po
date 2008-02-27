@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dtc-xen\n"
 "Report-Msgid-Bugs-To: thomas@goirand.fr\n"
-"POT-Creation-Date: 2007-12-30 13:34+0800\n"
+"POT-Creation-Date: 2008-02-27 11:37+0800\n"
 "PO-Revision-Date: 2007-04-21 14:17-0300\n"
 "Last-Translator: André Luís Lopes <andrelop@debian.org>\n"
 "Language-Team: Debian-BR Project <debian-l10n-portuguese@lists.debian.org>\n"
@@ -41,8 +41,10 @@ msgstr "Login no servidor SOAP:"
 #: ../dtc-xen.templates:2001
 #, fuzzy
 msgid ""
-"Dtc-xen will bind a SOAP Python server (to which a dtc panel can connect, in "
-"order to start, stop, create and destroy a VPS)."
+"Dtc-xen will start it's Python based SOAP server to listen for incoming "
+"requests over a TCP socket. A remote application (like the dtc web hosting "
+"control panel) can then connect to it in order to start, stop, create and "
+"destroy a VPS."
 msgstr ""
 "O dtc-xen irá ouvir em um servidor SOAP Python (ao qual um painel DTC poderá "
 "se conectar para iniciar, parar, criar e destruir um Servidor Virtual "
@@ -112,10 +114,11 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:5001
+#, fuzzy
 msgid ""
-"Assuming this value is 'XXXX', the node number will be 'xenXXXXYY', YY being "
-"the VPS number itself (xenYY). This node number must be 4 or 5 characters "
-"long."
+"Assuming this value is 'XXXX', the VPS numbers will be 'xenXXXXYY', YY being "
+"the VPS number itself (xenYY), and XXXX being the Xen server number. This "
+"node number must be 4 or 5 characters long."
 msgstr ""
 "Assumindo que esse valor seja 'XXXX', o número do nó será 'xenXXXXYY', onde "
 "YY será o número do VPS (xenYY). O número de nó deverá ter 4 ou 5 caracteres."
@@ -289,11 +292,11 @@ msgstr ""
 #. Type: note
 #. Description
 #: ../dtc-xen.templates:13001
+#, fuzzy
 msgid ""
 "This script will remove port forwarding from the current sshd_config file "
 "and add the grant of xm console to the group xenusers so that users can "
-"login to the physical console. It will then try to download the files needed "
-"to setup Gentoo and CentOS into the virtual machines."
+"login to the physical console."
 msgstr ""
 "Esse script irá remover a opção de encaminhamento de portas (port "
 "forwarding) do arquivo sshd_config atual e adicionar a permissão de "
@@ -325,10 +328,13 @@ msgstr "Ponto de montagem para o VPS:"
 #. Description
 #: ../dtc-xen.templates:14001
 msgid ""
-"In order to do the setup of the VPS it's managing, dtc-xen will mount LVM or "
-"file loopback partition on the dom0 of your Xen server. This will also be "
-"used to automaticaly set your /etc/fstab mount points so you can do "
-"maintenance and mount VPSes faster. Enter here the path to this mount points."
+"In order to do the setup of the VPS it's managing, dtc-xen will mount an LVM "
+"device or a file loopback on the dom0 of your Xen server, and then use it as "
+"a partition for your VPS. Loopback mounts by default are limited to a small "
+"number, and since LVM is also faster to access, it is the much preferred "
+"option. This will also be used to automatically set your /etc/fstab mount "
+"points so you can do maintenance and mount VPSes with less hassle. Enter the "
+"desired path prefix for these mount points."
 msgstr ""
 
 #. Type: select
@@ -342,7 +348,7 @@ msgstr ""
 #: ../dtc-xen.templates:15001
 msgid ""
 "Select the debian operating system that you want to have setup when dtc-xen "
-"creates a new VM instance."
+"creates a new VM instance with debootstrap."
 msgstr ""
 
 #~ msgid "Installation completion"

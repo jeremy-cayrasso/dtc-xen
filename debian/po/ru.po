@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.3.9-1\n"
 "Report-Msgid-Bugs-To: thomas@goirand.fr\n"
-"POT-Creation-Date: 2007-12-30 13:34+0800\n"
+"POT-Creation-Date: 2008-02-27 11:37+0800\n"
 "PO-Revision-Date: 2008-01-28 21:49+0300\n"
 "Last-Translator: Yuri Kozlov <kozlov.y@gmail.com>\n"
 "Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
@@ -15,7 +15,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 1.11.4\n"
-"Plural-Forms:  nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms:  nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
+"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #. Type: string
 #. Description
@@ -26,7 +27,8 @@ msgstr "Порт сервера:"
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:1001
-msgid "Default is 8089. Please enter the port the dtc-xen SOAP server will bind to."
+msgid ""
+"Default is 8089. Please enter the port the dtc-xen SOAP server will bind to."
 msgstr ""
 "По умолчанию использует порт 8089. Введите порт, к которому должен быть "
 "привязан dtc-xen SOAP сервер."
@@ -40,9 +42,12 @@ msgstr "Логин на сервер SOAP:"
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:2001
+#, fuzzy
 msgid ""
-"Dtc-xen will bind a SOAP Python server (to which a dtc panel can connect, in "
-"order to start, stop, create and destroy a VPS)."
+"Dtc-xen will start it's Python based SOAP server to listen for incoming "
+"requests over a TCP socket. A remote application (like the dtc web hosting "
+"control panel) can then connect to it in order to start, stop, create and "
+"destroy a VPS."
 msgstr ""
 "Dtc-xen подключится к серверу SOAP Python (подключившись к dtc панели "
 "которого можно запустить, установить, создать и удалить VPS)."
@@ -65,7 +70,8 @@ msgstr "Пароль на сервер SOAP:"
 msgid ""
 "Dtc-xen will generate a .htpasswd file for the login you have just "
 "configured."
-msgstr "Dtc-xen создаст файл .htpasswd для подключения, которое было настроено ранее."
+msgstr ""
+"Dtc-xen создаст файл .htpasswd для подключения, которое было настроено ранее."
 
 #. Type: password
 #. Description
@@ -86,8 +92,8 @@ msgid ""
 "Please enter the domain name for the dtc-xen server. This will be used as a "
 "part of the URL by the SOAP dtc panel client like nodeXXXX.example.com."
 msgstr ""
-"Введите доменное имя сервера dtc-xen. Оно будет использовано "
-"клиентской панелью dtc SOAP как часть URL, например nodeXXXX.example.com."
+"Введите доменное имя сервера dtc-xen. Оно будет использовано клиентской "
+"панелью dtc SOAP как часть URL, например nodeXXXX.example.com."
 
 #. Type: string
 #. Description
@@ -104,10 +110,11 @@ msgstr "Введите номер, который будет использов�
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:5001
+#, fuzzy
 msgid ""
-"Assuming this value is 'XXXX', the node number will be 'xenXXXXYY', YY being "
-"the VPS number itself (xenYY). This node number must be 4 or 5 characters "
-"long."
+"Assuming this value is 'XXXX', the VPS numbers will be 'xenXXXXYY', YY being "
+"the VPS number itself (xenYY), and XXXX being the Xen server number. This "
+"node number must be 4 or 5 characters long."
 msgstr ""
 "Если значение 'XXXX', то номер узла будет 'xenXXXXYY', где YY -- сам номер "
 "VPS (xenYY). Номер узла должен быть длиной 4 или 5 символов."
@@ -275,11 +282,11 @@ msgstr ""
 #. Type: note
 #. Description
 #: ../dtc-xen.templates:13001
+#, fuzzy
 msgid ""
 "This script will remove port forwarding from the current sshd_config file "
 "and add the grant of xm console to the group xenusers so that users can "
-"login to the physical console. It will then try to download the files needed "
-"to setup Gentoo and CentOS into the virtual machines."
+"login to the physical console."
 msgstr ""
 "Этот сценарий удалит перенаправление порта из имеющегося файла sshd_config и "
 "добавит доступ к консоли xm группе xenusers для того, чтобы пользователи "
@@ -307,17 +314,21 @@ msgstr "Точка монтирования VPS:"
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:14001
+#, fuzzy
 msgid ""
-"In order to do the setup of the VPS it's managing, dtc-xen will mount LVM or "
-"file loopback partition on the dom0 of your Xen server. This will also be "
-"used to automaticaly set your /etc/fstab mount points so you can do "
-"maintenance and mount VPSes faster. Enter here the path to this mount points."
+"In order to do the setup of the VPS it's managing, dtc-xen will mount an LVM "
+"device or a file loopback on the dom0 of your Xen server, and then use it as "
+"a partition for your VPS. Loopback mounts by default are limited to a small "
+"number, and since LVM is also faster to access, it is the much preferred "
+"option. This will also be used to automatically set your /etc/fstab mount "
+"points so you can do maintenance and mount VPSes with less hassle. Enter the "
+"desired path prefix for these mount points."
 msgstr ""
-"Чтобы выполнить настройку управления VPS, dtc-xen смонтирует LVM "
-"или раздел из файла обратной петли на dom0 вашего сервера Xen. "
-"Это будет автоматически добавлено к вашим точкам монтирования в "
-"файл /etc/fstab для ускорения монтирования и обслуживания VPS. "
-"Введите здесь путь к этим точкам монтирования."
+"Чтобы выполнить настройку управления VPS, dtc-xen смонтирует LVM или раздел "
+"из файла обратной петли на dom0 вашего сервера Xen. Это будет автоматически "
+"добавлено к вашим точкам монтирования в файл /etc/fstab для ускорения "
+"монтирования и обслуживания VPS. Введите здесь путь к этим точкам "
+"монтирования."
 
 #. Type: select
 #. Description
@@ -328,10 +339,10 @@ msgstr "Debian os для настройки:"
 #. Type: select
 #. Description
 #: ../dtc-xen.templates:15001
+#, fuzzy
 msgid ""
 "Select the debian operating system that you want to have setup when dtc-xen "
-"creates a new VM instance."
+"creates a new VM instance with debootstrap."
 msgstr ""
-"Выберите операционную систему debian, которая должна "
-"настраиваться, когда dtc-xen создаёт новый экземпляр VM."
-
+"Выберите операционную систему debian, которая должна настраиваться, когда "
+"dtc-xen создаёт новый экземпляр VM."
