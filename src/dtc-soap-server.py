@@ -494,6 +494,10 @@ def getVPSInstallLog(vpsname,numlines):
 		numlines = int(numlines)
 		if not numlines or numlines < 0: lastlines = "\n".join(log)
 		else: lastlines = "\n".join(log[-numlines:])
+		def toascii(char):
+			if ord(char) in [10,13] or 32 <= ord(char) <= 127: return char
+			return " "
+		lastlines = [ toascii(c) for c in lastlines ]
 		return lastlines
 	else:
 		return "NOTOK"
