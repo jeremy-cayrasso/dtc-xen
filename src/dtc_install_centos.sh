@@ -5,7 +5,9 @@ CACHEDIR="/var/cache/yum"      # where yum caches stuff -- is created as a subdi
 
 # FIXME perhaps after installation the script can modify the target machine's yum config to point to our Squid proxy
 #       or define http_proxy inside the machine.  that would make upgrades for customers much much faster.
+# better idea: instead of using a web cache, use a stash on the machine, we rsync the new RPMs into it once it's finished
 # FIXME once that is done, we can stop using apt-proxy or apt-cacher
+# FIXME try to make it for suse, mandriva or any other rpm-based distro
 
 YUMENVIRON="$1"                # where the yum config is generated and deployed
 INSTALLROOT="$2"               # destination directory / chroot for installation
