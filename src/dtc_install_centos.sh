@@ -19,14 +19,23 @@ fi
 set -e
 set -x
 
+which rpm >/dev/null 2>&1 || { echo "rpm is not installed.  please install rpm." ; exit 124 ; }
+
+# sometimes when the RPM database is inconsistent, yum fails but exits with success status
+# we make sure the db is in good health
+rpm --rebuilddb
+
+# set distro ver
+releasever=5
+
 # detect architecture
 ARCH=`uname -m`
 if [ "$ARCH" == x86_64 ] ; then
 	exclude="*.i386 *.i586 *.i686"
-	distroarch=x86_64
+	basearch=x86_64
 elif [ "$ARCH" == i686 ] ; then
 	exclude="*.x86_64"
-	distroarch=i386
+	basearch=i386
 else
 	echo "Unknown architecture: $ARCH -- stopping centos-installer"
 	exit 3
@@ -46,7 +55,8 @@ cachedir=$CACHEDIR
 installroot=$INSTALLROOT
 exclude=$exclude
 keepcache=1
-debuglevel=2
+#debuglevel=4
+#errorlevel=4
 pkgpolicy=newest
 distroverpkg=centos-release
 tolerant=1
@@ -57,8 +67,6 @@ plugins=1
 metadata_expire=1800
 EOF
 
-# FIXME: add mirrorlist argument below.  make yum more robust.
-
 cat > "$YUMENVIRON/pluginconf.d/installonlyn.conf" << EOF
 [main]
 enabled=1
@@ -68,35 +76,40 @@ EOF
 cat > "$YUMENVIRON/repos.d/CentOS-Base.repo" << EOF
 [base]
 name=CentOS-5 - Base
-baseurl=http://mirror.centos.org/centos/5/os/$distroarch/
+#baseurl=http://mirror.centos.org/centos/$releasever/os/$basearch/
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=os
 gpgcheck=1
 gpgkey=http://mirror.centos.org/centos/RPM-GPG-KEY-CentOS-5
 
 [updates]
 name=CentOS-5 - Updates
-baseurl=http://mirror.centos.org/centos/5/updates/$distroarch/
+#baseurl=http://mirror.centos.org/centos/$releasever/updates/$basearch/
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=updates
 gpgcheck=1
 gpgkey=http://mirror.centos.org/centos/RPM-GPG-KEY-CentOS-5
 
 [addons]
 name=CentOS-5 - Addons
-baseurl=http://mirror.centos.org/centos/5/addons/$distroarch/
+#baseurl=http://mirror.centos.org/centos/$releasever/addons/$basearch/
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=addons
 gpgcheck=1
 gpgkey=http://mirror.centos.org/centos/RPM-GPG-KEY-CentOS-5
 
 [extras]
 name=CentOS-5 - Extras
-baseurl=http://mirror.centos.org/centos/5/extras/$distroarch/
+#baseurl=http://mirror.centos.org/centos/$releasever/extras/$basearch/
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=extras
 gpgcheck=1
 gpgkey=http://mirror.centos.org/centos/RPM-GPG-KEY-CentOS-5
 
 [centosplus]
 name=CentOS-5 - Plus
-baseurl=http://mirror.centos.org/centos/5/centosplus/$distroarch/
+#baseurl=http://mirror.centos.org/centos/$releasever/centosplus/$basearch/
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=centosplus
 gpgcheck=1
 gpgkey=http://mirror.centos.org/centos/RPM-GPG-KEY-CentOS-5
 EOF
 
 # unleash yum
 
-yum -c "$YUMENVIRON/yum.conf" -y install basesystem centos-release yum
+exec yum -c "$YUMENVIRON/yum.conf" -y install basesystem centos-release yum
