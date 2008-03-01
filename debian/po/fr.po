@@ -265,7 +265,6 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:12001
-#, fuzzy
 msgid ""
 "Please enter that volume group name. The volume group size must fit all the "
 "virtual machines you will set up later on this server. If you don't want to "
@@ -355,7 +354,6 @@ msgstr "Stystème Debian à installer:"
 #. Type: select
 #. Description
 #: ../dtc-xen.templates:15001
-#, fuzzy
 msgid ""
 "Select the Debian operating system that you want to have setup when dtc-xen "
 "creates a new VM instance with debootstrap."
