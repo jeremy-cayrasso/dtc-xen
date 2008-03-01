@@ -1,13 +1,13 @@
 # Translation of dtc-xen debconf templates to German
-# Copyright (C) Helge Kreutzmann <debian@helgefjell.de>, 2007.
+# Copyright (C) Helge Kreutzmann <debian@helgefjell.de>, 2007, 2008.
 # This file is distributed under the same license as the dtc-xen package.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: dtc-xen \n"
+"Project-Id-Version: dtc-xen 0.3.13-1\n"
 "Report-Msgid-Bugs-To: thomas@goirand.fr\n"
-"POT-Creation-Date: 2008-02-27 11:37+0800\n"
-"PO-Revision-Date: 2007-05-01 11:38+0200\n"
+"POT-Creation-Date: 2007-12-30 13:34+0800\n"
+"PO-Revision-Date: 2008-02-26 20:28+0100\n"
 "Last-Translator: Helge Kreutzmann <debian@helgefjell.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -23,11 +23,11 @@ msgstr "Server-Port:"
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:1001
-#, fuzzy
 msgid ""
 "Default is 8089. Please enter the port the dtc-xen SOAP server will bind to."
 msgstr ""
-"Bitte geben Sie den Port ein, an dem der Server auf Anfragen warten wird."
+"Die Vorgabe lautet 8089. Bitte geben Sie den Port ein, an dem der Server auf "
+"Anfragen warten wird."
 
 #. Type: string
 #. Description
@@ -38,15 +38,12 @@ msgstr "SOAP-Server-Login:"
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:2001
-#, fuzzy
 msgid ""
-"Dtc-xen will start it's Python based SOAP server to listen for incoming "
-"requests over a TCP socket. A remote application (like the dtc web hosting "
-"control panel) can then connect to it in order to start, stop, create and "
-"destroy a VPS."
+"Dtc-xen will bind a SOAP Python server (to which a dtc panel can connect, in "
+"order to start, stop, create and destroy a VPS)."
 msgstr ""
 "Dtc-xen wird sich an einen SOAP Python-Server binden (zu dem sich ein Dtc-"
-"Panel verbinden kann, um einen Virtuellen Privaten Server zu starten, zu "
+"Panel verbinden kann, um einen Virtuellen Privaten Server (VPS) zu starten, zu "
 "erstellen oder zu zerstören)."
 
 #. Type: string
@@ -87,13 +84,12 @@ msgstr "Server-Rechnername:"
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:4001
-#, fuzzy
 msgid ""
 "Please enter the domain name for the dtc-xen server. This will be used as a "
 "part of the URL by the SOAP dtc panel client like nodeXXXX.example.com."
 msgstr ""
 "Bitte geben Sie den Domainnamen des Dtc-xen-Servers ein. Dieser wird vom "
-"SOAP-Dtc-Panel-Client als Teil der URL verwendet."
+"SOAP-Dtc-Panel-Client als Teil der URL, wie nodeXXXX.example.com, verwendet."
 
 #. Type: string
 #. Description
@@ -104,7 +100,6 @@ msgstr "Knotennummer des VPS:"
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:5001
-#, fuzzy
 msgid "Please enter the value to use to set up VPS numbering."
 msgstr ""
 "Bitte geben Sie den Wert an, der zur Einrichtung der Nummerierung des VPS "
@@ -113,11 +108,10 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:5001
-#, fuzzy
 msgid ""
-"Assuming this value is 'XXXX', the VPS numbers will be 'xenXXXXYY', YY being "
-"the VPS number itself (xenYY), and XXXX being the Xen server number. This "
-"node number must be 4 or 5 characters long."
+"Assuming this value is 'XXXX', the node number will be 'xenXXXXYY', YY being "
+"the VPS number itself (xenYY). This node number must be 4 or 5 characters "
+"long."
 msgstr ""
 "Lautet der Wert beispielsweise »XXXX« wird die Knotennummer »xenXXXXYY«, "
 "wobei »YY« die VPS-Nummer selbst (xenYY) ist. Die Knotennummer muss vier "
@@ -277,7 +271,7 @@ msgstr ""
 #. Description
 #: ../dtc-xen.templates:13001
 msgid "How to finish the install"
-msgstr ""
+msgstr "Wie die Installation beendet werden soll"
 
 #. Type: note
 #. Description
@@ -292,11 +286,11 @@ msgstr ""
 #. Type: note
 #. Description
 #: ../dtc-xen.templates:13001
-#, fuzzy
 msgid ""
 "This script will remove port forwarding from the current sshd_config file "
 "and add the grant of xm console to the group xenusers so that users can "
-"login to the physical console."
+"login to the physical console. It will then try to download the files needed "
+"to setup Gentoo and CentOS into the virtual machines."
 msgstr ""
 "Dieses Skript wird Port-Weiterleitung aus der aktuellen sshd_config-Datei "
 "entfernen und der Gruppe »xenusers« die Erlaubnis für die xm-Konsole "
@@ -327,28 +321,32 @@ msgstr "VPS-Einhängepunkt:"
 #. Description
 #: ../dtc-xen.templates:14001
 msgid ""
-"In order to do the setup of the VPS it's managing, dtc-xen will mount an LVM "
-"device or a file loopback on the dom0 of your Xen server, and then use it as "
-"a partition for your VPS. Loopback mounts by default are limited to a small "
-"number, and since LVM is also faster to access, it is the much preferred "
-"option. This will also be used to automatically set your /etc/fstab mount "
-"points so you can do maintenance and mount VPSes with less hassle. Enter the "
-"desired path prefix for these mount points."
+"In order to do the setup of the VPS it's managing, dtc-xen will mount LVM or "
+"file loopback partition on the dom0 of your Xen server. This will also be "
+"used to automaticaly set your /etc/fstab mount points so you can do "
+"maintenance and mount VPSes faster. Enter here the path to this mount points."
 msgstr ""
+"Um den VPS einzurichten, den es verwalten soll, wird Dtc-xen eine LVM- oder "
+"Datei-Loopback-Partition im Dom0 Ihres Xen-Servers einhängen. Dies wird auch "
+"dazu verwendet, Ihre Einhängepunkte in der /etc/fstab automatisch zu setzen, "
+"so dass Sie die Wartung und das Einhängen von VPSen schneller durchführen "
+"können. Geben Sie hier den Pfad zu den Einhängepunkten an."
 
 #. Type: select
 #. Description
 #: ../dtc-xen.templates:15001
 msgid "Debian os to setup:"
-msgstr ""
+msgstr "Einzurichtendes Debian-Betriebssystem:"
 
 #. Type: select
 #. Description
 #: ../dtc-xen.templates:15001
 msgid ""
 "Select the debian operating system that you want to have setup when dtc-xen "
-"creates a new VM instance with debootstrap."
+"creates a new VM instance."
 msgstr ""
+"Wählen Sie hier das Debian-Betriebssystem aus, das Sie eingerichtet bekommen "
+"möchten, wenn Dtc-Xen eine neue VM-Instanz erstellt."
 
 #~ msgid "Installation completion"
 #~ msgstr "Installationsabschluss"

@@ -1,11 +1,15 @@
 dtc-xen (0.3.14-1) unstable; urgency=low
 
   * New upstream release.
-  * This version uses yum to setup the CentOS VMs, so rpmstrap Suggests
-    is not needed any more (Closes: #468428)
+  * This version uses yum to setup the CentOS VMs, so rpmstrap Suggests is not
+    needed any more (Closes: #468428), and instead yum is in the Depends:
   * English Debconf template reviewed (Closes: #468047)
+  * Updated the nl.po Duch template thanks to "cobaco (aka Bart Cornelis)"
+    <cobaco@skolelinux.no> (Closes: #468302)
+  * Updated the de.po German template thanks to Helge Kreutzmann
+    <debian@helgefjell.de> (Closes: #468045)
 
- -- Thomas Goirand <zigo@mx.example.com>  Sat,  1 Mar 2008 16:10:14 +0800
+ -- Thomas Goirand <thomas@goirand.fr>  Sat,  1 Mar 2008 16:10:14 +0800
 
 dtc-xen (0.3.13-1) unstable; urgency=low
 
