@@ -23,8 +23,10 @@ set -x
 ARCH=`uname -m`
 if [ "$ARCH" == x86_64 ] ; then
 	exclude="*.i386 *.i586 *.i686"
+	distroarch=x86_64
 elif [ "$ARCH" == i686 ] ; then
 	exclude="*.x86_64"
+	distroarch=i386
 else
 	echo "Unknown architecture: $ARCH -- stopping centos-installer"
 	exit 3
@@ -66,31 +68,31 @@ EOF
 cat > "$YUMENVIRON/repos.d/CentOS-Base.repo" << EOF
 [base]
 name=CentOS-5 - Base
-baseurl=http://mirror.centos.org/centos/5/os/x86_64/
+baseurl=http://mirror.centos.org/centos/5/os/$distroarch/
 gpgcheck=1
 gpgkey=http://mirror.centos.org/centos/RPM-GPG-KEY-CentOS-5
 
 [updates]
 name=CentOS-5 - Updates
-baseurl=http://mirror.centos.org/centos/5/updates/x86_64/
+baseurl=http://mirror.centos.org/centos/5/updates/$distroarch/
 gpgcheck=1
 gpgkey=http://mirror.centos.org/centos/RPM-GPG-KEY-CentOS-5
 
 [addons]
 name=CentOS-5 - Addons
-baseurl=http://mirror.centos.org/centos/5/addons/x86_64/
+baseurl=http://mirror.centos.org/centos/5/addons/$distroarch/
 gpgcheck=1
 gpgkey=http://mirror.centos.org/centos/RPM-GPG-KEY-CentOS-5
 
 [extras]
 name=CentOS-5 - Extras
-baseurl=http://mirror.centos.org/centos/5/extras/x86_64/
+baseurl=http://mirror.centos.org/centos/5/extras/$distroarch/
 gpgcheck=1
 gpgkey=http://mirror.centos.org/centos/RPM-GPG-KEY-CentOS-5
 
 [centosplus]
 name=CentOS-5 - Plus
-baseurl=http://mirror.centos.org/centos/5/centosplus/x86_64/
+baseurl=http://mirror.centos.org/centos/5/centosplus/$distroarch/
 gpgcheck=1
 gpgkey=http://mirror.centos.org/centos/RPM-GPG-KEY-CentOS-5
 EOF
