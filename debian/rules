@@ -18,13 +18,14 @@ install:
 	install -D -m 700 src/dtc_reinstall_os.sh debian/dtc-xen/usr/sbin/dtc_reinstall_os
 	install -D -m 700 src/dtc_setup_vps_disk.sh debian/dtc-xen/usr/sbin/dtc_setup_vps_disk
 	install -D -m 700 src/dtc_change_bsd_kernel.sh debian/dtc-xen/usr/sbin/dtc_change_bsd_kernel
+	install -D -m 700 src/dtc_install_centos.sh debian/dtc-xen/usr/sbin/dtc_install_centos
 
 	install -D -m 700 src/xm_info_free_memory debian/dtc-xen/usr/sbin/xm_info_free_memory
 	install -D -m 700 src/vgdisplay_free_size debian/dtc-xen/usr/sbin/vgdisplay_free_size
 
 	install -D -m 700 src/dtc-soap-server.py debian/dtc-xen/usr/sbin/dtc-soap-server
 	install -D -m 700 src/Properties.py debian/dtc-xen/usr/share/dtc-xen/Properties.py
-	
+
 	install -D -m 640 panel/index.html debian/dtc-xen/usr/share/dtc-xen/index.html
 	install -D -m 740 panel/graph/xencpugraph.py debian/dtc-xen/usr/share/dtc-xen/graph/xencpugraph.py
 	install -D -m 740 panel/graph/xennetgraph.py debian/dtc-xen/usr/share/dtc-xen/graph/xennetgraph.py

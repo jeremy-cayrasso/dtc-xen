@@ -4,7 +4,7 @@ set -e # DIE on errors
 #set > /tmp/env # temp log environ
 
 if [ $# -lt 3 ]; then 
-	echo "Usage: $0 [-v] <xen id> <hdd size MB> <ram size MB> <ip address> < debian | ubuntu_dapper | centos | centos42 | gentoo | slackware | manual > [ lvm | vbd ]" > /dev/stderr
+	echo "Usage: $0 [-v] <xen id> <hdd size MB> <ram size MB> <ip address> < debian | ubuntu_dapper | centos | gentoo | slackware | manual > [ lvm | vbd ]" > /dev/stderr
 	echo "" > /dev/stderr
 	echo "Example: $0 09 3072 64 1.2.3.4 debian" > /dev/stderr
 	exit 1
@@ -170,59 +170,10 @@ echo "Bootstraping..."
 # get the most recent centos release.  it WILL FAIL once centos version hits 10.  But, hell, I'm a hacky hack.
 CENTOS_DIR=`ls -d /usr/src/centos* 2> /dev/null | tr ' ' '\n' | sort -r | head -1`
 if [ "$DISTRO" = "centos" ] ; then
-	# first check to see if we have a centos4 archive
-	# if not, revert to centos3 (to maintain backwards compatibility)
-	if [ ! -x /usr/bin/rpmstrap ] ; then
-		echo "Please install rpmstrap from http://rpmstrap.pimpscript.net/"
-		exit 1
-	fi
-	if [ -z "$CENTOS_DIR" ] ; then
-		echo "Please install a CentOS release RPM set in /usr/src/centos<version>"
-		echo "This can be done using: rpmstrap --verbose --download-only centos<version> /usr/src/centos<version>"
-		exit 1
-	fi
-	CENTOS_RELEASE=`basename "$CENTOS_DIR"`
-	if [ ! -d "/usr/src/$CENTOS_RELEASE" ] ; then
-		echo "CentOS release $CENTOS_RELEASE could not be found in $CENTOS_DIR"
-		exit 1
-	fi
-	[ "$DEBIAN_BINARCH" = "amd64" ] && ARCH="--arch x86_64"
-
-	# create pre-deps for RPMs (so we have less failures on install)
-        mkdir -p ${VPSGLOBPATH}/${VPSNUM}/etc
-        mkdir -p ${VPSGLOBPATH}/${VPSNUM}/dev
-        mkdir -p ${VPSGLOBPATH}/${VPSNUM}/var/lib/rpm
-        touch ${VPSGLOBPATH}/${VPSNUM}/etc/fstab
-        touch ${VPSGLOBPATH}/${VPSNUM}/etc/hosts
-        mknod ${VPSGLOBPATH}/${VPSNUM}/dev/null c 1 3
-        chmod 666 ${VPSGLOBPATH}/${VPSNUM}/dev/null
-
-	/usr/bin/rpmstrap --arch ${CENTOS_BINARCH} --local-source "$CENTOS_DIR" "$CENTOS_RELEASE" "$VPSGLOBPATH/$VPSNUM"
-
-	# fix rpmdb since it often fails to create the rpmdb properly due to db4.3 vs db4.4 issues
-        mkdir -p ${VPSGLOBPATH}/${VPSNUM}/rpms
-        mount -o bind /usr/src/$CENTOS_RELEASE ${VPSGLOBPATH}/${VPSNUM}/rpms
-        chroot ${VPSGLOBPATH}/${VPSNUM} /bin/rpm -i -v --nodeps --noscripts --notriggers --excludepath / /rpms/*
-        umount ${VPSGLOBPATH}/${VPSNUM}/rpms
-        rmdir ${VPSGLOBPATH}/${VPSNUM}/rpms
-
-elif [ "$DISTRO" = "centos42" ] ; then
-	CENTOS_RELEASE=4
-	if ! [ -d /usr/share/dtc-xen-os/centos42/${CENTOS_BINARCH} ] ; then
-		echo "Please apt-get install dtc-xen-os-centos42-${CENTOS_BINARCH}"
-		exit 1
-	fi
-	/usr/bin/rpmstrap --arch ${CENTOS_BINARCH} --local-source /usr/share/dtc-xen-os/centos42/${CENTOS_BINARCH} centos42 "$VPSGLOBPATH/$VPSNUM"
+	/usr/sbin/dtc_install_centos /var/lib/dtc-xen/yum "$VPSGLOBPATH/$VPSNUM"
 elif [ "$DISTRO" = "debian" ] ; then
 	echo $DEBOOTSTRAP --verbose --include=module-init-tools --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
 	$DEBOOTSTRAP --verbose --include=module-init-tools --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS} || debret=$?
-	if [ "$debret" != "" ]; then
-		echo "Failed to install $DISTRO via bootstrap!!"
-		exit $debret
-	fi
-elif [ "$DISTRO" = "debian-etch" -a -e "/usr/share/dtc-xen-os/debian-etch/"${DEBIAN_BINARCH} ] ; then
-	echo $DEBOOTSTRAP --verbose --include=module-init-tools --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} "file:///usr/share/dtc-xen-os/debian-etch/"${DEBIAN_BINARCH}
-	$DEBOOTSTRAP --verbose --include=module-init-tools --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} "file:///usr/share/dtc-xen-os/debian-etch/"${DEBIAN_BINARCH} || debret=$?
 	if [ "$debret" != "" ]; then
 		echo "Failed to install $DISTRO via bootstrap!!"
 		exit $debret

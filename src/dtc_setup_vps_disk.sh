@@ -12,7 +12,7 @@ fi
 
 # Things that might change
 # LVMNAME=lvm1
-VPSGLOBPATH=/xen
+VPSGLOBPATH=${VPS_MOUNTPOINT}
 
 # Things that most of then time don't change
 VPSNUM=$1

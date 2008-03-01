@@ -1,0 +1,43 @@
+.TH dtc_install_centos 8
+.SH NAME
+dtc_install_centos \- bootstrap a centos OS for using it in a chroot or in a VM
+.SH SYNOPSIS
+.B dtc_install_centos
+.I YUMENVIRON
+.I INSTALLROOT
+
+
+
+.SH DESCRIPTION
+
+This shell script is a part of the dtc-xen package that is to be used by the
+dtc panel to manage a Xen VPS server. This script is called by dtc_reinstall_os
+when started with then centos option as operating system to install.
+
+.SH "OPTION"
+
+.B YUMENVIRON
+Where the yum config is generated and deployed.
+
+.B INSTALLROOT
+Destination directory / chroot for installation.
+
+.SH "EXAMPLE"
+
+.B dtc_install_centos /root/yum /xen/13
+
+This will setup the operating system in /xen/13, with the CentOS configuration
+folder in /root/yum.
+
+.SH "SEE ALSO"
+
+dtc_reinstall_os(8)
+
+.SH "VERSION"
+This documentation describes
+.B dtc_install_os
+version 0.3.0.
+
+See
+.B http://www.gplhost.com/software-dtc-xen.html
+for updates.

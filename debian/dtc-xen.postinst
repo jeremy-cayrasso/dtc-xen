@@ -57,6 +57,7 @@ fi
 
 mkdir -p ${XEN_USER_HOME}
 mkdir -p $DTCXEN_ETCPATH
+mkdir -p ${conf_vps_mountpoint}
 CWD=`pwd`
 cd $DTCXEN_ETCPATH
 
