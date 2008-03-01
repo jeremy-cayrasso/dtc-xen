@@ -1,5 +1,2 @@
 src/bashrc				/etc/dtc-xen
 src/motd				/etc/dtc-xen
-yum/yum.conf				/etc/dtc-xen/yum
-yum/pluginconf.d/installonlyn.conf	/etc/dtc-xen/yum/pluginconf.d
-yum/repos.d/CentOS-Base.repo		/etc/dtc-xen/yum/repos.d
