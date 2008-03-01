@@ -10,6 +10,7 @@ CACHEDIR="/var/cache/yum"      # where yum caches stuff -- is created as a subdi
 # the critical section is both the yum and the rsync process
 # we also need to rsync packages from the stash into the var cache on the vps, and a mutex to lock out if another yum is running, just as in the first scenario
 # cannot use a symlink because its chrooted for the duration of the process
+# at any case, the repo names for different distros need to be different, otherwise the caches will clash horribly
 # FIXME once that is done, we can stop using apt-proxy or apt-cacher
 # FIXME try to make it for suse, mandriva or any other rpm-based distro
 
