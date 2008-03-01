@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: thomas@goirand.fr\n"
-"POT-Creation-Date: 2008-02-27 11:37+0800\n"
-"PO-Revision-Date: 2008-01-25 12:44+0800\n"
+"POT-Creation-Date: 2008-03-02 02:51+0800\n"
+"PO-Revision-Date: 2008-03-02 02:48+0800\n"
 "Last-Translator: Thomas Goirand <thomas@goirand.fr>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -43,16 +43,16 @@ msgstr "Identifiant de connexion sur le serveur SOAP :"
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:2001
-#, fuzzy
 msgid ""
 "Dtc-xen will start it's Python based SOAP server to listen for incoming "
 "requests over a TCP socket. A remote application (like the dtc web hosting "
 "control panel) can then connect to it in order to start, stop, create and "
 "destroy a VPS."
 msgstr ""
-"Dtc-xen met à l'écoute un serveur SOAP Python sur lequel un panneau de "
-"contrôle de dtc peut se connecter afin de créer, démarrer, arrêter ou "
-"détruire un serveur virtuel privé."
+"Dtc-xen met à l'écoute son serveur SOAP Python sur un port TCP. Une "
+"application distante (comme le panneau de contrôle de dtc) peut s'y "
+"connecter afin de créer, démarrer, arrêter ou détruire un serveur virtuel "
+"privé."
 
 #. Type: string
 #. Description
@@ -117,15 +117,15 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:5001
-#, fuzzy
 msgid ""
 "Assuming this value is 'XXXX', the VPS numbers will be 'xenXXXXYY', YY being "
 "the VPS number itself (xenYY), and XXXX being the Xen server number. This "
 "node number must be 4 or 5 characters long."
 msgstr ""
 "Si cette valeur est « XXXX », le numéro du noeud sera « xenXXXXYY », où YY "
-"est le numéro du serveur virtuel privé (xenYY). Il est conseillé d'utiliser "
-"une chaîne comportant 4 ou 5 caractères."
+"est le numéro du serveur virtuel privé (xenYY), et où XXXX est le numéro du "
+"serveur Xen. Il est obligatoire d'utiliser une chaîne comportant 4 ou 5 "
+"caractères."
 
 #. Type: string
 #. Description
@@ -265,9 +265,10 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:12001
+#, fuzzy
 msgid ""
 "Please enter that volume group name. The volume group size must fit all the "
-"virtual machiness you will set up later on this server. If you don't want to "
+"virtual machines you will set up later on this server. If you don't want to "
 "use LVM (because you don't care if loopback is slower), leave this setting "
 "to the default value."
 msgstr ""
@@ -296,7 +297,6 @@ msgstr ""
 #. Type: note
 #. Description
 #: ../dtc-xen.templates:13001
-#, fuzzy
 msgid ""
 "This script will remove port forwarding from the current sshd_config file "
 "and add the grant of xm console to the group xenusers so that users can "
@@ -304,9 +304,7 @@ msgid ""
 msgstr ""
 "Ce script supprimera la redirection de ports de sshd_config et autorisera le "
 "groupe xenusers à  utiliser le terminal xm afin que les utilisateurs "
-"puissent se connecter à la console physique. Il essayera de télécharger les "
-"fichiers nécessaires à la configuration de Gentoo et CentOS dans les "
-"machines virtuelles."
+"puissent se connecter à la console physique."
 
 #. Type: note
 #. Description
@@ -330,7 +328,6 @@ msgstr "Point de montage des serveurs virtuels privés :"
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:14001
-#, fuzzy
 msgid ""
 "In order to do the setup of the VPS it's managing, dtc-xen will mount an LVM "
 "device or a file loopback on the dom0 of your Xen server, and then use it as "
@@ -341,10 +338,13 @@ msgid ""
 "desired path prefix for these mount points."
 msgstr ""
 "Pour fabriquer les VPS qu'il gère, dtc-xen va monter des partitions LVM ou "
-"des loopback dans le dom0 de votre serveur Xen. Ce point de montage sera "
-"aussi utilisé pour gérer vos points de montages dans /etc/fstab pour que "
-"vous puissiez faire de la maintenance plus rapidement. Entrez votre chemin "
-"pour ce point de montage."
+"des fichiers loopback dans le dom0 de votre serveur Xen, et les utilisera en "
+"tant que partition pour vos VPS. Les montages loopback sont par défaut "
+"limité en nombre, et vu que LVM est aussi plus rapide a accéder, c'est "
+"vraiment l'option la meilleurs. Ce point de montage sera aussi utilisé pour "
+"gérer vos points de montages dans /etc/fstab pour que vous puissiez faire de "
+"la maintenance et monter vos VPS plus rapidement. Entrez votre chemin pour "
+"ce point de montage."
 
 #. Type: select
 #. Description
@@ -357,8 +357,8 @@ msgstr "Stystème Debian à installer:"
 #: ../dtc-xen.templates:15001
 #, fuzzy
 msgid ""
-"Select the debian operating system that you want to have setup when dtc-xen "
+"Select the Debian operating system that you want to have setup when dtc-xen "
 "creates a new VM instance with debootstrap."
 msgstr ""
 "Choisissez le système d'exploitation Debian que vous voulez lorsque dtc-xen "
-"fabrique une nouvelle instance de machine virtuelle."
+"fabrique une nouvelle instance de machine virtuelle avec debootstrap."

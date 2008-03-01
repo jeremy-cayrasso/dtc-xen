@@ -1,43 +1,35 @@
-# translation of ru.po to Russian
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-#
-# Yuri Kozlov <kozlov.y@gmail.com>, 2007, 2008.
 msgid ""
 msgstr ""
-"Project-Id-Version: 0.3.9-1\n"
+"Project-Id-Version: dtc-xen 0.3.13-1\n"
 "Report-Msgid-Bugs-To: thomas@goirand.fr\n"
 "POT-Creation-Date: 2008-03-02 02:51+0800\n"
-"PO-Revision-Date: 2008-01-28 21:49+0300\n"
-"Last-Translator: Yuri Kozlov <kozlov.y@gmail.com>\n"
-"Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
+"PO-Revision-Date: 2008-03-01 20:07+0200\n"
+"Last-Translator: Esko Arajärvi <edu@iki.fi>\n"
+"Language-Team: Finnish <debian-l10n-finnish@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 1.11.4\n"
-"Plural-Forms:  nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
-"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Poedit-Language: Finnish\n"
+"X-Poedit-Country: FINLAND\n"
 
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:1001
 msgid "Server port:"
-msgstr "Порт сервера:"
+msgstr "Palvelimen portti:"
 
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:1001
 msgid ""
 "Default is 8089. Please enter the port the dtc-xen SOAP server will bind to."
-msgstr ""
-"По умолчанию использует порт 8089. Введите порт, к которому должен быть "
-"привязан dtc-xen SOAP сервер."
+msgstr "Oletus on 8089. Anna portti, jota dtc-xenin SOAP-palvelin kuuntelee."
 
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:2001
 msgid "SOAP server login:"
-msgstr "Логин на сервер SOAP:"
+msgstr "SOAP-palvelimen tunnus:"
 
 #. Type: string
 #. Description
@@ -49,20 +41,20 @@ msgid ""
 "control panel) can then connect to it in order to start, stop, create and "
 "destroy a VPS."
 msgstr ""
-"Dtc-xen подключится к серверу SOAP Python (подключившись к dtc панели "
-"которого можно запустить, установить, создать и удалить VPS)."
+"Dtc-xen liittyy SOAP Python -palvelimeen (johon dtc-paneeli voi ottaa "
+"yhteyttä käynnistääkseen, pysäyttääkseen, luodakseen tai tuhotakseen VPS:n)."
 
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:2001
 msgid "Please enter the login name to connect to the server."
-msgstr "Введите имя пользователя для подключения к серверу."
+msgstr "Anna käyttäjätunnus, jota käytetään otettaessa yhteys palvelimelle."
 
 #. Type: password
 #. Description
 #: ../dtc-xen.templates:3001
 msgid "SOAP server pass:"
-msgstr "Пароль на сервер SOAP:"
+msgstr "SOAP-palvelimen salasana:"
 
 #. Type: password
 #. Description
@@ -71,19 +63,20 @@ msgid ""
 "Dtc-xen will generate a .htpasswd file for the login you have just "
 "configured."
 msgstr ""
-"Dtc-xen создаст файл .htpasswd для подключения, которое было настроено ранее."
+"Dtc-xen luo .htpasswd-tiedoston kirjautumista varten juuri antamistasi "
+"tiedoista."
 
 #. Type: password
 #. Description
 #: ../dtc-xen.templates:3001
 msgid "Please enter the password to use in that file."
-msgstr "Введите пароль для использования в этом файле."
+msgstr "Anna salasana, jota käytetään kyseisessä tiedostossa."
 
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:4001
 msgid "Server domain name:"
-msgstr "Доменное имя сервера:"
+msgstr "Palvelimen verkkoaluenimi:"
 
 #. Type: string
 #. Description
@@ -92,20 +85,20 @@ msgid ""
 "Please enter the domain name for the dtc-xen server. This will be used as a "
 "part of the URL by the SOAP dtc panel client like nodeXXXX.example.com."
 msgstr ""
-"Введите доменное имя сервера dtc-xen. Оно будет использовано клиентской "
-"панелью dtc SOAP как часть URL, например nodeXXXX.example.com."
+"Anna dtc-xen-palvelimen verkkoaluenimi. Tätä käytetään osana SOAP dtc -"
+"paneeliasiakkaan URLia, kuten nodeXXXX.esimerkki.fi."
 
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:5001
 msgid "VPS Server node number:"
-msgstr "Номер узла сервера VPS:"
+msgstr "VPS-palvelimen solmun numero:"
 
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:5001
 msgid "Please enter the value to use to set up VPS numbering."
-msgstr "Введите номер, который будет использован для установки нумерации VPS."
+msgstr "Anna arvo, jota käytetään VPS:ien numerointiin."
 
 #. Type: string
 #. Description
@@ -116,8 +109,8 @@ msgid ""
 "the VPS number itself (xenYY), and XXXX being the Xen server number. This "
 "node number must be 4 or 5 characters long."
 msgstr ""
-"Если значение 'XXXX', то номер узла будет 'xenXXXXYY', где YY -- сам номер "
-"VPS (xenYY). Номер узла должен быть длиной 4 или 5 символов."
+"Jos arvo on ”XXXX”, solmun numero tulee olemaan ”xenXXXXYY”, jossa YY on VPS:"
+"n oma numero (xenYY). Tämä solmun numero voi olla 4 tai 5 merkkiä pitkä."
 
 #. Type: string
 #. Description
@@ -126,14 +119,14 @@ msgid ""
 "As a consequence of this choice, the server's hostname will be nodeXXXX."
 "example.com (which you can later add in your DTC control panel)."
 msgstr ""
-"Как следствие этого, имя сервера будет nodeXXXX.example.com (которое вы "
-"можете добавить позже в панель управления DTC)."
+"Tämän valinnan seurauksena palvelimen verkkonimi tulee olemaan nodeXXXX."
+"esimerkki.fi (jonka voit myöhemmin lisätä DTC-kontrollipaneliisi)."
 
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:6001
 msgid "Debian repository for VPS creation:"
-msgstr "Репозиторий Debian для создания VPS:"
+msgstr "Debian-varasto VPS:n lyontia varten:"
 
 #. Type: string
 #. Description
@@ -144,16 +137,16 @@ msgid ""
 "created VPS so the repository you enter here will be used only during the "
 "debootstrap stage of the VPS creation."
 msgstr ""
-"Введите репозиторий, который будет использован для создания VPS (Virtual "
-"Private Server). В созданный VPS будет скопирован имеющийся файл /etc/apt/"
-"sources.list, а введённый здесь репозиторий будет использован только на "
-"время стадии debootstrap при создании VPS."
+"Anna varasto, jota käytetään VPS:n (Virtual Private Server, virtuaalinen "
+"yksityinen palvelin) luontiin. Nykyinen /etc/apt/sources.list kopioidaan "
+"luotuun VPS:ään, joten tässä antamaasi varastoa käytetään vain VPS:n luonnin "
+"debootstrap-vaiheessa."
 
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:7001
 msgid "Network mask for the VPS:"
-msgstr "Маска сети для VPS:"
+msgstr "VPS:n verkon peitto:"
 
 #. Type: string
 #. Description
@@ -161,15 +154,13 @@ msgstr "Маска сети для VPS:"
 msgid ""
 "Please enter the network mask to use in the created Virtual Private Server's "
 "network settings."
-msgstr ""
-"Введите маску сети, которая будет использована в сетевых настройках "
-"созданных Virtual Private Server."
+msgstr "Anna verkon peitto, jota käytetään luodun VPS:n verkkoasetuksissa."
 
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:8001
 msgid "Network address for the VPS:"
-msgstr "Сетевой адрес для VPS:"
+msgstr "VPS:n verkko-osoite:"
 
 #. Type: string
 #. Description
@@ -177,15 +168,13 @@ msgstr "Сетевой адрес для VPS:"
 msgid ""
 "Please enter the network address to use in the created Virtual Private "
 "Server's network settings."
-msgstr ""
-"Введите сетевой адрес, который будет использован в сетевых настройках "
-"созданных Virtual Private Server."
+msgstr "Anna verkko-osoite, jota käytetään luodun VPS:n verkko-asetuksissa."
 
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:9001
 msgid "Broadcast address for the VPS:"
-msgstr "Широковещательный адрес для VPS:"
+msgstr "VPS:n yleislähetysosoite:"
 
 #. Type: string
 #. Description
@@ -194,14 +183,13 @@ msgid ""
 "Please enter the network broadcast address to use in the created Virtual "
 "Private Server's network settings."
 msgstr ""
-"Введите широковещательный адрес, который будет использован в сетевых "
-"настройках созданных Virtual Private Server."
+"Anna verkon yleislähetysosoite, jota käytetään VPS:n verkkoasetuksissa."
 
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:10001
 msgid "Gateway address for the VPS:"
-msgstr "Адрес шлюза для VPS:"
+msgstr "VPS:n yhdyskäytäväosoite:"
 
 #. Type: string
 #. Description
@@ -210,14 +198,14 @@ msgid ""
 "Please enter the network gateway address to use in the created Virtual "
 "Private Server's network settings."
 msgstr ""
-"Введите адрес шлюза, который будет использован в сетевых настройках "
-"созданных Virtual Private Server."
+"Anna verkon yhdyskäytäväosoite, jota käytetään luodun VPS:n "
+"verkkoasetuksissa."
 
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:11001
 msgid "Xen kernel release name:"
-msgstr "Имя выпуска ядра Xen:"
+msgstr "Xen-ytimen julkaisunimi:"
 
 #. Type: string
 #. Description
@@ -225,7 +213,9 @@ msgstr "Имя выпуска ядра Xen:"
 msgid ""
 "Please enter the kernel version number as it appears with the 'uname -a' "
 "command."
-msgstr "Введите номер версии ядра, который доступен по команде 'uname -a'."
+msgstr ""
+"Anna ytimen versionumero siinä muodossa kuin se tulostuu komennolla ”uname -"
+"a”."
 
 #. Type: string
 #. Description
@@ -234,20 +224,22 @@ msgid ""
 "A kernel domU with that name must be located in /boot (example: vmlinuz-"
 "2.6.16.27-xenU) and its corresponding modules must be in /lib/modules."
 msgstr ""
-"Ядро domU с этим именем должно быть в каталоге /boot (пример: vmlinuz-"
-"2.6.16.27-xenU), а его модули в каталоге /lib/modules."
+"Ytimen kyseisen nimisen domUn pitää olla hakemistossa /boot (esimerkiksi: "
+"vmlinuz-2.6.16.27-xenU) ja vastaavien moduulien hakemistossa /lib/modules."
 
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:12001
 msgid "Volume group to create VPS in:"
-msgstr "Группа томов, которая будет использована для VPS:"
+msgstr "Levynideryhmä, johon VPS luodaan:"
 
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:12001
 msgid "Dtc-xen creates physical partitions in an existing LVM volume group"
-msgstr "Dtc-xen создаёт физические разделы в существующей группе томов LVM"
+msgstr ""
+"Dtc-xen luo fyysisiä osioita olemassa olevaan loogiseen levynideryhmään "
+"(LVM)."
 
 #. Type: string
 #. Description
@@ -259,16 +251,16 @@ msgid ""
 "use LVM (because you don't care if loopback is slower), leave this setting "
 "to the default value."
 msgstr ""
-"Введите имя группы томов. Объём группы томов должен вмещать все виртуальные "
-"машины, которые вы создадите позже на этом сервере. Если вы не хотите "
-"использовать LVM (то есть для вас неважно, что через loopback работает "
-"медленнее), оставьте значение по умолчанию."
+"Anna kyseisen levynideryhmän nimi. Kaikkien tälle palvelimelle myöhemmin "
+"luotavien virtuaalikoneiden tulee mahtua tämän levynideryhmän tilaan. Jos et "
+"halua käyttää LVM:ää (koska et välitä hitaammasta takaisinkytkennästä), jätä "
+"asetus oletusarvoon."
 
 #. Type: note
 #. Description
 #: ../dtc-xen.templates:13001
 msgid "How to finish the install"
-msgstr "Как завершить установку"
+msgstr "Kuinka asennus päätetään"
 
 #. Type: note
 #. Description
@@ -276,9 +268,7 @@ msgstr "Как завершить установку"
 msgid ""
 "To finish the installation, you need to launch /usr/sbin/dtc-"
 "xen_finish_install."
-msgstr ""
-"Для завершения установки вам нужно запустить /usr/sbin/dtc-"
-"xen_finish_install."
+msgstr "Päättääksesi asennuksen aja /usr/sbin/dtc-xen_finish_install."
 
 #. Type: note
 #. Description
@@ -289,10 +279,11 @@ msgid ""
 "and add the grant of xm console to the group xenusers so that users can "
 "login to the physical console."
 msgstr ""
-"Этот сценарий удалит перенаправление порта из имеющегося файла sshd_config и "
-"добавит доступ к консоли xm группе xenusers для того, чтобы пользователи "
-"могли подключаться к физической консоли. Затем он попытается скачать файлы, "
-"необходимые для настройки Gentoo и CentOS в виртуальных машинах."
+"Tämä komentosarja poistaa porttien edelleenohjauksen nykyisestä sshd_config-"
+"tiedostosta ja antaa xm-konsolin oikeudet ryhmälle xenusers, jotta käyttäjät "
+"voivat kirjautua fyysiselle konsolille. Sen jälkeen se yrittää ladata "
+"tiedostot, joita tarvitaan Gentoon ja CentOS:n asentamiseen "
+"virtuaalikoneisiin."
 
 #. Type: note
 #. Description
@@ -302,15 +293,16 @@ msgid ""
 "console as xenXX will be rejected because the /etc/sudoers is not changed), "
 "but a basic user won't be able to log into his physical console using ssh."
 msgstr ""
-"Заметим, что это система пока безопасна (подключения к физической консоли "
-"как xenXX будут отвергаться, так как файл /etc/sudoers не изменён), а "
-"простой пользователь не сможет войти на свою физическую консоль по ssh."
+"Järjestelmä on tällä hetkellä turvallinen (yhteydenotot fyysisille "
+"konsoleille kuten xenXX hylätään, koska tiedostoa /etc/sudoers ei ole "
+"muokattu), mutta tavalliset käyttäjät eivät myöskään voi kirjautua "
+"fyysisille konsoleille käyttäen ssh:ta."
 
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:14001
 msgid "VPS mountpoint:"
-msgstr "Точка монтирования VPS:"
+msgstr "VPS:n liitoskohta:"
 
 #. Type: string
 #. Description
@@ -325,17 +317,16 @@ msgid ""
 "points so you can do maintenance and mount VPSes with less hassle. Enter the "
 "desired path prefix for these mount points."
 msgstr ""
-"Чтобы выполнить настройку управления VPS, dtc-xen смонтирует LVM или раздел "
-"из файла обратной петли на dom0 вашего сервера Xen. Это будет автоматически "
-"добавлено к вашим точкам монтирования в файл /etc/fstab для ускорения "
-"монтирования и обслуживания VPS. Введите здесь путь к этим точкам "
-"монтирования."
+"Tehdäkseen hallinnoimansa VPS:n asetukset dtc-xen liittää LVM:n tai "
+"takaisinkytketyn tiedosto-osion Xen-palvelimen dom0:aan. Tätä käytetään myös "
+"tiedoston /etc/fstab liitoskohtien automaattiseen asettamiseen, jolloin "
+"ylläpito ja VPS:ien liittäminen on nopeampaa. Anna polku tähän liitoskohtaan."
 
 #. Type: select
 #. Description
 #: ../dtc-xen.templates:15001
 msgid "Debian os to setup:"
-msgstr "Debian os для настройки:"
+msgstr "Asetettava Debian-käyttöjärjestelmä:"
 
 #. Type: select
 #. Description
@@ -345,5 +336,5 @@ msgid ""
 "Select the Debian operating system that you want to have setup when dtc-xen "
 "creates a new VM instance with debootstrap."
 msgstr ""
-"Выберите операционную систему debian, которая должна настраиваться, когда "
-"dtc-xen создаёт новый экземпляр VM."
+"Valitse Debian-käyttöjärjestelmä, jonka haluat asentaa, kun dtc-xen luo "
+"uuden virtuaalikoneen."

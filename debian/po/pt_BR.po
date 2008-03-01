@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dtc-xen\n"
 "Report-Msgid-Bugs-To: thomas@goirand.fr\n"
-"POT-Creation-Date: 2008-02-27 11:37+0800\n"
+"POT-Creation-Date: 2008-03-02 02:51+0800\n"
 "PO-Revision-Date: 2007-04-21 14:17-0300\n"
 "Last-Translator: André Luís Lopes <andrelop@debian.org>\n"
 "Language-Team: Debian-BR Project <debian-l10n-portuguese@lists.debian.org>\n"
@@ -261,9 +261,10 @@ msgstr "O dtc-xen cria partições físicas em um grupo de volume LVM existente"
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:12001
+#, fuzzy
 msgid ""
 "Please enter that volume group name. The volume group size must fit all the "
-"virtual machiness you will set up later on this server. If you don't want to "
+"virtual machines you will set up later on this server. If you don't want to "
 "use LVM (because you don't care if loopback is slower), leave this setting "
 "to the default value."
 msgstr ""
@@ -347,7 +348,7 @@ msgstr ""
 #. Description
 #: ../dtc-xen.templates:15001
 msgid ""
-"Select the debian operating system that you want to have setup when dtc-xen "
+"Select the Debian operating system that you want to have setup when dtc-xen "
 "creates a new VM instance with debootstrap."
 msgstr ""
 
