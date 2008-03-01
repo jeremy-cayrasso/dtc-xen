@@ -6,6 +6,10 @@ CACHEDIR="/var/cache/yum"      # where yum caches stuff -- is created as a subdi
 # FIXME perhaps after installation the script can modify the target machine's yum config to point to our Squid proxy
 #       or define http_proxy inside the machine.  that would make upgrades for customers much much faster.
 # better idea: instead of using a web cache, use a stash on the machine, we rsync the new RPMs into it once it's finished
+# we would need a mutex (flock or fcntl based?) that mutially excludes the critical section
+# the critical section is both the yum and the rsync process
+# we also need to rsync packages from the stash into the var cache on the vps, and a mutex to lock out if another yum is running, just as in the first scenario
+# cannot use a symlink because its chrooted for the duration of the process
 # FIXME once that is done, we can stop using apt-proxy or apt-cacher
 # FIXME try to make it for suse, mandriva or any other rpm-based distro
 
