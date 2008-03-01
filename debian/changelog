@@ -8,6 +8,8 @@ dtc-xen (0.3.14-1) unstable; urgency=low
     <cobaco@skolelinux.no> (Closes: #468302)
   * Updated the de.po German template thanks to Helge Kreutzmann
     <debian@helgefjell.de> (Closes: #468045)
+  * Added Finnish translation of the debconf template thanks to Esko Arajärvi
+    <edu@iki.fi> (Closes: #468828)
   * Updated the French fr.po translation.
 
  -- Thomas Goirand <thomas@goirand.fr>  Sat,  1 Mar 2008 16:10:14 +0800
