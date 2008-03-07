@@ -1,3 +1,12 @@
+dtc-xen (0.3.14-2) unstable; urgency=low
+
+  * Updated German debconf template thanks to Helge Kreutzmann
+    <debian@helgefjell.de> (Closes: #468045)
+  * Updated watch file using our orig.tar.gz in GPLHost's Debian source
+    repository (now it's running ok and detecting the correct version)
+
+ -- Thomas Goirand <thomas@goirand.fr>  Fri,  7 Mar 2008 17:03:13 +0800
+
 dtc-xen (0.3.14-1) unstable; urgency=low
 
   * New upstream release.
