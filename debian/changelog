@@ -1,15 +1,10 @@
-dtc-xen (0.3.14-2) unstable; urgency=low
+dtc-xen (0.3.15) unstable; urgency=low
 
+  * New upstream release.
   * Updated German debconf template thanks to Helge Kreutzmann
     <debian@helgefjell.de> (Closes: #468045)
   * Updated watch file using our orig.tar.gz in GPLHost's Debian source
     repository (now it's running ok and detecting the correct version)
-
- -- Thomas Goirand <thomas@goirand.fr>  Fri,  7 Mar 2008 17:03:13 +0800
-
-dtc-xen (0.3.14-1) unstable; urgency=low
-
-  * New upstream release.
   * This version uses yum to setup the CentOS VMs, so rpmstrap Suggests is not
     needed any more (Closes: #468428), and instead yum is in the Depends:
   * English Debconf template reviewed (Closes: #468047)
@@ -21,7 +16,7 @@ dtc-xen (0.3.14-1) unstable; urgency=low
     <edu@iki.fi> (Closes: #468828)
   * Updated the French fr.po translation.
 
- -- Thomas Goirand <thomas@goirand.fr>  Sat,  1 Mar 2008 16:10:14 +0800
+ -- Thomas Goirand <thomas@goirand.fr>  Fri,  7 Mar 2008 17:03:13 +0800
 
 dtc-xen (0.3.13-1) unstable; urgency=low
 
