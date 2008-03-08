@@ -1,26 +1,62 @@
-.TH dtc_create_vps.sh 8
+.TH dtc_setup_vps_disks 8
 .SH NAME
-dtc_setup_disk.sh \- setup LVM disks for using it as a VM
+dtc_setup_disk \- setup LVM disks for using it as a VM
 .SH SYNOPSIS
 .B dtc_setup_vps_disk.sh
 .I VPS_NUMBER
-.I MEMORY_SIZE
 .I HDD_SIZE
-.I IP_ADDRESS
+.I SWAP_SIZE
 [
-.I DISTRO
+.I lvm|loopback
 ]
+
 .SH DESCRIPTION
 .B dtc_setup_vps_disk.sh
-This shell script is a part of the dtc-xen
-package that is to be used by the dtc panel
-to manage a Xen VPS server.
+This shell script is a part of the dtc-xen package that is to be used by the
+dtc panel to manage a Xen VPS server.
+
+This script is used to create partitions to be used by a VPS later on.
+It will create a normal partition that will be used as a root disk, and
+a swap partition.
+
+dtc_setup_disk is to be used by the dtc-xen SOAP server, but can also be used
+as a standalone userland tool.
+
+If the partition(s) exists, then this script will delete it/them first.
+
+.SH OPTIONS
+.B VPS_NUMBER
+has to be a number between 01 and 19. Let's say the number is 16, and that
+dtc-xen is configured to use the volume group called lvm1, then this script
+will create /dev/lvm1/xen16 and /dev/lvm1/xen16swap.
+
+.B HDD_SIZE
+Size in MB of the VPS partition to create. 
+
+.B SWAP_SIZE
+Size in MB of the VPS swap partition to create. If the dtc-xen SOAP server is
+used to create the VPS, then it will create a swap partition of the exact same
+size as the memory.
+
+.B IMAGE_TYPE
+This parameter can have 2 values: either lvm or loopback. If ommited, then lvm
+is used. If lvm is used, then this script will create a partition using
+lvmcreate, otherwise it will create an image file. Both will later be used for the VPS.
+
+.SH EXAMPLE
+
+.B dtc_setup_vps_disk 04 15360 256 lvm
+
+This will create 2 LVM partition to be used by the VPS named xen04, the first one being
+a root partition of 15 GB, and the second one being a swap partition of 256 MB.
 
 .SH "VERSION"
 This documentation describes
-.B dtc_setup_vps_disk.sh
-version 0.1.2.
+.B dtc_setup_vps_disk
+version 0.3.15.
 See
 .B http://www.gplhost.com/software-dtc-xen.html
 for updates.
 
+.SH "SEE ALSO"
+dtc_reinstall_os(8)

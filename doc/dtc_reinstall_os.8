@@ -48,7 +48,13 @@ Xen if you need it (with untrusted users / unknown customers for example).
 .B [ DISTRO ]
 is an optional parameter that can be debian, centos, gentoo or netbsd.
 If ommited it will use debian as default. Note that for centos and gentoo,
-you need to have the install files downloaded in /usr/src.
+you need to have the install files downloaded in /usr/src/gentoo:
+.B portage-latest.tar.bz2
+and
+.B stage3-amd64-2006.1.tar.bz2
+(if using amd64 arch) or
+.B stage3-x86-2006.1.tar.bz2
+(if using i[3456]86 arch).
 
 .B [ lvm | loopback ]
 You can then specify lvm or loopback. Currently the only value the script compares
@@ -77,7 +83,7 @@ dtc_setup_vps_disk(8)
 .SH "VERSION"
 This documentation describes
 .B dtc_reinstall_os
-version 0.3.0.
+version 0.3.15.
 
 See
 .B http://www.gplhost.com/software-dtc-xen.html
