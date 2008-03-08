@@ -131,6 +131,7 @@ soap_server_port=${conf_soap_port}
 soap_server_pass_phrase=${conf_ssl_passphrase}
 soap_server_dtcxen_user=${conf_soap_login}
 soap_server_lvmname=${conf_lvm_name}
+soap_server_mount_point=$conf_vps_mountpoint
 " >${DTCXEN_ETCPATH}/soap.conf
 
 # Create the sh config file for dtc_reinstall_os and dtc_setup_disk

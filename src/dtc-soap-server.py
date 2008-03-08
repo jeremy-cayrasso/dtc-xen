@@ -69,6 +69,7 @@ server_port=int(p.getProperty("soap_server_port"));
 cert_passphrase=p.getProperty("soap_server_pass_phrase");
 dtcxen_user=p.getProperty("soap_server_dtcxen_user");
 server_lvmname=p.getProperty("soap_server_lvmname");
+vpsimage_mount_point=p.getProperty("soap_server_mount_point");
 
 # server_host = "mirror.tusker.net"
 # server_host = "dtc.xen650202.gplhost.com"
@@ -263,7 +264,7 @@ def reinstallVPSos(vpsname,ostype,hddsize,ramsize,ipaddr,imagetype='lvm'):
 		fd2 = open(filename, 'w')
 		fd2.write("mkos\n")
 
-		log = file("/xen/%s.log"%os.path.basename(vpsname),"w",0)
+		log = file("%s/%s.log" % (vpsimage_mount_point, vpsname),"w",0)
 		# FIXME idea: we could reuse the log isntead of a file, a stringio or something that reflects all the log activity into the logging module
 		# that way everything goes into /var/log/dtc-soap-server.log
 		# brilliant? you be the judge
@@ -490,7 +491,7 @@ def getVPSState(vpsname):
 def getVPSInstallLog(vpsname,numlines):
 	username = getUser()
         if username == dtcxen_user or username == vpsname:
-		log = file("/xen/%s.log"%os.path.basename(vpsname),"r").readlines()
+		log = file("%s/%s.log" % (vpsimage_mount_point, vpsname),"r").readlines()
 		numlines = int(numlines)
 		if not numlines or numlines < 0: lastlines = "\n".join(log)
 		else: lastlines = "\n".join(log[-numlines:])
