@@ -180,7 +180,7 @@ dtcaddxenuser () {
 }
 
 mkdir -p $XEN_USER_HOME
-for i in `seq -w 1 19`; do
+for i in `seq -w 1 29`; do
 	dtcaddxenuser xen$i
 done
 
