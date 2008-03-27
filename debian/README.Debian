@@ -7,3 +7,14 @@ wont be able to bind as the hostname will be wrong. Once again,
 dpkg-reconfigure dtc-xen will solve this problem. Of course, making this
 hostname resolvable for example by editing your /etc/hosts or your DNS IS
 mandatory.
+
+Last thing, this is a known bug. When the package postinst scripts is ran, it
+starts the soap server. For an unknown reason, when it's done like this, your
+soap server will NOT be able to execute debootstrap and make it setup a Debian
+VPS until you restart dtc-xen's SOAP server. So right after a setup or an
+upgrade, issue:
+
+/etc/init.d/dtc-xen restart
+
+and your should be good to go (and setup Debian VPS with debootstrap
+automatically using DTC's web interface).
