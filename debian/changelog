@@ -2,6 +2,7 @@ dtc-xen (0.3.17-2) unstable; urgency=low
 
   * Added debconf german translation thanks to Helge Kreutzmann
     <debian@helgefjell.de> (Closes: #471520)
+  * Updated the english debconf template (Closes: #421743).
 
  -- Thomas Goirand <thomas@goirand.fr>  Wed, 19 Mar 2008 22:34:15 +0800
 

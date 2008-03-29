@@ -119,8 +119,8 @@ _Description: How to finish the install
  /usr/sbin/dtc-xen_finish_install. 
  .
  This script will remove port forwarding from the current sshd_config
- file and add the grant of xm console to the group xenusers so that
- users can login to the physical console.
+ file and add the permission to access the xm console to the group xenusers so
+ that users can login to the physical console.
  .
  Please note that the system is currently safe (connections to a
  physical console as xenXX will be rejected because the /etc/sudoers
