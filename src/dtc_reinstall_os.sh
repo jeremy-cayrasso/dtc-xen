@@ -206,12 +206,13 @@ elif [ "$DISTRO" = "gentoo" ]; then
 	fi
 	tar -xjpf /usr/src/gentoo/$GENTOO_STAGE3_ARCHIVE -C ${VPSGLOBPATH}/${VPSNUM}
 	# grab the latest portage
-	pushd /usr/src/gentoo
+	OLDDIR=`pwd`
+	cd /usr/src/gentoo
 	wget -N http://gentoo.osuosl.org/snapshots/portage-latest.tar.bz2.md5sum
 	wget -N http://gentoo.osuosl.org/snapshots/portage-latest.tar.bz2
 	md5sum -c portage-latest.tar.bz2.md5sum
 	tar -xjpf portage-latest.tar.bz2 -C ${VPSGLOBPATH}/${VPSNUM}/usr/
-	popd
+	cd ${OLDDIR}
 	# need to reset the root password
 	sed -e 's/root:\*:/root::/' ${VPSGLOBPATH}/${VPSNUM}/etc/shadow > ${VPSGLOBPATH}/${VPSNUM}/etc/shadow.tmp
 	mv ${VPSGLOBPATH}/${VPSNUM}/etc/shadow.tmp ${VPSGLOBPATH}/${VPSNUM}/etc/shadow
@@ -223,9 +224,10 @@ elif [ "$DISTRO" = "slackware" ]; then
 	fi
 	# download the image if it doesn't exist yet
 	if [ ! -e /usr/src/slackware/$JAILTIME_IMAGE ]; then
-		pushd /usr/src/slackware
+		OLDDIR=`pwd
+		cd /usr/src/slackware
 		wget -N "http://www.jailtime.org/lib/exe/fetch.php?cache=cache&media=download%3Aslackware%3Aslackware.11-0.20061220.img.tar.bz2"
-		popd
+		cd ${OLDDIR}
 	fi
 	# if the internal image isn't present, extract it
 	if [ ! -e /usr/src/slackware/slackware.11-0.img ]; then
@@ -465,7 +467,10 @@ else
 	# Make all the generic devices (inclusive of sda1 and sda2)
 	mkdir -p ${VPSGLOBPATH}/${VPSNUM}/dev/
 	echo "Making VPS devices with MAKEDEV generic"
-	pushd ${VPSGLOBPATH}/${VPSNUM}/dev/; /sbin/MAKEDEV generic; popd
+	OLDDIR=`pwd`
+	cd ${VPSGLOBPATH}/${VPSNUM}/dev/
+	/sbin/MAKEDEV generic
+	cd ${OLDDIR}
 	if [ -d "${VPSGLOBPATH}/${VPSNUM}/lib/tls" ] ; then
 		echo "Disabling lib/tls"
 		mv "${VPSGLOBPATH}/${VPSNUM}/lib/tls" "${VPSGLOBPATH}/${VPSNUM}/lib/tls.disabled"

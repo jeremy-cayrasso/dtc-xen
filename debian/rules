@@ -14,7 +14,6 @@ install:
 	dh_installdirs
 	dh_link
 	install -D -m 700 src/dtc-xen_userconsole.sh debian/dtc-xen/bin/dtc-xen_userconsole
-	install -D -m 700 src/dtc_create_vps.sh debian/dtc-xen/usr/sbin/dtc_create_vps
 	install -D -m 700 src/dtc_reinstall_os.sh debian/dtc-xen/usr/sbin/dtc_reinstall_os
 	install -D -m 700 src/dtc_setup_vps_disk.sh debian/dtc-xen/usr/sbin/dtc_setup_vps_disk
 	install -D -m 700 src/dtc_change_bsd_kernel.sh debian/dtc-xen/usr/sbin/dtc_change_bsd_kernel
