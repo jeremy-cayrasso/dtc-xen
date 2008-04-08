@@ -1,26 +1,38 @@
 .TH dtc_install_centos 8
 .SH NAME
-dtc_install_centos \- bootstrap a centos OS for using it in a chroot or in a VM
+dtc_install_centos \- bootstrap a CentOS install to use in a chroot or VM
 .SH SYNOPSIS
-.B dtc_install_centos
-.I YUMENVIRON
-.I INSTALLROOT
-
+.B dtc_install_centos <install root> <yum environment>
 
 
 .SH DESCRIPTION
 
-This shell script is a part of the dtc-xen package that is to be used by the
-dtc panel to manage a Xen VPS server. This script is called by dtc_reinstall_os
-when started with then centos option as operating system to install.
+This shell script is part of the dtc-xen package, generally to be used by the
+dtc panel to install a new a Xen VPS server. This script is called by
+dtc_reinstall_os when the user chooses to install the CentOS operating system.
+
+How it works: it generates a temporary yum configuration in the yum
+environment directory, that directs yum to act inside the install root instead
+of in the base system; then it kindly requests yum to install the basesystem,
+centos-release and yum packages onto it.  Yum then uses the configuration
+to download the required (usually, security-updated) packages and then
+perform the RPM installation process under the install root.
+
+It requires both RPM and yum.  It does work under Debian (it was developed
+in Ubuntu first).  It should also work on RPM-based systems without destroying
+the system-wide RPM and yum configurations.
 
 .SH "OPTION"
 
-.B YUMENVIRON
-Where the yum config is generated and deployed.
+.B <install root>
 
-.B INSTALLROOT
-Destination directory / chroot for installation.
+Target directory where CentOS will be deployed.  Must exist beforehand.
+
+.B <yum environment>
+
+Directory where yum will store the repository manifests and configuration.
+Will be automatically created.  Cached RPMs and manifests will be left, as
+usual, in a directory var/cache/yum inside the install root.
 
 .SH "EXAMPLE"
 
@@ -29,6 +41,17 @@ Destination directory / chroot for installation.
 This will setup the operating system in /xen/13, with the CentOS configuration
 folder in /root/yum.
 
+.SH "BUGS"
+
+It's limited to CentOS 5 at the moment.
+
+It must be run as root.
+
+Under some circumstances, the installation process itself may kill processes
+running on the host machine.  The chroot yum does should be sufficient to
+avoid this, but we haven't been able, yet, to ascertain why this fails
+sometimes.
+
 .SH "SEE ALSO"
 
 dtc_reinstall_os(8)
@@ -36,7 +59,7 @@ dtc_reinstall_os(8)
 .SH "VERSION"
 This documentation describes
 .B dtc_install_os
-version 0.3.0.
+version 0.3.1.
 
 See
 .B http://www.gplhost.com/software-dtc-xen.html
