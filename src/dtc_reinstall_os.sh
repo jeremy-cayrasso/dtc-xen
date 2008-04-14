@@ -224,7 +224,7 @@ elif [ "$DISTRO" = "slackware" ]; then
 	fi
 	# download the image if it doesn't exist yet
 	if [ ! -e /usr/src/slackware/$JAILTIME_IMAGE ]; then
-		OLDDIR=`pwd
+		OLDDIR=`pwd`
 		cd /usr/src/slackware
 		wget -N "http://www.jailtime.org/lib/exe/fetch.php?cache=cache&media=download%3Aslackware%3Aslackware.11-0.20061220.img.tar.bz2"
 		cd ${OLDDIR}
@@ -467,10 +467,10 @@ else
 	# Make all the generic devices (inclusive of sda1 and sda2)
 	mkdir -p ${VPSGLOBPATH}/${VPSNUM}/dev/
 	echo "Making VPS devices with MAKEDEV generic"
-	OLDDIR=`pwd`
+	OLDPWDDIR=`pwd`
 	cd ${VPSGLOBPATH}/${VPSNUM}/dev/
 	/sbin/MAKEDEV generic
-	cd ${OLDDIR}
+	cd ${OLDPWDDIR}
 	if [ -d "${VPSGLOBPATH}/${VPSNUM}/lib/tls" ] ; then
 		echo "Disabling lib/tls"
 		mv "${VPSGLOBPATH}/${VPSNUM}/lib/tls" "${VPSGLOBPATH}/${VPSNUM}/lib/tls.disabled"
