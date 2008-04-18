@@ -52,6 +52,9 @@ fi
 
 mkdir -p "$YUMENVIRON"/{pluginconf.d,repos.d} "$CACHEDIR" "$INSTALLROOT/var/log"
 
+# In case the folder is not there:
+mkdir -p /var/lib/rpm
+
 # configure yum:
 
 cat > "$YUMENVIRON/yum.conf" << EOF
