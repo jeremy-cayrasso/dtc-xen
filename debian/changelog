@@ -1,5 +1,6 @@
 dtc-xen (0.3.19-1) unstable; urgency=low
 
+  * New upstream release.
   * Updated Galician debconf template translation thanks to Jacobo Tarrio
     <jacobo@tarrio.org> (Closes: #480988)
 

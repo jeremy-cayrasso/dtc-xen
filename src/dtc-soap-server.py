@@ -128,6 +128,16 @@ def destroyVPS(vpsname):
 	else:
 		return "NOTOK"
 
+def killVPS(vpsname):
+	username = getUser()
+	if username == dtcxen_user or username == vpsname:
+		logging.info("Destroying vps xen%s VPS partitions", vpsname)
+		cmd = "/usr/sbin/dtc_kill_vps_disk %s %s", vpsname, imagetype)
+		output = commands.getstatusoutput(cmd)
+		logging.debug("Command stdout: %s",cmd)
+	else:
+		return "NOTOK"
+
 def shutdownVPS(vpsname):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
@@ -614,6 +624,7 @@ soapserver.registerFunction(testVPSServer)
 soapserver.registerFunction(startVPS)
 soapserver.registerFunction(destroyVPS)
 soapserver.registerFunction(shutdownVPS)
+soapserver.registerFunction(killVPS)
 soapserver.registerFunction(listStartedVPS)
 soapserver.registerFunction(getVPSState)
 soapserver.registerFunction(changeVPSxmPassword)

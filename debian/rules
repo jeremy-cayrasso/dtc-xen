@@ -16,6 +16,7 @@ install:
 	install -D -m 700 src/dtc-xen_userconsole.sh debian/dtc-xen/bin/dtc-xen_userconsole
 	install -D -m 700 src/dtc_reinstall_os.sh debian/dtc-xen/usr/sbin/dtc_reinstall_os
 	install -D -m 700 src/dtc_setup_vps_disk.sh debian/dtc-xen/usr/sbin/dtc_setup_vps_disk
+	install -D -m 700 src/dtc_kill_vps_disk.sh debian/dtc-xen/usr/sbin/dtc_kill_vps_disk
 	install -D -m 700 src/dtc_change_bsd_kernel.sh debian/dtc-xen/usr/sbin/dtc_change_bsd_kernel
 	install -D -m 700 src/dtc_install_centos.sh debian/dtc-xen/usr/sbin/dtc_install_centos
 
