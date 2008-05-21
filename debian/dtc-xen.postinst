@@ -187,6 +187,9 @@ done
 # Touch this file just to show that it's possible to edit it
 touch /etc/dtc-xen/authorized_keys2
 
+# Needs the /var/lib/rpm to setup CentOS, it's not there by default, so we add it
+mkdir -p /var/lib/rpm
+
 #DEBHELPER#
 
 exit 0
