@@ -123,4 +123,4 @@ EOF
 # unleash yum
 
 export LANG=C
-exec yum -c "$YUMENVIRON/yum.conf" -y install basesystem centos-release yum
+exec yum -c "$YUMENVIRON/yum.conf" -y install basesystem centos-release yum wget
