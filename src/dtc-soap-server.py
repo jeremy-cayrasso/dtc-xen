@@ -517,14 +517,78 @@ def getInstallableOS():
 	folderlist = os.listdir('/usr/share/dtc-xen-os/')
 	return folderlist
 
-#	d = {}
-#	d['dom'] = int(xenxm.sxp.child_value(info, 'id', '-1'))
-#	d['name'] = xenxm.sxp.child_value(info, 'name', '??')
-#	d['mem'] = int(xenxm.sxp.child_value(info, 'memory', '0'))
-#	d['cpu'] = int(xenxm.sxp.child_value(info, 'cpu', '0'))
-#	d['state'] = xenxm.sxp.child_value(info, 'state', '??')
-#	d['cpu_time'] = float(sxp.child_value(info, 'cpu_time', '0'))
-#	return d
+
+from threading import Thread,RLock
+from glob import glob
+from subprocess import Popen,PIPE
+import re
+import time
+import pickle
+tabsplitter = re.compile("[\t ]+").split
+data_collection_lock = RLock()
+
+class DataCollector(Thread):
+	
+	def __init__(self):
+		
+		self.setDaemon(True)
+	
+	@log_exceptions
+	def run(self):
+		
+		while True:
+			
+			dictionary = {}
+			now = time.gmtime()
+			domains = (
+				tabsplitter(d.strip())
+				for d in Popen(["/usr/sbin/xm","list"], stdout=PIPE).communicate()[0].splitlines()[2:]
+				if d.strip()
+			)
+			name,id,mem,cpu,state,cpu_time=domain[0:6]
+			for domain in domains:
+				cpu_time = float(cpu_time)
+				inbytes,a,a,a,a,a,a,a,outbytes,a,a,a,a,a,a,a=tabsplitter(
+					[
+						re.sub(".*:","",o).strip()
+						for o in file("/proc/net/dev").readlines()
+						if o.startswith("vif%s.0:"%id)
+					] [0]
+				)
+				netusage_bytes = int(inbytes) + int(outbytes)
+				io_sectors = sum(
+					( int(file(f).read()) for f in glob(
+							os.path.join("/","sys","devices","xen-backend",
+								"vbd-%s-*"%id,"statistics","*_sect")
+						)
+					)
+				)
+				dictionary[name] = [now,cpu_time,netusage_bytes,io_sectors]
+			
+			savepath = os.path.join("/","var","lib","dtc-xen",
+				"perfdata","perfdata-%s.pickle"%time.time()
+			)
+			
+			try:
+				data_collection_lock.acquire()
+				pickle.dump(dictionary,file(savepath,"w"))
+			finally: data_collection_lock.release()
+			
+			time.sleep(60)
+
+def getCollectedPerformanceData():
+	username = getUser()
+        if username == dtcxen_user:
+		try:
+			data_collection_lock.acquire()
+			loadfiles = glob(os.path.join("/","var","lib","dtc-xen","perfdata","*.pickle"))
+			samples = [ pickle.load(file(p)) for p in loadfiles ]
+			for p in loadfiles: os.unlink(p)
+		finally: data_collection_lock.release()
+		
+		return samples
+	else:
+		return "NOTOK"
 
 # ask for returned SOAP responses to be converted to basic python types
 Config.simplify_objects = 1
@@ -616,7 +680,7 @@ soapserver = SOAPpy.SOAPServer((server_host, server_port), ssl_context = ssl_con
 # soapserver = SOAPpy.SOAPServer((server_host, server_port))
 
 #let's make some functions log exceptions, arguments and retvalues
-for f in [startVPS,destroyVPS,reinstallVPSos,getVPSState]: f = log_exceptions(f)
+for f in [startVPS,destroyVPS,reinstallVPSos,getVPSState,getCollectedPerformanceData]: f = log_exceptions(f)
 # this is required because really really really old python versions don't support decorators
 
 soapserver.registerFunction(_authorize)
@@ -639,6 +703,7 @@ soapserver.registerFunction(getIOUsage)
 soapserver.registerFunction(getCPUUsage)
 soapserver.registerFunction(getInstallableOS)
 soapserver.registerFunction(getVPSInstallLog)
+soapserver.registerFunction(getCollectedPerformanceData)
 logging.info("Started dtc-xen python SOAP server at https://%s:%s/ ..." , server_host, server_port)
 while True:
 	try:
