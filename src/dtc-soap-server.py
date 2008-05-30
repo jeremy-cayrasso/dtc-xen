@@ -17,7 +17,7 @@ SOAPpy.Config.debug=1
 # this could probably use a bit of help when run in the console instead of daemonized
 # by the way, this script seems not to be detaching from the controlling pty or daemonizing itself properly.  it's WRONG.
 # and it shouldn't even run as root!
-logging.basicConfig(filename="/var/log/dtc-xen.log",level=logging.DEBUG)
+logging.basicConfig(filename="/var/log/dtc-xen.log",level=logging.INFO)
 logging.info("Starting DTC SOAP server...")
 
 # A generalized decorator for logging exceptions
