@@ -662,9 +662,6 @@ def _authorize(*args, **kw):
 		# decode and analyze the string for the username and password
 		# (we slice the string from 6 onwards to remove the "Basic ")
 		username, password = base64.decodestring(ah[6:].strip()).split(":")
-		logging.debug( "Authorization string: \"%s\"" , ah )
-		# FIXME the pw should never end up the log
-		logging.debug( "Username: \"%s\" Password: \"%s\"" , username, password )
 
 		logging.debug("Loading /etc/dtc-xen/htpasswd...")
 		fd = open('/etc/dtc-xen/htpasswd', 'r') 
@@ -672,10 +669,7 @@ def _authorize(*args, **kw):
 		for line in fd:
 			u, h = line.strip().split(':')
 			if u == username:
-				logging.debug( "Found user: %s",username)
-				logging.debug( "Password from file: %s", h)
 				verify_pass = crypt.crypt(password, h[:2])
-				logging.debug( "Check hash password: %s",verify_pass)
 				if verify_pass == h:
 					fd.close()
 					logging.debug( "Password matches the one in the file!")
