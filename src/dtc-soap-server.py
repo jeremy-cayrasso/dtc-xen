@@ -530,36 +530,11 @@ data_collection_lock = RLock()
 class DataCollector(Thread):
 	
 	def __init__(self):
-		Thread.__init__(self,name="Data collector thread")
+		
 		self.setDaemon(True)
 	
 	@log_exceptions
 	def run(self):
-		"""Saves a sample to disk /var/lib/dtc-xen/perfdata
-		
-		prototype sample:
-		{
-			"xen01" : [
-				(2008, 5, 27, 21, 2, 28, 1, 148, 0),
-				51.5,
-				838375767,
-				36464,
-			],
-			"xen02" : [
-				(2008, 5, 27, 21, 2, 28, 1, 148, 0),
-				51.5,
-				838375767,
-				36464,
-			],
-		}
-		
-		each item in the sample dictionary is keyed by node name, and its value contains:
-		1. time.gmtime() output, in UTC time of course
-		2. CPU time, as a float (cputime column in xm list)
-		3. network bytes in + out
-		4. disk blocks read + written (both swap and file partition accesses)
-		"""
-		logging.info("Starting data collection thread")
 		
 		while True:
 			
@@ -599,12 +574,9 @@ class DataCollector(Thread):
 				pickle.dump(dictionary,file(savepath,"w"))
 			finally: data_collection_lock.release()
 			
-			logging.info("Data collected into file %s",savepath)
-			
 			time.sleep(60)
 
 def getCollectedPerformanceData():
-	"""Returns a list with the latest samples collected by the DataCollector, then removes them from the disk."""
 	username = getUser()
         if username == dtcxen_user:
 		try:
@@ -726,11 +698,9 @@ soapserver.registerFunction(getCPUUsage)
 soapserver.registerFunction(getInstallableOS)
 soapserver.registerFunction(getVPSInstallLog)
 soapserver.registerFunction(getCollectedPerformanceData)
+logging.info("Started dtc-xen python SOAP server at https://%s:%s/ ..." , server_host, server_port)
 while True:
 	try:
-		collector = DataCollector()
-		collector.start()
-		logging.info("About to start dtc-xen python SOAP server at https://%s:%s/" , server_host, server_port)
 		soapserver.serve_forever()
 	except KeyboardInterrupt:
 		logging.info("Shutting down due to SIGINT...")
