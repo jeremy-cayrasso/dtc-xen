@@ -225,6 +225,12 @@ def changeVPSsshKey(vpsname,keystring):
 			file.write(keystring)
 			file.close()
 			os.chown(filename, getuserid(vpsname), getusergroup(vpsname))
+			# In case we are using authorized_keys2, we do it a 2nd time.
+			filename = "/var/lib/dtc-xen/ttyssh_home/%s/.ssh/authorized_keys2" % vpsname
+			file = open(filename, "w")
+			file.write(keystring)
+			file.close()
+			os.chown(filename, getuserid(vpsname), getusergroup(vpsname))
 		except IOError:
 			return "NOTOK - There was an error writing to", filename
 		return "OK"
