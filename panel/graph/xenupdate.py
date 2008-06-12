@@ -85,7 +85,7 @@ for domain in domains:
 		)
 	)
     )
-    rrd=os.path.join(basename,"iosectors-"+name+".rrd")
+    rrd=os.path.join(basename,"io-"+name+".rrd")
     if not os.path.exists(rrd):
 	# 10 days of exact archive, 42 days of 1 hr RRD, 1000 days of 1 day RRD
 	check_call( [
