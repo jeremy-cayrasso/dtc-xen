@@ -29,6 +29,7 @@ install:
 	install -D -m 640 panel/index.html debian/dtc-xen/usr/share/dtc-xen/index.html
 	install -D -m 740 panel/graph/xencpugraph.py debian/dtc-xen/usr/share/dtc-xen/graph/xencpugraph.py
 	install -D -m 740 panel/graph/xennetgraph.py debian/dtc-xen/usr/share/dtc-xen/graph/xennetgraph.py
+	install -D -m 740 panel/graph/xeniograph.py debian/dtc-xen/usr/share/dtc-xen/graph/xeniograph.py
 	install -D -m 740 panel/graph/xenupdate.py debian/dtc-xen/usr/share/dtc-xen/graph/xenupdate.py
 	install -D -m 740 debian/scripts/dtc-xen_finish_install debian/dtc-xen/usr/sbin/dtc-xen_finish_install
 
