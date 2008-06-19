@@ -30,6 +30,7 @@ which rpm >/dev/null 2>&1 || { echo "rpm is not installed.  please install rpm."
 
 # sometimes when the RPM database is inconsistent, yum fails but exits with success status
 # we make sure the db is in good health
+mkdir -p /var/lib/rpm
 rpm --rebuilddb
 
 # set distro ver
