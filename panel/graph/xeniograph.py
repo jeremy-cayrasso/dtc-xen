@@ -16,7 +16,7 @@ def graph(basename, subname, seconds):
     rrds=[x for x in rrds if os.stat(x)[8] > (time.time()-seconds)]
 
     # cmdline="--imgformat PNG --unit % --vertical-label CPU%  "
-    cmdline="--imgformat PNG --vertical-label IO bytes "
+    cmdline="--imgformat PNG --vertical-label IO\ sectors "
     #cmdline="--imgformat PNG --unit % --vertical-label CPU% --rigid --lower-limit 0 --upper-limit 100 "
 
     for rrd,id in zip(rrds,range(len(rrds))):
