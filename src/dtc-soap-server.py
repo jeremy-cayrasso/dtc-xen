@@ -349,6 +349,153 @@ def getgroupid(group):
 	entry = grp.getgrnam(group)
 	return entry[2]
 
+from threading import Thread,RLock
+from glob import glob
+from subprocess import Popen,PIPE
+import re
+import time
+import pickle
+tabsplitter = re.compile("[\t ]+").split
+data_collection_lock = RLock()
+perfdata_dir = os.path.join("/","var","lib","dtc-xen","perfdata")
+
+class DataCollector(Thread):
+	
+	def __init__(self):
+		Thread.__init__(self,name="Data collector thread")
+		self.setDaemon(True)
+	
+	@log_exceptions
+	def run(self):
+		"""Saves a sample to path perfdata_dir
+		
+		prototype sample:
+		{
+			"xen01" : [
+				(2008, 5, 27, 21, 2, 28, 1, 148, 0),
+				51.5, # cputime
+				838375767, # netusage bytes
+				324328402389, # iousage sectors
+				5134, # last cputime reading
+				(2389432929,2934893399), # last netusage reading
+				{'/sys/devices/xen-backend/vbd-80-2050/statistics/rd_sect': 4803176, '/sys/devices/xen-backend/vbd-80-2050/statistics/wr_sect': 2372896, '/sys/devices/xen-backend/vbd-80-2049/statistics/wr_sect': 110456272, '/sys/devices/xen-backend/vbd-80-2049/statistics/rd_sect': 20238074},
+			],
+			"xen02" : [
+				(2008, 5, 27, 21, 2, 28, 1, 148, 0),
+				51.5, # cputime
+				838375767, # netusage bytes
+				324328402389, # iousage sectors
+				5134, # last cputime reading
+				(2389432929,2934893399), # last netusage reading
+				{'/sys/devices/xen-backend/vbd-80-2050/statistics/rd_sect': 4803176, '/sys/devices/xen-backend/vbd-80-2050/statistics/wr_sect': 2372896, '/sys/devices/xen-backend/vbd-80-2049/statistics/wr_sect': 110456272, '/sys/devices/xen-backend/vbd-80-2049/statistics/rd_sect': 20238074},
+			],
+		}
+		
+		each item in the sample dictionary is keyed by node name, and its value contains:
+		0. time.gmtime() output (a time tuple), in UTC time
+			first six values (those that matter) are year,month,day,hour,min,sec
+		1. differential CPU time, as a float (cputime column in xm list)
+		2. differential network bytes for the first network device assigned to it, by Xen ID
+		3. differential total disk blocks read + written (both swap and file partition accesses)
+		4. last CPU time reading
+		5. last netusage reading (inbytes + outbytes)
+		6. last iosectors reading (detail for every device assigned to the Xen instance, both read and written sectors)
+		"""
+		logging.info("Starting data collection thread")
+		
+		# load latest data file
+		try: dictionary = pickle.load(file(os.path.join(perfdata_dir,"last-sample.pickle")))
+		except IOError,e:
+			if errno == 2: dictionary = {}
+			else: raise
+		
+		while True:
+			
+			started_time = time.time()
+			now = time.gmtime()
+			
+			old_dictionary,dictionary = dictionary,{}
+			domains = (
+				tabsplitter(d.strip())
+				for d in Popen(["/usr/sbin/xm","list"], stdout=PIPE).communicate()[0].splitlines()[2:]
+				if d.strip()
+			)
+			procnetdev_readout = file("/proc/net/dev").readlines()
+			for domain in domains:
+				name,xid,mem,cpu,state,cpu_time=domain[0:6]
+				cpu_time = float(cpu_time)
+				# if cpu time was measured the last time, and it was less than this one, get the difference
+				inbytes,a,a,a,a,a,a,a,outbytes,a,a,a,a,a,a,a=tabsplitter(
+					[
+						re.sub(".*:","",o).strip()
+						for o in procnetdev_readout
+						if o.startswith("vif%s.0:"%xid)
+					] [0]
+				)
+				inbytes,outbytes = int(inbytes),int(outbytes)
+				io_sectors_detail = dict( (f,int(file(f).read())) for f in glob(
+							os.path.join("/","sys","devices","xen-backend",
+								"vbd-%s-*"%xid,"statistics","*_sect")
+					)
+				)
+				# now we account for the difference if it is the sensible thing to do
+				diff_cpu_time = cpu_time
+				diff_inbytes = inbytes
+				diff_outbytes = outbytes
+				diff_io_sectors_detail = dict(io_sectors_detail) # copy the dicts, do not reassign
+				if name in old_dictionary:
+					# we basically diff old and new unless old is bigger than new
+					if old_dictionary[name][4] <= cpu_time:
+						diff_cpu_time = cpu_time - old_dictionary[name][4]
+					if old_dictionary[name][5][0] <= inbytes:
+						diff_inbytes = inbytes - old_dictionary[name][5][0]
+					if old_dictionary[name][5][1] <= outbytes:
+						diff_outbytes = outbytes - old_dictionary[name][5][1]
+					for key,old_value in old_dictionary[name][6].items():
+						if key in io_sectors_detail and old_value <= io_sectors_detail[key]:
+							diff_io_sectors_detail[key] = io_sectors_detail[key] - old_value
+				diff_netusage = diff_inbytes + diff_outbytes
+				diff_io_sectors = sum(diff_io_sectors_detail.values())
+				dictionary[name] = [
+					now,
+					diff_cpu_time,
+					diff_netusage,
+					diff_io_sectors,
+					cpu_time,
+					(inbytes,outbytes),
+					io_sectors_detail,
+				]
+			
+			try:
+				data_collection_lock.acquire()
+				try: os.mkdir(perfdata_dir)
+				except OSError,e:
+					if errno != 17: raise
+				pickle.dump(dictionary,file(os.path.join(perfdata_dir,"last-sample.pickle"),"w"))
+				pickle.dump(dictionary,file(os.path.join(perfdata_dir,"sample-%s.pickle"%time.time()),"w"))
+			finally: data_collection_lock.release()
+			
+			elapsed_time = time.time() - started_time
+			logging.info("Sample data collected.  Collection time: %s seconds"%elapsed_time)
+			time.sleep(60 - elapsed_time)
+
+def getCollectedPerformanceData():
+	"""Returns a list with the latest samples collected by the DataCollector, then removes them from the disk."""
+	username = getUser()
+        if username == dtcxen_user:
+		samples = []
+		try:
+			data_collection_lock.acquire()
+			loadfiles = glob(os.path.join(perfdata_dir,"sample-*.pickle"))
+			samples = [ pickle.load(file(p)) for p in loadfiles ]
+			for p in loadfiles: os.unlink(p)
+		finally: data_collection_lock.release()
+		
+		return samples
+	else:
+		return "NOTOK"
+
+
 def getNetworkUsage(vpsname):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
@@ -616,7 +763,7 @@ soapserver = SOAPpy.SOAPServer((server_host, server_port), ssl_context = ssl_con
 # soapserver = SOAPpy.SOAPServer((server_host, server_port))
 
 #let's make some functions log exceptions, arguments and retvalues
-for f in [startVPS,destroyVPS,reinstallVPSos,getVPSState]: f = log_exceptions(f)
+for f in [startVPS,destroyVPS,reinstallVPSos,getVPSState,getCollectedPerformanceData]: f = log_exceptions(f)
 # this is required because really really really old python versions don't support decorators
 
 soapserver.registerFunction(_authorize)
@@ -634,12 +781,14 @@ soapserver.registerFunction(reinstallVPSos)
 soapserver.registerFunction(fsckVPSpartition)
 soapserver.registerFunction(changeBSDkernel)
 soapserver.registerFunction(setupLVMDisks)
+soapserver.registerFunction(getCollectedPerformanceData)
 soapserver.registerFunction(getNetworkUsage)
 soapserver.registerFunction(getIOUsage)
 soapserver.registerFunction(getCPUUsage)
 soapserver.registerFunction(getInstallableOS)
 soapserver.registerFunction(getVPSInstallLog)
-logging.info("Started dtc-xen python SOAP server at https://%s:%s/ ..." , server_host, server_port)
+collector = DataCollector()
+collector.start()
 while True:
 	try:
 		soapserver.serve_forever()
