@@ -406,7 +406,7 @@ class DataCollector(Thread):
 		# load latest data file
 		try: dictionary = pickle.load(file(os.path.join(perfdata_dir,"last-sample.pickle")))
 		except IOError,e:
-			if errno == 2: dictionary = {}
+			if e.errno == 2: dictionary = {}
 			else: raise
 		
 		while True:
@@ -470,7 +470,7 @@ class DataCollector(Thread):
 				data_collection_lock.acquire()
 				try: os.mkdir(perfdata_dir)
 				except OSError,e:
-					if errno != 17: raise
+					if e.errno != 17: raise
 				pickle.dump(dictionary,file(os.path.join(perfdata_dir,"last-sample.pickle"),"w"))
 				pickle.dump(dictionary,file(os.path.join(perfdata_dir,"sample-%s.pickle"%time.time()),"w"))
 			finally: data_collection_lock.release()
