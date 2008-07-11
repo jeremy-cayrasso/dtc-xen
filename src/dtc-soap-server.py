@@ -374,31 +374,28 @@ class DataCollector(Thread):
 			"xen01" : {
 				"timestamp":1237287382.45,
 				"diff_cpu_time":51.5, # cputime
-				"diff_net_bytes":838375767, # network bytes
-				"diff_io_sectors":324328402389, # iousage sectors
-				"cpu_time":5134, # last cputime reading
-				"net_bytes_detail":(2389432929,2934893399), # last net_bytes reading
-				"io_sectors_detail":{'/sys/devices/xen-backend/vbd-80-2050/statistics/rd_sect': 4803176, '/sys/devices/xen-backend/vbd-80-2050/statistics/wr_sect': 2372896, '/sys/devices/xen-backend/vbd-80-2049/statistics/wr_sect': 110456272, '/sys/devices/xen-backend/vbd-80-2049/statistics/rd_sect': 20238074},
+				"diff_net_inbytes":838375767, # network bytes in
+				"diff_net_outbytes":324328402389, # network bytes out
+				"diff_filesystem_sectors":5134, # fs sectors
+				"diff_swap_sectors":5134, # fs sectors
+				...
 			},
 			"xen02" : {
 				"timestamp":1237287382.45,
 				"diff_cpu_time":51.5, # cputime
-				"diff_net_bytes":838375767, # net_bytes bytes
-				"diff_io_sectors":324328402389, # iousage sectors
-				"cpu_time":5134, # last cputime reading
-				"net_bytes_detail":(2389432929,2934893399), # last net_bytes reading
-				"io_sectors_detail":{'/sys/devices/xen-backend/vbd-80-2050/statistics/rd_sect': 4803176, '/sys/devices/xen-backend/vbd-80-2050/statistics/wr_sect': 2372896, '/sys/devices/xen-backend/vbd-80-2049/statistics/wr_sect': 110456272, '/sys/devices/xen-backend/vbd-80-2049/statistics/rd_sect': 20238074},
+				"diff_net_inbytes":838375767, # network bytes in
+				"diff_net_outbytes":324328402389, # network bytes out
+				"diff_filesystem_sectors":5134, # fs sectors
+				"diff_swap_sectors":5134, # fs sectors
+				...
 			},
 		}
 		
 		each item in the sample dictionary is keyed by node name, and its value contains:
 		timestamp: time.time() output
 		diff_cpu_time: differential CPU time, as a float (cputime column in xm list)
-		diff_net_bytes: differential network bytes for the first network device assigned to it, by Xen ID
-		diff_io_sectors: differential total disk blocks read + written (both swap and file partition accesses)
-		cpu_time: last CPU time reading
-		net_bytes_detail: last net_bytes reading (inbytes + outbytes)
-		io_sectors_detail: last iosectors reading (detail for every device assigned to the Xen instance, both read and written sectors)
+		diff_net_*bytes: differential network bytes for the first network device assigned to it, by Xen ID
+		diff_*_sectors: differential total disk blocks read + written (both swap and file partition accesses)
 		"""
 		logging.info("Starting data collection thread")
 		
@@ -433,45 +430,41 @@ class DataCollector(Thread):
 				net_inbytes,net_outbytes = int(net_inbytes),int(net_outbytes)
 
 				def get_blocks_dm(minor):
-					return int(file("/sys/block/dm-%s/stat" % diskMinor,'r').readline().split()[10])
+					line = file("/sys/block/dm-%s/stat" % minor,'r').readline().split()
+					return int(line[2]) + int(line[6])
 				
 				try:	filesystem_sectors = get_blocks_dm(
-						os.minor(os.stat("/dev/mapper/%s-%s" % (server_lvmname,vpsname)).st_rdev) )
+						os.minor(os.stat("/dev/mapper/%s-%s" % (server_lvmname,name)).st_rdev) )
 				except OSError,e:
 					if e.errno == 2: filesystem_sectors = 0
 					else: raise
 				try:	swap_sectors = get_blocks_dm(
-						os.minor(os.stat("/dev/mapper/%s-%sswap" % (server_lvmname,vpsname)).st_rdev) )
+						os.minor(os.stat("/dev/mapper/%s-%sswap" % (server_lvmname,name)).st_rdev) )
 				except OSError,e:
 					if e.errno == 2: swap_sectors = 0
 					else: raise
 				
 				# now we account for the difference if it is the sensible thing to do
-				diff_cpu_time = cpu_time
-				diff_net_inbytes = net_inbytes
-				diff_net_outbytes = net_outbytes
-				diff_filesystem_sectors = filesystem_sectors
-				diff_swap_sectors = swap_sectors
-				# compute differences
-				if name in old_dictionary:
-					for reading in "cpu_time,net_inbytes,net_outbytes,filesystem_sectors,swap_sectors".split(","):
-						# we basically diff old and new unless old is bigger than new
-						if old_dictionary[name][reading] <= locals()[reading]:
-							locals()["diff_"+reading] = locals()[reading] - old_dictionary[name][reading]
-				
+
 				dictionary[name] = {
 					"timestamp":started_time,
-					"diff_cpu_time":diff_cpu_time,
-					"diff_net_inbytes":diff_net_inbytes,
-					"diff_net_outbytes":diff_net_outbytes,
-					"diff_filesystem_sectors":diff_filesystem_sectors,
-					"diff_swap_sectors":diff_swap_sectors,
+					"diff_cpu_time":cpu_time,
+					"diff_net_inbytes":net_inbytes,
+					"diff_net_outbytes":net_outbytes,
+					"diff_filesystem_sectors":filesystem_sectors,
+					"diff_swap_sectors":swap_sectors,
 					"cpu_time":cpu_time,
 					"net_inbytes":net_inbytes,
 					"net_outbytes":net_outbytes,
 					"filesystem_sectors":filesystem_sectors,
 					"swap_sectors":swap_sectors,
 				}
+				# compute differences
+				if name in old_dictionary:
+					for reading in "cpu_time,net_inbytes,net_outbytes,filesystem_sectors,swap_sectors".split(","):
+						# we basically diff old and new unless old is bigger than new
+						if old_dictionary[name][reading] <= dictionary[name][reading]:
+							dictionary[name]["diff_"+reading] = dictionary[name][reading] - old_dictionary[name][reading]
 			
 			try:
 				data_collection_lock.acquire()
