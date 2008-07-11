@@ -423,45 +423,54 @@ class DataCollector(Thread):
 				name,xid,mem,cpu,state,cpu_time=domain[0:6]
 				cpu_time = float(cpu_time)
 				# if cpu time was measured the last time, and it was less than this one, get the difference
-				inbytes,a,a,a,a,a,a,a,outbytes,a,a,a,a,a,a,a=tabsplitter(
+				net_inbytes,a,a,a,a,a,a,a,net_outbytes,a,a,a,a,a,a,a=tabsplitter(
 					[
 						re.sub(".*:","",o).strip()
 						for o in procnetdev_readout
 						if o.startswith("vif%s.0:"%xid)
 					] [0]
 				)
-				inbytes,outbytes = int(inbytes),int(outbytes)
-				io_sectors_detail = dict( (f,int(file(f).read())) for f in glob(
-							os.path.join("/","sys","devices","xen-backend",
-								"vbd-%s-*"%xid,"statistics","*_sect")
-					)
-				)
+				net_inbytes,net_outbytes = int(net_inbytes),int(net_outbytes)
+
+				def get_blocks_dm(minor):
+					return int(file("/sys/block/dm-%s/stat" % diskMinor,'r').readline().split()[10])
+				
+				try:	filesystem_sectors = get_blocks_dm(
+						os.minor(os.stat("/dev/mapper/%s-%s" % (server_lvmname,vpsname)).st_rdev) )
+				except OSError,e:
+					if e.errno == 2: filesystem_sectors = 0
+					else: raise
+				try:	swap_sectors = get_blocks_dm(
+						os.minor(os.stat("/dev/mapper/%s-%sswap" % (server_lvmname,vpsname)).st_rdev) )
+				except OSError,e:
+					if e.errno == 2: swap_sectors = 0
+					else: raise
+				
 				# now we account for the difference if it is the sensible thing to do
 				diff_cpu_time = cpu_time
-				diff_inbytes = inbytes
-				diff_outbytes = outbytes
-				diff_io_sectors_detail = dict(io_sectors_detail) # copy the dicts, do not reassign
+				diff_net_inbytes = net_inbytes
+				diff_net_outbytes = net_outbytes
+				diff_filesystem_sectors = filesystem_sectors
+				diff_swap_sectors = swap_sectors
+				# compute differences
 				if name in old_dictionary:
-					# we basically diff old and new unless old is bigger than new
-					if old_dictionary[name]["cpu_time"] <= cpu_time:
-						diff_cpu_time = cpu_time - old_dictionary[name]["cpu_time"]
-					if old_dictionary[name]["net_bytes_detail"][0] <= inbytes:
-						diff_inbytes = inbytes - old_dictionary[name]["net_bytes_detail"][0]
-					if old_dictionary[name]["net_bytes_detail"][1] <= outbytes:
-						diff_outbytes = outbytes - old_dictionary[name]["net_bytes_detail"][1]
-					for key,old_value in old_dictionary[name]["io_sectors_detail"].items():
-						if key in io_sectors_detail and old_value <= io_sectors_detail[key]:
-							diff_io_sectors_detail[key] = io_sectors_detail[key] - old_value
-				diff_net_bytes = diff_inbytes + diff_outbytes
-				diff_io_sectors = sum(diff_io_sectors_detail.values())
+					for reading in "cpu_time,net_inbytes,net_outbytes,filesystem_sectors,swap_sectors".split(","):
+						# we basically diff old and new unless old is bigger than new
+						if old_dictionary[name][reading] <= locals()[reading]:
+							locals()["diff_"+reading] = locals()[reading] - old_dictionary[name][reading]
+				
 				dictionary[name] = {
 					"timestamp":started_time,
 					"diff_cpu_time":diff_cpu_time,
-					"diff_net_bytes":diff_net_bytes,
-					"diff_io_sectors":diff_io_sectors,
+					"diff_net_inbytes":diff_net_inbytes,
+					"diff_net_outbytes":diff_net_outbytes,
+					"diff_filesystem_sectors":diff_filesystem_sectors,
+					"diff_swap_sectors":diff_swap_sectors,
 					"cpu_time":cpu_time,
-					"net_bytes_detail":(inbytes,outbytes),
-					"io_sectors_detail":io_sectors_detail,
+					"net_inbytes":net_inbytes,
+					"net_outbytes":net_outbytes,
+					"filesystem_sectors":filesystem_sectors,
+					"swap_sectors":swap_sectors,
 				}
 			
 			try:
