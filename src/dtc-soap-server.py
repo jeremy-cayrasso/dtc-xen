@@ -371,35 +371,34 @@ class DataCollector(Thread):
 		
 		prototype sample:
 		{
-			"xen01" : [
-				(2008, 5, 27, 21, 2, 28, 1, 148, 0),
-				51.5, # cputime
-				838375767, # netusage bytes
-				324328402389, # iousage sectors
-				5134, # last cputime reading
-				(2389432929,2934893399), # last netusage reading
-				{'/sys/devices/xen-backend/vbd-80-2050/statistics/rd_sect': 4803176, '/sys/devices/xen-backend/vbd-80-2050/statistics/wr_sect': 2372896, '/sys/devices/xen-backend/vbd-80-2049/statistics/wr_sect': 110456272, '/sys/devices/xen-backend/vbd-80-2049/statistics/rd_sect': 20238074},
-			],
-			"xen02" : [
-				(2008, 5, 27, 21, 2, 28, 1, 148, 0),
-				51.5, # cputime
-				838375767, # netusage bytes
-				324328402389, # iousage sectors
-				5134, # last cputime reading
-				(2389432929,2934893399), # last netusage reading
-				{'/sys/devices/xen-backend/vbd-80-2050/statistics/rd_sect': 4803176, '/sys/devices/xen-backend/vbd-80-2050/statistics/wr_sect': 2372896, '/sys/devices/xen-backend/vbd-80-2049/statistics/wr_sect': 110456272, '/sys/devices/xen-backend/vbd-80-2049/statistics/rd_sect': 20238074},
-			],
+			"xen01" : {
+				"timestamp":1237287382.45,
+				"diff_cpu_time":51.5, # cputime
+				"diff_net_bytes":838375767, # network bytes
+				"diff_io_sectors":324328402389, # iousage sectors
+				"cpu_time":5134, # last cputime reading
+				"net_bytes_detail":(2389432929,2934893399), # last net_bytes reading
+				"io_sectors_detail":{'/sys/devices/xen-backend/vbd-80-2050/statistics/rd_sect': 4803176, '/sys/devices/xen-backend/vbd-80-2050/statistics/wr_sect': 2372896, '/sys/devices/xen-backend/vbd-80-2049/statistics/wr_sect': 110456272, '/sys/devices/xen-backend/vbd-80-2049/statistics/rd_sect': 20238074},
+			},
+			"xen02" : {
+				"timestamp":1237287382.45,
+				"diff_cpu_time":51.5, # cputime
+				"diff_net_bytes":838375767, # net_bytes bytes
+				"diff_io_sectors":324328402389, # iousage sectors
+				"cpu_time":5134, # last cputime reading
+				"net_bytes_detail":(2389432929,2934893399), # last net_bytes reading
+				"io_sectors_detail":{'/sys/devices/xen-backend/vbd-80-2050/statistics/rd_sect': 4803176, '/sys/devices/xen-backend/vbd-80-2050/statistics/wr_sect': 2372896, '/sys/devices/xen-backend/vbd-80-2049/statistics/wr_sect': 110456272, '/sys/devices/xen-backend/vbd-80-2049/statistics/rd_sect': 20238074},
+			},
 		}
 		
 		each item in the sample dictionary is keyed by node name, and its value contains:
-		0. time.gmtime() output (a time tuple), in UTC time
-			first six values (those that matter) are year,month,day,hour,min,sec
-		1. differential CPU time, as a float (cputime column in xm list)
-		2. differential network bytes for the first network device assigned to it, by Xen ID
-		3. differential total disk blocks read + written (both swap and file partition accesses)
-		4. last CPU time reading
-		5. last netusage reading (inbytes + outbytes)
-		6. last iosectors reading (detail for every device assigned to the Xen instance, both read and written sectors)
+		timestamp: time.time() output
+		diff_cpu_time: differential CPU time, as a float (cputime column in xm list)
+		diff_net_bytes: differential network bytes for the first network device assigned to it, by Xen ID
+		diff_io_sectors: differential total disk blocks read + written (both swap and file partition accesses)
+		cpu_time: last CPU time reading
+		net_bytes_detail: last net_bytes reading (inbytes + outbytes)
+		io_sectors_detail: last iosectors reading (detail for every device assigned to the Xen instance, both read and written sectors)
 		"""
 		logging.info("Starting data collection thread")
 		
@@ -412,7 +411,6 @@ class DataCollector(Thread):
 		while True:
 			
 			started_time = time.time()
-			now = time.gmtime()
 			
 			old_dictionary,dictionary = dictionary,{}
 			domains = (
@@ -445,26 +443,26 @@ class DataCollector(Thread):
 				diff_io_sectors_detail = dict(io_sectors_detail) # copy the dicts, do not reassign
 				if name in old_dictionary:
 					# we basically diff old and new unless old is bigger than new
-					if old_dictionary[name][4] <= cpu_time:
-						diff_cpu_time = cpu_time - old_dictionary[name][4]
-					if old_dictionary[name][5][0] <= inbytes:
-						diff_inbytes = inbytes - old_dictionary[name][5][0]
-					if old_dictionary[name][5][1] <= outbytes:
-						diff_outbytes = outbytes - old_dictionary[name][5][1]
-					for key,old_value in old_dictionary[name][6].items():
+					if old_dictionary[name]["cpu_time"] <= cpu_time:
+						diff_cpu_time = cpu_time - old_dictionary[name]["cpu_time"]
+					if old_dictionary[name]["net_bytes_detail"][0] <= inbytes:
+						diff_inbytes = inbytes - old_dictionary[name]["net_bytes_detail"][0]
+					if old_dictionary[name]["net_bytes_detail"][1] <= outbytes:
+						diff_outbytes = outbytes - old_dictionary[name]["net_bytes_detail"][1]
+					for key,old_value in old_dictionary[name]["io_sectors_detail"].items():
 						if key in io_sectors_detail and old_value <= io_sectors_detail[key]:
 							diff_io_sectors_detail[key] = io_sectors_detail[key] - old_value
-				diff_netusage = diff_inbytes + diff_outbytes
+				diff_net_bytes = diff_inbytes + diff_outbytes
 				diff_io_sectors = sum(diff_io_sectors_detail.values())
-				dictionary[name] = [
-					now,
-					diff_cpu_time,
-					diff_netusage,
-					diff_io_sectors,
-					cpu_time,
-					(inbytes,outbytes),
-					io_sectors_detail,
-				]
+				dictionary[name] = {
+					"timestamp":started_time,
+					"diff_cpu_time":diff_cpu_time,
+					"diff_net_bytes":diff_net_bytes,
+					"diff_io_sectors":diff_io_sectors,
+					"cpu_time":cpu_time,
+					"net_bytes_detail":(inbytes,outbytes),
+					"io_sectors_detail":io_sectors_detail,
+				}
 			
 			try:
 				data_collection_lock.acquire()
