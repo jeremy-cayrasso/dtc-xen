@@ -487,6 +487,7 @@ def getCollectedPerformanceData():
 		try:
 			data_collection_lock.acquire()
 			loadfiles = glob(os.path.join(perfdata_dir,"sample-*.pickle"))
+			loadfiles.sort()
 			samples = [ pickle.load(file(p)) for p in loadfiles ]
 			for p in loadfiles: os.unlink(p)
 		finally: data_collection_lock.release()
