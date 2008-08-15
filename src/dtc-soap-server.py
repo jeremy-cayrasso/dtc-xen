@@ -479,8 +479,13 @@ class DataCollector(Thread):
 			logging.info("Sample data collected.  Collection time: %s seconds"%elapsed_time)
 			time.sleep(60 - elapsed_time)
 
-def getCollectedPerformanceData():
-	"""Returns a list with the latest samples collected by the DataCollector, then removes them from the disk."""
+def getCollectedPerformanceData(count=None):
+	"""Returns a list with the latest samples collected by the
+	DataCollector, then removes them from the disk.
+	If the count argument is specified, it fetches then deletes
+	a maximum of <count> samples, in chronological order.
+	This allows for batched data fetches.
+	"""
 	username = getUser()
         if username == dtcxen_user:
 		samples = []
@@ -488,6 +493,7 @@ def getCollectedPerformanceData():
 			data_collection_lock.acquire()
 			loadfiles = glob(os.path.join(perfdata_dir,"sample-*.pickle"))
 			loadfiles.sort()
+			if count > 0: loadfiles = loadfiles[:count]
 			samples = [ pickle.load(file(p)) for p in loadfiles ]
 			for p in loadfiles: os.unlink(p)
 		finally: data_collection_lock.release()
