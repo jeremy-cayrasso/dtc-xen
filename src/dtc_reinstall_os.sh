@@ -4,7 +4,7 @@ set -e # DIE on errors
 #set > /tmp/env # temp log environ
 
 if [ $# -lt 3 ]; then 
-	echo "Usage: $0 [-v] <xen id> <hdd size MB> <ram size MB> <ip address> < debian | ubuntu_dapper | centos | gentoo | slackware | xenpv | manual > [ lvm | vbd ]" > /dev/stderr
+	echo "Usage: $0 [-v] <xen id> <hdd size MB> <ram size MB> <ip address> < debian | ubuntu_dapper | centos | gentoo | slackware | manual > [ lvm | vbd ]" > /dev/stderr
 	echo "" > /dev/stderr
 	echo "Example: $0 09 3072 64 1.2.3.4 debian" > /dev/stderr
 	exit 1
@@ -120,8 +120,8 @@ UMOUNT=/bin/umount
 DEBOOTSTRAP=/usr/sbin/debootstrap
 
 echo "Seleted ${VPSNAME}: ${VPSHDD}G HDD and ${VPSMEM}MB RAM";
-if [ "$DISTRO" = "netbsd" -o "xenpv" ] ; then
-	echo "Not creating disks: NetBSD or xenpv!"
+if [ "$DISTRO" = "netbsd" ] ; then
+	echo "Not creating disks: NetBSD!"
 else
 	echo "Creating disks..."
 
@@ -243,8 +243,6 @@ elif [ "$DISTRO" = "slackware" ]; then
 	umount /usr/src/slackware/mnt || true
 	# reset root password back to empty
 	sed -i 's/root:[^:]*:/root::/' ${VPSGLOBPATH}/${VPSNUM}/etc/shadow
-elif [ "$DISTRO" = "xenpv" ] ; then
-	echo "Not installing anything as it's a xenpv!"
 else
 	echo "Currently, you will have to manually install your distro... sorry :)"
 	echo "The filesystem is mounted on ${VPSGLOBPATH}/${VPSNUM}"
@@ -252,8 +250,8 @@ else
 	echo "Cheers!"
 	exit
 fi
-if [ "$DISTRO" = "netbsd" -o "xenpv" ] ; then
-	echo "Nothing to do: it's NetBSD or xenpv!"
+if [ "$DISTRO" = "netbsd" ] ; then
+	echo "Nothing to do: it's BSD"
 else
 	echo "Customizing vps..."
 	ETC=${VPSGLOBPATH}/${VPSNUM}/etc
@@ -431,33 +429,6 @@ vif = [ 'mac=${MAC_ADDR}, ip=${ALL_IPADDRS}' ]
 		echo "disk = [ 'file:$VPSGLOBPATH/${VPSNAME}.img,0x301,w' ]
 " >>/etc/xen/${VPSNAME}
 	fi
-elif [ "$DISTRO" = "xenpv" ] ; then
-	# At initialization, use a random pass
-	RANDOM_PASS=`dd if=/dev/random bs=64 count=1 2>|/dev/null | md5sum | cut -d' ' -f1`
-	echo "
-kernel = \"/usr/lib/xen/boot/hvmloader\"
-builder = 'hvm'
-memory = ${VPSMEM}
-name = \"${VPSNAME}\"
-vcpus=1
-pae=0
-acpi=0
-apic=0
-vif = [ 'mac=${MAC_ADDR}, type=ioemu, ip=${ALL_IPADDRS}' ]
-disk=[ 'phy:/dev/mapper/${LVMNAME}-xen${VPSNUM},ioemu:hda,w','file:/usr/src/WinServ2k3-1.iso,hdc:cdrom,r' ]
-# This asks to bind VNC to port 5900 + ${VPSNUM} (eg: 59${VPSNUM}) with password XXXX
-vfb = [\"type=vnc,vncdisplay=${VPSNUM},vncpasswd=${RANDOM_PASS}\"]
-device_model='/usr/lib/xen/bin/qemu-dm'
-#cdrom=\"/usr/src/WinServ2k3-1.iso\"
-# c for hdd, d for cdrom
-boot=\"c\"
-#nographic=1
-#vnc=1
-#vncviewer=1
-#stdvga=1
-serial='pty'
-" >/etc/xen/${VPSNAME}
-
 else
 	echo "kernel = \"${KERNELPATH}\"
 memory = ${VPSMEM}
