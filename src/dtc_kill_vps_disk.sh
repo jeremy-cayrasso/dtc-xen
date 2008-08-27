@@ -1,7 +1,7 @@
 #!/bin/sh
 
-if [ $# -lt 3 ]; then 
-	echo "Usage: $0 <xen id> <hdd size> <swap size> [lvm/vbd]"
+if [ $# -lt 1 ]; then 
+	echo "Usage: $0 <xen id> [lvm/vbd]"
 	exit
 fi
 
@@ -18,9 +18,7 @@ VPSGLOBPATH=${VPS_MOUNTPOINT}
 VPSNUM=$1
 VPSNAME=xen${VPSNUM}
 VPSHOSTNAME=xen${NODE_NUM}${VPSNUM}
-VPSHDD=$2
-VPSMEM=$3
-IMAGE_TYPE=$4
+IMAGE_TYPE=$2
 
 # redirect stdout and stderr to log files, so we can see what happened during install
 
@@ -43,9 +41,6 @@ fi
 
 LVCREATE=/sbin/lvcreate
 LVREMOVE=/sbin/lvremove
-MKFS=/sbin/mkfs.ext3
-MKDIR=/bin/mkdir
-MKSWAP=/sbin/mkswap
 
 echo "Seleted ${VPSNAME}";
 echo "Destroying disks..."
