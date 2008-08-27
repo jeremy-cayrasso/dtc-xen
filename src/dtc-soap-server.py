@@ -128,11 +128,11 @@ def destroyVPS(vpsname):
 	else:
 		return "NOTOK"
 
-def killVPS(vpsname,imagetype='lvm'):
+def killVPS(vpsname):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
 		logging.info("Destroying vps xen%s VPS partitions", vpsname)
-		cmd = "/usr/sbin/dtc_kill_vps_disk %s %s" % (vpsname, imagetype)
+		cmd = "/usr/sbin/dtc_kill_vps_disk %s %s"(vpsname, imagetype)
 		output = commands.getstatusoutput(cmd)
 		logging.debug("Command stdout: %s",cmd)
 	else:
