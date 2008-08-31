@@ -1,6 +1,9 @@
-dtc-xen (0.3.20-1) unstable; urgency=low
+dtc-xen (0.3.21-1) unstable; urgency=low
 
   * New upstream release correcting the killVPS() method that was notworking.
+  * Removed the link in /var/www to satisfy the Debian policy.
+  * Added comments in README.Debian on how to manually activate the stats page.
+  * Added missing man page for dtc_kill_vps_disk.
 
  -- Thomas Goirand <thomas@goirand.fr>  Thu, 28 Aug 2008 13:21:05 +0800
 

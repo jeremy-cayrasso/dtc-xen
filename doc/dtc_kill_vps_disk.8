@@ -1,0 +1,49 @@
+.TH dtc_kill_vps_disk 8
+.SH NAME
+dtc_kill_vps_disk \- destroy LVM disks for freeing space
+.SH SYNOPSIS
+.B dtc_kill_vps_disk
+.I VPS_NUMBER
+[
+.I lvm|loopback
+]
+
+.SH DESCRIPTION
+.B dtc_kill_vps_disk
+This shell script is a part of the dtc-xen package that is to be used by the
+dtc panel to manage a Xen VPS server.
+
+This script is used to delete a partitions that was used by a VPS.
+It will delete the normal partition that was used as a root disk, and
+the swap partition.
+
+dtc_kill_vps_disk is to be used by the dtc-xen SOAP server, but can also be used
+as a standalone userland tool.
+
+.SH OPTIONS
+.B VPS_NUMBER
+has to be a number between 01 and 19. Let's say the number is 16, and that
+dtc-xen is configured to use the volume group called lvm1, then this script
+will create /dev/lvm1/xen16 and /dev/lvm1/xen16swap.
+
+.B IMAGE_TYPE
+This parameter can have 2 values: either lvm or loopback. If ommited, then lvm
+is used. If lvm is used, then this script will create a partition using
+lvmcreate, otherwise it will create an image file. Both will later be used for the VPS.
+
+.SH EXAMPLE
+
+.B dtc_setup_vps_disk 04 lvm
+
+This will delete the 2 LVM partitions that were used by the VPS named xen04, the first one being
+the root partition, and the second one being the swap partition.
+
+.SH "VERSION"
+This documentation describes
+.B dtc_kill_vps_disk
+See
+.B http://www.gplhost.com/software-dtc-xen.html
+for updates.
+
+.SH "SEE ALSO"
+dtc_reinstall_os(8), dtc_setup_vps_disk(8)
