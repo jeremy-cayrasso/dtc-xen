@@ -18,8 +18,8 @@ fi
 #GATEWAY=202.124.18.1
 
 # Things that might change
-LVMNAME=lvm1
-VPSGLOBPATH=/xen
+if [ "$LVMNAME" = "" ] ; then LVMNAME=lvm1 ; fi
+VPSGLOBPATH=${VPS_MOUNTPOINT}
 #KERNELNAME="2.6.11.12-xenU"
 INSTALL_KERNELPATH="/boot/netbsd-INSTALL_XENU"
 NORMAL_KERNELPATH="/boot/netbsd-XENU"
@@ -66,7 +66,7 @@ echo "kernel = \"${KERNELPATH}\"
 memory = ${RAMSIZE}
 name = \"${VPSNAME}\"
 vif = [ 'mac=${MAC_ADDR}, ip=${ALL_IPADDRS}' ]
-disk = [ 'phy:/dev/mapper/lvm1-${VPSNAME},0x3,w' ]
+disk = [ 'phy:/dev/mapper/${LVMNAME}-${VPSNAME},0x3,w' ]
 " >/etc/xen/${VPSNAME}
 if [ ! -e /etc/xen/auto/${VPSNAME} ] ; then
 	ln -s ../${VPSNAME} /etc/xen/auto/${VPSNAME}
