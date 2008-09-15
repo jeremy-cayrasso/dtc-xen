@@ -1,21 +1,23 @@
-Here is what you MUST do to have a working setup:
+Here is what you MUST do to have a working set-up:
 
-0. Quick & durty setup without reading the rest of this text
-------------------------------------------------------------
+0. Quick set-upup without reading the rest of this text
+----------------------------------------------------
 * apt-get install dtc-xen
 * check your /etc/hosts so that nodeXXXX.example.com corresponds to what
-you have set in debconf.
+you have set in debconf, and make sure that nodeXXXX.example.com resolves to
+your dom0 IP.
 * ln -s /usr/share/dtc-xen /var/www/dtc-xen
 * /usr/sbin/dtc-xen_finish_install
 * /etc/init.d/dtc-xen restart
+* /etc/init.d/ssh restart
 
 If you want to know why you have to do all this by hand, read further,
 otherwise, stop reading, you are already good to go.
 
 1. Password of the SOAP server
 ------------------------------
-When the package is setup in non-interactive mode, the password for
-/etc/dtc-xen/htpasswd is set randomly. In that case, you will need to setup
+When the package is set-up in non-interactive mode, the password for
+/etc/dtc-xen/htpasswd is set randomly. In that case, you will need to set-up
 a new password by running dpkg-reconfigure dtc-xen.
 
 2. Hostname of the SOAP server so it can binds to an IP
@@ -48,7 +50,35 @@ setup of the dtc-xen package, you should run on the shell:
 
 /usr/sbin/dtc-xen_finish_install
 
-4. Restarting the SOAP server after install/upgrade
+Let me explain further. When a customer wants to access his VPS's physical
+console, he just connect to your dom0's ssh server using something like this:
+
+ssh xenXX@nodeYYYY.example.com
+
+where XX is the number of his VPS and nodeYYYY.example.com your dom0's
+hostname. His shell is /bin/dtc-xen_userconsole. Internally, this script has
+the following content:
+
+sudo /usr/sbin/xm console $USER
+
+In other words, when doing "ssh xenXX@your-dom0", the user will automatically
+start "xm consle xenXX". As xm is a root only program, we need to modify the
+/etc/sudoers to allow this. So dtc-xen_finish_install adds the following:
+
+%xenusers	ALL= NOPASSWD: /usr/sbin/xm console xen*
+
+Also, using Xen, any VPS that is started also starts a telnet server on a
+specific port, so you can access the physical console of the VPS using telnet
+on this port on localhost. As your users are granted an ssh access, they could
+user ssh port's forwarding to get access to any of the dom0's telnet port,
+which would then give them access to the physical console of the VPS that they
+do not own. This is why this script disable port forwarding, so your users have
+access to ONLY their VPS physical console, and not another one. You will then
+need to restart your sshd server using the following:
+
+/etc/init.d/ssh restart
+
+5. Restarting the SOAP server after install/upgrade
 ---------------------------------------------------
 Last thing, this is a known bug. When the package postinst scripts is ran, it
 starts the soap server. For an unknown reason, when it's done like this, your
@@ -61,14 +91,37 @@ upgrade, issue:
 and your should be good to go (and setup Debian VPS with debootstrap
 automatically using DTC's web interface).
 
-5. Contribute helping enhancements
-----------------------------------
+6. Contribute enhancements
+--------------------------
 If you think that all of the above is borring, and that all should be
 automated, then you are free to try and help us to make all this Debian
 POLICY COMPLIANT, which is really not an obvious thing to do. In the mean
 while, don't complain TO ME, but starts discutions in debian-devel, and
-help improving the distribution for a better, brighter, cleaner, and more
-user friendly distribution.
+help improving the distribution and dtc-xen for a better, brighter, cleaner,
+and more user friendly distribution and dtc-xen. There are very good policy
+rules and reasons why the above can't be in the debian/dtc-xen.postinst
+(especially points #3 and #4 are being problematic), and there is no way we can
+change the package if it is to stay in Debian.
+
+Here are current plans:
+
+- There's nothing we can do about points #1 and #2. If you have problems with
+them, to us it means that you need to learn more about how to use servers,
+Debian and Debconf. Do a "man hosts" and read more documentation about Debian.
+
+- Point #3 will be solved in the next version of dtc-xen that is not using
+apache or rrdtool at all (the statistics are exported to your dtc interface
+using the SOAP server included in dtc-xen).
+
+- Point #4 and #5 are the most problematic. We really don't know any way to
+solve the issue of #4 without breaking Debian policy. We really would like to
+find a clean way. Maybe the solution is to have ssh port forwarding to off by
+default in the openssh-server package, but for this, we need to convince the
+maintainer of this package, which is not an easy thing to do, as many other
+applications might need the port forwarding. There is no reason why dtc-xen
+would have priority over others. For point #5, we have no idea why debconf is
+doing this. We would like to solve this, but we need help, this seems a quite
+tricky bug.
 
 On the behalf of all GPLHost staff, dtc-xen contributors and authors,
 
