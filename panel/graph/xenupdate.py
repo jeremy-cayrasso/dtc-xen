@@ -26,7 +26,8 @@ domains = (
 	)
 for domain in domains:
 
-    name,id,mem,cpu,state,cputime=domain[0:6]
+    try: name,id,mem,cpu,state,cputime=domain[0:6]
+    except ValueError: continue
     # Log the CPU of each domain
     cputime=int(float(cputime)*1000)
     rrd=os.path.join(basename,"cpu-"+name+".rrd")
