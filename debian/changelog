@@ -1,4 +1,4 @@
-dtc-xen (0.3.22-1) unstable; urgency=low
+dtc-xen (0.3.23-1) unstable; urgency=low
 
   * New upstream release correcting the dtc_change_bsd_kernel shell script
     so it takes the VG name from the config file of dtc-xen.
