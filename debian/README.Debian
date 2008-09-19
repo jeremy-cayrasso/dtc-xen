@@ -1,7 +1,7 @@
 Here is what you MUST do to have a working set-up:
 
-0. Quick set-upup without reading the rest of this text
-----------------------------------------------------
+0. Quick set-up without reading the rest of this text
+-----------------------------------------------------
 * apt-get install dtc-xen
 * check your /etc/hosts so that nodeXXXX.example.com corresponds to what
 you have set in debconf, and make sure that nodeXXXX.example.com resolves to
