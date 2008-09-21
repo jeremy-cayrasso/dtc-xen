@@ -64,23 +64,44 @@ The following command:
 
 dtc_write_xenpv_conf 14 512 '1.2.3.4 1.2.3.5' mYvNcPaSs boot.iso
 
-will produce this config file:
+will produce this config file in /etc/xen/xen14:
 
 kernel = "/usr/lib/xen/boot/hvmloader"
+.br
 builder = 'hvm'
+.br
 memory = 512
+.br
 name = "xen14${VPSNAME}"
+.br
 vcpus=1
+.br
 pae=0
+.br
 acpi=0
+.br
 apic=0
+.br
 vif = [ 'type=ioemu, mac=00:00:00:00:00:00, ip=1.2.3.4 1.2.3.5' ]
+.br
 disk=[ 'phy:/dev/mapper/lvm1-xen14,ioemu:hda,w','file:/var/lib/dtc-xen/ttyssh_home/xen14/boot.iso,hdb:cdrom,r','file:/var/lib/dtc-xen/ttyssh_home/xen14/cd2.iso,hdc:cdrom,r' ]
+.br
+cdrom="/var/lib/dtc-xen/ttyssh_home/xen14/boot.iso"
+.br
+boot="d"
+.br
 vfb = [ "type=vnc,vncdisplay=21,vncpasswd=mYvNcPaSs" ]
+.br
 nographic=0
+.br
 vnc=1
+.br
 stdvga=1
+.br
 serial='pty'
+
+Note that the above mac address will be calculated and depend on your node
+name: it will NOT be like the above example.
 
 .SH UPDATES
 
