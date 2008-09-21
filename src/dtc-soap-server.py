@@ -8,6 +8,7 @@ from StringIO import StringIO
 from SOAPpy import *
 import logging
 import threading
+import glob
 try: import subprocess # FIXME maybe this wont work on older pythons?
 except ImportError: subprocess = False
 
@@ -265,6 +266,21 @@ def changeBSDkernel(vpsname,ramsize,kerneltype,allipaddrs):
 		print cmd
 		output = commands.getstatusoutput(cmd)
 		return "OK"
+
+def writeXenPVconf(vpsname,ramsize,allipaddrs,vncpassword,howtoboot):
+	username = getUser()
+	if username == dtcxen_user or username == vpsname:
+		cmd = "dtc_write_xenpv_conf %s %s '%s' %s %s" % (vpsname,ramsize,allipaddrs,vncpassword,howtoboot)
+		print cmd
+		output = commands.getstatusoutput(cmd)
+		return "OK"
+
+def reportInstalledIso(vpsname):
+	username = getUser()
+	if username == dtcxen_user or username == vpsname:
+		path = "/var/lib/dtc-xen/ttyssh_home/%s"%vpsname
+		files = [ os.path.basename(f) for f in glob.iglob(path+"/*.iso" if os.path.isfile(f) ]
+		return files
 
 # Take care! This time, the vpsname has to be only the number (eg XX and not xenXX)
 def reinstallVPSos(vpsname,ostype,hddsize,ramsize,ipaddr,imagetype='lvm'):
@@ -784,9 +800,11 @@ soapserver.registerFunction(getVPSState)
 soapserver.registerFunction(changeVPSxmPassword)
 soapserver.registerFunction(changeVPSsoapPassword)
 soapserver.registerFunction(changeVPSsshKey)
+soapserver.registerFunction(reportInstalledIso)
 soapserver.registerFunction(reinstallVPSos)
 soapserver.registerFunction(fsckVPSpartition)
 soapserver.registerFunction(changeBSDkernel)
+soapserver.registerFunction(writeXenPVconf)
 soapserver.registerFunction(setupLVMDisks)
 soapserver.registerFunction(getCollectedPerformanceData)
 soapserver.registerFunction(getNetworkUsage)

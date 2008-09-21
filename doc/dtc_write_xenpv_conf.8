@@ -1,0 +1,89 @@
+.TH dtc_write_xenpv_conf 8
+.SH NAME
+dtc_write_xenpv_conf \- rewrites the xen startup script with selected params
+.SH SYNOPSIS
+.B dtc_write_xenpv_conf
+.I VPS_NUMBER
+.I MEMORY_SIZE
+.I ALL_IP_ADDRESSES
+.I VNC_CONSOLE_PASSWORD
+.I HOW_TO_BOOT
+
+.SH DESCRIPTION
+.B dtc_write_xenpv_conf
+This shell script is a part of the dtc\-xen
+package that is to be used by the dtc panel
+to manage a Xen VPS server.
+
+This script generate a Xen startup file with the parameters
+given to the script.
+
+.SH PARAMETERS
+
+Note that ALL parameters are mendatory.
+
+.B VPS_NUMBER
+has to be a number between 01 and 29
+
+.B MEMORY_SIZE
+is the amount of memory in mega bytes that you want to have setup
+in the Xen startup file for this VPS
+
+.B ALL_IP_ADDRESSES
+is a list of IPs that you want to be set in the VM's startup file and
+in the VM's configuration. Note that the IPs have to be separated by spaces,
+and thus you might want to use single quotes like this: '1.2.3.4 1.2.3.5'. Note
+that only the first IP will be set in the VM's configuration, but the list will
+be set in the Xen startup file so you can use the anti\-spoofing facilities of
+Xen if you need it (with untrusted users / unknown customers for example).
+
+.B VNC_CONSOLE_PASSWORD
+This is the VNC console password that you want to have set\-up in the Xen domU
+configuration file, so that you can connect using VNC to the the setup. Note
+that special value
+.I none
+can be used to declare that you do not want the VNC console to be used at all.
+
+.B HOW_TO_BOOT
+This controls what the VPS will use to boot. A special value of
+.I hdd
+can be used to tell dtc_write_xenpv_conf that you want to boot on the hard
+drive of the domU. Any other parameters will be used as a .iso file located
+in /var/lib/dtc\-xen/ttyssh_home/xenXX where xenXX equals to the VPS number
+set in the
+.I VPS_NUMBER
+parameter (see above).
+
+Note that whatever is set in this parameter, dtc_write_xenpv_conf will add as
+many cdrom devices as it finds .iso files in the /var/lib/dtc\-xen/ttyssh_home/xenXX
+folder.
+
+.SH EXAMPLE
+
+The following command:
+
+dtc_write_xenpv_conf 14 512 '1.2.3.4 1.2.3.5' mYvNcPaSs boot.iso
+
+will produce this config file:
+
+kernel = "/usr/lib/xen/boot/hvmloader"
+builder = 'hvm'
+memory = 512
+name = "xen14${VPSNAME}"
+vcpus=1
+pae=0
+acpi=0
+apic=0
+vif = [ 'type=ioemu, mac=00:00:00:00:00:00, ip=1.2.3.4 1.2.3.5' ]
+disk=[ 'phy:/dev/mapper/lvm1-xen14,ioemu:hda,w','file:/var/lib/dtc-xen/ttyssh_home/xen14/boot.iso,hdb:cdrom,r','file:/var/lib/dtc-xen/ttyssh_home/xen14/cd2.iso,hdc:cdrom,r' ]
+vfb = [ "type=vnc,vncdisplay=21,vncpasswd=mYvNcPaSs" ]
+nographic=0
+vnc=1
+stdvga=1
+serial='pty'
+
+.SH UPDATES
+
+See
+.B http://www.gplhost.com/software\-dtc\-xen.html
+for updates.
