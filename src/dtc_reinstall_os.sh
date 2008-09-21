@@ -4,7 +4,7 @@ set -e # DIE on errors
 #set > /tmp/env # temp log environ
 
 if [ $# -lt 3 ]; then 
-	echo "Usage: $0 [-v] <xen id> <hdd size MB> <ram size MB> <ip address> < debian | ubuntu_dapper | centos | gentoo | slackware | manual > [ lvm | vbd ]" > /dev/stderr
+	echo "Usage: $0 [-v] [--vnc-pass VNCPASS ] [ --boot-iso file.iso ] <xen id> <hdd size MB> <ram size MB> <ip address> < debian | ubuntu_dapper | centos | gentoo | slackware | xenpv | manual > [ lvm | vbd ]" > /dev/stderr
 	echo "" > /dev/stderr
 	echo "Example: $0 09 3072 64 1.2.3.4 debian" > /dev/stderr
 	exit 1
@@ -15,6 +15,20 @@ if [ "$1" = "-v" ] ; then
 	shift
 else
 	REDIRECTOUTPUT=true
+fi
+
+if [ "$1" = "--vnc-pass" ] ; then
+	VNC_PASSWORD=$2
+	shift
+	shift
+else
+	VNC_PASSWORD=`dd if=/dev/random bs=64 count=1 2>|/dev/null | md5sum | cut -d' ' -f1`
+fi
+
+if [ [ "$1" = "--boot-iso" ] ; then
+	BOOT_ISO=$2
+	shift
+	shift
 fi
 
 # Source the configuration in the config file!
@@ -120,8 +134,10 @@ UMOUNT=/bin/umount
 DEBOOTSTRAP=/usr/sbin/debootstrap
 
 echo "Seleted ${VPSNAME}: ${VPSHDD}G HDD and ${VPSMEM}MB RAM";
-if [ "$DISTRO" = "netbsd" ] ; then
-	echo "Not creating disks: NetBSD!"
+if [ [ "$DISTRO" = "xenpv" ] ; then
+	echo "Not formating disks, xenpv will use emulated hard drives."
+elif [ "$DISTRO" = "netbsd" -o "$DISTRO" = "xenpv" ] ; then
+	echo "Not formating disks, NetBSD will use emulated hard drives."
 else
 	echo "Creating disks..."
 
@@ -250,8 +266,8 @@ else
 	echo "Cheers!"
 	exit
 fi
-if [ "$DISTRO" = "netbsd" ] ; then
-	echo "Nothing to do: it's BSD"
+if [ "$DISTRO" = "netbsd" -o "xenpv" ] ; then
+	echo "Nothing to do: it's BSD or xenpv"
 else
 	echo "Customizing vps..."
 	ETC=${VPSGLOBPATH}/${VPSNUM}/etc
@@ -324,8 +340,8 @@ exit 0
 fi
 
 # handle the network setup
-if [ "$DISTRO" = "netbsd" ] ; then
-	echo "Nothing to do: it's BSD!"
+if [ "$DISTRO" = "netbsd" -o "xenpv" ] ; then
+	echo "Nothing to do: it's BSD or xenpv!"
 elif [ "$DISTRO" = "centos" -o "$DISTRO" = "centos42" ] ; then
 	# Configure the eth0
 	echo "DEVICE=eth0
@@ -416,7 +432,39 @@ else
 	exit 1
 fi
 
-if [ "$DISTRO" = "netbsd" ] ; then
+if [ "$DISTRO" = "xenpv" ] ; then
+	echo -n "kernel = \"/usr/lib/xen/boot/hvmloader\"
+builder = 'hvm'
+memory = ${VPSMEM}
+name = \"${VPSNAME}\"
+vcpus=1
+pae=0
+acpi=0
+apic=0
+vif = [ 'type=ioemu, mac=${MAC_ADDR}, ip=${ALL_IPADDRS}' ]
+disk=[ 'phy:/dev/mapper/${LVMNAME}-xen${VPSNUM},ioemu:hda,w'" >/etc/xen/${VPSNAME}
+	# Add all *.iso files to the config file
+	for i in `find /usr/src/win -mindepth 1 -maxdepth 1 -iname '*.iso' | cut -d'/' -f5 | tr \\\r\\\n ,\ ` ; do
+		echo -n ,\'file:/var/lib/dtc-xen/ttyssh_home/xen${VPSNUM}/$i,hdc:cdrom,r\' >>/etc/xen/${VPSNAME}
+		echo $i
+	done
+	# Set the VPN password
+	echo " ]
+vfb = [ \"type=vnc,vncdisplay=21,vncpasswd=XXXX\" ]" >>/etc/xen/${VPSNAME}
+	# Set the boot cd if variable is set
+	if [ -z "${BOOT_ISO}" -a -e /var/lib/dtc-xen/ttyssh_home/xen${VPSNUM}/${BOOT_ISO} ] ; then
+		echo "cdrom=\"/var/lib/dtc-xen/ttyssh_home/xen${VPSNUM}/${BOOT_ISO}\"
+boot=\"d\"
+nographic=0
+vnc=1
+stdvga=1" >>/etc/xen/${VPSNAME}
+	# Otherwise boot on the HDD
+	else
+		echo "boot=\"c\"
+nographic=1" >>/etc/xen/${VPSNAME}
+	fi
+	echo "serial='pty'" >>/etc/xen/${VPSNAME}
+elif [ "$DISTRO" = "netbsd" ] ; then
 	echo "kernel = \"${BSDKERNELPATH}\"
 memory = ${VPSMEM}
 name = \"${VPSNAME}\"
@@ -459,8 +507,8 @@ if [ ! -e /etc/xen/auto/${VPSNAME} ] ; then
 	ln -s ../${VPSNAME} /etc/xen/auto/${VPSNAME}
 fi
 
-if [ "$DISTRO" = "netbsd" ] ; then
-	echo "Not coping modules: it's BSD!"
+if [ "$DISTRO" = "netbsd" -o "xenpv" ] ; then
+	echo "Not coping modules: it's BSD or xenpv!"
 else
 
 	# we need to do MAKEDEV for all linux distroes
