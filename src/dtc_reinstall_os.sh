@@ -25,7 +25,7 @@ else
 	VNC_PASSWORD=`dd if=/dev/random bs=64 count=1 2>|/dev/null | md5sum | cut -d' ' -f1`
 fi
 
-if [ [ "$1" = "--boot-iso" ] ; then
+if [ "$1" = "--boot-iso" ] ; then
 	BOOT_ISO=$2
 	shift
 	shift
@@ -134,7 +134,7 @@ UMOUNT=/bin/umount
 DEBOOTSTRAP=/usr/sbin/debootstrap
 
 echo "Seleted ${VPSNAME}: ${VPSHDD}G HDD and ${VPSMEM}MB RAM";
-if [ [ "$DISTRO" = "xenpv" ] ; then
+if [ "$DISTRO" = "xenpv" ] ; then
 	echo "Not formating disks, xenpv will use emulated hard drives."
 elif [ "$DISTRO" = "netbsd" -o "$DISTRO" = "xenpv" ] ; then
 	echo "Not formating disks, NetBSD will use emulated hard drives."
@@ -185,7 +185,9 @@ echo "Bootstraping..."
 
 # get the most recent centos release.  it WILL FAIL once centos version hits 10.  But, hell, I'm a hacky hack.
 CENTOS_DIR=`ls -d /usr/src/centos* 2> /dev/null | tr ' ' '\n' | sort -r | head -1`
-if [ "$DISTRO" = "centos" ] ; then
+if [ "$DISTRO" = "xenpv" -o "$DISTRO" = "netbsd" ] ; then
+	echo "There's nothing to bootstrap, as you will use the provided distribution installer in this case."
+elif [ "$DISTRO" = "centos" ] ; then
 	/usr/sbin/dtc_install_centos /var/lib/dtc-xen/yum "$VPSGLOBPATH/$VPSNUM"
 elif [ "$DISTRO" = "debian" ] ; then
 	echo $DEBOOTSTRAP --verbose --include=module-init-tools,locales --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
