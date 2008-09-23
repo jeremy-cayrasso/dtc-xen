@@ -49,9 +49,9 @@ vif = [ 'type=ioemu, mac=${MAC_ADDR}, ip=${ALL_IPADDRS}' ]
 disk=[ 'phy:/dev/mapper/${LVMNAME}-xen${VPSNUM},ioemu:hda,w'" >/etc/xen/${VPSNAME}
 # Set the additional cdrom drives: add all *.iso files to the config file
 HDDLIST="bcdefghijklmnopqrstuvwxyz"
-INCREMENT=1
+INCREMENT=2
 for i in `find /var/lib/dtc-xen/ttyssh_home/xen${VPSNUM}/ -mindepth 1 -maxdepth 1 -iname '*.iso' | cut -d'/' -f7 | tr \\\r\\\n ,\ ` ; do
-	DRIVE_LETTER=`echo ${HDDLIST} | awk '{print substr($0,$INCREMENT,1)}'`
+	DRIVE_LETTER=`echo ${HDDLIST} | awk '{print substr($0,'${INCREMENT}',1)}'`
 	INCREMENT=$(( $INCREMENT + 1))
 	echo -n ,\'file:/var/lib/dtc-xen/ttyssh_home/xen${VPSNUM}/$i,hd${DRIVE_LETTER}:cdrom,r\' >>/etc/xen/${VPSNAME}
 done
