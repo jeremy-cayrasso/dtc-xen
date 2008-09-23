@@ -271,6 +271,7 @@ def writeXenPVconf(vpsname,ramsize,allipaddrs,vncpassword,howtoboot):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
 		cmd = "dtc_write_xenpv_conf %s %s '%s' %s %s" % (vpsname,ramsize,allipaddrs,vncpassword,howtoboot)
+		logging.info("Now calling: %s" % cmd)
 		print cmd
 		output = commands.getstatusoutput(cmd)
 		return "OK"
@@ -366,7 +367,6 @@ def getgroupid(group):
 	return entry[2]
 
 from threading import Thread,RLock
-from glob import glob
 from subprocess import Popen,PIPE
 import re
 import time
