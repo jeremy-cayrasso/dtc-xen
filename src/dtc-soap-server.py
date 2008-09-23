@@ -280,7 +280,7 @@ def reportInstalledIso(vpsname):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
 		path = "/var/lib/dtc-xen/ttyssh_home/%s"%vpsname
-		files = [ os.path.basename(f) for f in glob.iglob(path+"/*.iso" if os.path.isfile(f) ]
+		files = [ os.path.basename(f) for f in glob.glob(path+"/*.iso") if os.path.isfile(f) ]
 		return files
 
 # Take care! This time, the vpsname has to be only the number (eg XX and not xenXX)
