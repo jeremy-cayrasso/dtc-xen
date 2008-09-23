@@ -27,8 +27,12 @@ else
 	fi
 fi
 
-cd /usr/src
-mkdir centos3
+if grep -q "/bin/dtc-xen_userconsole" /etc/shells ; then
+	echo "/etc/shells already knows /bin/dtc-xen_userconsole"
+else
+	echo "Adding /bin/dtc-xen_userconsole to /etc/shells"
+	echo "/bin/dtc-xen_userconsole" >>/etc/shells
+fi
 
 FOUNDED_ARCH=`uname -m`
 case "$FOUNDED_ARCH" in
@@ -52,28 +56,6 @@ case "$FOUNDED_ARCH" in
 		exit 1
 		;;
 esac
-
-
-if [ ! -e /usr/src/centos3 ]; then
-	echo "CentOS 3 archive not found, try to do it issuing this command:"
-	if [ ""${BINARCH} = "amd64" ] ; then
-		echo "/usr/bin/rpmstrap --verbose --arch x86_64 --download-only centos3 /usr/src/centos3"
-#		/usr/bin/rpmstrap --verbose --arch x86_64 --download-only centos3 /usr/src/centos3
-	else
-		echo "For i[3456]86: /usr/bin/rpmstrap --verbose --arch i386 --download-only centos3 /usr/src/centos3"
-	fi
-fi
-
-if [ ! -e /usr/src/centos4 ]; then
-	echo "CentOS 4 archive not found, trying to do it issuing this command:"
-	if [ ""${BINARCH} = "amd64" ] ; then
-		echo "/usr/bin/rpmstrap --verbose --arch x86_64 --download-only centos4 /usr/src/centos4"
-#		/usr/bin/rpmstrap --verbose --arch x86_64 --download-only centos4 /usr/src/centos4
-	else
-		echo "/usr/bin/rpmstrap --verbose --arch i386 --download-only centos4 /usr/src/centos4"
-#		/usr/bin/rpmstrap --verbose --arch i386 --download-only centos4 /usr/src/centos4
-	fi
-fi
 
 if [ ! -e /usr/src/gentoo ]; then
 	mkdir -p /usr/src/gentoo
