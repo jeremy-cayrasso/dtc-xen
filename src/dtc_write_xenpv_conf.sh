@@ -58,7 +58,7 @@ done
 echo " ]" >>/etc/xen/${VPSNAME}
 
 # Set the VNC configuration
-if [ -z "${VNC_PASSWORD}" -o "${VNC_PASSWORD}" = "none" ] ; then
+if [ -z "${VNC_PASSWORD}" -o "${VNC_PASSWORD}" = "no_vnc" ] ; then
 	echo "nographic=1
 vnc=0" >>/etc/xen/${VPSNAME}
 else
@@ -73,7 +73,6 @@ if [ ! "${HOW_TO_BOOT}" = "hdd" -a -e /var/lib/dtc-xen/ttyssh_home/xen${VPSNUM}/
 	echo "cdrom=\"/var/lib/dtc-xen/ttyssh_home/xen${VPSNUM}/${HOW_TO_BOOT}\"
 boot=\"d\"" >>/etc/xen/${VPSNAME}
 else
-	echo "boot=\"c\"
-nographic=1" >>/etc/xen/${VPSNAME}
+	echo "boot=\"c\"" >>/etc/xen/${VPSNAME}
 fi
 echo "serial='pty'" >>/etc/xen/${VPSNAME}
