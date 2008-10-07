@@ -507,7 +507,7 @@ def getCollectedPerformanceData(count=None):
 		samples = []
 		try:
 			data_collection_lock.acquire()
-			loadfiles = glob(os.path.join(perfdata_dir,"sample-*.pickle"))
+			loadfiles = glob.glob(os.path.join(perfdata_dir,"sample-*.pickle"))
 			loadfiles.sort()
 			if count > 0: loadfiles = loadfiles[:count]
 			samples = [ pickle.load(file(p)) for p in loadfiles ]
