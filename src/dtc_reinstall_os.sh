@@ -268,7 +268,7 @@ else
 	echo "Cheers!"
 	exit
 fi
-if [ "$DISTRO" = "netbsd" -o "xenpv" ] ; then
+if [ "$DISTRO" = "netbsd" -o "$DISTRO" = "xenpv" ] ; then
 	echo "Nothing to do: it's BSD or xenpv"
 else
 	echo "Customizing vps..."
@@ -342,7 +342,7 @@ exit 0
 fi
 
 # handle the network setup
-if [ "$DISTRO" = "netbsd" -o "xenpv" ] ; then
+if [ "$DISTRO" = "netbsd" -o "$DISTRO" = "xenpv" ] ; then
 	echo "Nothing to do: it's BSD or xenpv!"
 elif [ "$DISTRO" = "centos" -o "$DISTRO" = "centos42" ] ; then
 	# Configure the eth0
@@ -513,7 +513,7 @@ if [ ! -e /etc/xen/auto/${VPSNAME} ] ; then
 	ln -s ../${VPSNAME} /etc/xen/auto/${VPSNAME}
 fi
 
-if [ "$DISTRO" = "netbsd" -o "xenpv" ] ; then
+if [ "$DISTRO" = "netbsd" -o "$DISTRO" = "xenpv" ] ; then
 	echo "Not coping modules: it's BSD or xenpv!"
 else
 
