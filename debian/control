@@ -14,7 +14,7 @@ Package: dtc-xen
 Section: web
 Priority: optional
 Architecture: all
-Depends: debconf, python, rrdtool, python-soappy, python-crypto, python-sqlite, m2crypto, debootstrap, openssl, sudo, adduser, sysstat, lsb-base, yum
+Depends: apache2-utils, debconf, python, rrdtool, python-soappy, python-crypto, python-sqlite, m2crypto, debootstrap, openssl, sudo, adduser, sysstat, lsb-base, yum
 Recommends: dtc-xen-firewall, sysfsutils
 Suggests: xen-utils-common
 Description: SOAP daemon and scripts to allow control panel management for Xen VMs
