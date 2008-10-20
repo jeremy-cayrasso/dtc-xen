@@ -3,40 +3,83 @@
 set -e # DIE on errors
 #set > /tmp/env # temp log environ
 
-if [ $# -lt 3 ]; then 
-	echo "Usage: $0 [-v] [--vnc-pass VNCPASS ] [ --boot-iso file.iso ] <xen id> <hdd size MB> <ram size MB> <ip address> < debian | ubuntu_dapper | centos | gentoo | slackware | xenpv | manual > [ lvm | vbd ]" > /dev/stderr
-	echo "" > /dev/stderr
+if [ $# -lt 5 ]; then 
+	echo "Usage: $0 [ OPTIONS ] <xen id> <hdd size MB> <ram size MB> <ip address(es)> <operating-system> [ lvm | vbd ]"> /dev/stderr
+	echo "-------------------------------------------------------------------------" > /dev/stderr
+	echo "<operating-system> can be one of the follwing:" > /dev/stderr
+	echo "debian, ubuntu_dapper, centos, gentoo, slackware, xenpv, manual" > /dev/stderr
+	echo "-------------------------------------------------------------------------" > /dev/stderr
+	echo "Options can be in any order and are:" > /dev/stderr
+	echo "                       [ -v ] : Do a more verboze install" > /dev/stderr
+	echo "[ --release OS-Release-name ] : currently unused" > /dev/stderr
+	echo "-------------------------------------------------------------------------" > /dev/stderr
+	echo "Network option to setup inside the guest VPS:" > /dev/stderr
+	echo "        [ --netmask netmask ] : guest OS netmask" > /dev/stderr
+	echo "        [ --network network ] : guest OS network" > /dev/stderr
+	echo "    [ --broadcast broadcast ] : guest OS broadcast" > /dev/stderr
+	echo "        [ --gateway gateway ] : guest OS network gateway" > /dev/stderr
+	echo "-------------------------------------------------------------------------" > /dev/stderr
+	echo "Options specific to Xen PV guests:" > /dev/stderr
+	echo "       [ --vnc-pass VNCPASS ] : VNC password for the physical console" > /dev/stderr
+	echo "      [ --boot-iso file.iso ] : CDROM device to boot on" > /dev/stderr
+	echo "-------------------------------------------------------------------------" > /dev/stderr
 	echo "Example: $0 09 3072 64 1.2.3.4 debian" > /dev/stderr
 	exit 1
 fi
 
-if [ "$1" = "-v" ] ; then
-	REDIRECTOUTPUT=false
-	shift
-else
-	REDIRECTOUTPUT=true
-fi
-
-if [ "$1" = "--vnc-pass" ] ; then
-	VNC_PASSWORD=$2
-	shift
-	shift
-else
-	VNC_PASSWORD=`dd if=/dev/random bs=64 count=1 2>|/dev/null | md5sum | cut -d' ' -f1`
-fi
-
-if [ "$1" = "--boot-iso" ] ; then
-	BOOT_ISO=$2
-	shift
-	shift
-fi
-
 # Source the configuration in the config file!
 . /etc/dtc-xen/dtc_create_vps.conf.sh
-
-# Things that might change
+# Some defaults if not present in the conf file...
 if [ "$LVMNAME" = "" ] ; then LVMNAME=lvm1 ; fi
 if [ "$DEBIAN_RELEASE" = "" ] ; then DEBIAN_RELEASE=etch ; fi
+
+# Manage options in any order...
+REDIRECTOUTPUT=true
+VNC_PASSWORD=`dd if=/dev/random bs=64 count=1 2>|/dev/null | md5sum | cut -d' ' -f1`
+for i in `seq 0 7` ; do
+	case "$1" in
+	"-v")
+		REDIRECTOUTPUT=false
+		shift
+		;;
+	"--vnc-pass")
+		VNC_PASSWORD=$2
+		shift
+		shift
+		;;
+	"--boot-iso")
+		BOOT_ISO=$2
+		shift
+		shift
+		;;
+	"--release")
+		RELEASE=$2
+		shift
+		shift
+		;;
+	"--netmask")
+		NETMASK=$2
+		shift
+		shift
+		;;
+	"--network")
+		NETWORK=$2
+		shift
+		shift
+		;;
+	"--broadcast")
+		BROADCAST=$2
+		shift
+		shift
+		;;
+	"--gateway")
+		GATEWAY=$2
+		shift
+		shift
+		;;
+	esac
+done
+
 VPSGLOBPATH=${VPS_MOUNTPOINT}
 #KERNELNAME="2.6.11.12-xenU"
 KERNELPATH="/boot/vmlinuz-${KERNELNAME}"
