@@ -26,10 +26,9 @@ domains = (
 	)
 for domain in domains:
 
-    try: name,id,mem,cpu,state,cputime=domain[0:6]
-    except ValueError: continue
+    name,id,mem,cpu,state,cputime=domain[0:6]
     # Log the CPU of each domain
-    cputime=int(float(cputime)*1000)
+    cputime=long(float(cputime)*1000)
     rrd=os.path.join(basename,"cpu-"+name+".rrd")
     if not os.path.exists(rrd):
 	# 10 days of exact archive, 42 days of 1 hr RRD, 1000 days of 1 day RRD
@@ -57,7 +56,7 @@ for domain in domains:
 		if o.startswith("vif%s.0:"%id)
 	] [0]
     )
-    inplusout = int(inbytes) + int(outbytes)
+    inplusout = long(inbytes) + long(outbytes)
     rrd = os.path.join(basename,"net-"+name+".rrd")
     if not os.path.exists(rrd):
 	# 10 days of exact archive, 42 days of 1 hr RRD, 1000 days of 1 day RRD
@@ -80,8 +79,11 @@ for domain in domains:
     #br_req  oo_req  rd_req  rd_sect  wr_req  wr_sect
     #rd_sect / wr_sect contain sectors, so if we can assume 512 bytes/sector then we could fill in the bytes fields.
     # http://www.redhat.com/archives/libvir-list/2007-August/msg00224.html
+    def fixwraparound(negint):
+	if negint < 0: return negint + pow(2,32)
+	return negint
     iosectors = sum(
-    	( int(file(f).read()) for f in glob(
+    	( fixwraparound(long(file(f).read())) for f in glob(
 			os.path.join("/","sys","devices","xen-backend","vbd-%s-*"%id,"statistics","*_sect")
 		)
 	)
