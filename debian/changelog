@@ -1,7 +1,10 @@
-(what do I put here?)
+dtc-xen (0.3.24-1) unstable; urgency=low
 
-  * Bug fix that corrects overflow problem with integers in IO and net
-    data collection graphs.
+  * New upstream release with the following correction:
+    - Bug fix that corrects overflow problem with integers in IO and net data
+    collection graphs.
+
+ -- Thomas Goirand <thomas@goirand.fr>  Tue, 21 Oct 2008 12:26:08 +0800
 
 dtc-xen (0.3.23-1) unstable; urgency=low
 
