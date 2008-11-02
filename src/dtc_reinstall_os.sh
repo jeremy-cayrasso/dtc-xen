@@ -274,13 +274,13 @@ fi
 
 echo "Customizing vps fstab, hosts, hostname, and capability kernel module..."
 if [ "$DISTRO" = "debian" -o "$DISTRO" = "centos" ] ; then
-	/usr/sbin/dtc-xen_domUconf_standard ${VPSGLOBPATH}/${VPSNUM} ${VPSHOSTNAME} ${NODE_DOMAIN_NAME} ${KERNELNAME}
+	/usr/sbin/dtc-xen_domUconf_standard ${VPSGLOBPATH}/${VPSNUM} ${VPSHOSTNAME} ${NODE_DOMAIN_NAME} ${KERNELNAME} ${IPADDR}
 	if [ "$DISTRO" = "debian" ] ; then
 		sed "s/VPS_HOSTNAME/${VPSHOSTNAME}/" /etc/dtc-xen/motd >${VPSGLOBPATH}/${VPSNUM}/etc/motd.tail
 	fi
 else
 	if [ -x /usr/share/dtc-xen-os/${DISTRO}/custom_os ] ; then
-		/usr/share/dtc-xen-os/${DISTRO}/custom_os ${VPSGLOBPATH}/${VPSNUM} ${VPSHOSTNAME} ${NODE_DOMAIN_NAME} ${KERNELNAME}
+		/usr/share/dtc-xen-os/${DISTRO}/custom_os ${VPSGLOBPATH}/${VPSNUM} ${VPSHOSTNAME} ${NODE_DOMAIN_NAME} ${KERNELNAME} ${IPADDR}
 	fi
 fi
 
