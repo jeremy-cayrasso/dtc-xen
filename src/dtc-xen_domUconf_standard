@@ -80,6 +80,7 @@ if [ -f /etc/dtc-xen/authorized_keys2 ] ; then
 	fi
 fi
 
-sed "s/VPS_HOSTNAME/${VPSHOSTNAME}/" /etc/dtc-xen/bashrc >${VPSPATH}/root/.bashrc
+# Customize the /root/.bashrc script
+sed "s/VPS_HOSTNAME/${VPSHOSTNAME}/" /etc/dtc-xen/bashrc >${VPS_PATH}/root/.bashrc
 
 exit 0
