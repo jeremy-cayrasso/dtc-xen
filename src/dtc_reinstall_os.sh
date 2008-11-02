@@ -1,7 +1,10 @@
 #!/bin/sh
 
 set -e # DIE on errors
-#set > /tmp/env # temp log environ
+
+#########################
+### MANAGE PARAMETERS ###
+#########################
 
 if [ $# -lt 5 ]; then 
 	echo "Usage: $0 [ OPTIONS ] <xen id> <hdd size MB> <ram size MB> <ip address(es)> <operating-system> [ lvm | vbd ]"> /dev/stderr
@@ -36,7 +39,7 @@ if [ "$DEBIAN_RELEASE" = "" ] ; then DEBIAN_RELEASE=etch ; fi
 # Manage options in any order...
 REDIRECTOUTPUT=true
 VNC_PASSWORD=`dd if=/dev/random bs=64 count=1 2>|/dev/null | md5sum | cut -d' ' -f1`
-for i in `seq 0 7` ; do
+for i in $@ ; do
 	case "$1" in
 	"-v")
 		REDIRECTOUTPUT=false
@@ -96,26 +99,6 @@ ALL_IPADDRS=$4
 DISTRO=$5
 IMAGE_TYPE=$6
 
-# redirect stdout and stderr to log files, so we can see what happened during install
-if [ "$REDIRECTOUTPUT" = "true" ] ; then
-	echo "Redirecting standard output to $VPSGLOBPATH/$VPSNUM.stdout..."
-	echo "Redirecting standard error to $VPSGLOBPATH/$VPSNUM.stderr..."
-	if [ -e $VPSGLOBPATH/$VPSNUM.stdout ]; then
-		mv $VPSGLOBPATH/$VPSNUM.stdout $VPSGLOBPATH/$VPSNUM.stdout.old
-	fi
-	if [ -e $VPSGLOBPATH/$VPSNUM.stderr ]; then
-		mv $VPSGLOBPATH/$VPSNUM.stderr $VPSGLOBPATH/$VPSNUM.stderr.old
-	fi
-	
-	exec 1>$VPSGLOBPATH/$VPSNUM.stdout
-	exec 2>$VPSGLOBPATH/$VPSNUM.stderr
-fi
-
-# default to lvm type for backwards compatibility
-if [ -z "$IMAGE_TYPE" ]; then
-	IMAGE_TYPE=lvm
-fi
-
 # Configure the first IP only (the user can setup the others)
 IPADDR=`echo ${ALL_IPADDRS} | cut -d' ' -f1`
 
@@ -133,6 +116,12 @@ calcMacAddr () {
 	MAC_ADDR=`echo 00:00:2$MEGA_NUM:$MAJOR_NUM:$MINOR_NUM:$VPSNUM`
 }
 calcMacAddr
+
+# default to lvm type for backwards compatibility
+if [ -z "$IMAGE_TYPE" ]; then
+	IMAGE_TYPE=lvm
+fi
+
 
 FOUNDED_ARCH=`uname -m`
 
@@ -175,6 +164,30 @@ MKSWAP=/sbin/mkswap
 MOUNT=/bin/mount
 UMOUNT=/bin/umount
 DEBOOTSTRAP=/usr/sbin/debootstrap
+
+######################################
+### REDIRECTION OF STANDARD OUTPUT ###
+######################################
+
+# redirect stdout and stderr to log files, so we can see what happened during install
+if [ "$REDIRECTOUTPUT" = "true" ] ; then
+	echo "Redirecting standard output to $VPSGLOBPATH/$VPSNUM.stdout..."
+	echo "Redirecting standard error to $VPSGLOBPATH/$VPSNUM.stderr..."
+	if [ -e $VPSGLOBPATH/$VPSNUM.stdout ]; then
+		mv $VPSGLOBPATH/$VPSNUM.stdout $VPSGLOBPATH/$VPSNUM.stdout.old
+	fi
+	if [ -e $VPSGLOBPATH/$VPSNUM.stderr ]; then
+		mv $VPSGLOBPATH/$VPSNUM.stderr $VPSGLOBPATH/$VPSNUM.stderr.old
+	fi
+	
+	exec 1>$VPSGLOBPATH/$VPSNUM.stdout
+	exec 2>$VPSGLOBPATH/$VPSNUM.stderr
+fi
+
+
+############################
+### FORMAT THE PARTITION ###
+############################
 
 echo "Seleted ${VPSNAME}: ${VPSHDD}G HDD and ${VPSMEM}MB RAM";
 if [ "$DISTRO" = "xenpv" ] ; then
@@ -223,6 +236,10 @@ else
 	$MOUNT ${VPSGLOBPATH}/${VPSNUM}
 fi
 
+####################
+### BOOTSTRAPING ###
+####################
+
 echo "Bootstraping..."
 # default CENTOS_RELEASE is centos4
 
@@ -239,243 +256,59 @@ elif [ "$DISTRO" = "debian" ] ; then
 		echo "Failed to install $DISTRO via bootstrap!!"
 		exit $debret
 	fi
-elif [ "$DISTRO" = "ubuntu_dapper" ] ; then
-	echo $DEBOOTSTRAP --verbose --include=module-init-tools,udev --arch i386 dapper ${VPSGLOBPATH}/${VPSNUM} http://archive.ubuntu.com/ubuntu
-	$DEBOOTSTRAP --verbose --include=module-init-tools,udev --arch i386 dapper ${VPSGLOBPATH}/${VPSNUM} http://archive.ubuntu.com/ubuntu || debret=$?
-	if [ "$debret" != "" ]; then
-		echo "Failed to install $DISTRO via bootstrap!!"
-		exit $debret
-	fi
-elif [ "$DISTRO" = "gentoo" ]; then
-	GENTOO_STAGE3_ARCHIVE="stage3-i686-2006.1.tar.bz2"
-	GENTOO_STAGE3_BASEURL="http://gentoo.osuosl.org/releases/x86/2006.1/stages/"
-	# detect if it requires an amd64 distro
-	if [ "$DEBIAN_BINARCH" = "amd64" ]; then
-		GENTOO_STAGE3_ARCHIVE="stage3-amd64-2006.1.tar.bz2"
-		GENTOO_STAGE3_BASEURL="http://gentoo.osuosl.org/releases/amd64/2006.1/stages/"
-	fi
-
-	if [ ! -e /usr/src/gentoo/$GENTOO_STAGE3_ARCHIVE ]; then
-		echo "Please download the gentoo stage3 from $GENTOO_STAGE3_BASEURL$GENTOO_STAGE3_ARCHIVE"
-		echo "Or another gentoo mirror"
-		if [ -e /usr/src/gentoo/stage3-x86-2006.0.tar.bz2 ]; then
-			# if we find an old archive here, use this as a fall back
-			GENTOO_STAGE3_ARCHIVE=stage3-x86-2006.0.tar.bz2
-		else
-			exit 1
-		fi
-	fi
-	tar -xjpf /usr/src/gentoo/$GENTOO_STAGE3_ARCHIVE -C ${VPSGLOBPATH}/${VPSNUM}
-	# grab the latest portage
-	OLDDIR=`pwd`
-	cd /usr/src/gentoo
-	wget -N http://gentoo.osuosl.org/snapshots/portage-latest.tar.bz2.md5sum
-	wget -N http://gentoo.osuosl.org/snapshots/portage-latest.tar.bz2
-	md5sum -c portage-latest.tar.bz2.md5sum
-	tar -xjpf portage-latest.tar.bz2 -C ${VPSGLOBPATH}/${VPSNUM}/usr/
-	cd ${OLDDIR}
-	# need to reset the root password
-	sed -e 's/root:\*:/root::/' ${VPSGLOBPATH}/${VPSNUM}/etc/shadow > ${VPSGLOBPATH}/${VPSNUM}/etc/shadow.tmp
-	mv ${VPSGLOBPATH}/${VPSNUM}/etc/shadow.tmp ${VPSGLOBPATH}/${VPSNUM}/etc/shadow
-elif [ "$DISTRO" = "slackware" ]; then
-	JAILTIME_IMAGE="slackware.11-0.20061220.img.tar.bz2"
-	# create our slackware directory if it doesn't exist
-	if [ ! -e /usr/src/slackware ]; then
-		$MKDIR -p /usr/src/slackware
-	fi
-	# download the image if it doesn't exist yet
-	if [ ! -e /usr/src/slackware/$JAILTIME_IMAGE ]; then
-		OLDDIR=`pwd`
-		cd /usr/src/slackware
-		wget -N "http://www.jailtime.org/lib/exe/fetch.php?cache=cache&media=download%3Aslackware%3Aslackware.11-0.20061220.img.tar.bz2"
-		cd ${OLDDIR}
-	fi
-	# if the internal image isn't present, extract it
-	if [ ! -e /usr/src/slackware/slackware.11-0.img ]; then
-		tar -xjpf "/usr/src/slackware/$JAILTIME_IMAGE" -C /usr/src/slackware/
-	fi
-	# if the mnt point doesn't exist, create it
-	if [ ! -e /usr/src/slackware/mnt ]; then
-		$MKDIR -p /usr/src/slackware/mnt
-	fi
-	umount /usr/src/slackware/mnt || true
-	mount -o loop /usr/src/slackware/slackware.11-0.img /usr/src/slackware/mnt
-	cp -ax /usr/src/slackware/mnt/* ${VPSGLOBPATH}/${VPSNUM}/
-	umount /usr/src/slackware/mnt || true
-	# reset root password back to empty
-	sed -i 's/root:[^:]*:/root::/' ${VPSGLOBPATH}/${VPSNUM}/etc/shadow
 else
-	echo "Currently, you will have to manually install your distro... sorry :)"
-	echo "The filesystem is mounted on ${VPSGLOBPATH}/${VPSNUM}"
-	echo "Remember to unmount (umount ${VPSGLOBPATH}/${VPSNUM}) before booting the OS"
-	echo "Cheers!"
-	exit
+	if [ -x /usr/share/dtc-xen-os/${DISTRO}/install_os ] ; then
+		/usr/share/dtc-xen-os/${DISTRO}/install_os ${VPSGLOBPATH} ${VPSNUM}
+	else
+		echo "Currently, you will have to manually install your distro... sorry :)"
+		echo "The filesystem is mounted on ${VPSGLOBPATH}/${VPSNUM}"
+		echo "Remember to unmount (umount ${VPSGLOBPATH}/${VPSNUM}) before booting the OS"
+		echo "Cheers!"
+		exit
+	fi
 fi
-if [ "$DISTRO" = "netbsd" -o "$DISTRO" = "xenpv" ] ; then
-	echo "Nothing to do: it's BSD or xenpv"
-else
-	echo "Customizing vps..."
-	ETC=${VPSGLOBPATH}/${VPSNUM}/etc
-	echo "/dev/sda1       /       ext3    errors=remount-ro       0       0
-proc            /proc   proc    defaults                0       0
-/dev/sda2       none    swap    sw                      0       0
-" >${ETC}/fstab
 
-	# We set the default needed by DTC as hostname, so DTC can be setup quite fast
-	echo "mx.${VPSHOSTNAME}.${NODE_DOMAIN_NAME}" >${ETC}/hostname
-	echo "127.0.0.1	localhost.localdomain	localhost
-${IPADDR}	mx.${VPSHOSTNAME}.${NODE_DOMAIN_NAME} dtc.${VPSHOSTNAME}.${NODE_DOMAIN_NAME} ${VPSHOSTNAME}.${NODE_DOMAIN_NAME} ${VPSHOSTNAME}
+########################
+### OS CUSTOMIZATION ###
+########################
 
-# The following lines are desirable for IPv6 capable hosts
-::1	ip6-localhost ip6-loopback
-fe00::0	ip6-localnet
-ff00::0	ip6-mcastprefix
-ff02::1	ip6-allnodes
-ff02::2	ip6-allrouters
-ff02::3	ip6-allhosts
-" >${ETC}/hosts
-	# Under Debian /etc/motd is a symlink to /var/run/motd, so we need to take care of this fact.
+echo "Customizing vps fstab, hosts, hostname, and capability module loading..."
+if [ "$DISTRO" = "debian" -o "$DISTRO" = "centos" ] ; then
+	/usr/sbin/dtc-xen_domUconf_standard ${VPSGLOBPATH}/${VPSNUM} ${VPSHOSTNAME} ${NODE_DOMAIN_NAME} ${KERNELNAME}
 	if [ "$DISTRO" = "debian" ] ; then
 		sed "s/VPS_HOSTNAME/${VPSHOSTNAME}/" /etc/dtc-xen/motd >${VPSGLOBPATH}/${VPSNUM}/etc/motd.tail
-	else
-		sed "s/VPS_HOSTNAME/${VPSHOSTNAME}/" /etc/dtc-xen/motd >${VPSGLOBPATH}/${VPSNUM}/etc/motd
 	fi
-	sed "s/VPS_HOSTNAME/${VPSHOSTNAME}/" /etc/dtc-xen/bashrc >${VPSGLOBPATH}/${VPSNUM}/root/.bashrc
-
-	echo "#!/bin/bash
-
-MODPROBE=/sbin/modprobe
-case \"\$1\" in
-	start)
-		echo \"Adding linux default capabilities module\"
-		\$MODPROBE capability
-		echo \"done!\"
-		;;
-	stop)
-		;;
-	restart)
-		\$0 start
-		;;
-	reload|force-reload)
-		;;
-	*)
-		echo \"Usage: /etc/init.d/capabilities {start|stop|restart|reload}\"
-		exit 1
-esac
-exit 0
-
- " >${ETC}/init.d/capabilities
-	chmod +x ${ETC}/init.d/capabilities
-	# Gentoo runlevels are a bit different, this has to be fixed!
-	if [ "$DISTRO" = "gentoo" ] ; then
-		echo "FIX ME! Gentoo runlevel needs capabilities script!"
-	else
-		ln -s ../init.d/capabilities ${ETC}/rc0.d/K19capabilities
-		ln -s ../init.d/capabilities ${ETC}/rc1.d/K19capabilities
-		ln -s ../init.d/capabilities ${ETC}/rc6.d/K19capabilities
-		ln -s ../init.d/capabilities ${ETC}/rc2.d/S19capabilities
-		ln -s ../init.d/capabilities ${ETC}/rc3.d/S19capabilities
-		ln -s ../init.d/capabilities ${ETC}/rc4.d/S19capabilities
-		ln -s ../init.d/capabilities ${ETC}/rc5.d/S19capabilities
+else
+	if [ -x /usr/share/dtc-xen-os/${DISTRO}/custom_os ] ; then
+		/usr/share/dtc-xen-os/${DISTRO}/custom_os
 	fi
-
-	# This will reduce swappiness and makes the overall VPS server faster. Increase
-	# slowness when swapping, which is after all, not a bad thing so customers notice it swaps.
-	echo "sys.vm.swappiness=10" >> /etc/sysctl.conf
 fi
+
+####################################
+### NETWORK CONFIG CUSTOMIZATION ###
+####################################
 
 # handle the network setup
 if [ "$DISTRO" = "netbsd" -o "$DISTRO" = "xenpv" ] ; then
 	echo "Nothing to do: it's BSD or xenpv!"
 elif [ "$DISTRO" = "centos" -o "$DISTRO" = "centos42" ] ; then
-	# Configure the eth0
-	echo "DEVICE=eth0
-BOOTPROTO=static
-BROADCAST=${BROADCAST}
-IPADDR=${IPADDR}
-NETMASK=${NETMASK}
-NETWORK=${NETWORK}
-ONBOOT=yes
-" >${ETC}/sysconfig/network-scripts/ifcfg-eth0
-	# Set the gateway file
-	echo "NETWORKING=yes
-HOSTNAME=xen${NODE_NUM}${VPSNUM}
-GATEWAY=${GATEWAY}
-" >${ETC}/sysconfig/network
-	# Set the resolv.conf
-	cp /etc/resolv.conf ${ETC}/resolv.conf
-elif [ "$DISTRO" = "gentoo" ] ; then
-	cp -L /etc/resolv.conf ${ETC}/resolv.conf	
-	echo "config_eth0=( \"${IPADDR} netmask ${NETMASK} broadcast ${BROADCAST}\" )
-routes_eth0=(
-       \"default via ${GATEWAY}\"
-)
-" > ${ETC}/conf.d/net
-
-chroot ${VPSGLOBPATH}/${VPSNUM} rc-update add net.eth0 default
-
+	/usr/sbin/dtc-xen_domUconf_network_redhat ${VPSGLOBPATH}/${VPSNUM} ${IPADDR} ${NETMASK} ${NETWORK} ${BROADCAST} ${GATEWAY}
 elif [ "$DISTRO" = "debian" ] ; then
-		cp /etc/apt/sources.list ${VPSGLOBPATH}/${VPSNUM}/etc/apt
-		echo "auto lo
-iface lo inet loopback
+	/usr/sbin/dtc-xen_domUconf_network_debian ${VPSGLOBPATH}/${VPSNUM} ${IPADDR} ${NETMASK} ${NETWORK} ${BROADCAST} ${GATEWAY}
 
-auto eth0
-iface eth0 inet static
-	address ${IPADDR}
-	netmask ${NETMASK}
-	network ${NETWORK}
-	broadcast ${BROADCAST}
-	gateway ${GATEWAY}
-" >${ETC}/network/interfaces
-elif [ "$DISTRO" = "ubuntu_dapper" ] ; then
-	echo "deb http://archive.ubuntu.com/ubuntu/ dapper main restricted
-deb-src http://archive.ubuntu.com/ubuntu/ dapper main restricted
-		
-deb http://archive.ubuntu.com/ubuntu/ dapper-updates main restricted
-deb-src http://archive.ubuntu.com/ubuntu/ dapper-updates main restricted
-" >${VPSGLOBPATH}/${VPSNUM}/etc/apt/sources.list
-		echo "auto lo
-iface lo inet loopback
-
-auto eth0
-iface eth0 inet static
-	address ${IPADDR}
-	netmask ${NETMASK}
-	network ${NETWORK}
-	broadcast ${BROADCAST}
-	gateway ${GATEWAY}
-" >${ETC}/network/interfaces
-elif [ "$DISTRO" = "slackware" ]; then
-	echo "Customizing slackware image..."
-
-cat <<EOF> ${ETC}/rc.d/rc.inet1.conf
-# /etc/rc.d/rc.inet1.conf
-#
-# This file contains the configuration settings for network interfaces.
-# If USE_DHCP[interface] is set to "yes", this overrides any other settings.
-# If you don't have an interface, leave the settings null ("").
-
-# Config information for eth0:
-IPADDR[0]="${IPADDR}"
-NETMASK[0]="${NETMASK}"
-USE_DHCP[0]="no"
-DHCP_HOSTNAME[0]=""
-
-# Default gateway IP address:
-GATEWAY="${GATEWAY}"
-
-# Change this to "yes" for debugging output to stdout.  Unfortunately,
-# /sbin/hotplug seems to disable stdout so you'll only see debugging output
-# when rc.inet1 is called directly.
-DEBUG_ETH_UP="no"
-cp -L /etc/resolv.conf ${ETC}/resolv.conf
-
-EOF
-
+	cp /etc/apt/sources.list ${VPSGLOBPATH}/${VPSNUM}/etc/apt
 else
-	echo "Not implemented for other distros yet"
-	exit 1
+	if [ -x /usr/share/dtc-xen-os/${DISTRO}/setup_network ] ; then
+		/usr/share/dtc-xen-os/${DISTRO}/setup_network ${VPSGLOBPATH}/${VPSNUM} ${IPADDR} ${NETMASK} ${NETWORK} ${BROADCAST} ${GATEWAY}
+	else
+		echo "Not implemented for other distros yet"
+		exit 1
+	fi
 fi
+
+#################################
+### XEN STARTUP FILE CREATION ###
+#################################
 
 if [ "$DISTRO" = "xenpv" ] ; then
 	echo -n "kernel = \"/usr/lib/xen/boot/hvmloader\"
@@ -556,54 +389,9 @@ if [ ! -e /etc/xen/auto/${VPSNAME} ] ; then
 	ln -s ../${VPSNAME} /etc/xen/auto/${VPSNAME}
 fi
 
-if [ "$DISTRO" = "netbsd" -o "$DISTRO" = "xenpv" ] ; then
-	echo "Not coping modules: it's BSD or xenpv!"
-else
-
-	# we need to do MAKEDEV for all linux distroes
-	# Make all the generic devices (inclusive of sda1 and sda2)
-	mkdir -p ${VPSGLOBPATH}/${VPSNUM}/dev/
-	echo "Making VPS devices with MAKEDEV generic"
-	OLDPWDDIR=`pwd`
-	cd ${VPSGLOBPATH}/${VPSNUM}/dev/
-	/sbin/MAKEDEV generic
-	cd ${OLDPWDDIR}
-	if [ -d "${VPSGLOBPATH}/${VPSNUM}/lib/tls" ] ; then
-		echo "Disabling lib/tls"
-		mv "${VPSGLOBPATH}/${VPSNUM}/lib/tls" "${VPSGLOBPATH}/${VPSNUM}/lib/tls.disabled"
-	fi
-	# create the /lib/modules if it doesn't exist
-	echo "Copying modules..."
-	if [ ! -e ${VPSGLOBPATH}/${VPSNUM}/lib/modules ]; then 
-		$MKDIR -p ${VPSGLOBPATH}/${VPSNUM}/lib/modules
-	fi
-	cp -auxf /lib/modules/${KERNELNAME} ${VPSGLOBPATH}/${VPSNUM}/lib/modules
-	cp -L ${KERNELPATH} ${VPSGLOBPATH}/${VPSNUM}/boot
-	cp -L /boot/System.map-${KERNELNAME} ${VPSGLOBPATH}/${VPSNUM}/boot
-	# symlink the System.map and kernel
-	ln -s /boot/System.map-${KERNELNAME} ${VPSGLOBPATH}/${VPSNUM}/boot/System.map
-	ln -s /boot/vmlinuz-${KERNELNAME} ${VPSGLOBPATH}/${VPSNUM}/boot/vmlinuz
-	# regen the module dependancies within the chroot (just in case)
-	chroot ${VPSGLOBPATH}/${VPSNUM} /sbin/depmod -a ${KERNELNAME}
-
-	# Copy an eventual /etc/dtc-xen/authorized_keys2 file
-	if [ -f /etc/dtc-xen/authorized_keys2 ] ; then
-		if [ ! -d "${VPSGLOBPATH}/${VPSNUM}/root/.ssh" ] ; then
-			mkdir -p "${VPSGLOBPATH}/${VPSNUM}/root/.ssh"
-			chmod 700 "${VPSGLOBPATH}/${VPSNUM}/root/.ssh"
-		fi
-		if [ -d "${VPSGLOBPATH}/${VPSNUM}/root/.ssh" -a ! -e "${VPSGLOBPATH}/${VPSNUM}/root/.ssh/authorized_keys2" ] ; then
-			cp /etc/dtc-xen/authorized_keys2 "${VPSGLOBPATH}/${VPSNUM}/root/.ssh/authorized_keys2"
-			chmod 600 "${VPSGLOBPATH}/${VPSNUM}/root/.ssh/authorized_keys2"
-		fi
-	fi
-	# Ask the VPS not to swap too much. This at east works with Debian.
-	if [ -e "${VPSGLOBPATH}/${VPSNUM}/etc/sysctl.conf" ] ; then
-		if ! grep "vm.swapiness" "${VPSGLOBPATH}/${VPSNUM}/etc/sysctl.conf" 2>&1 >/dev/null ; then
-			echo "vm.swappiness=10" >>"${VPSGLOBPATH}/${VPSNUM}/etc/sysctl.conf"
-		fi
-	fi
-fi
+########################
+### SOME LAST THINGS ###
+########################
 
 # need to install 2.6 compat stuff for centos3
 if [ "$DISTRO" = "centos" -a "$CENTOS_RELEASE" = "centos3" ]; then
@@ -619,6 +407,10 @@ fi
 if [ "$DISTRO" = "centos" ] ; then
 	chroot ${VPSGLOBPATH}/${VPSNUM} usermod -p "" root
 fi
+
+#######################
+### UMOUNT AND EXIT ###
+#######################
 
 echo "Unmounting proc and filesystem root..."
 $UMOUNT ${VPSGLOBPATH}/${VPSNUM}/proc 2> /dev/null || /bin/true

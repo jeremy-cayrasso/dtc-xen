@@ -1,0 +1,84 @@
+#!/bin/sh
+
+VPS_PATH=${1}
+VPSHOSTNAME=${2}
+NODE_DOMAIN_NAME=${3}
+KERNELNAME=${4}
+
+KERNELPATH="/boot/vmlinuz-${KERNELNAME}"
+ETC=${VPS_PATH}/etc
+
+# Setup the fstab
+echo "/dev/sda1	/	ext3	errors=remount-ro	0 0
+proc		/proc	proc	defaults		0 0
+/dev/sda2	none	swap	sw			0 0
+" >${ETC}/fstab
+
+# Setup hostname and hosts
+echo "mx.${VPSHOSTNAME}.${NODE_DOMAIN_NAME}" >${ETC}/hostname
+echo "127.0.0.1	localhost.localdomain localhost
+${IPADDR} mx.${VPSHOSTNAME}.${NODE_DOMAIN_NAME} dtc.${VPSHOSTNAME}.${NODE_DOMAIN_NAME} ${VPSHOSTNAME}.${NODE_DOMAIN_NAME} ${VPSHOSTNAME}
+
+# The following lines are desirable for IPv6 capable hosts
+::1     ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+ff02::3 ip6-allhosts
+" >${ETC}/hosts
+
+# Setup the automatic load of the capability module
+cp /etc/dtc-xen/capabilities ${ETC}/init.d/capabilities
+chmod +x ${ETC}/init.d/capabilities
+
+if [ -d ${ETC}/rc0.d ] ; then
+	ln -s ../init.d/capabilities ${ETC}/rc0.d/K19capabilities
+	ln -s ../init.d/capabilities ${ETC}/rc1.d/K19capabilities
+	ln -s ../init.d/capabilities ${ETC}/rc6.d/K19capabilities
+	ln -s ../init.d/capabilities ${ETC}/rc2.d/S19capabilities
+	ln -s ../init.d/capabilities ${ETC}/rc3.d/S19capabilities
+	ln -s ../init.d/capabilities ${ETC}/rc4.d/S19capabilities
+	ln -s ../init.d/capabilities ${ETC}/rc5.d/S19capabilities
+fi
+
+# Setup the devices
+mkdir -p ${VPS_PATH}/dev/
+echo "Making VPS devices with MAKEDEV generic"
+OLDPWDDIR=`pwd`
+cd ${VPS_PATH}/dev
+/sbin/MAKEDEV generic
+cd ${OLDPWDDIR}
+
+if [ -d "${VPS_PATH}lib/tls" ] ; then
+	echo "Disabling lib/tls"
+	mv ${VPS_PATH}/lib/tls ${VPS_PATH}/lib/tls.disabled
+fi
+
+# Setup the kernel
+echo "Copying modules..."
+if [ ! -e ${VPS_PATH}/lib/modules ]; then
+	$MKDIR -p ${VPS_PATH}/lib/modules
+fi
+cp -auxf /lib/modules/${KERNELNAME} ${VPS_PATH}/lib/modules
+cp -L ${KERNELPATH} ${VPS_PATH}/boot
+cp -L /boot/System.map-${KERNELNAME} ${VPS_PATH}/boot
+ln -s /boot/System.map-${KERNELNAME} ${VPS_PATH}/boot/System.map
+ln -s /boot/vmlinuz-${KERNELNAME} ${VPS_PATH}/boot/vmlinuz
+chroot ${VPS_PATH} /sbin/depmod -a ${KERNELNAME}
+
+# Copy an eventual /etc/dtc-xen/authorized_keys2 file
+if [ -f /etc/dtc-xen/authorized_keys2 ] ; then
+	if [ ! -d "${VPS_PATH}/root/.ssh" ] ; then
+		mkdir -p "${VPS_PATH}/root/.ssh"
+		chmod 700 "${VPS_PATH}/root/.ssh"
+	fi
+	if [ -d "${VPS_PATH}/root/.ssh" -a ! -e "${VPS_PATH}/root/.ssh/authorized_keys2" ] ; then
+		cp /etc/dtc-xen/authorized_keys2 "${VPS_PATH}/root/.ssh/authorized_keys2"
+		chmod 600 "${VPS_PATH}/root/.ssh/authorized_keys2"
+	fi
+fi
+
+sed "s/VPS_HOSTNAME/${VPSHOSTNAME}/" /etc/dtc-xen/bashrc >${VPSPATH}/root/.bashrc
+
+exit 0

@@ -1,0 +1,26 @@
+#!/bin/sh
+
+VPS_PATH=${1}
+IPADDR=$2
+NETMASK=$3
+NETWORK=$4
+BROADCAST=$5
+GATEWAY=$6
+
+ETC=${VPS_PATH}/etc
+
+# Configure the eth0
+echo "auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet static
+	address ${IPADDR}
+	netmask ${NETMASK}
+	network ${NETWORK}
+	broadcast ${BROADCAST}
+	gateway ${GATEWAY}
+" >${ETC}/network/interfaces
+
+# Set the resolv.conf
+cp /etc/resolv.conf ${ETC}/resolv.conf

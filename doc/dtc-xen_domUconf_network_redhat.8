@@ -1,0 +1,32 @@
+.TH dtc-xen_domUconf_network_redhat 8
+.SH NAME
+dtc-xen_domUconf_network_redhat \- configure a redhat VPS for using network
+.SH SYNOPSIS
+
+VPS_PATH=${1}
+IPADDR=$2
+NETMASK=$3
+NETWORK=$4
+BROADCAST=$5
+GATEWAY=$6
+
+.B dtc-xen_domUconf_network_redhat
+.I VPS_PATH
+.I IP_ADDR
+.I NETMASK
+.I NETWORK
+.I BROADCAST
+.I GATEWAY
+
+.SH DESCRIPTION
+.B dtc-xen_domUconf_network_redhat
+This shell script is a part of the dtc-xen package that is to be used by the
+dtc panel to manage a Xen VPS server.
+
+When doing it's VPS install, dtc_reinstall_os will call a script to do the setup
+of the network. dtc-xen_domUconf_network_redhat does the job when the VPS type
+is RedHat (that is: works also for CentOS and Fedora core based VPS).
+
+See
+.B http://www.gplhost.com/software-dtc-xen.html
+for updates.

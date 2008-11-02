@@ -1,0 +1,29 @@
+#!/bin/sh
+
+VPS_PATH=${1}
+IPADDR=$2
+NETMASK=$3
+NETWORK=$4
+BROADCAST=$5
+GATEWAY=$6
+
+ETC=${VPS_PATH}/etc
+
+# Configure the eth0
+echo "DEVICE=eth0
+BOOTPROTO=static
+BROADCAST=${BROADCAST}
+IPADDR=${IPADDR}
+NETMASK=${NETMASK}
+NETWORK=${NETWORK}
+ONBOOT=yes
+" >${ETC}/sysconfig/network-scripts/ifcfg-eth0
+
+# Set the gateway file
+echo "NETWORKING=yes
+HOSTNAME=xen${NODE_NUM}${VPSNUM}
+GATEWAY=${GATEWAY}
+" >${ETC}/sysconfig/network
+
+# Set the resolv.conf
+cp /etc/resolv.conf ${ETC}/resolv.conf
