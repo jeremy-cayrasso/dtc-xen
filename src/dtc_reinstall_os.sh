@@ -272,7 +272,7 @@ fi
 ### OS CUSTOMIZATION ###
 ########################
 
-echo "Customizing vps fstab, hosts, hostname, and capability module loading..."
+echo "Customizing vps fstab, hosts, hostname, and capability kernel module..."
 if [ "$DISTRO" = "debian" -o "$DISTRO" = "centos" ] ; then
 	/usr/sbin/dtc-xen_domUconf_standard ${VPSGLOBPATH}/${VPSNUM} ${VPSHOSTNAME} ${NODE_DOMAIN_NAME} ${KERNELNAME}
 	if [ "$DISTRO" = "debian" ] ; then
@@ -280,7 +280,7 @@ if [ "$DISTRO" = "debian" -o "$DISTRO" = "centos" ] ; then
 	fi
 else
 	if [ -x /usr/share/dtc-xen-os/${DISTRO}/custom_os ] ; then
-		/usr/share/dtc-xen-os/${DISTRO}/custom_os
+		/usr/share/dtc-xen-os/${DISTRO}/custom_os ${VPSGLOBPATH}/${VPSNUM} ${VPSHOSTNAME} ${NODE_DOMAIN_NAME} ${KERNELNAME}
 	fi
 fi
 
