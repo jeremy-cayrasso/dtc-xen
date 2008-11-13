@@ -284,7 +284,7 @@ def reportInstalledIso(vpsname):
 		return files
 
 # Take care! This time, the vpsname has to be only the number (eg XX and not xenXX)
-def reinstallVPSos(vpsname,ostype,hddsize,ramsize,ipaddr,imagetype='lvm'):
+def reinstallVPSos(vpsname,ostype,hddsize,ramsize,ipaddr,password,imagetype='lvm'):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
 		logging.info("Reinstalling %s on VPS %s",ostype,vpsname)  #maybe these should be notices if notices are below info severity
@@ -302,7 +302,7 @@ def reinstallVPSos(vpsname,ostype,hddsize,ramsize,ipaddr,imagetype='lvm'):
 		# that way everything goes into /var/log/dtc-soap-server.log
 		# brilliant? you be the judge
 		args = ["/usr/sbin/dtc_reinstall_os", "-v", vpsname, hddsize,
-			ramsize, "%s" % ipaddr, ostype, imagetype]
+			ramsize, "%s" % ipaddr, password, ostype, imagetype]
 			
 		logging.debug("Running %s in subprocess",args)
 		if subprocess:

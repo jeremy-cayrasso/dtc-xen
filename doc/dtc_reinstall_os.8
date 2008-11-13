@@ -10,6 +10,7 @@ dtc_reinstall_os \- reinstall an operating system in a VM
 .I HDD_SIZE
 .I MEMORY_SIZE
 .I IP_ADDRESS
+.I PASSWORD
 [
 .I DISTRO
 ]
@@ -44,6 +45,10 @@ and thus you might want to use single quotes like this: '1.2.3.4 1.2.3.5'. Note
 that only the first IP will be set in the VM's configuration, but the list will
 be set in the Xen startup file so you can use the anti-spoofing facilities of
 Xen if you need it (with untrusted users / unknown customers for example).
+
+.B PASSWORD
+is the root password you wish to have setup inside the VPS. Not all operating
+system setup will suport it, but it's still a mandatory parameter.
 
 .B [ DISTRO ]
 is an optional parameter that can be debian, centos, gentoo or netbsd.

@@ -7,10 +7,10 @@ set -e # DIE on errors
 #########################
 
 if [ $# -lt 5 ]; then 
-	echo "Usage: $0 [ OPTIONS ] <xen id> <hdd size MB> <ram size MB> <ip address(es)> <operating-system> [ lvm | vbd ]"> /dev/stderr
+	echo "Usage: $0 [ OPTIONS ] <xen id> <hdd size MB> <ram size MB> <ip address(es)> <password-to-setup> <operating-system> [ lvm | vbd ]"> /dev/stderr
 	echo "-------------------------------------------------------------------------" > /dev/stderr
 	echo "<operating-system> can be one of the follwing:" > /dev/stderr
-	echo "debian, ubuntu_dapper, centos, gentoo, slackware, xenpv, manual" > /dev/stderr
+	echo "debian, debian-dtc, ubuntu_dapper, centos, gentoo, slackware, xenpv, manual" > /dev/stderr
 	echo "-------------------------------------------------------------------------" > /dev/stderr
 	echo "Options can be in any order and are:" > /dev/stderr
 	echo "                       [ -v ] : Do a more verboze install" > /dev/stderr
@@ -96,8 +96,9 @@ VPSHOSTNAME=xen${NODE_NUM}${VPSNUM}
 VPSHDD=$2
 VPSMEM=$3
 ALL_IPADDRS=$4
-DISTRO=$5
-IMAGE_TYPE=$6
+PASSWORD=$5
+DISTRO=$6
+IMAGE_TYPE=$7
 
 # Configure the first IP only (the user can setup the others)
 IPADDR=`echo ${ALL_IPADDRS} | cut -d' ' -f1`
@@ -249,7 +250,7 @@ if [ "$DISTRO" = "xenpv" -o "$DISTRO" = "netbsd" ] ; then
 	echo "There's nothing to bootstrap, as you will use the provided distribution installer in this case."
 elif [ "$DISTRO" = "centos" ] ; then
 	/usr/sbin/dtc_install_centos /var/lib/dtc-xen/yum "$VPSGLOBPATH/$VPSNUM"
-elif [ "$DISTRO" = "debian" ] ; then
+elif [ "$DISTRO" = "debian" -o "$DISTRO" = "debian-dtc" ] ; then
 	echo $DEBOOTSTRAP --verbose --include=module-init-tools,locales --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
 	$DEBOOTSTRAP --verbose --include=module-init-tools,locales --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS} || debret=$?
 	if [ "$debret" != "" ]; then
@@ -273,9 +274,9 @@ fi
 ########################
 
 echo "Customizing vps fstab, hosts, hostname, and capability kernel module..."
-if [ "$DISTRO" = "debian" -o "$DISTRO" = "centos" ] ; then
+if [ "$DISTRO" = "debian" -o "$DISTRO" = "debian-dtc" -o "$DISTRO" = "centos" ] ; then
 	/usr/sbin/dtc-xen_domUconf_standard ${VPSGLOBPATH}/${VPSNUM} ${VPSHOSTNAME} ${NODE_DOMAIN_NAME} ${KERNELNAME} ${IPADDR}
-	if [ "$DISTRO" = "debian" ] ; then
+	if [ "$DISTRO" = "debian" -o "$DISTRO" = "debian-dtc" ] ; then
 		sed "s/VPS_HOSTNAME/${VPSHOSTNAME}/" /etc/dtc-xen/motd >${VPSGLOBPATH}/${VPSNUM}/etc/motd.tail
 	fi
 else
@@ -293,7 +294,7 @@ if [ "$DISTRO" = "netbsd" -o "$DISTRO" = "xenpv" ] ; then
 	echo "Nothing to do: it's BSD or xenpv!"
 elif [ "$DISTRO" = "centos" -o "$DISTRO" = "centos42" ] ; then
 	/usr/sbin/dtc-xen_domUconf_network_redhat ${VPSGLOBPATH}/${VPSNUM} ${IPADDR} ${NETMASK} ${NETWORK} ${BROADCAST} ${GATEWAY}
-elif [ "$DISTRO" = "debian" ] ; then
+elif [ "$DISTRO" = "debian" -o "$DISTRO" = "debian-dtc" ] ; then
 	/usr/sbin/dtc-xen_domUconf_network_debian ${VPSGLOBPATH}/${VPSNUM} ${IPADDR} ${NETMASK} ${NETWORK} ${BROADCAST} ${GATEWAY}
 
 	cp /etc/apt/sources.list ${VPSGLOBPATH}/${VPSNUM}/etc/apt
@@ -406,6 +407,20 @@ fi
 # WARNING: for some reason CentOS is not using shadow passwords
 if [ "$DISTRO" = "centos" ] ; then
 	chroot ${VPSGLOBPATH}/${VPSNUM} usermod -p "" root
+fi
+
+if [ "$DISTRO" = "debian-dtc" ] ; then
+	cp /usr/share/dtc-xen/dtc-panel_autodeploy.sh ${VPSGLOBPATH}/${VPSNUM}/root/dtc-panel_autodeploy
+	chmod +x ${VPSGLOBPATH}/${VPSNUM}/root/dtc-panel_autodeploy
+	cp /usr/share/dtc-xen/selection_config_file ${VPSGLOBPATH}/${VPSNUM}/root
+	mv ${VPSGLOBPATH}/${VPSNUM}/etc/rc.local ${VPSGLOBPATH}/${VPSNUM}/etc/rc.local.DTCtempbackup
+	echo "#!/bin/sh
+
+cd /root
+dtc-panel_autodeploy ${PASSWORD}
+
+mv /etc/rc.local.DTCtempbackup /etc/rc.local
+" >${VPSGLOBPATH}/${VPSNUM}/etc/rc.local
 fi
 
 #######################
