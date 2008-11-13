@@ -124,4 +124,4 @@ EOF
 # unleash yum
 
 export LANG=C
-exec yum -c "$YUMENVIRON/yum.conf" -y install basesystem centos-release yum wget which yum-basearchonly nano rsyslog
+exec yum -c "$YUMENVIRON/yum.conf" -y install basesystem centos-release yum wget which yum-basearchonly nano rsyslog passwd
