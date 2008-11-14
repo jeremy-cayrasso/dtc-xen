@@ -413,14 +413,15 @@ if [ "$DISTRO" = "debian-dtc" ] ; then
 	cp /usr/share/dtc-xen/dtc-panel_autodeploy.sh ${VPSGLOBPATH}/${VPSNUM}/root/dtc-panel_autodeploy
 	chmod +x ${VPSGLOBPATH}/${VPSNUM}/root/dtc-panel_autodeploy
 	cp /usr/share/dtc-xen/selection_config_file ${VPSGLOBPATH}/${VPSNUM}/root
-	mv ${VPSGLOBPATH}/${VPSNUM}/etc/rc.local ${VPSGLOBPATH}/${VPSNUM}/etc/rc.local.DTCtempbackup
 	echo "#!/bin/sh
 
 cd /root
 dtc-panel_autodeploy ${PASSWORD}
 
-mv /etc/rc.local.DTCtempbackup /etc/rc.local
-" >${VPSGLOBPATH}/${VPSNUM}/etc/rc.local
+rm /etc/rc4.d/S99dtc-panel_autodeploy
+" >${VPSGLOBPATH}/${VPSNUM}/etc/init.d/dtc-panel_autodeploy
+	chmod +x ${VPSGLOBPATH}/${VPSNUM}/etc/init.d/dtc-panel_autodeploy
+	ln -s ${VPSGLOBPATH}/${VPSNUM}/etc/rc4.d/S99dtc-panel_autodeploy
 fi
 
 #######################
