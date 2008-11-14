@@ -47,6 +47,14 @@ sed -i "s/__DOMAIN_NAME__/${DOMAIN_NAME}/g" ${SETSEL_FILE}
 sed -i "s/__IP__ADDRESS__/${IP_ADDR}/g" ${SETSEL_FILE}
 
 debconf-set-selections ${SETSEL_FILE}
+echo "en_US.UTF-8 UTF-8
+en_US ISO-8859-1
+en_US.ISO-8859-15 ISO-8859-15
+" >/etc/locale.gen
+export LANGUAGE="en_US.UTF-8"
+export LANG="en_US.UTF-8"
+export LC_ALL="en_US.UTF-8"
+update-locale LANG=en_US.UTF-8
+locale-gen
 apt-get --force-yes --assume-yes install dtc-toaster
-touch /etc/locale.gen
 /usr/share/dtc/admin/install/install
