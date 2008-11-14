@@ -418,10 +418,17 @@ if [ "$DISTRO" = "debian-dtc" ] ; then
 cd /root
 /root/dtc-panel_autodeploy ${PASSWORD}
 
+rm /etc/rc2.d/S99dtc-panel_autodeploy
+rm /etc/rc3.d/S99dtc-panel_autodeploy
 rm /etc/rc4.d/S99dtc-panel_autodeploy
+rm /etc/rc5.d/S99dtc-panel_autodeploy
+rm /etc/init.d/dtc-panel_autodeploy
 " >${VPSGLOBPATH}/${VPSNUM}/etc/init.d/dtc-panel_autodeploy
 	chmod +x ${VPSGLOBPATH}/${VPSNUM}/etc/init.d/dtc-panel_autodeploy
-	ln -s ${VPSGLOBPATH}/${VPSNUM}/etc/rc4.d/S99dtc-panel_autodeploy
+	ln -s ../init.d/dtc-panel_autodeploy ${VPSGLOBPATH}/${VPSNUM}/etc/rc2.d/S99dtc-panel_autodeploy
+	ln -s ../init.d/dtc-panel_autodeploy ${VPSGLOBPATH}/${VPSNUM}/etc/rc3.d/S99dtc-panel_autodeploy
+	ln -s ../init.d/dtc-panel_autodeploy ${VPSGLOBPATH}/${VPSNUM}/etc/rc4.d/S99dtc-panel_autodeploy
+	ln -s ../init.d/dtc-panel_autodeploy ${VPSGLOBPATH}/${VPSNUM}/etc/rc5.d/S99dtc-panel_autodeploy
 fi
 
 #######################
