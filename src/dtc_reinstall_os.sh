@@ -251,8 +251,13 @@ if [ "$DISTRO" = "xenpv" -o "$DISTRO" = "netbsd" ] ; then
 elif [ "$DISTRO" = "centos" ] ; then
 	/usr/sbin/dtc_install_centos /var/lib/dtc-xen/yum "$VPSGLOBPATH/$VPSNUM"
 elif [ "$DISTRO" = "debian" -o "$DISTRO" = "debian-dtc" ] ; then
-	echo $DEBOOTSTRAP --verbose --include=module-init-tools,locales --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
-	$DEBOOTSTRAP --verbose --include=module-init-tools,locales --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS} || debret=$?
+	if [ ${DEBIAN_BINARCH} = "i386" ] ; then
+		ADD_LIBC="libc6-xen,"
+	else
+		ADD_LIBC=""
+	fi
+	echo $DEBOOTSTRAP --verbose --include=${ADD_LIBC}module-init-tools,locales --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
+	$DEBOOTSTRAP --verbose --include=${ADD_LIBC}module-init-tools,locales --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS} || debret=$?
 	if [ "$debret" != "" ]; then
 		echo "Failed to install $DISTRO via bootstrap!!"
 		exit $debret
