@@ -21,6 +21,7 @@ PASSWORD=$1
 
 apt-get update
 apt-get --assume-yes install ssh
+apt-get --force-yes --assume-yes dist-upgrade
 
 # Use shadow password and set the root pass of the ssh
 shadowconfig on
