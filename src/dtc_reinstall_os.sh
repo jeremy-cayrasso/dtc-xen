@@ -416,7 +416,7 @@ if [ "$DISTRO" = "debian-dtc" ] ; then
 	echo "#!/bin/sh
 
 cd /root
-dtc-panel_autodeploy ${PASSWORD}
+/root/dtc-panel_autodeploy ${PASSWORD}
 
 rm /etc/rc4.d/S99dtc-panel_autodeploy
 " >${VPSGLOBPATH}/${VPSNUM}/etc/init.d/dtc-panel_autodeploy
