@@ -24,7 +24,7 @@ apt-get --assume-yes install ssh
 
 # Use shadow password and set the root pass of the ssh
 shadowconfig on
-( sleep 1; echo ${PASSWORD}; sleep 1; echo {PASSWORD}; ) | passwd
+( sleep 1; echo ${PASSWORD}; sleep 1; echo ${PASSWORD}; ) | passwd
 
 # Set the apt to NOT install the recommends, to make it a smaller footprint
 echo "APT{
@@ -40,12 +40,12 @@ IP_ADDR=`ifconfig ${DEFAULT_IF} | grep 'inet addr' | sed 's/.\+inet addr:\([0-9.
 MKTEMP="mktemp -t"
 
 SETSEL_FILE=`${MKTEMP} DTC_AUTODEPLOY.XXXXXX` || exit 1
-cp selection_config_file >${TMP_FILE}
+cp selection_config_file ${SETSEL_FILE}
 
 sed -i "s/__PASSWORD__/${PASSWORD}/g" ${SETSEL_FILE}
 sed -i "s/__DOMAIN_NAME__/${DOMAIN_NAME}/g" ${SETSEL_FILE}
 sed -i "s/__IP__ADDRESS__/${IP_ADDR}/g" ${SETSEL_FILE}
 
 debconf-set-selections ${SETSEL_FILE}
-apt-get --assume-yes install dtc-toaster
+apt-get --force-yes --assume-yes install dtc-toaster
 /usr/share/dtc/admin/install/install
