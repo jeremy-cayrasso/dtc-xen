@@ -45,7 +45,7 @@ fi
 
 # Setup the devices
 mkdir -p ${VPS_PATH}/dev/
-echo "Making VPS devices with MAKEDEV generic"
+echo "Making VPS devices with MAKEDEV generic, this WILL take a while..."
 OLDPWDDIR=`pwd`
 cd ${VPS_PATH}/dev
 /sbin/MAKEDEV generic

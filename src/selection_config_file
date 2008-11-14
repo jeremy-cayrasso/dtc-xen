@@ -114,3 +114,13 @@ phpmyadmin phpmyadmin/setup-password password __PASSWORD__
 phpmyadmin phpmyadmin/setup-password password true
 phpmyadmin phpmyadmin/restart-webserver boolean false
 phpmyadmin phpmyadmin/restart-webserver seen true
+
+# debconf
+debconf debconf/frontend select Noninteractive
+debconf debconf/frontend seen true
+debconf debconf/priority select medium
+debconf debconf/priority seen true
+debconf debconf-apt-progress/title string fake
+debconf debconf-apt-progress/title seen true
+debconf debconf-apt-progress/preparing string fake
+debconf debconf-apt-progress/preparing seen true
