@@ -51,7 +51,7 @@ debconf debconf-apt-progress/title seen true
 debconf debconf-apt-progress/preparing string fake
 debconf debconf-apt-progress/preparing seen true" >${SETSEL_FILE}
 debconf-set-selections ${SETSEL_FILE}
-apt-get --reinstall install debconf
+apt-get --force-yes --assume-yes --reinstall install debconf
 
 # Copy our selection_config_file template file, and tweak it with correct values
 cp selection_config_file ${SETSEL_FILE}
@@ -84,7 +84,7 @@ debconf debconf-apt-progress/title seen true
 debconf debconf-apt-progress/preparing string fake
 debconf debconf-apt-progress/preparing seen true" >${SETSEL_FILE}
 debconf-set-selections ${SETSEL_FILE}
-apt-get --reinstall install debconf
+apt-get --force-yes --assume-yes --reinstall install debconf
 
 # Finally start the dtc shell installer and we are done!
 /usr/share/dtc/admin/install/install
