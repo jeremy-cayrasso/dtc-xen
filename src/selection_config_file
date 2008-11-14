@@ -54,6 +54,7 @@ clamav-freshclam clamav-freshclam/NotifyClamd seen true
 courier-base courier-base/webadmin-configmode boolean true
 courier-base courier-base/webadmin-configmode seen true
 
+courier-ssl courier-ssl/certnotice string fakestring
 courier-ssl courier-ssl/certnotice seen true
 
 # Postfix

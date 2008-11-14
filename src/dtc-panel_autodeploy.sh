@@ -48,4 +48,5 @@ sed -i "s/__IP__ADDRESS__/${IP_ADDR}/g" ${SETSEL_FILE}
 
 debconf-set-selections ${SETSEL_FILE}
 apt-get --force-yes --assume-yes install dtc-toaster
+touch /etc/locale.gen
 /usr/share/dtc/admin/install/install
