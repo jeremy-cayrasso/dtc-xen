@@ -57,7 +57,7 @@ if [ -d "${VPS_PATH}lib/tls" ] ; then
 fi
 
 # Setup the kernel
-echo "Copying modules..."
+echo "Copying kernel modules..."
 if [ ! -e ${VPS_PATH}/lib/modules ]; then
 	$MKDIR -p ${VPS_PATH}/lib/modules
 fi

@@ -205,7 +205,7 @@ else
 
 	$MKDIR -p ${VPSGLOBPATH}/${VPSNUM}
 	if [ "$IMAGE_TYPE" = "lvm" ]; then
-		$MKFS /dev/${LVMNAME}/${VPSNAME}
+		$MKFS -q /dev/${LVMNAME}/${VPSNAME}
 	#	$LVCREATE -L${VPSMEM} -n${VPSNAME}swap ${LVMNAME}
 		$MKSWAP /dev/${LVMNAME}/${VPSNAME}swap
 
