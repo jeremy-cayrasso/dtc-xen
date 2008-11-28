@@ -190,7 +190,7 @@ fi
 ### FORMAT THE PARTITION ###
 ############################
 
-echo "Seleted ${VPSNAME}: ${VPSHDD}G HDD and ${VPSMEM}MB RAM";
+echo "Seleted ${VPSNAME}: ${VPSHDD}MB HDD and ${VPSMEM}MB RAM";
 if [ "$DISTRO" = "xenpv" ] ; then
 	echo "Not formating disks, xenpv will use emulated hard drives."
 elif [ "$DISTRO" = "netbsd" -o "$DISTRO" = "xenpv" ] ; then
@@ -256,8 +256,8 @@ elif [ "$DISTRO" = "debian" -o "$DISTRO" = "debian-dtc" ] ; then
 	else
 		ADD_LIBC=""
 	fi
-	echo $DEBOOTSTRAP --verbose --include=${ADD_LIBC}module-init-tools,locales --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
-	$DEBOOTSTRAP --verbose --include=${ADD_LIBC}module-init-tools,locales --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS} || debret=$?
+	echo $DEBOOTSTRAP --verbose --include=${ADD_LIBC}module-init-tools,locales,udev --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
+	$DEBOOTSTRAP --verbose --include=${ADD_LIBC}module-init-tools,locales,udev --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS} || debret=$?
 	if [ "$debret" != "" ]; then
 		echo "Failed to install $DISTRO via bootstrap!!"
 		exit $debret
