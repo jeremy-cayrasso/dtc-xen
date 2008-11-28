@@ -193,6 +193,15 @@ mkdir -p /var/lib/rpm
 # Xen packagers in Debian decided to omit the /etc/xen/auto folder, WHY???
 mkdir -p /etc/xen/auto
 
+# Warn if no /usr/lib/python/xen
+if ! [ -d /usr/lib/python/xen ] ; then
+	echo "*** WARNING ***"
+	echo "You don't have a /usr/lib/python/xen, maybe because you have installed"
+	echo "Xen using the Debian package. dtc-xen needs it to be able to load the"
+	echo "Xen python library. To fix, you can manually do:"
+	echo "cd /usr/lib && ln -s xen-3.2-1/lib/python/ python"
+fi
+
 #DEBHELPER#
 
 exit 0
