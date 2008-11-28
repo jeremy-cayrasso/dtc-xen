@@ -28,6 +28,8 @@ db_get dtc-xen/conf_gateway
 conf_gateway=$RET
 db_get dtc-xen/conf_linux_kernel_name
 conf_linux_kernel_name=$RET
+db_get dtc-xen/conf_linux_domu_initrd
+conf_linux_domu_initrd=$RET
 db_get dtc-xen/conf_lvm_name
 conf_lvm_name=$RET
 db_get dtc-xen/conf_vps_mountpoint
@@ -150,6 +152,7 @@ VPS_MOUNTPOINT=$conf_vps_mountpoint
 DEBIAN_RELEASE=$conf_debian_release
 
 KERNELNAME=$conf_linux_kernel_name
+INITRDNAME=$conf_linux_domu_initrd
 " > ${DTCXEN_ETCPATH}/dtc_create_vps.conf.sh
 
 chmod 600 ${DTCXEN_ETCPATH}/*

@@ -430,12 +430,24 @@ vif = [ 'mac=${MAC_ADDR}, ip=${ALL_IPADDRS}' ]
 " >>/etc/xen/${VPSNAME}
 	fi
 else
+	# Set the configured kernel name
 	echo "kernel = \"${KERNELPATH}\"
-memory = ${VPSMEM}
+" > /etc/xen/${VPSNAME}
+
+	# Set a initrd image if configured
+	if [ -z "${INITRDNAME}" ] ; then
+		echo "ramdisk = \"/boot/${INITRDNAME}\"
+" > /etc/xen/${VPSNAME}
+	fi
+
+	# Set memory, domU name and vif
+	echo "memory = ${VPSMEM}
 name = \"${VPSNAME}\"
 #cpu = -1   # leave to Xen to pick
 vif = [ 'mac=${MAC_ADDR}, ip=${ALL_IPADDRS}' ]
-" > /etc/xen/${VPSNAME}
+" >> /etc/xen/${VPSNAME}
+
+	# Set the HDDs
 	if [ "$IMAGE_TYPE" = "lvm" ]; then
 		echo "disk = [ 'phy:/dev/mapper/${LVMNAME}-xen${VPSNUM},sda1,w','phy:/dev/mapper/${LVMNAME}-xen${VPSNUM}swap,sda2,w' ]
 " >> /etc/xen/${VPSNAME}
@@ -443,6 +455,8 @@ vif = [ 'mac=${MAC_ADDR}, ip=${ALL_IPADDRS}' ]
 		echo "disk = [ 'file:$VPSGLOBPATH/${VPSNAME}.img,sda1,w','file:$VPSGLOBPATH/${VPSNAME}.swap.img,sda2,w' ]
 " >> /etc/xen/${VPSNAME}
 	fi
+
+	# Set the boot parameters (runlevel and tty)
 	if [ "$DISTRO" = "slackware" ]; then
 		echo "root = \"/dev/sda1 ro\"
 # Sets runlevel 3.
@@ -455,6 +469,8 @@ extra = \"4 TERM=xterm xencons=tty console=tty1\"
 " >>/etc/xen/${VPSNAME}
 	fi
 fi
+
+# The reboot autostart
 if [ ! -e /etc/xen/auto/${VPSNAME} ] ; then
 	ln -s ../${VPSNAME} /etc/xen/auto/${VPSNAME}
 fi
