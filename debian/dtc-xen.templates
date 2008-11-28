@@ -92,7 +92,7 @@ _Description: Gateway address for the VPS:
 
 Template: dtc-xen/conf_linux_kernel_name
 Type: string
-Default: 2.6.16.27-xenU
+Default: 2.6.26-1-xen-amd64
 _Description: Xen kernel release name:
  Please enter the kernel version number as it appears with the
  'uname -a' command. 
@@ -100,6 +100,14 @@ _Description: Xen kernel release name:
  A kernel domU with that name must be located in /boot (example:
  vmlinuz-2.6.16.27-xenU) and its corresponding modules must be in
  /lib/modules.
+
+Template: dtc-xen/conf_linux_domu_initrd
+Type: string
+Default: initrd.img-2.6.26-1-xen-amd64
+_Description: Name of the initrd image:
+ Please enter the name of the initrd ram disk image to use when
+ setting-up a Linux Xen startup file. Leave this blank to not
+ setup your domU with a initrd image at all.
 
 Template: dtc-xen/conf_lvm_name
 Type: string
