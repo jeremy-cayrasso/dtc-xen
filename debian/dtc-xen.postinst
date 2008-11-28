@@ -190,6 +190,9 @@ touch /etc/dtc-xen/authorized_keys2
 # Needs the /var/lib/rpm to setup CentOS, it's not there by default, so we add it
 mkdir -p /var/lib/rpm
 
+# Xen packagers in Debian decided to omit the /etc/xen/auto folder, WHY???
+mkdir -p /etc/xen/auto
+
 #DEBHELPER#
 
 exit 0
