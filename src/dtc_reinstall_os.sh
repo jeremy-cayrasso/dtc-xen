@@ -371,7 +371,7 @@ else
 " > /etc/xen/${VPSNAME}
 
 	# Set a initrd image if configured
-	if [ -z "${INITRDNAME}" ] ; then
+	if ! [ -z "${INITRDNAME}" ] ; then
 		echo "ramdisk = \"/boot/${INITRDNAME}\"
 " > /etc/xen/${VPSNAME}
 	fi
