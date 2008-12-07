@@ -431,13 +431,11 @@ vif = [ 'mac=${MAC_ADDR}, ip=${ALL_IPADDRS}' ]
 	fi
 else
 	# Set the configured kernel name
-	echo "kernel = \"${KERNELPATH}\"
-" > /etc/xen/${VPSNAME}
+	echo "kernel = \"${KERNELPATH}\"" > /etc/xen/${VPSNAME}
 
 	# Set a initrd image if configured
 	if ! [ -z "${INITRDNAME}" ] ; then
-		echo "ramdisk = \"/boot/${INITRDNAME}\"
-" > /etc/xen/${VPSNAME}
+		echo "ramdisk = \"/boot/${INITRDNAME}\"" >> /etc/xen/${VPSNAME}
 	fi
 
 	# Set memory, domU name and vif
