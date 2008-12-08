@@ -57,14 +57,40 @@ case "$FOUNDED_ARCH" in
 		;;
 esac
 
-if [ ! -e /usr/src/gentoo ]; then
-	mkdir -p /usr/src/gentoo
-	echo "Gentoo archive not found, trying to do it issuing this command:"
-	if [ ""${BINARCH} = "amd64" ] ; then
-		echo "cd /usr/src/gentoo; wget http://gentoo.osuosl.org/releases/amd64/2006.1/stages/stage3-amd64-2006.1.tar.bz2"
-	else
-		echo "cd /usr/src/gentoo; wget http://gentoo.osuosl.org/releases/x86/2006.1/stages/stage3-i686-2006.1.tar.bz2"
+APT_GET_PKGS=""
+if [ ${BINARCH} = "amd64" ] ; then
+	if [ ! -e /usr/share/dtc-xen-os/fedora-amd64 ]; then
+		APT_GET_PKGS="${APT_GET_PKGS} dtc-xen-os-fedora-amd64"
+	fi
+	if [ ! -e /usr/share/dtc-xen-os/gentoo-amd64 ]; then
+		APT_GET_PKGS="${APT_GET_PKGS} dtc-xen-os-gentoo-amd64"
+	fi
+	if [ ! -e /usr/share/dtc-xen-os/ubuntu-amd64 ]; then
+		APT_GET_PKGS="${APT_GET_PKGS} dtc-xen-os-ubuntu-amd64"
+	fi
+	if [ ! -e /usr/share/dtc-xen-os/netbsd5-amd64 ]; then
+		APT_GET_PKGS="${APT_GET_PKGS} dtc-xen-os-netbsd5-amd64"
+	fi
+else
+	if [ ! -e /usr/share/dtc-xen-os/fedora-x86 ]; then
+		APT_GET_PKGS="${APT_GET_PKGS} dtc-xen-os-fedora-x86"
+	fi
+	if [ ! -e /usr/share/dtc-xen-os/gentoo-i686 ]; then
+		APT_GET_PKGS="${APT_GET_PKGS} dtc-xen-os-gentoo-i686"
+	fi
+	if [ ! -e /usr/share/dtc-xen-os/ubuntu-x86 ]; then
+		APT_GET_PKGS="${APT_GET_PKGS} dtc-xen-os-ubuntu-x86"
+	fi
+	if [ ! -e /usr/share/dtc-xen-os/netbsd5-i386 ]; then
+		APT_GET_PKGS="${APT_GET_PKGS} dtc-xen-os-netbsd5-i386"
 	fi
 fi
+
+echo "You should now add one of the following Debian repository:
+Main mirror:   deb ftp://ftp.gplhost.com/debian stable main
+Europe mirror: deb ftp://ftp.gplhost.fr/debian stable main
+Asia mirror:   deb ftp://ftp.gplhost.sg/debian stable main
+and do:
+apt-get get install ${APT_GET_PKGS}"
 
 exit 0
