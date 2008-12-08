@@ -322,9 +322,9 @@ builder = 'hvm'
 memory = ${VPSMEM}
 name = \"${VPSNAME}\"
 vcpus=1
-pae=0
-acpi=0
-apic=0
+#pae=0
+#acpi=0
+#apic=0
 vif = [ 'type=ioemu, mac=${MAC_ADDR}, ip=${ALL_IPADDRS}' ]
 disk=[ 'phy:/dev/mapper/${LVMNAME}-xen${VPSNUM},ioemu:hda,w'" >/etc/xen/${VPSNAME}
 	# Add all *.iso files to the config file
