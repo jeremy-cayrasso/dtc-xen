@@ -338,7 +338,7 @@ disk=[ 'phy:/dev/mapper/${LVMNAME}-xen${VPSNUM},ioemu:hda,w'" >/etc/xen/${VPSNAM
 	done
 	# Set the VPN password
 	echo " ]
-vfb = [ \"type=vnc,vncdisplay=21,vncpasswd=XXXX\" ]" >>/etc/xen/${VPSNAME}
+vfb = [ \"type=vnc,vncdisplay=${VPSNUM},vncpasswd=XXXX\" ]" >>/etc/xen/${VPSNAME}
 	# Set the boot cd if variable is set
 	if [ -z "${BOOT_ISO}" -a -e /var/lib/dtc-xen/ttyssh_home/xen${VPSNUM}/${BOOT_ISO} ] ; then
 		echo "cdrom=\"/var/lib/dtc-xen/ttyssh_home/xen${VPSNUM}/${BOOT_ISO}\"
