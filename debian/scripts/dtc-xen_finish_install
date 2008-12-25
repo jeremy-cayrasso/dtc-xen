@@ -91,6 +91,6 @@ Main mirror:   deb ftp://ftp.gplhost.com/debian stable main
 Europe mirror: deb ftp://ftp.gplhost.fr/debian stable main
 Asia mirror:   deb ftp://ftp.gplhost.sg/debian stable main
 and do:
-apt-get get install ${APT_GET_PKGS}"
+apt-get install ${APT_GET_PKGS}"
 
 exit 0
