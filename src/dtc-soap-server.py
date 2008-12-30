@@ -174,27 +174,32 @@ def infoVPS(vpsname):
 def listStartedVPS():
 	username = getUser()
 	if username == dtcxen_user:
+		# Bellow is the new tested and working code
+		domains = (
+			tabsplitter(d.strip())[:6]
+			for d in Popen(["/usr/sbin/xm","list"],stdout=PIPE).communicate()[0].splitlines()[1:]
+			if d.strip()
+		)
+		domlist=[]
+		for domain in domains:
+			if (domain[0]!="Domain-0"):
+				domlist.insert(1,domain)
+		domlist.sort()
+		return (domlist)
+		# This is the old code...
 		# first check to see if we have a xend_domain method (for 2.x)
-		try:
-			func = getattr(xenxm.server, "xend_domains")
-			if func:
-				doms = xenxm.server.xend_domains()
-			else:
-				logging.warn("Couldn't find xend_domains method")
-		except:
-			doms = xenxm.server.xend.domains(1)
-		doms.sort()
-		return doms
+		#try:
+		#	func = getattr(xenxm.server, "xend_domains")
+		#	if func:
+		#		doms = xenxm.server.xend_domains()
+		#	else:
+		#		logging.warn("Couldn't find xend_domains method")
+		#except:
+		#	doms = xenxm.server.xend.domains(1)
+		#doms.sort()
+		#return doms
 	else:
-		try:
-			func = getattr(xenxm.server, "xend_domain")
-			if func:
-				dom = xenxm.server.xend_domain(username)
-			else:
-				logging.warn("Couldn't find xend_domain method")
-		except:
-			dom = xenxm.server.xend.domain(username)
-		return dom
+		return "NOTOK"
 
 def changeVPSxmPassword(vpsname,password):
 	username = getUser()
