@@ -248,7 +248,7 @@ echo "Bootstraping..."
 
 # Search if we are installing an appliance that depends on a particular distribution
 APPLIANCE=""
-if [ -x /usr/share/dtc-xen-app/${DISTRO}/depends ] ; then
+if [ -e /usr/share/dtc-xen-app/${DISTRO}/depends ] ; then
 	APPLIANCE="${DISTRO}"
 	DISTRO=`cat /usr/share/dtc-xen-app/${DISTRO}/depends`
 fi
@@ -272,7 +272,7 @@ elif [ "$DISTRO" = "debian" -o "$DISTRO" = "debian-dtc" ] ; then
 		exit $debret
 	fi
 else
-	if [ -x /usr/share/dtc-xen-os/${DISTRO}/install_os ] ; then
+	if [ -e /usr/share/dtc-xen-os/${DISTRO}/install_os ] ; then
 		/usr/share/dtc-xen-os/${DISTRO}/install_os ${VPSGLOBPATH} ${VPSNUM}
 	else
 		echo "Currently, you will have to manually install your distro... sorry :)"
