@@ -10,7 +10,9 @@ if [ $# -lt 5 ]; then
 	echo "Usage: $0 [ OPTIONS ] <xen id> <hdd size MB> <ram size MB> <ip address(es)> <password-to-setup> <operating-system> [ lvm | vbd ]"> /dev/stderr
 	echo "-------------------------------------------------------------------------" > /dev/stderr
 	echo "<operating-system> can be one of the follwing:" > /dev/stderr
-	echo "debian, debian-dtc, ubuntu_dapper, centos, gentoo, slackware, xenpv, manual" > /dev/stderr
+	echo "debian, debian-dtc, centos, netbsd, xenpv, manual" > /dev/stderr
+	echo "or one of the operating system folder names present in /usr/share/dtc-xen-os" > /dev/stderr
+	echo "or one of the applicances folder names present in /usr/share/dtc-xen-app" > /dev/stderr
 	echo "-------------------------------------------------------------------------" > /dev/stderr
 	echo "Options can be in any order and are:" > /dev/stderr
 	echo "                       [ -v ] : Do a more verboze install" > /dev/stderr
@@ -26,7 +28,8 @@ if [ $# -lt 5 ]; then
 	echo "       [ --vnc-pass VNCPASS ] : VNC password for the physical console" > /dev/stderr
 	echo "      [ --boot-iso file.iso ] : CDROM device to boot on" > /dev/stderr
 	echo "-------------------------------------------------------------------------" > /dev/stderr
-	echo "Example: $0 09 3072 64 1.2.3.4 debian" > /dev/stderr
+	echo "Example1: $0 09 3072 64 1.2.3.4 debian" > /dev/stderr
+	echo "Example2: $0 12 15360 256 1.2.3.4 kde-nx-server-3.3.0" > /dev/stderr
 	exit 1
 fi
 
@@ -242,7 +245,13 @@ fi
 ####################
 
 echo "Bootstraping..."
-# default CENTOS_RELEASE is centos4
+
+# Search if we are installing an appliance that depends on a particular distribution
+APPLIANCE=""
+if [ -x /usr/share/dtc-xen-app/${DISTRO}/depends ] ; then
+	APPLIANCE="${DISTRO}"
+	DISTRO=`cat /usr/share/dtc-xen-app/${DISTRO}/depends`
+fi
 
 # get the most recent centos release.  it WILL FAIL once centos version hits 10.  But, hell, I'm a hacky hack.
 CENTOS_DIR=`ls -d /usr/src/centos* 2> /dev/null | tr ' ' '\n' | sort -r | head -1`
@@ -448,6 +457,32 @@ rm /etc/init.d/dtc-panel_autodeploy
 	ln -s ../init.d/dtc-panel_autodeploy ${VPSGLOBPATH}/${VPSNUM}/etc/rc3.d/S99dtc-panel_autodeploy
 	ln -s ../init.d/dtc-panel_autodeploy ${VPSGLOBPATH}/${VPSNUM}/etc/rc4.d/S99dtc-panel_autodeploy
 	ln -s ../init.d/dtc-panel_autodeploy ${VPSGLOBPATH}/${VPSNUM}/etc/rc5.d/S99dtc-panel_autodeploy
+fi
+
+##########################################
+### SETUP APPLIANCE SCRIPT AND FOLDERS ###
+##########################################
+if [ ! -z "${APPLIANCE}" ] ; then
+	cp /usr/share/dtc-xen-app/${APPLIANCE}/setup-script ${VPSGLOBPATH}/${VPSNUM}/root/dtc-xen-applicance-setup
+	if [ -e /usr/share/dtc-xen-app/${APPLIANCE}/setup-folder ] ; then
+		cp -rf /usr/share/dtc-xen-app/${APPLIANCE}/setup-folder ${VPSGLOBPATH}/${VPSNUM}/root/
+	fi
+	echo "#!/bin/sh
+
+cd /root
+/root/dtc-xen-applicance-setup ${PASSWORD}
+
+rm /etc/rc2.d/S99dtc-xen-appliance
+rm /etc/rc3.d/S99dtc-xen-appliance
+rm /etc/rc4.d/S99dtc-xen-appliance
+rm /etc/rc5.d/S99dtc-xen-appliance
+rm /etc/init.d/dtc-xen-appliance
+" >${VPSGLOBPATH}/${VPSNUM}/etc/init.d/dtc-xen-appliance
+	chmod +x ${VPSGLOBPATH}/${VPSNUM}/etc/init.d/dtc-xen-appliance
+	ln -s ../init.d/dtc-xen-appliance ${VPSGLOBPATH}/${VPSNUM}/etc/rc2.d/S99dtc-xen-appliance
+	ln -s ../init.d/dtc-xen-appliance ${VPSGLOBPATH}/${VPSNUM}/etc/rc3.d/S99dtc-xen-appliance
+	ln -s ../init.d/dtc-xen-appliance ${VPSGLOBPATH}/${VPSNUM}/etc/rc4.d/S99dtc-xen-appliance
+	ln -s ../init.d/dtc-xen-appliance ${VPSGLOBPATH}/${VPSNUM}/etc/rc5.d/S99dtc-xen-appliance
 fi
 
 #######################
