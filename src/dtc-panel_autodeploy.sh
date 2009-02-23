@@ -29,7 +29,7 @@ shadowconfig on
 
 # Set the apt to NOT install the recommends, to make it a smaller footprint
 echo "APT{
-Install-Recommends "false";
+Install-Recommends \"false\";
 }" >/etc/apt/apt.conf
 
 # Find the hostname and default interface and IP of the VPS

@@ -287,7 +287,7 @@ fi
 ### OS CUSTOMIZATION ###
 ########################
 
-echo "Customizing vps fstab, hosts, hostname, and capability kernel module..."
+echo "Customizing vps fstab, hosts, hostname, and capability kernel module for distro ${DISTRO}..."
 if [ "$DISTRO" = "debian" -o "$DISTRO" = "debian-dtc" -o "$DISTRO" = "centos" ] ; then
 	/usr/sbin/dtc-xen_domUconf_standard ${VPSGLOBPATH}/${VPSNUM} ${VPSHOSTNAME} ${NODE_DOMAIN_NAME} ${KERNELNAME} ${IPADDR}
 	if [ "$DISTRO" = "debian" -o "$DISTRO" = "debian-dtc" ] ; then
@@ -304,6 +304,7 @@ fi
 ####################################
 
 # handle the network setup
+echo "Setting-up network for distro ${DISTRO}..."
 if [ "$DISTRO" = "netbsd" -o "$DISTRO" = "xenpv" ] ; then
 	echo "Nothing to do: it's BSD or xenpv!"
 elif [ "$DISTRO" = "centos" -o "$DISTRO" = "centos42" ] ; then
@@ -431,6 +432,12 @@ if [ "$DISTRO" = "centos" -a "$CENTOS_RELEASE" = "centos3" ]; then
 	chroot ${VPSGLOBPATH}/${VPSNUM} rm /tmp/yum.conf.mini
 fi
 
+# Remove the persistent-net udev config, so the eth wont get renamed
+if [ "$DISTRO" = "debian-dtc" -o "$DISTRO" = "debian" ] ; then
+	rm -f ${VPSGLOBPATH}/${VPSNUM}/etc/udev/rules.d/z25_persistent-net.rules
+	rm -f ${VPSGLOBPATH}/${VPSNUM}/etc/udev/rules.d/70-persistent-net.rules
+fi
+
 # nuke the root password in CentOS 5 and above
 # WARNING: for some reason CentOS is not using shadow passwords
 if [ "$DISTRO" = "centos" ] ; then
@@ -463,6 +470,7 @@ fi
 ### SETUP APPLIANCE SCRIPT AND FOLDERS ###
 ##########################################
 if [ ! -z "${APPLIANCE}" ] ; then
+	echo "Setting up appliance boot-stage setup script ${APPLIANCE}..."
 	cp /usr/share/dtc-xen-app/${APPLIANCE}/setup-script ${VPSGLOBPATH}/${VPSNUM}/root/dtc-xen-applicance-setup
 	if [ -e /usr/share/dtc-xen-app/${APPLIANCE}/setup-folder ] ; then
 		cp -rf /usr/share/dtc-xen-app/${APPLIANCE}/setup-folder ${VPSGLOBPATH}/${VPSNUM}/root/
@@ -493,5 +501,5 @@ echo "Unmounting proc and filesystem root..."
 $UMOUNT ${VPSGLOBPATH}/${VPSNUM}/proc 2> /dev/null || /bin/true
 $UMOUNT ${VPSGLOBPATH}/${VPSNUM}
 
-echo "Install script finished"
+echo "Install script finished: click on the installation tab on the left to refresh!"
 exit 0
