@@ -707,6 +707,10 @@ def getInstallableOS():
 #	d['cpu_time'] = float(sxp.child_value(info, 'cpu_time', '0'))
 #	return d
 
+def getInstallableAPP():
+	folderlist = os.listdir('/usr/share/dtc-xen-app/')
+	return folderlist
+
 # ask for returned SOAP responses to be converted to basic python types
 Config.simplify_objects = 1
 
@@ -817,6 +821,7 @@ soapserver.registerFunction(getIOUsage)
 soapserver.registerFunction(getCPUUsage)
 soapserver.registerFunction(getInstallableOS)
 soapserver.registerFunction(getVPSInstallLog)
+soapserver.registerFunction(getInstallableAPP)
 collector = DataCollector()
 collector.start()
 while True:
