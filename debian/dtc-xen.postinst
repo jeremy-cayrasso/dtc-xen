@@ -196,6 +196,11 @@ mkdir -p /var/lib/rpm
 # Xen packagers in Debian decided to omit the /etc/xen/auto folder, WHY???
 mkdir -p /etc/xen/auto
 
+# Delete an eventual cron job that was installed prior dtc-xen 0.4
+if [ -e /etc/cron.d/dtc-xen ] ; then
+	rm -f /etc/cron.d/dtc-xen
+fi
+
 # Warn if no /usr/lib/python/xen
 if ! [ -d /usr/lib/python/xen ] ; then
 	echo "*** WARNING ***"
