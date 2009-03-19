@@ -201,6 +201,11 @@ if [ -e /etc/cron.d/dtc-xen ] ; then
 	rm -f /etc/cron.d/dtc-xen
 fi
 
+# Patches the stupid xen kernel package of Debian
+if [ ! -e /usr/lib/xen -o /etc/alternatives/xen-default ] ; then
+	ln -s /etc/alternatives/xen-default /usr/lib/xen
+fi
+
 # Warn if no /usr/lib/python/xen
 if ! [ -d /usr/lib/python/xen ] ; then
 	echo "*** WARNING ***"
