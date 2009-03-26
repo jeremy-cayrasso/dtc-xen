@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import sys, traceback
+sys.path.append("/usr/lib/xen/lib/python/")
 import os
 import SOAPpy
 import commands
