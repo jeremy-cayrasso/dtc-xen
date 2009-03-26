@@ -438,7 +438,7 @@ else
 	# Set a initrd image if configured
 	if ! [ -z "${INITRDNAME}" ] ; then
 		echo "ramdisk = \"/boot/${INITRDNAME}\"
-" > /etc/xen/${VPSNAME}
+" >> /etc/xen/${VPSNAME}
 	fi
 
 	# Set memory, domU name and vif
