@@ -258,6 +258,7 @@ else
 	echo "/dev/sda1       /       ext3    errors=remount-ro       0       0
 proc            /proc   proc    defaults                0       0
 /dev/sda2       none    swap    sw                      0       0
+none            /dev/pts devpts defaults                0 0
 " >${ETC}/fstab
 
 	# We set the default needed by DTC as hostname, so DTC can be setup quite fast
