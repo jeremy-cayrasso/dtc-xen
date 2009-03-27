@@ -252,7 +252,7 @@ else
 fi
 
 # Fix the pts device thing
-rm -f ${VPSGLOBPATH}/${VPSNUM}/dev/pts
+rm -rf ${VPSGLOBPATH}/${VPSNUM}/dev/pts
 mkdir -p ${VPSGLOBPATH}/${VPSNUM}/dev/pts
 rm -rf ${VPSGLOBPATH}/${VPSNUM}/dev/ptmx
 mknod ${VPSGLOBPATH}/${VPSNUM}/dev/ptmx c 5 2
