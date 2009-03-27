@@ -27,7 +27,7 @@ Package: dtc-xen-firewall
 Section: web
 Priority: optional
 Architecture: all
-Depends: iptables
+Depends: debconf, iptables
 Description: A small firewall script for your dom0
  If running in a production environment, you might want to have a basic
  firewall running on your dom0 to avoid having DoS attack. This is not the

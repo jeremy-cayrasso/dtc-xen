@@ -9,8 +9,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
-"Report-Msgid-Bugs-To: thomas@goirand.fr\n"
-"POT-Creation-Date: 2008-03-29 10:27+0800\n"
+"Report-Msgid-Bugs-To: dtc-xen@packages.debian.org\n"
+"POT-Creation-Date: 2009-03-27 14:26+0800\n"
 "PO-Revision-Date: 2008-03-02 02:48+0800\n"
 "Last-Translator: Thomas Goirand <thomas@goirand.fr>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -122,8 +122,8 @@ msgid ""
 "the VPS number itself (xenYY), and XXXX being the Xen server number. This "
 "node number must be 4 or 5 characters long."
 msgstr ""
-"Si cette valeur est « XXXX », le numéro du noeud sera « xenXXXXYY », où YY "
-"est le numéro du serveur virtuel privé (xenYY), et où XXXX est le numéro du "
+"Si cette valeur est « XXXX », le numéro du noeud sera « xenXXXXYY », où YY est "
+"le numéro du serveur virtuel privé (xenYY), et où XXXX est le numéro du "
 "serveur Xen. Il est obligatoire d'utiliser une chaîne comportant 4 ou 5 "
 "caractères."
 
@@ -244,19 +244,34 @@ msgid ""
 "A kernel domU with that name must be located in /boot (example: vmlinuz-"
 "2.6.16.27-xenU) and its corresponding modules must be in /lib/modules."
 msgstr ""
-"Un noyau « domU » avec ce nom doit être présent dans le répertoire /boot "
-"(par exemple, vmlinuz-2.6.26.27-xenU) et les modules noyau correspondants "
-"doivent se trouver dans /lib/modules."
+"Un noyau « domU » avec ce nom doit être présent dans le répertoire /boot (par "
+"exemple, vmlinuz-2.6.26.27-xenU) et les modules noyau correspondants doivent "
+"se trouver dans /lib/modules."
 
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:12001
+msgid "Name of the initrd image:"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../dtc-xen.templates:12001
+msgid ""
+"Please enter the name of the initrd ram disk image to use when setting-up a "
+"Linux Xen startup file. Leave this blank to not setup your domU with a "
+"initrd image at all."
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../dtc-xen.templates:13001
 msgid "Volume group to create VPS in:"
 msgstr "Groupe de volumes où créer les serveurs virtuels privés :"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:12001
+#: ../dtc-xen.templates:13001
 msgid "Dtc-xen creates physical partitions in an existing LVM volume group"
 msgstr ""
 "Dtc-xen crée les partitions physiques dans un groupe de volumes existant "
@@ -264,7 +279,7 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:12001
+#: ../dtc-xen.templates:13001
 msgid ""
 "Please enter that volume group name. The volume group size must fit all the "
 "virtual machines you will set up later on this server. If you don't want to "
@@ -279,13 +294,13 @@ msgstr ""
 
 #. Type: note
 #. Description
-#: ../dtc-xen.templates:13001
+#: ../dtc-xen.templates:14001
 msgid "How to finish the install"
 msgstr "Comment finir l'installation"
 
 #. Type: note
 #. Description
-#: ../dtc-xen.templates:13001
+#: ../dtc-xen.templates:14001
 msgid ""
 "To finish the installation, you need to launch /usr/sbin/dtc-"
 "xen_finish_install."
@@ -295,7 +310,7 @@ msgstr ""
 
 #. Type: note
 #. Description
-#: ../dtc-xen.templates:13001
+#: ../dtc-xen.templates:14001
 msgid ""
 "This script will remove port forwarding from the current sshd_config file "
 "and add the permission to access the xm console to the group xenusers so "
@@ -307,7 +322,7 @@ msgstr ""
 
 #. Type: note
 #. Description
-#: ../dtc-xen.templates:13001
+#: ../dtc-xen.templates:14001
 msgid ""
 "Please note that the system is currently safe (connections to a physical "
 "console as xenXX will be rejected because the /etc/sudoers is not changed), "
@@ -320,13 +335,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:14001
+#: ../dtc-xen.templates:15001
 msgid "VPS mountpoint:"
 msgstr "Point de montage des serveurs virtuels privés :"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:14001
+#: ../dtc-xen.templates:15001
 msgid ""
 "In order to do the setup of the VPS it's managing, dtc-xen will mount an LVM "
 "device or a file loopback on the dom0 of your Xen server, and then use it as "
@@ -347,13 +362,13 @@ msgstr ""
 
 #. Type: select
 #. Description
-#: ../dtc-xen.templates:15001
+#: ../dtc-xen.templates:16001
 msgid "Debian os to setup:"
 msgstr "Stystème Debian à installer:"
 
 #. Type: select
 #. Description
-#: ../dtc-xen.templates:15001
+#: ../dtc-xen.templates:16001
 msgid ""
 "Select the Debian operating system that you want to have setup when dtc-xen "
 "creates a new VM instance with debootstrap."

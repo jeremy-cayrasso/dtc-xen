@@ -1,0 +1,23 @@
+#!/bin/sh
+
+set -e
+
+. /usr/share/debconf/confmodule
+db_version 2.0
+
+db_get dtc-xen-firewall/conf_soap_server_allowed_ip
+conf_soap_server_allowed_ip=$RET
+db_stop
+
+DTCXEN_ETCPATH=/etc/dtc-xen
+mkdir -p $DTCXEN_ETCPATH
+
+echo "# This is the configuration file for the dtc-xen-firewall package
+# Note that you can as well dpkg-reconfigure dtc-xen-firewall to edit this file
+
+soap_server_allowed_ip=${conf_soap_server_allowed_ip}
+" >${DTCXEN_ETCPATH}/dtc-xen-firewall.sh
+
+#DEBHELPER#
+
+exit 0

@@ -17,6 +17,13 @@
 
 IPTABLES=/sbin/iptables
 
+if [ -e /etc/dtc-xen/dtc-xen-firewall.sh ] ; then
+	. /etc/dtc-xen/dtc-xen-firewall.sh
+fi
+
+if [ -z ${soap_server_allowed_ip} ] ; then
+	soap_server_allowed_ip=0.0.0.0
+fi
 
 flush-input-chain () {
 	${IPTABLES} -F dtc-xen-input
@@ -37,6 +44,16 @@ create-dtc-xen-forward-chain () {
 
 accept-localhost-traffic () {
 	${IPTABLES} -A dtc-xen-in -i lo -j ACCEPT
+}
+
+soap-server-limit () {
+	# Allow only our management server to connect
+	if ! [ ${soap_server_allowed_ip} = "0.0.0.0" ] ; then
+		${IPTABLES} -A dtc-xen-in -p tcp --dport 8089 -i eth0 -s ! ${soap_server_allowed_ip} -j REJECT
+	fi
+	# Rate limit connections to our SOAP server (20 connections per minutes should be more than enough...)
+	${IPTABLES} -A dtc-xen-in -p tcp --dport 8089 -i eth0 -m state --state NEW -m recent --set
+	${IPTABLES} -A dtc-xen-in -p tcp --dport 8089 -i eth0 -m state --state NEW -m recent --update --seconds 60 --hitcount 20 -j REJECT
 }
 
 port25-reject () {
@@ -83,6 +100,7 @@ case "${1}" in
 		ping-flood-protect
 		syn-flood-protect
 		port-scanner-limitation
+		soap-server-limit
         ;;
 
 	stop)

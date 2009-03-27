@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 0.3.9-1\n"
-"Report-Msgid-Bugs-To: thomas@goirand.fr\n"
-"POT-Creation-Date: 2008-03-29 10:27+0800\n"
+"Report-Msgid-Bugs-To: dtc-xen@packages.debian.org\n"
+"POT-Creation-Date: 2009-03-27 14:26+0800\n"
 "PO-Revision-Date: 2008-01-28 21:49+0300\n"
 "Last-Translator: Yuri Kozlov <kozlov.y@gmail.com>\n"
 "Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
@@ -240,18 +240,33 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:12001
+msgid "Name of the initrd image:"
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../dtc-xen.templates:12001
+msgid ""
+"Please enter the name of the initrd ram disk image to use when setting-up a "
+"Linux Xen startup file. Leave this blank to not setup your domU with a "
+"initrd image at all."
+msgstr ""
+
+#. Type: string
+#. Description
+#: ../dtc-xen.templates:13001
 msgid "Volume group to create VPS in:"
 msgstr "Группа томов, которая будет использована для VPS:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:12001
+#: ../dtc-xen.templates:13001
 msgid "Dtc-xen creates physical partitions in an existing LVM volume group"
 msgstr "Dtc-xen создаёт физические разделы в существующей группе томов LVM"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:12001
+#: ../dtc-xen.templates:13001
 #, fuzzy
 msgid ""
 "Please enter that volume group name. The volume group size must fit all the "
@@ -266,13 +281,13 @@ msgstr ""
 
 #. Type: note
 #. Description
-#: ../dtc-xen.templates:13001
+#: ../dtc-xen.templates:14001
 msgid "How to finish the install"
 msgstr "Как завершить установку"
 
 #. Type: note
 #. Description
-#: ../dtc-xen.templates:13001
+#: ../dtc-xen.templates:14001
 msgid ""
 "To finish the installation, you need to launch /usr/sbin/dtc-"
 "xen_finish_install."
@@ -282,7 +297,7 @@ msgstr ""
 
 #. Type: note
 #. Description
-#: ../dtc-xen.templates:13001
+#: ../dtc-xen.templates:14001
 #, fuzzy
 msgid ""
 "This script will remove port forwarding from the current sshd_config file "
@@ -296,7 +311,7 @@ msgstr ""
 
 #. Type: note
 #. Description
-#: ../dtc-xen.templates:13001
+#: ../dtc-xen.templates:14001
 msgid ""
 "Please note that the system is currently safe (connections to a physical "
 "console as xenXX will be rejected because the /etc/sudoers is not changed), "
@@ -308,13 +323,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:14001
+#: ../dtc-xen.templates:15001
 msgid "VPS mountpoint:"
 msgstr "Точка монтирования VPS:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:14001
+#: ../dtc-xen.templates:15001
 #, fuzzy
 msgid ""
 "In order to do the setup of the VPS it's managing, dtc-xen will mount an LVM "
@@ -333,13 +348,13 @@ msgstr ""
 
 #. Type: select
 #. Description
-#: ../dtc-xen.templates:15001
+#: ../dtc-xen.templates:16001
 msgid "Debian os to setup:"
 msgstr "Debian os для настройки:"
 
 #. Type: select
 #. Description
-#: ../dtc-xen.templates:15001
+#: ../dtc-xen.templates:16001
 #, fuzzy
 msgid ""
 "Select the Debian operating system that you want to have setup when dtc-xen "
