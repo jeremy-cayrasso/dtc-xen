@@ -254,6 +254,9 @@ fi
 # Fix the pts device thing
 rm -f ${VPSGLOBPATH}/${VPSNUM}/dev/pts
 mkdir -p ${VPSGLOBPATH}/${VPSNUM}/dev/pts
+rm -rf ${VPSGLOBPATH}/${VPSNUM}/dev/ptmx
+mknod ${VPSGLOBPATH}/${VPSNUM}/dev/ptmx c 5 2
+chmod 666 ${VPSGLOBPATH}/${VPSNUM}/dev/ptmx
 
 if [ "$DISTRO" = "netbsd" ] ; then
 	echo "Nothing to do: it's BSD"
