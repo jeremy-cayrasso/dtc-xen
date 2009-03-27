@@ -1,3 +1,9 @@
+dtc-xen (0.3.26-1) unstable; urgency=low
+
+  * Fixes the ptmx issue.
+
+ -- Thomas Goirand <thomas@goirand.fr>  Sat, 28 Mar 2009 00:36:00 +0800
+
 dtc-xen (0.3.25-1) unstable; urgency=low
 
   * New upstream version with bugfixes as follow.
