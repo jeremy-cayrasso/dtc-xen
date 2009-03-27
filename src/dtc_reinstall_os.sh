@@ -172,8 +172,8 @@ CENTOS_DIR=`ls -d /usr/src/centos* 2> /dev/null | tr ' ' '\n' | sort -r | head -
 if [ "$DISTRO" = "centos" ] ; then
 	/usr/sbin/dtc_install_centos /var/lib/dtc-xen/yum "$VPSGLOBPATH/$VPSNUM"
 elif [ "$DISTRO" = "debian" ] ; then
-	echo $DEBOOTSTRAP --verbose --include=module-init-tools,locales --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
-	$DEBOOTSTRAP --verbose --include=module-init-tools,locales --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS} || debret=$?
+	echo $DEBOOTSTRAP --verbose --include=module-init-tools,locales,udev --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
+	$DEBOOTSTRAP --verbose --include=module-init-tools,locales,udev --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS} || debret=$?
 	if [ "$debret" != "" ]; then
 		echo "Failed to install $DISTRO via bootstrap!!"
 		exit $debret
@@ -250,6 +250,11 @@ else
 	echo "Cheers!"
 	exit
 fi
+
+# Fix the pts device thing
+rm -f ${VPSGLOBPATH}/${VPSNUM}/dev/pts
+mkdir -p ${VPSGLOBPATH}/${VPSNUM}/dev/pts
+
 if [ "$DISTRO" = "netbsd" ] ; then
 	echo "Nothing to do: it's BSD"
 else
