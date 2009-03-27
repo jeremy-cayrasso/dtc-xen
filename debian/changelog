@@ -1,10 +1,4 @@
-dtc-xen (0.3.26-1) unstable; urgency=low
-
-  * Fixes the ptmx issue.
-
- -- Thomas Goirand <thomas@goirand.fr>  Sat, 28 Mar 2009 00:36:00 +0800
-
-dtc-xen (0.3.25-1) unstable; urgency=low
+dtc-xen (0.3.27-1) unstable; urgency=low
 
   * New upstream version with bugfixes as follow.
   * The domU kernel now defaults to the version of Lenny, and the reinstall
@@ -12,10 +6,10 @@ dtc-xen (0.3.25-1) unstable; urgency=low
   * Path to the Xen python lib is now fixed.
   * More dependencies when setting-up a yum domU: which yum-basearchonly nano
     and rsyslog.
-  * The reinstall script now adds the pts devices to the domU fstab, as
+  * The reinstall script now adds the pts/ptmx devices to the domU fstab, as
     otherwise ssh to the domU simply doesn't work.
 
- -- Thomas Goirand <thomas@goirand.fr>  Thu, 26 Mar 2009 20:22:06 +0800
+ -- Thomas Goirand <thomas@goirand.fr>  Sat, 28 Mar 2009 01:26:30 +0800
 
 dtc-xen (0.3.24-1) unstable; urgency=low
 
