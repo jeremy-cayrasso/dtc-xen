@@ -53,9 +53,22 @@ cd ${VPS_PATH}/dev
 /sbin/MAKEDEV generic
 cd ${OLDPWDDIR}
 
-if [ -d "${VPS_PATH}lib/tls" ] ; then
-	echo "Disabling lib/tls"
-	mv ${VPS_PATH}/lib/tls ${VPS_PATH}/lib/tls.disabled
+# Fix the /dev/ptmx and /dev/pts device and folder
+rm -rf ${VPS_PATH}/dev/ptmx
+mknod ${VPS_PATH}/dev/ptmx c 5 2
+chmod 666 ${VPS_PATH}/dev/ptmx
+rm -f ${VPS_PATH}/dev/pts
+mkdir ${VPS_PATH}/dev/pts
+
+# If we run on a non-debian non-64 bits system, disable the tls folder
+FOUNDED_ARCH=`uname -m`
+if [ $FOUNDED_ARCH = "i386" -o $FOUNDED_ARCH = "i486" -o $FOUNDED_ARCH = "i586" -o $FOUNDED_ARCH = "i686" ] ; then
+	if ! [ -f ${VPS_PATH}/debian_version ] ; then
+		if [ -d "${VPS_PATH}/lib/tls" ] ; then
+			echo "Disabling lib/tls"
+			mv ${VPS_PATH}/lib/tls ${VPS_PATH}/lib/tls.disabled
+		fi
+	fi
 fi
 
 # Setup the kernel
