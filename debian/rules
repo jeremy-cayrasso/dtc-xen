@@ -7,6 +7,9 @@ clean:
 	dh_testroot
 	dh_clean
 
+	# As per advice from Christian Perrier
+	debconf-updatepo
+
 install:
 	dh_testdir
 	dh_testroot
