@@ -1,3 +1,9 @@
+dtc-xen (0.3.27-2) unstable; urgency=low
+
+  * Updated french debconf translation thanks to Florentin Duneau <fduneau@gmail.com>
+
+ -- Thomas Goirand <thomas@goirand.fr>  Thu, 09 Apr 2009 13:38:50 +0800
+
 dtc-xen (0.3.27-1) unstable; urgency=low
 
   * New upstream version with bugfixes as follow.
