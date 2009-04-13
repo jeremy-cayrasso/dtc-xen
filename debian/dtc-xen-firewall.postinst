@@ -18,6 +18,19 @@ echo "# This is the configuration file for the dtc-xen-firewall package
 soap_server_allowed_ip=${conf_soap_server_allowed_ip}
 " >${DTCXEN_ETCPATH}/dtc-xen-firewall.sh
 
+if ! [ -e /etc/dtc-xen/dtc-xen-firewall-custom-rules ] ; then
+	echo "# This is where to add your custom rules for your Firewall
+
+add-custom-rules () {
+	# Disables all limitation forwarding rules for a specific target IP
+	# \${IPTABLES} -I FORWARD -s 1.2.3.4 -j RETURN
+	# \${IPTABLES} -I FORWARD -d 1.2.3.4 -j RETURN
+	echo -n ""
+}
+
+" >/etc/dtc-xen/dtc-xen-firewall-custom-rules
+fi
+
 #DEBHELPER#
 
 exit 0

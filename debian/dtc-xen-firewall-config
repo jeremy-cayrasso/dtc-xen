@@ -1,0 +1,34 @@
+# This is the configuration files for the default rules of the
+# dtc-xen-firewall script. Feel free to customize as you wish. Note that all
+# rules have default values in the script, and that you don't need to have
+# variables defined unless you wish to override the default value.
+
+# ACCEPTING_RATE is how much connection per ACCEPTING_TIME you want to accept
+# in the INPUT chain, which means in fact how much connections to your dom0
+# FORWARDING_RATE is the same but for the forward chain (which means:
+# connections to your domUs globaly)
+# Time is always in seconds, rate is in number of connections during this
+# the defined time.
+
+# Connection rate to the dtc-xen SOAP server
+#SOAP_ACCEPTING_RATE=20
+#SOAP_ACCEPTING_TIME=60
+
+# Rate limits for ssh connections (prevents brute force, dictionnary and DoS)
+#SSH_ACCEPTING_RATE=300
+#SSH_ACCEPTING_TIME=10
+#SSH_FORWARDING_RATE=5
+#SSH_FORWARDING_TIME=10
+
+# Ping flood limits (prevents DoS and data center broadcast hell)
+# Rate here is per seconds
+#PING_ACCEPTING_RATE=5
+#PING_FORWARDING_RATE=50
+
+# Syn flood limits (prevents DoS and data center broadcast hell)
+#SYN_ACCEPTING_RATE=10
+#SYN_FORWARDING_RATE=100
+
+# SYN,ACK,FIN,RST global limits
+#GLOB_CONNECT_ACCEPTING_RATE=10
+#GLOB_CONNECT_FORWARDING_RATE=1000
