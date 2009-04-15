@@ -12,6 +12,7 @@ def check_call(*args):
 	return retval
 
 tabsplitter = re.compile("[\t ]+").split
+tabcolonsplitter = re.compile("[\t :]+").split
 
 if len(sys.argv) < 2:
     print "Syntax: %s <rrdbasename> [--test]"%sys.argv[0]
@@ -49,7 +50,7 @@ for domain in domains:
     if name == "Domain-0": continue
      
     # Log the network usage of each domU domain
-    inbytes,a,a,a,a,a,a,a,outbytes,a,a,a,a,a,a,a=tabsplitter(
+    vifnamediscard,inbytes,a,a,a,a,a,a,a,outbytes,a,a,a,a,a,a,a=tabcolonsplitter(
 	[
 		re.sub(".*:","",o).strip()
 		for o in file("/proc/net/dev").readlines()
