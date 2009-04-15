@@ -22,9 +22,14 @@ if ! [ -e /etc/dtc-xen/dtc-xen-firewall-custom-rules ] ; then
 	echo "# This is where to add your custom rules for your Firewall
 
 add-custom-rules () {
+	# Here is a short example.
 	# Disables all limitation forwarding rules for a specific target IP
-	# \${IPTABLES} -I FORWARD -s 1.2.3.4 -j RETURN
-	# \${IPTABLES} -I FORWARD -d 1.2.3.4 -j RETURN
+	# \${IPTABLES} -A dtc-xen-fw -s 1.2.3.4 -j RETURN
+	# \${IPTABLES} -A dtc-xen-fw -d 1.2.3.4 -j RETURN
+
+	# The following is there as if there is no instructions at all,
+	# the script fails. Of course, feel free to remove if you are
+	# adding custom rules in this script.
 	echo -n ""
 }
 
