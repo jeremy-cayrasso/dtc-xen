@@ -445,7 +445,7 @@ class DataCollector(Thread):
 				# if cpu time was measured the last time, and it was less than this one, get the difference
 				vifdiscard,net_inbytes,a,a,a,a,a,a,a,net_outbytes,a,a,a,a,a,a,a=tabcolonsplitter(
 					[
-						re.sub(".*:","",o).strip()
+						re.sub("sdkljflsdkjfsdlfj.*:","",o).strip()
 						for o in procnetdev_readout
 						if o.startswith("vif%s.0:"%xid)
 					] [0]
