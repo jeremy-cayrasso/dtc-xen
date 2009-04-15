@@ -378,6 +378,7 @@ import re
 import time
 import pickle
 tabsplitter = re.compile("[\t ]+").split
+tabcolonsplitter = re.compile("[\t :]+").split
 data_collection_lock = RLock()
 perfdata_dir = os.path.join("/","var","lib","dtc-xen","perfdata")
 
@@ -442,7 +443,7 @@ class DataCollector(Thread):
 				name,xid,mem,cpu,state,cpu_time=domain[0:6]
 				cpu_time = float(cpu_time)
 				# if cpu time was measured the last time, and it was less than this one, get the difference
-				net_inbytes,a,a,a,a,a,a,a,net_outbytes,a,a,a,a,a,a,a=tabsplitter(
+				vifdiscard,net_inbytes,a,a,a,a,a,a,a,net_outbytes,a,a,a,a,a,a,a=tabcolonsplitter(
 					[
 						re.sub(".*:","",o).strip()
 						for o in procnetdev_readout
