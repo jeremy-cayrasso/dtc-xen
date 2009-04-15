@@ -172,8 +172,8 @@ CENTOS_DIR=`ls -d /usr/src/centos* 2> /dev/null | tr ' ' '\n' | sort -r | head -
 if [ "$DISTRO" = "centos" ] ; then
 	/usr/sbin/dtc_install_centos /var/lib/dtc-xen/yum "$VPSGLOBPATH/$VPSNUM"
 elif [ "$DISTRO" = "debian" ] ; then
-	echo $DEBOOTSTRAP --verbose --include=module-init-tools,locales --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
-	$DEBOOTSTRAP --verbose --include=module-init-tools,locales --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS} || debret=$?
+	echo $DEBOOTSTRAP --verbose --include=module-init-tools,locales,udev --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
+	$DEBOOTSTRAP --verbose --include=module-init-tools,locales,udev --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS} || debret=$?
 	if [ "$debret" != "" ]; then
 		echo "Failed to install $DISTRO via bootstrap!!"
 		exit $debret
@@ -250,6 +250,14 @@ else
 	echo "Cheers!"
 	exit
 fi
+
+# Fix the pts device thing
+rm -rf ${VPSGLOBPATH}/${VPSNUM}/dev/pts
+mkdir -p ${VPSGLOBPATH}/${VPSNUM}/dev/pts
+rm -rf ${VPSGLOBPATH}/${VPSNUM}/dev/ptmx
+mknod ${VPSGLOBPATH}/${VPSNUM}/dev/ptmx c 5 2
+chmod 666 ${VPSGLOBPATH}/${VPSNUM}/dev/ptmx
+
 if [ "$DISTRO" = "netbsd" ] ; then
 	echo "Nothing to do: it's BSD"
 else
@@ -258,6 +266,7 @@ else
 	echo "/dev/sda1       /       ext3    errors=remount-ro       0       0
 proc            /proc   proc    defaults                0       0
 /dev/sda2       none    swap    sw                      0       0
+none            /dev/pts devpts defaults                0 0
 " >${ETC}/fstab
 
 	# We set the default needed by DTC as hostname, so DTC can be setup quite fast
@@ -430,12 +439,24 @@ vif = [ 'mac=${MAC_ADDR}, ip=${ALL_IPADDRS}' ]
 " >>/etc/xen/${VPSNAME}
 	fi
 else
+	# Set the configured kernel name
 	echo "kernel = \"${KERNELPATH}\"
-memory = ${VPSMEM}
+" > /etc/xen/${VPSNAME}
+
+	# Set a initrd image if configured
+	if ! [ -z "${INITRDNAME}" ] ; then
+		echo "ramdisk = \"/boot/${INITRDNAME}\"
+" >> /etc/xen/${VPSNAME}
+	fi
+
+	# Set memory, domU name and vif
+	echo "memory = ${VPSMEM}
 name = \"${VPSNAME}\"
 #cpu = -1   # leave to Xen to pick
 vif = [ 'mac=${MAC_ADDR}, ip=${ALL_IPADDRS}' ]
-" > /etc/xen/${VPSNAME}
+" >> /etc/xen/${VPSNAME}
+
+	# Set the HDDs
 	if [ "$IMAGE_TYPE" = "lvm" ]; then
 		echo "disk = [ 'phy:/dev/mapper/${LVMNAME}-xen${VPSNUM},sda1,w','phy:/dev/mapper/${LVMNAME}-xen${VPSNUM}swap,sda2,w' ]
 " >> /etc/xen/${VPSNAME}
@@ -443,6 +464,8 @@ vif = [ 'mac=${MAC_ADDR}, ip=${ALL_IPADDRS}' ]
 		echo "disk = [ 'file:$VPSGLOBPATH/${VPSNAME}.img,sda1,w','file:$VPSGLOBPATH/${VPSNAME}.swap.img,sda2,w' ]
 " >> /etc/xen/${VPSNAME}
 	fi
+
+	# Set the boot parameters (runlevel and tty)
 	if [ "$DISTRO" = "slackware" ]; then
 		echo "root = \"/dev/sda1 ro\"
 # Sets runlevel 3.
@@ -455,6 +478,8 @@ extra = \"4 TERM=xterm xencons=tty console=tty1\"
 " >>/etc/xen/${VPSNAME}
 	fi
 fi
+
+# The reboot autostart
 if [ ! -e /etc/xen/auto/${VPSNAME} ] ; then
 	ln -s ../${VPSNAME} /etc/xen/auto/${VPSNAME}
 fi

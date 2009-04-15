@@ -28,6 +28,8 @@ db_get dtc-xen/conf_gateway
 conf_gateway=$RET
 db_get dtc-xen/conf_linux_kernel_name
 conf_linux_kernel_name=$RET
+db_get dtc-xen/conf_linux_domu_initrd
+conf_linux_domu_initrd=$RET
 db_get dtc-xen/conf_lvm_name
 conf_lvm_name=$RET
 db_get dtc-xen/conf_vps_mountpoint
@@ -150,6 +152,7 @@ VPS_MOUNTPOINT=$conf_vps_mountpoint
 DEBIAN_RELEASE=$conf_debian_release
 
 KERNELNAME=$conf_linux_kernel_name
+INITRDNAME=$conf_linux_domu_initrd
 " > ${DTCXEN_ETCPATH}/dtc_create_vps.conf.sh
 
 chmod 600 ${DTCXEN_ETCPATH}/*
@@ -186,6 +189,15 @@ done
 
 # Touch this file just to show that it's possible to edit it
 touch /etc/dtc-xen/authorized_keys2
+
+# Adds the /usr/lib/xen that exists in the source version of Xen
+# this has been reported to the pkg-xen group, but they said they
+# don't want to fix, so someone has to do it at some point...
+if ! [ -e /usr/lib/xen ] ; then
+	if [ -e /etc/alternatives/xen-default ] ; then
+		ln -s /etc/alternatives/xen-default /usr/lib/xen
+	fi
+fi
 
 # Needs the /var/lib/rpm to setup CentOS, it's not there by default, so we add it
 mkdir -p /var/lib/rpm

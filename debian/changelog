@@ -1,3 +1,22 @@
+dtc-xen (0.3.27-2) unstable; urgency=low
+
+  * Updated french debconf translation thanks to Florentin Duneau <fduneau@gmail.com>
+
+ -- Thomas Goirand <thomas@goirand.fr>  Thu, 09 Apr 2009 13:38:50 +0800
+
+dtc-xen (0.3.27-1) unstable; urgency=low
+
+  * New upstream version with bugfixes as follow.
+  * The domU kernel now defaults to the version of Lenny, and the reinstall
+    script now adds an initrd to the default config of new domUs.
+  * Path to the Xen python lib is now fixed.
+  * More dependencies when setting-up a yum domU: which yum-basearchonly nano
+    and rsyslog.
+  * The reinstall script now adds the pts/ptmx devices to the domU fstab, as
+    otherwise ssh to the domU simply doesn't work.
+
+ -- Thomas Goirand <thomas@goirand.fr>  Sat, 28 Mar 2009 01:26:30 +0800
+
 dtc-xen (0.3.24-1) unstable; urgency=low
 
   * New upstream release with the following correction:
