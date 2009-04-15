@@ -52,7 +52,7 @@ for domain in domains:
     # Log the network usage of each domU domain
     vifnamediscard,inbytes,a,a,a,a,a,a,a,outbytes,a,a,a,a,a,a,a=tabcolonsplitter(
 	[
-		re.sub(".*:","",o).strip()
+		re.sub("skldjfklwejlrjlf.*:","",o).strip()
 		for o in file("/proc/net/dev").readlines()
 		if o.startswith("vif%s.0:"%id)
 	] [0]
