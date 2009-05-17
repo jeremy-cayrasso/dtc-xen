@@ -2,14 +2,14 @@
 # Copyright (C) 2007 THE dtc-xen'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the dtc-xen package.
 # Praveen|പ്രവീണ്‍ A|എ <pravi.a@gmail.com>, 2007.
-#
-#
-#
+# 
+# 
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: dtc-xen 20070422\n"
-"Report-Msgid-Bugs-To: dtc-xen@packages.debian.org\n"
-"POT-Creation-Date: 2009-03-27 14:26+0800\n"
+"Report-Msgid-Bugs-To: thomas@goirand.fr\n"
+"POT-Creation-Date: 2008-03-29 10:27+0800\n"
 "PO-Revision-Date: 2007-04-22 00:52-0600\n"
 "Last-Translator: Praveen|പ്രവീണ്‍ A|എ <pravi.a@gmail.com>\n"
 "Language-Team: Swathanthra|സ്വതന്ത്ര Malayalam|മലയാളം Computing|കമ്പ്യൂട്ടിങ്ങ് <smc-"
@@ -243,33 +243,18 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:12001
-msgid "Name of the initrd image:"
-msgstr ""
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:12001
-msgid ""
-"Please enter the name of the initrd ram disk image to use when setting-up a "
-"Linux Xen startup file. Leave this blank to not setup your domU with a "
-"initrd image at all."
-msgstr ""
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:13001
 msgid "Volume group to create VPS in:"
 msgstr "വിപിഎസ് സൃഷ്ടിയ്ക്കാനുള്ള വാള്യം ഗ്രൂപ്പ്:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:13001
+#: ../dtc-xen.templates:12001
 msgid "Dtc-xen creates physical partitions in an existing LVM volume group"
 msgstr "Dtc-xen നിലവിലുള്ള എല്‍വിഎം വാള്യം ഗ്രൂപ്പില്‍ ഭൌതിക ഭാഗങ്ങള്‍ സൃഷ്ടിയ്ക്കും"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:13001
+#: ../dtc-xen.templates:12001
 #, fuzzy
 msgid ""
 "Please enter that volume group name. The volume group size must fit all the "
@@ -284,13 +269,13 @@ msgstr ""
 
 #. Type: note
 #. Description
-#: ../dtc-xen.templates:14001
+#: ../dtc-xen.templates:13001
 msgid "How to finish the install"
 msgstr ""
 
 #. Type: note
 #. Description
-#: ../dtc-xen.templates:14001
+#: ../dtc-xen.templates:13001
 msgid ""
 "To finish the installation, you need to launch /usr/sbin/dtc-"
 "xen_finish_install."
@@ -299,7 +284,7 @@ msgstr ""
 
 #. Type: note
 #. Description
-#: ../dtc-xen.templates:14001
+#: ../dtc-xen.templates:13001
 #, fuzzy
 msgid ""
 "This script will remove port forwarding from the current sshd_config file "
@@ -313,7 +298,7 @@ msgstr ""
 
 #. Type: note
 #. Description
-#: ../dtc-xen.templates:14001
+#: ../dtc-xen.templates:13001
 msgid ""
 "Please note that the system is currently safe (connections to a physical "
 "console as xenXX will be rejected because the /etc/sudoers is not changed), "
@@ -326,13 +311,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:15001
+#: ../dtc-xen.templates:14001
 msgid "VPS mountpoint:"
 msgstr "വിപിഎസ് മൌണ്ട്പോയിന്റ്:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:15001
+#: ../dtc-xen.templates:14001
 msgid ""
 "In order to do the setup of the VPS it's managing, dtc-xen will mount an LVM "
 "device or a file loopback on the dom0 of your Xen server, and then use it as "
@@ -345,13 +330,13 @@ msgstr ""
 
 #. Type: select
 #. Description
-#: ../dtc-xen.templates:16001
+#: ../dtc-xen.templates:15001
 msgid "Debian os to setup:"
 msgstr ""
 
 #. Type: select
 #. Description
-#: ../dtc-xen.templates:16001
+#: ../dtc-xen.templates:15001
 msgid ""
 "Select the Debian operating system that you want to have setup when dtc-xen "
 "creates a new VM instance with debootstrap."

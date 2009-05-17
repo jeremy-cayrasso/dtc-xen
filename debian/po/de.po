@@ -1,13 +1,13 @@
 # Translation of dtc-xen debconf templates to German
-# Copyright (C) Helge Kreutzmann <debian@helgefjell.de>, 2007, 2008.
+# Copyright (C) Helge Kreutzmann <debian@helgefjell.de>, 2007-2009.
 # This file is distributed under the same license as the dtc-xen package.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: dtc-xen 0.3.17-1\n"
+"Project-Id-Version: dtc-xen 0.4.0-1\n"
 "Report-Msgid-Bugs-To: dtc-xen@packages.debian.org\n"
 "POT-Creation-Date: 2009-03-27 14:26+0800\n"
-"PO-Revision-Date: 2008-03-18 18:23+0100\n"
+"PO-Revision-Date: 2009-04-13 22:17+0200\n"
 "Last-Translator: Helge Kreutzmann <debian@helgefjell.de>\n"
 "Language-Team: de <debian-l10n-german@lists.debian.org>\n"
 "MIME-Version: 1.0\n"
@@ -59,7 +59,7 @@ msgstr "Bitte geben Sie den Login-Namen für die Verbindung zum Server an."
 #. Description
 #: ../dtc-xen.templates:3001
 msgid "SOAP server pass:"
-msgstr "SOAP-Server-Pass:"
+msgstr "SOAP-Server-Passwort:"
 
 #. Type: password
 #. Description
@@ -116,7 +116,7 @@ msgid ""
 "the VPS number itself (xenYY), and XXXX being the Xen server number. This "
 "node number must be 4 or 5 characters long."
 msgstr ""
-"Lautet der Wert beispielsweise »XXXX« werden die VPS-nnummern »xenXXXXYY« "
+"Lautet der Wert beispielsweise »XXXX« werden die VPS-Nummern »xenXXXXYY« "
 "lauten, wobei »YY« die VPS-Nummer selbst (xenYY) und XXXX die Xen-"
 "Servernummer ist. Diese Knotennummer muss vier oder fünf Zeichen lang sein."
 
@@ -244,7 +244,7 @@ msgstr ""
 #. Description
 #: ../dtc-xen.templates:12001
 msgid "Name of the initrd image:"
-msgstr ""
+msgstr "Name des Initrd-Images:"
 
 #. Type: string
 #. Description
@@ -254,6 +254,9 @@ msgid ""
 "Linux Xen startup file. Leave this blank to not setup your domU with a "
 "initrd image at all."
 msgstr ""
+"Bitte geben Sie den Namen des Initrd-RAM-Platten-Images an, der beim "
+"Einrichten einer Linux-Xen-Start-Datei verwandt werden soll. Lassen Sie dies "
+"leer, um Ihre domU nicht mit einem Initrd-Images einzurichten."
 
 #. Type: string
 #. Description
@@ -343,9 +346,9 @@ msgid ""
 "points so you can do maintenance and mount VPSes with less hassle. Enter the "
 "desired path prefix for these mount points."
 msgstr ""
-"Um den VPS einzurichten, den es verwalten soll, wird Dtc-xen eine LVM-Gerät "
+"Um den VPS einzurichten, den es verwalten soll, wird Dtc-xen ein LVM-Gerät "
 "oder eine Datei via Loopback im Dom0 Ihres Xen-Servers einhängen und dann "
-"diese als Partition für Ihre VPS verwenden. Standardmäßig können nur wenige "
+"dieses als Partition für Ihre VPS verwenden. Standardmäßig können nur wenige "
 "Loopback-Einhängungen vorgenommen werden, und da LVM auch im Zugriff "
 "schneller ist, wird diese Option deutlich empfohlen. Dies wird auch dazu "
 "verwendet, Ihre Einhängepunkte in der /etc/fstab automatisch zu setzen, so "
