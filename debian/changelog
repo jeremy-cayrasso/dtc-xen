@@ -1,8 +1,9 @@
 dtc-xen (0.4.0-1) unstable; urgency=low
 
   * New upstream release.
+  * Bumped standard-version.
 
- -- Thomas Goirand <thomas@goirand.fr>  Sun, 13 Jul 2008 23:59:04 +0800
+ -- Thomas Goirand <thomas@goirand.fr>  Thu, 11 Jun 2009 15:08:32 +0800
 
 dtc-xen (0.3.19-1) unstable; urgency=low
 

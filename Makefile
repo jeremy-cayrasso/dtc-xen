@@ -9,7 +9,8 @@ dtc_setup_vps_disk.8 dtc-xen_finish_install.8 dtc_install_centos.8 dtc_kill_vps_
 dtc-xen_domUconf_network_debian.8 dtc-xen_domUconf_network_redhat.8 dtc-xen_domUconf_standard.8
 
 SBIN_SH_SCRIPTS=dtc_kill_vps_disk xm_info_free_memory vgdisplay_free_size dtc_setup_vps_disk dtc_reinstall_os \
-dtc_change_bsd_kernel dtc_write_xenpv_conf dtc_install_centos dtc-xen_domUconf_standard dtc-xen_domUconf_network_debian dtc-xen_domUconf_network_redhat
+dtc_change_bsd_kernel dtc_write_xenpv_conf dtc_install_centos dtc-xen_domUconf_standard dtc-xen_domUconf_network_debian \
+dtc-xen_domUconf_network_redhat dtc-xen_finish_install dtc-soap-server
 
 default:
 	@-echo "Building... not..."
@@ -32,19 +33,25 @@ clean:
 	for i in $(MAN8_PAGES) ; do rm $(DESTDIR)/usr/share/man/man8/$$i.gz ; done
 	rm $(DESTDIR)/usr/share/man/man1/dtc-xen_userconsole.1.gz
 
+install_dtc-xen-firewall:
+	install -D -m 0640 etc/dtc-xen/dtc-xen-firewall-config $(DESTDIR)/etc/dtc-xen/dtc-xen-firewall-config
+	install -D -m 0755 etc/init.d/dtc-xen-firewall $(DESTDIR)/etc/init.d/dtc-xen-firewall
+	if [ -e debian ] ; then cp etc/init.d/dtc-xen-firewall debian/dtc-xen-firewall.init ; fi
+
 install:
 # The soap server
-	install -D -m 0700 src/dtc-soap-server.py $(DESTDIR)/usr/sbin/dtc-soap-server
 	install -D -m 0700 src/Properties.py $(DESTDIR)/usr/share/dtc-xen/Properties.py
+	install -D -m 0755 etc/init.d/dtc-xen $(DESTDIR)/etc/init.d/dtc-xen
+	install -D -m 0644 etc/logrotate.d/dtc-xen $(DESTDIR)/etc/logrotate.d/dtc-xen
+	if [ -e debian ] ; then cp etc/init.d/dtc-xen debian/dtc-xen.init ; fi
 
 	for i in $(SBIN_SH_SCRIPTS) ; do install -D -m 0700 src/$$i $(DESTDIR)/usr/sbin/$$i ;  done
-	install -D -m 0740 debian/scripts/dtc-xen_finish_install $(DESTDIR)/usr/sbin/dtc-xen_finish_install
 
 # The utilities used by the soap server
 	install -D -m 0700 src/dtc-xen_userconsole $(DESTDIR)/bin/dtc-xen_userconsole
 
 # DTC autodeploy script
-	install -D -m 0640 src/dtc-panel_autodeploy.sh $(DESTDIR)/usr/share/dtc-xen/dtc-panel_autodeploy.sh
+	install -D -m 0740 src/dtc-panel_autodeploy.sh $(DESTDIR)/usr/share/dtc-xen/dtc-panel_autodeploy.sh
 	install -D -m 0644 src/selection_config_file $(DESTDIR)/usr/share/dtc-xen/selection_config_file
 
 # Some configuration files

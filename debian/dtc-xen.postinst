@@ -117,7 +117,7 @@ create_ssl_cert () {
 	# If one is missing, just regenerate the cert from scratch !
 	if [ ${TEST} = "true" ] ; then
 		# If the config file exist, read the passphrase from the file
-		echoIfVerbose "===> Generating SSL certs for the SOAP python server"
+		echoIfVerbose "---> Generating SSL certs for the SOAP python server"
 		rm -f $DTCXEN_ETCPATH/privkey.pem $DTCXEN_ETCPATH/dtc-xen.cert.csr $DTCXEN_ETCPATH/dtc-xen.cert.cert $DTCXEN_ETCPATH/dtc-xen.cert.key
 		CERTPASS_TMP_FILE=`${MKTEMP} certfilepass.XXXXXX`  || exit 1
 		echo $conf_ssl_passphrase >$CERTPASS_TMP_FILE
@@ -147,7 +147,7 @@ manage_htpasswd () {
 	fi
 
 	# Generate the htpasswd file (each time, it doesn't mater)
-	echoIfVerbose "===> Generating $DTCXEN_ETCPATH/htpasswd file for the SOAP python server"
+	echoIfVerbose "---> Generating $DTCXEN_ETCPATH/htpasswd file for the SOAP python server"
 	# Just in case there's no password set (which is the case if running debconf in non-interactive), generate a random one
 	if [ -z ${conf_soap_pass} ] ; then
 		echoIfVerbose "WARNING: No password set durring debconf, will pickup a random one."
@@ -246,6 +246,17 @@ else
 fi
 mkdir -p $XEN_USER_HOME
 for i in `seq -w 1 29`; do dtcaddxenuser xen$i ; done
+
+# Install our init.d script
+if [ -e /etc/redhat-release ] ; then
+	if [ -x /etc/rc.d/init.d/dtc-xen ] ; then
+		echo "TODO: CentOS startup links"
+		chkconfig --add dtc-xen
+		if [ -x /sbin/service ] ; then
+			service start dtc-xen
+		fi
+	fi
+fi
 
 #DEBHELPER#
 

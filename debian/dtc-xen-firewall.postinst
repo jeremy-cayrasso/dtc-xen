@@ -36,6 +36,17 @@ add-custom-rules () {
 " >/etc/dtc-xen/dtc-xen-firewall-custom-rules
 fi
 
+# Install our init.d script
+if [ -e /etc/redhat-release ] ; then
+	if [ -x /etc/rc.d/init.d/dtc-xen-firewall ] ; then
+		echo "TODO: CentOS startup links"
+		chkconfig --add dtc-xen-firewall
+		if [ -x /sbin/service ] ; then
+			service start dtc-xen-firewall
+		fi
+	fi
+fi
+
 #DEBHELPER#
 
 exit 0

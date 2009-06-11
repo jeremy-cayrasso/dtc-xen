@@ -6,6 +6,7 @@ clean:
 	dh_testdir
 	dh_testroot
 	dh_clean
+	rm -f debian/dtc-xen.init debian/dtc-xen-firewall.init
 
 	# As per advice from Christian Perrier
 	debconf-updatepo
@@ -18,16 +19,16 @@ install:
 	dh_link
 
 	$(MAKE) install DESTDIR=debian/dtc-xen
+	$(MAKE) install_dtc-xen-firewall DESTDIR=debian/dtc-xen-firewall
 
 binary-indep: install
 	dh_testdir
 	dh_testroot
-	dh_install
 	dh_installchangelogs doc/changelog
-	dh_installinit
 	dh_installdebconf
 	dh_installdocs
 	dh_installlogrotate
+	dh_installinit
 	dh_fixperms
 	dh_compress
 	dh_installdeb

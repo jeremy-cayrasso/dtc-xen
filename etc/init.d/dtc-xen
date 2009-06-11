@@ -1,0 +1,47 @@
+#!/bin/bash
+
+### BEGIN INIT INFO
+# Provides:          dtc-xen-soap-server
+# Required-Start:    $all
+# Required-Stop:
+# Should-Start:      $local_fs
+# Should-Stop:       $local_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Provide a SOAP server facility for managing your Xen VMs
+# Description:       dtc-xen is a SOAP server running over HTTPS with auth,
+#                    so a web GUI tool can manage, create and destroy your
+#                    domU under Xen. This package is to be run in the dom0
+#                    of your Xen server. It's written to integrate within DTC
+#                    web hosting control panel.
+### END INIT INFO
+
+. /lib/lsb/init-functions
+
+PYTHON=/usr/bin/python
+case "$1" in
+	start)
+		log_daemon_msg "Starting python SOAP server" "dtc-soap-server"
+		start-stop-daemon --start -b --quiet --pidfile /var/run/dtc-xen-soap-server.pid --make-pidfile --exec $PYTHON /usr/sbin/dtc-soap-server
+		log_end_msg $?
+        ;;
+
+	stop)
+		log_daemon_msg "Stoping python SOAP server" "dtc-soap-server"
+		start-stop-daemon --stop --oknodo --pidfile /var/run/dtc-xen-soap-server.pid
+		log_end_msg $?
+	;;
+
+	restart|reload|force-reload)
+		$0 stop
+		sleep 1
+		$0 start
+	;;
+
+	*)
+		echo 'Usage: $0 {start|stop|restart|reload}'
+		exit 1
+
+esac
+
+exit 0

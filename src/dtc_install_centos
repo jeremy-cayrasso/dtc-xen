@@ -17,7 +17,7 @@ CACHEDIR="/var/cache/yum"      # where yum caches stuff -- is created as a subdi
 YUMENVIRON="$1"                # where the yum config is generated and deployed
 INSTALLROOT="$2"               # destination directory / chroot for installation
 
-if [ "$INSTALLROOT" == "" -o ! -d "$INSTALLROOT" -o "$YUMENVIRON" == "" ] ; then
+if [ "$INSTALLROOT" = "" -o ! -d "$INSTALLROOT" -o "$YUMENVIRON" = "" ] ; then
 	echo "usage: centos-installer /yum/environment (will be created) /destination/directory (must exist)"
 	echo "dest dir MUST BE an absolute path"
 	exit 126
@@ -38,10 +38,10 @@ releasever=5
 
 # detect architecture
 ARCH=`uname -m`
-if [ "$ARCH" == x86_64 ] ; then
+if [ "$ARCH" = x86_64 ] ; then
 	exclude="*.i386 *.i586 *.i686"
 	basearch=x86_64
-elif [ "$ARCH" == i686 ] ; then
+elif [ "$ARCH" = i686 ] ; then
 	exclude="*.x86_64"
 	basearch=i386
 else
