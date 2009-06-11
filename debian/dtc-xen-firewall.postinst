@@ -21,7 +21,7 @@ soap_server_allowed_ip=${conf_soap_server_allowed_ip}
 if ! [ -e /etc/dtc-xen/dtc-xen-firewall-custom-rules ] ; then
 	echo "# This is where to add your custom rules for your Firewall
 
-add-custom-rules () {
+add_custom_rules () {
 	# Here is a short example.
 	# Disables all limitation forwarding rules for a specific target IP
 	# \${IPTABLES} -A dtc-xen-fw -s 1.2.3.4 -j RETURN

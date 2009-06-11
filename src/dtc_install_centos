@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 CACHEDIR="/var/cache/yum"      # where yum caches stuff -- is created as a subdir
                                # of the destination chroot
@@ -17,7 +17,7 @@ CACHEDIR="/var/cache/yum"      # where yum caches stuff -- is created as a subdi
 YUMENVIRON="$1"                # where the yum config is generated and deployed
 INSTALLROOT="$2"               # destination directory / chroot for installation
 
-if [ "$INSTALLROOT" = "" -o ! -d "$INSTALLROOT" -o "$YUMENVIRON" = "" ] ; then
+if [ "${INSTALLROOT}" = "" -o ! -d "${INSTALLROOT}" -o "${YUMENVIRON}" = "" ] ; then
 	echo "usage: centos-installer /yum/environment (will be created) /destination/directory (must exist)"
 	echo "dest dir MUST BE an absolute path"
 	exit 126
@@ -38,27 +38,27 @@ releasever=5
 
 # detect architecture
 ARCH=`uname -m`
-if [ "$ARCH" = x86_64 ] ; then
+if [ "${ARCH}" = x86_64 ] ; then
 	exclude="*.i386 *.i586 *.i686"
 	basearch=x86_64
-elif [ "$ARCH" = i686 ] ; then
+elif [ "${ARCH}" = i686 ] ; then
 	exclude="*.x86_64"
 	basearch=i386
 else
-	echo "Unknown architecture: $ARCH -- stopping centos-installer"
+	echo "Unknown architecture: ${ARCH} -- stopping centos-installer"
 	exit 3
 fi
 
 # make yum environment
 
-mkdir -p "$YUMENVIRON"/{pluginconf.d,repos.d} "$CACHEDIR" "$INSTALLROOT/var/log"
+mkdir -p ${YUMENVIRON}/pluginconf.d ${YUMENVIRON}/repos.d ${CACHEDIR} ${INSTALLROOT}/var/log
 
 # In case the folder is not there:
 mkdir -p /var/lib/rpm
 
 # configure yum:
 
-cat > "$YUMENVIRON/yum.conf" << EOF
+cat > "${YUMENVIRON}/yum.conf" << EOF
 [main]
 reposdir=$YUMENVIRON/repos.d
 pluginconfpath=$YUMENVIRON/pluginconf.d
@@ -78,13 +78,13 @@ plugins=1
 metadata_expire=1800
 EOF
 
-cat > "$YUMENVIRON/pluginconf.d/installonlyn.conf" << EOF
+cat > "${YUMENVIRON}/pluginconf.d/installonlyn.conf" << EOF
 [main]
 enabled=1
 tokeep=5
 EOF
 
-cat > "$YUMENVIRON/repos.d/CentOS-Base.repo" << EOF
+cat > "${YUMENVIRON}/repos.d/CentOS-Base.repo" << EOF
 [base]
 name=CentOS-5 - Base
 #baseurl=http://mirror.centos.org/centos/$releasever/os/$basearch/
@@ -124,4 +124,4 @@ EOF
 # unleash yum
 
 export LANG=C
-exec yum -c "$YUMENVIRON/yum.conf" -y install basesystem centos-release yum wget which yum-basearchonly nano rsyslog passwd
+exec yum -c "${YUMENVIRON}/yum.conf" -y install basesystem centos-release yum wget which yum-basearchonly nano rsyslog passwd

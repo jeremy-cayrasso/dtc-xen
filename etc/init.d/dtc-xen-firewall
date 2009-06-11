@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 ### BEGIN INIT INFO
 # Provides:          dtc-xen-firewall
@@ -33,11 +33,11 @@ if [ -z ${soap_server_allowed_ip} ] ; then
 	soap_server_allowed_ip=0.0.0.0
 fi
 
-flush-input-chain () {
+flush_input_chain () {
 	${IPTABLES} -F dtc-xen-input
 }
 
-create-dtc-xen-forward-chain () {
+create_dtc_xen_forward_chain () {
 	# Create the chain (if it doesn't exists, then it should be inserted in the INPUT or FORWARD chain)
 	if ${IPTABLES} --new-chain dtc-xen-in ; then
 		${IPTABLES} -I INPUT -j dtc-xen-in
@@ -50,11 +50,11 @@ create-dtc-xen-forward-chain () {
 	${IPTABLES} -F dtc-xen-in
 }
 
-accept-localhost-traffic () {
+accept_localhost_traffic () {
 	${IPTABLES} -A dtc-xen-in -i lo -j ACCEPT
 }
 
-soap-server-limit () {
+soap_server_limit () {
 	# Allow only our management server to connect
 	if ! [ ${soap_server_allowed_ip} = "0.0.0.0" ] ; then
 		${IPTABLES} -A dtc-xen-in -p tcp --dport 8089 -s ! ${soap_server_allowed_ip} -j REJECT
@@ -70,18 +70,18 @@ soap-server-limit () {
 	${IPTABLES} -A dtc-xen-in -p tcp --dport 8089 -m state --state NEW -m recent --update --seconds ${SOAP_ACCEPTING_TIME} --hitcount ${SOAP_ACCEPTING_RATE} -j REJECT
 }
 
-port25-reject () {
+port25_reject () {
 	${IPTABLES} -A dtc-xen-in -p tcp --dport 25 -j REJECT
 }
 
-call-add-custom-rules () {
+call_add_custom_rules () {
 	if [ -e /etc/dtc-xen/dtc-xen-firewall-custom-rules ] ; then
 		. /etc/dtc-xen/dtc-xen-firewall-custom-rules
-		add-custom-rules
+		add_custom_rules
 	fi
 }
 
-limit-ssh-login-rate () {
+limit_ssh_login_rate () {
 	if [ -z "${SSH_ACCEPTING_RATE}" ] ; then
 		SSH_ACCEPTING_RATE=10
 	fi
@@ -105,7 +105,7 @@ limit-ssh-login-rate () {
 	${IPTABLES} -A dtc-xen-fw -p tcp --dport 22 -m state --state NEW -m recent --update --seconds ${SSH_FORWARDING_TIME} --hitcount ${SSH_FORWARDING_RATE} -j REJECT
 }
 
-ping-flood-protect () {
+ping_flood_protect () {
 	if [ -z "${PING_ACCEPTING_RATE}" ] ; then
 		PING_ACCEPTING_RATE=5
 	fi
@@ -120,7 +120,7 @@ ping-flood-protect () {
 	${IPTABLES} -A dtc-xen-fw -p icmp --icmp-type echo-request -m limit --limit ${PING_FORWARDING_RATE}/s -j RETURN
 	${IPTABLES} -A dtc-xen-fw -p icmp --icmp-type echo-request -j DROP
 }
-syn-flood-protect () {
+syn_flood_protect () {
 	if [ -z "${SYN_ACCEPTING_RATE}" ] ; then
 		SYN_ACCEPTING_RATE=10
 	fi
@@ -135,7 +135,7 @@ syn-flood-protect () {
 	${IPTABLES} -A dtc-xen-fw -p tcp --syn -j DROP
 }
 
-port-scanner-limitation () {
+port_scanner_limitation () {
 	if [ -z "${GLOB_CONNECT_ACCEPTING_RATE}" ] ; then
 		GLOB_CONNECT_ACCEPTING_RATE=10
 	fi
@@ -152,15 +152,15 @@ port-scanner-limitation () {
 case "${1}" in
 	start)
 		# flush-input-chain
-		create-dtc-xen-forward-chain
-		accept-localhost-traffic
-		port25-reject
-		soap-server-limit
-		call-add-custom-rules
-		limit-ssh-login-rate
-		ping-flood-protect
-		syn-flood-protect
-		port-scanner-limitation
+		create_dtc_xen_forward_chain
+		accept_localhost_traffic
+		port25_reject
+		soap_server_limit
+		call_add_custom_rules
+		limit_ssh_login_rate
+		ping_flood_protect
+		syn_flood_protect
+		port_scanner_limitation
         ;;
 
 	stop)
