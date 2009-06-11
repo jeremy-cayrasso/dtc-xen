@@ -2,129 +2,55 @@
 
 set -e
 
-. /usr/share/debconf/confmodule
-db_version 2.0
-
-db_get dtc-xen/conf_soap_port
-conf_soap_port=$RET
-db_get dtc-xen/conf_soap_login
-conf_soap_login=$RET
-db_get dtc-xen/conf_soap_pass
-conf_soap_pass=$RET
-db_get dtc-xen/conf_soap_domain_name
-conf_soap_domain_name=$RET
-db_get dtc-xen/conf_node_number
-conf_node_number=$RET
-conf_soap_hostname="node${conf_node_number}.conf_soap_domain_name"
-db_get dtc-xen/conf_debian_repository
-conf_debian_repository=$RET
-db_get dtc-xen/conf_netmask
-conf_netmask=$RET
-db_get dtc-xen/conf_network
-conf_network=$RET
-db_get dtc-xen/conf_broadcast
-conf_broadcast=$RET
-db_get dtc-xen/conf_gateway
-conf_gateway=$RET
-db_get dtc-xen/conf_linux_kernel_name
-conf_linux_kernel_name=$RET
-db_get dtc-xen/conf_linux_domu_initrd
-conf_linux_domu_initrd=$RET
-db_get dtc-xen/conf_lvm_name
-conf_lvm_name=$RET
-db_get dtc-xen/conf_vps_mountpoint
-conf_vps_mountpoint=$RET
-db_get dtc-xen/conf_debian_release
-conf_debian_release=$RET
-db_get dtc-xen/conf_info_finish_setup
-db_unregister dtc-xen/conf_soap_pass
-db_stop
-
-VERBOSE_INSTALL=yes
-DTCXEN_ETCPATH=/etc/dtc-xen
-
-XEN_USER_HOME=/var/lib/dtc-xen/ttyssh_home
-MKTEMP="mktemp -t"
-OPENSSL=/usr/bin/openssl
-if [ -e "/usr/bin/htpasswd" ] ;then
-	HTPASSWD="/usr/bin/htpasswd"
-else
-	if [ -e "/usr/sbin/htpasswd2" ] ;then
-		HTPASSWD="/usr/sbin/htpasswd2"
-	else
-		echo "Didn't find any htpasswd binary: exiting !!!"
-		exit 1;
+echoIfVerbose () {
+	if [ ""$VERBOSE_INSTALL = "yes" ] ; then
+		echo $1
 	fi
-fi
+}
 
-mkdir -p ${XEN_USER_HOME}
-mkdir -p $DTCXEN_ETCPATH
-mkdir -p ${conf_vps_mountpoint}
-CWD=`pwd`
-cd $DTCXEN_ETCPATH
+debian_get_config () {
+	. /usr/share/debconf/confmodule
+	db_version 2.0
 
-# Check if all the files of the cert are present
-TEST=false
-if [ ! -e $DTCXEN_ETCPATH/privkey.pem ] ; then
-	TEST=true
-fi
-if [ ! -e $DTCXEN_ETCPATH/dtc-xen.cert.csr ] ; then
-	TEST=true
-fi
-if [ ! -e $DTCXEN_ETCPATH/dtc-xen.cert.cert ] ; then
-	 TEST=true
-fi
-if [ ! -e $DTCXEN_ETCPATH/dtc-xen.cert.key ] ; then
-	TEST=true
-fi
+	db_get dtc-xen/conf_soap_port
+	conf_soap_port=$RET
+	db_get dtc-xen/conf_soap_login
+	conf_soap_login=$RET
+	db_get dtc-xen/conf_soap_pass
+	conf_soap_pass=$RET
+	db_get dtc-xen/conf_soap_domain_name
+	conf_soap_domain_name=$RET
+	db_get dtc-xen/conf_node_number
+	conf_node_number=$RET
+	conf_soap_hostname="node${conf_node_number}.conf_soap_domain_name"
+	db_get dtc-xen/conf_debian_repository
+	conf_debian_repository=$RET
+	db_get dtc-xen/conf_netmask
+	conf_netmask=$RET
+	db_get dtc-xen/conf_network
+	conf_network=$RET
+	db_get dtc-xen/conf_broadcast
+	conf_broadcast=$RET
+	db_get dtc-xen/conf_gateway
+	conf_gateway=$RET
+	db_get dtc-xen/conf_linux_kernel_name
+	conf_linux_kernel_name=$RET
+	db_get dtc-xen/conf_linux_domu_initrd
+	conf_linux_domu_initrd=$RET
+	db_get dtc-xen/conf_lvm_name
+	conf_lvm_name=$RET
+	db_get dtc-xen/conf_vps_mountpoint
+	conf_vps_mountpoint=$RET
+	db_get dtc-xen/conf_debian_release
+	conf_debian_release=$RET
+	db_get dtc-xen/conf_info_finish_setup
+	db_unregister dtc-xen/conf_soap_pass
+	db_stop
+}
 
-# Check if we have an old passphrase stored!
-if [ -e ${DTCXEN_ETCPATH}/soap.conf ] ; then
-	conf_ssl_passphrase=`grep soap_server_pass_phrase ${DTCXEN_ETCPATH}/soap.conf | cut -d"=" -f 2`
-	if [ -z ""$conf_ssl_passphrase ] ; then
-		echo "Detected empty password: regenerating it!"
-		conf_ssl_passphrase=`dd if=/dev/random bs=64 count=1 2>|/dev/null | md5sum | cut -d' ' -f1`
-	fi
-	TEST=true
-else
-	conf_ssl_passphrase=`dd if=/dev/random bs=64 count=1 2>|/dev/null | md5sum | cut -d' ' -f1`
-fi
-
-# If one is missing, just regenerate the cert from scratch !
-if [ ${TEST} = "true" ] ; then
-	# If the config file exist, read the passphrase from the file
-	if [ ""$VERBOSE_INSTALL = "yes" ] ;then
-		echo "===> Generating SSL certs for the SOAP python server"
-	fi
-	rm -f $DTCXEN_ETCPATH/privkey.pem $DTCXEN_ETCPATH/dtc-xen.cert.csr $DTCXEN_ETCPATH/dtc-xen.cert.cert $DTCXEN_ETCPATH/dtc-xen.cert.key
-	CERTPASS_TMP_FILE=`${MKTEMP} certfilepass.XXXXXX`  || exit 1
-	echo $conf_ssl_passphrase >$CERTPASS_TMP_FILE
-	OLD_UMASK=`umask`
-	umask 077
-	( echo "US"; echo "the-state"; echo "My-ocation"; echo "GPLHost"; echo "No-unit"; echo $conf_soap_hostname;
-	echo "webmaster@"$conf_soap_hostname; echo "challenge pass";
-	echo $conf_cert_organization; ) | $OPENSSL req -passout file:$CERTPASS_TMP_FILE -new > $DTCXEN_ETCPATH/dtc-xen.cert.csr
-	$OPENSSL rsa -passin file:$CERTPASS_TMP_FILE -in $DTCXEN_ETCPATH/privkey.pem -out $DTCXEN_ETCPATH/dtc-xen.cert.key
-	$OPENSSL x509 -in $DTCXEN_ETCPATH/dtc-xen.cert.csr -out $DTCXEN_ETCPATH/dtc-xen.cert.cert -req -signkey $DTCXEN_ETCPATH/dtc-xen.cert.key -days 3650
-	umask $OLD_UMASK
-	rm $CERTPASS_TMP_FILE
-fi
-
-# Generate the htpasswd file (each time, it doesn't mater)
-if [ ""$VERBOSE_INSTALL = "yes" ] ;then
-	echo "===> Generating $DTCXEN_ETCPATH/htpasswd file for the SOAP python server"
-#	echo "$HTPASSWD -cb $DTCXEN_ETCPATH/htpasswd ${conf_soap_login} ${conf_soap_pass}"
-fi
-# Just in case there's no password set (which is the case if running debconf in non-interactive), generate a random one
-if [ -z ${conf_soap_pass} ] ; then
-	echo "WARNING: No password set durring debconf, will pickup a random one."
-	echo "Issue a dpkg-reconfigure dtc-xen to setup a real password."
-	conf_soap_pass=`dd if=/dev/random bs=64 count=1 2>|/dev/null | md5sum | cut -d' ' -f1 | awk '{print substr($0,0,16)}'`
-fi
-$HTPASSWD -cb $DTCXEN_ETCPATH/htpasswd ${conf_soap_login} ${conf_soap_pass}
-
-# Create the python config file
-echo "# This is the configuration file for the DTC soap server dtc-xen
+write_debian_config_files () {
+	# Create the python config file
+	echo "# This is the configuration file for the DTC soap server dtc-xen
 # Please make soap_server_host correspond to NODE_NUM and NODE_DOMAIN_NAME in
 # dtc_create_vps.conf.sh as the postinst of dtc-xen might overwrite the value
 # this way
@@ -136,8 +62,8 @@ soap_server_lvmname=${conf_lvm_name}
 soap_server_mount_point=$conf_vps_mountpoint
 " >${DTCXEN_ETCPATH}/soap.conf
 
-# Create the sh config file for dtc_reinstall_os and dtc_setup_disk
-echo "#!/bin/sh
+	# Create the sh config file for dtc_reinstall_os and dtc_setup_disk
+	echo "#!/bin/sh
 # This the configuration file for dtc-xen setup scripts (called uppon VM reinstallation)
 
 NODE_NUM=$conf_node_number
@@ -154,26 +80,88 @@ DEBIAN_RELEASE=$conf_debian_release
 KERNELNAME=$conf_linux_kernel_name
 INITRDNAME=$conf_linux_domu_initrd
 " > ${DTCXEN_ETCPATH}/dtc_create_vps.conf.sh
+}
 
-chmod 600 ${DTCXEN_ETCPATH}/*
+create_ssl_cert () {
+	mkdir -p $DTCXEN_ETCPATH
+	CWD=`pwd`
+	cd $DTCXEN_ETCPATH
 
-cd $CWD
+	# Check if all the files of the cert are present
+	TEST=false
+	if [ ! -e $DTCXEN_ETCPATH/privkey.pem ] ; then
+		TEST=true
+	fi
+	if [ ! -e $DTCXEN_ETCPATH/dtc-xen.cert.csr ] ; then
+		TEST=true
+	fi
+	if [ ! -e $DTCXEN_ETCPATH/dtc-xen.cert.cert ] ; then
+		 TEST=true
+	fi
+	if [ ! -e $DTCXEN_ETCPATH/dtc-xen.cert.key ] ; then
+		TEST=true
+	fi
 
-if getent group xenusers >/dev/null ; then
-	echo "Group xenusers already exists in /etc/group"
-else
-	echo "Add group xenusers"
-	groupadd xenusers
-fi
+	# Check if we have an old passphrase stored!
+	if [ -e ${DTCXEN_ETCPATH}/soap.conf ] ; then
+		conf_ssl_passphrase=`grep soap_server_pass_phrase ${DTCXEN_ETCPATH}/soap.conf | cut -d"=" -f 2`
+		if [ -z ""$conf_ssl_passphrase ] ; then
+			echoIfVerbose "Detected empty password: regenerating it!"
+			conf_ssl_passphrase=`dd if=/dev/random bs=64 count=1 2>|/dev/null | md5sum | cut -d' ' -f1`
+		fi
+		TEST=true
+	else
+		conf_ssl_passphrase=`dd if=/dev/random bs=64 count=1 2>|/dev/null | md5sum | cut -d' ' -f1`
+	fi
 
-# Add the 19 users to /etc/passwd with random password if they don't exist
-# Use /var/lib/dtc-xen/ttyssh_home as the homedir so problems of nsf mounted
-# homes goes away.
+	# If one is missing, just regenerate the cert from scratch !
+	if [ ${TEST} = "true" ] ; then
+		# If the config file exist, read the passphrase from the file
+		echoIfVerbose "===> Generating SSL certs for the SOAP python server"
+		rm -f $DTCXEN_ETCPATH/privkey.pem $DTCXEN_ETCPATH/dtc-xen.cert.csr $DTCXEN_ETCPATH/dtc-xen.cert.cert $DTCXEN_ETCPATH/dtc-xen.cert.key
+		CERTPASS_TMP_FILE=`${MKTEMP} certfilepass.XXXXXX`  || exit 1
+		echo $conf_ssl_passphrase >$CERTPASS_TMP_FILE
+		OLD_UMASK=`umask`
+		umask 077
+		( echo "US"; echo "the-state"; echo "My-ocation"; echo "GPLHost"; echo "No-unit"; echo $conf_soap_hostname;
+		echo "webmaster@"$conf_soap_hostname; echo "challenge pass";
+		echo $conf_cert_organization; ) | $OPENSSL req -passout file:$CERTPASS_TMP_FILE -new > $DTCXEN_ETCPATH/dtc-xen.cert.csr
+		$OPENSSL rsa -passin file:$CERTPASS_TMP_FILE -in $DTCXEN_ETCPATH/privkey.pem -out $DTCXEN_ETCPATH/dtc-xen.cert.key
+		$OPENSSL x509 -in $DTCXEN_ETCPATH/dtc-xen.cert.csr -out $DTCXEN_ETCPATH/dtc-xen.cert.cert -req -signkey $DTCXEN_ETCPATH/dtc-xen.cert.key -days 3650
+		umask $OLD_UMASK
+		rm $CERTPASS_TMP_FILE
+	fi
+	cd $CWD
+}
+
+manage_htpasswd () {
+	if [ -e "/usr/bin/htpasswd" ] ;then
+		HTPASSWD="/usr/bin/htpasswd"
+	else
+		if [ -e "/usr/sbin/htpasswd2" ] ;then
+			HTPASSWD="/usr/sbin/htpasswd2"
+		else
+			echo "Didn't find any htpasswd binary: exiting !!!"
+			exit 1;
+		fi
+	fi
+
+	# Generate the htpasswd file (each time, it doesn't mater)
+	echoIfVerbose "===> Generating $DTCXEN_ETCPATH/htpasswd file for the SOAP python server"
+	# Just in case there's no password set (which is the case if running debconf in non-interactive), generate a random one
+	if [ -z ${conf_soap_pass} ] ; then
+		echoIfVerbose "WARNING: No password set durring debconf, will pickup a random one."
+		echoIfVerbose "Issue a dpkg-reconfigure dtc-xen to setup a real password."
+		conf_soap_pass=`dd if=/dev/random bs=64 count=1 2>|/dev/null | md5sum | cut -d' ' -f1 | awk '{print substr($0,0,16)}'`
+	fi
+	$HTPASSWD -cb $DTCXEN_ETCPATH/htpasswd ${conf_soap_login} ${conf_soap_pass}
+}
+
 dtcaddxenuser () {
 	if getent passwd ${1} >/dev/null ; then
-		echo "User already exists "${1}
+		echoIfVerbose "User already exists "${1}
 	else
-		echo "Adding user "${1}
+		echoIfVerbose "Adding user "${1}
 		adduser --quiet --disabled-password --ingroup xenusers --home ${XEN_USER_HOME}/${1} --shell /bin/dtc-xen_userconsole --gecos dtc-xen-user ${1}
 	fi
 	# make sure all the settings are correct as per this version of the package, and create the .ssh dir for uploading the ssh public key file
@@ -182,47 +170,82 @@ dtcaddxenuser () {
 	usermod -d "${XEN_USER_HOME}/${1}" -g xenusers -s /bin/dtc-xen_userconsole ${1}
 }
 
-mkdir -p $XEN_USER_HOME
-for i in `seq -w 1 29`; do
-	dtcaddxenuser xen$i
-done
+# All this function should NOT exist.
+# These are ISSUES in Debian that I'm really not happy off...
+# Fellow maintainers, please fix your packages
+debian_fixups () {
+	# Needs the /var/lib/rpm to setup CentOS, it's not there by default, so we add it
+	# This will be fixed in the next yum package we'll release, but I really think this
+	# should be fixed in the RPM package
+	mkdir -p /var/lib/rpm
 
+	# Xen packagers in Debian decided to omit the /etc/xen/auto folder, WHY???
+	mkdir -p /etc/xen/auto
+
+	# Delete an eventual cron job that was installed prior dtc-xen 0.4
+	if [ -e /etc/cron.d/dtc-xen ] ; then
+		rm -f /etc/cron.d/dtc-xen
+	fi
+
+	# Because someone has to do it if nobody cares:
+	# Patches the stupid xen kernel package of Debian with the below
+	# double symlinks. Note that a bug has been sent to the pkg-xen
+	# team, and in respond, my bug was tagged "wontfix". THAT is what
+	# I call being cooperative ... and not respectful at all of the
+	# fact that the upstream of Xen puts the python libs of Xen in
+	# a folder that is in the default python path (and for a reason...).
+	if [ ! -e /usr/lib/xen -o /etc/alternatives/xen-default ] ; then
+		ln -s /etc/alternatives/xen-default /usr/lib/xen
+	fi
+	if [ ! -e /usr/lib/python2.5/site-packages/xen ] ; then
+		ln -s /usr/lib/xen/lib/python/xen /usr/lib/python2.5/site-packages/xen
+	fi
+}
+
+VERBOSE_INSTALL=yes
+DTCXEN_ETCPATH=/etc/dtc-xen
+XEN_USER_HOME=/var/lib/dtc-xen/ttyssh_home
+MKTEMP="mktemp -t"
+OPENSSL=/usr/bin/openssl
+
+################################
+### EXECUTION STARTS HERE!!! ###
+################################
+if [ -e /etc/debian_version ] ; then
+	debian_get_config
+	write_debian_config_files
+	debian_fixups
+else
+	if [ ! -e ${DTCXEN_ETCPATH}/soap.conf ] ; then
+		cp /usr/share/doc/dtc-xen/examples/soap.conf ${DTCXEN_ETCPATH}/soap.conf
+	fi
+	if [ ! -e ${DTCXEN_ETCPATH}/dtc_create_vps.conf.sh ] ; then
+		cp /usr/share/doc/dtc-xen/examples/dtc_create_vps.conf.sh ${DTCXEN_ETCPATH}/dtc_create_vps.conf.sh
+	fi
+	. ${DTCXEN_ETCPATH}/dtc_create_vps.conf.sh
+fi
+create_ssl_cert
+manage_htpasswd
 # Touch this file just to show that it's possible to edit it
 touch /etc/dtc-xen/authorized_keys2
 
-# Needs the /var/lib/rpm to setup CentOS, it's not there by default, so we add it
-mkdir -p /var/lib/rpm
+# Make it safer...
+chmod 600 ${DTCXEN_ETCPATH}/*
 
-# Xen packagers in Debian decided to omit the /etc/xen/auto folder, WHY???
-mkdir -p /etc/xen/auto
-
-# Delete an eventual cron job that was installed prior dtc-xen 0.4
-if [ -e /etc/cron.d/dtc-xen ] ; then
-	rm -f /etc/cron.d/dtc-xen
+# This is to be able to mount the VPS partitions in order to bootstrap.
+mkdir -p ${conf_vps_mountpoint}
+# Manage the dtc-xen users, so people can log through the physical console
+# using ssh xenXX@node99999.example.com (where XX is the VPS number).
+# We first add a group xenusers, then we add our 29 users.
+mkdir -p ${XEN_USER_HOME}
+if getent group xenusers >/dev/null ; then
+	echoIfVerbose "Group xenusers already exists in /etc/group"
+else
+	echoIfVerbose "Add group xenusers"
+	groupadd xenusers
 fi
-
-# Because someone has to do it if nobody cares:
-# Patches the stupid xen kernel package of Debian with the below
-# double symlinks. Note that a bug has been sent to the pkg-xen
-# team, and in respond, my bug was tagged "wontfix". THAT is what
-# I call being cooperative ... and not respectful at all of the
-# fact that the upstream of Xen puts the python libs of Xen in
-# a folder that is in the default python path (and for a reason...).
-if [ ! -e /usr/lib/xen -o /etc/alternatives/xen-default ] ; then
-	ln -s /etc/alternatives/xen-default /usr/lib/xen
-fi
-if [ ! -e /usr/lib/python2.5/site-packages/xen ] ; then
-	ln -s /usr/lib/xen/lib/python/xen /usr/lib/python2.5/site-packages/xen
-fi
-
-# Warn if no /usr/lib/python/xen
-if ! [ -d /usr/lib/python/xen ] ; then
-	echo "*** WARNING ***"
-	echo "You don't have a /usr/lib/python/xen, maybe because you have installed"
-	echo "Xen using the Debian package. dtc-xen needs it to be able to load the"
-	echo "Xen python library. To fix, you can manually do:"
-	echo "cd /usr/lib && ln -s xen-3.2-1/lib/python/ python"
-fi
+mkdir -p $XEN_USER_HOME
+for i in `seq -w 1 29`; do dtcaddxenuser xen$i ; done
 
 #DEBHELPER#
 
