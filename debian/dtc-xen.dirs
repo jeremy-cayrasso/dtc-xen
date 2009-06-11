@@ -1,7 +1,0 @@
-/var/lib/dtc-xen/rrds
-/var/lib/dtc-xen/states
-/var/lib/dtc-xen/perfdata
-/var/lib/dtc-xen/ttyssh_home
-/var/www
-/usr/share/doc/dtc-xen
-/etc/dtc-xen

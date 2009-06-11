@@ -26,7 +26,6 @@ binary-indep: install
 	dh_installchangelogs doc/changelog
 	dh_installinit
 	dh_installdebconf
-	dh_installman
 	dh_installdocs
 	dh_installlogrotate
 	dh_fixperms
