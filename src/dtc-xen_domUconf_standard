@@ -31,20 +31,6 @@ ff02::2 ip6-allrouters
 ff02::3 ip6-allhosts
 " >${ETC}/hosts
 
-# Setup the automatic load of the capability module
-cp /etc/dtc-xen/capabilities ${ETC}/init.d/capabilities
-chmod +x ${ETC}/init.d/capabilities
-
-if [ -d ${ETC}/rc0.d ] ; then
-	ln -s ../init.d/capabilities ${ETC}/rc0.d/K19capabilities
-	ln -s ../init.d/capabilities ${ETC}/rc1.d/K19capabilities
-	ln -s ../init.d/capabilities ${ETC}/rc6.d/K19capabilities
-	ln -s ../init.d/capabilities ${ETC}/rc2.d/S19capabilities
-	ln -s ../init.d/capabilities ${ETC}/rc3.d/S19capabilities
-	ln -s ../init.d/capabilities ${ETC}/rc4.d/S19capabilities
-	ln -s ../init.d/capabilities ${ETC}/rc5.d/S19capabilities
-fi
-
 # Setup the devices
 mkdir -p ${VPS_PATH}/dev/
 echo "Making VPS devices with MAKEDEV generic, this WILL take a while..."
