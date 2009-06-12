@@ -1,0 +1,56 @@
+NOTES FOR THE RPM EDITION
+=====================================
+
+After installation, you need to set the management password:
+
+   htpasswd /etc/dtc-xen/htpasswd -b <adminuser> <adminpassword>
+
+This is the super user name and password that DTC-Xen will require
+when trying to connect to it with any SOAP client or DTC. The name
+of the admin user can be changed in /etc/dtc-xen/soap.conf with the
+configuration key soap_server_dtcxen_user.  It defaults to dtc-xen.
+
+DTC-Xen will not let any function be called while this password has
+not been set.
+
+
+On startup and SSL certificate generation
+=====================================
+
+This package automatically creates and configures the required
+SSL certificate.  You don't have to do anything except set the
+management password.  It also starts automatically once installed,
+and sets itself up on levels 3, 4 and 5 (check the init script
+named dtc-xen to verify this).
+
+If you want to generate another certificate, check the files in
+/etc/pki/tls:
+
+ - private/dtc-xen.key: private key
+ - certs/dtc-xen.cert:  certificate
+
+A good starting point for the generation of the certificate can
+be found in the certificate generation scriptlet:
+
+   rpm -q dtc-xen --scripts
+
+It is highly recommended that you set up a proper fully-qualified
+domain name before regenerating the certificate.
+
+
+Security
+==============================
+
+After installing DTC-Xen, disable port forwarding in your SSH server
+configuration.  Otherwise a nasty user could use it to get access to
+the telnet port of a VPS they don't own.
+
+To do so, consult the sshd_config manual page.
+
+
+Thanks for choosing us!
+=================================
+
+On the behalf of all GPLHost staff, dtc-xen contributors and authors,
+
+Manuel Amador (Rudd-O)
