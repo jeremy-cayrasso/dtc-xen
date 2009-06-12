@@ -22,7 +22,7 @@ debian_get_config () {
 	conf_soap_domain_name=$RET
 	db_get dtc-xen/conf_node_number
 	conf_node_number=$RET
-	conf_soap_hostname="node${conf_node_number}.conf_soap_domain_name"
+	conf_soap_hostname="node${conf_node_number}.${conf_soap_domain_name}"
 	db_get dtc-xen/conf_debian_repository
 	conf_debian_repository=$RET
 	db_get dtc-xen/conf_netmask
