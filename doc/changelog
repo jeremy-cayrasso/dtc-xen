@@ -1,3 +1,12 @@
+dtc-xen (0.2.7) unstable; urgency=low
+
+  * Write RPM version including initscripts, specfile, autoconfiguration, SSL cert gen
+  * Included daemon.py from http://www.clapper.org/software/python/daemon/ (BSD license)
+  * Added the ability to self-daemonize
+  * Added the respective documentation in the man pages
+
+ -- Manuel Amador (Rudd-O) <rudd-o@rudd-o.com>  Fri, 12 Jun 2006 18:40 -0500
+
 dtc-xen (0.2.6) unstable; urgency=low
 
   * Make it debian standard
