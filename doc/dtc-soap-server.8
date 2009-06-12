@@ -2,18 +2,24 @@
 .SH NAME
 dtc-soap-server \- This is a SOAP server running over HTTPS with Auth to remotly start/stop/reinstall/fsck a VPS under Xen
 .SH SYNOPSIS
-.B dtc-soap-server
+.B dtc-soap-server [\fI-D\fR]
 
 .SH DESCRIPTION
 .B dtc-soap-server
 This soap server script is a part of the dtc-xen
-package that is to be used by the dtc panel
+package that is to be used by the DTC control panel
 to manage a Xen VPS server.
 
 It will bind a soap server with auth using SSL on the
-port defined in /etc/dtc-xen. It's auth users are also defined
-in the /etc/dtc-xen/htpasswd, use the htpasswd utility from
-apache / apache2 to edit it.
+port defined in /etc/dtc-xen/soap.conf. It's auth users are
+also defined in the /etc/dtc-xen/htpasswd, use the htpasswd
+utility from apache / apache2 to edit it.
+
+If you're using this server in CentOS, you can replace
+the SSL certificate this program uses by replacing
+the files named dtc-xen.* inside /etc/pki/tls.
+
+The -D command line option daemonizes the server.
 
 .SH "VERSION"
 This documentation describes

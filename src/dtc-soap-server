@@ -1,17 +1,27 @@
 #!/usr/bin/env python
 import sys, traceback
 sys.path.append("/usr/lib/xen/lib/python/")
+sys.path.append( '/usr/lib/python' ) #Required to import from /usr/lib/python for FC4
+sys.path.append( '/usr/share/dtc-xen' )
+
 import os
 import SOAPpy
 import commands
-#import sqlite
 from StringIO import StringIO
 from SOAPpy import *
 import logging
 import threading
 import glob
+import signal
 try: import subprocess # FIXME maybe this wont work on older pythons?
 except ImportError: subprocess = False
+from M2Crypto import SSL
+import crypt
+from Properties import *
+# import xm stuff
+import xen.xm.main as xenxm
+try: from xen.xend.XendClient import server
+except: pass # exception silenced beacuse xen 3 not found
 
 # debug
 SOAPpy.Config.debug=1
@@ -31,33 +41,16 @@ def log_exceptions(f):
            logging.debug("Function returned %s",ret)
            return ret
       except Exception,e:
-           logging.exception("Trapped exception in function call")
+           logging.exception("Trapped exception in function call.  Thread: %s"%threading.currentThread())
            raise
    func.func_name = f.func_name
    return func
 
-from M2Crypto import SSL
-
-import crypt
-sys.path.append( '/usr/share/dtc-xen' )
-from Properties import *
-
-# import xm stuff
-sys.path.append( '/usr/lib/python' ) #Required to import from /usr/lib/python for FC4
-import xen.xm.main as xenxm
-try:
-	from xen.xend.XendClient import server
-except:
-	pass
-# FIXME WHY ARE WE SILENCING THIS EXCEPTION?
-
 # Checking for Xen version
 logging.debug("Checking for Xen version")
-xen_version = 2
 try:
 	func = getattr(xenxm.server, "xend_domain")
-	if func:
-		xen_version = 2
+	xen_version = 2
 except:
 	xen_version = 3
 
@@ -72,10 +65,6 @@ cert_passphrase=p.getProperty("soap_server_pass_phrase");
 dtcxen_user=p.getProperty("soap_server_dtcxen_user");
 server_lvmname=p.getProperty("soap_server_lvmname");
 vpsimage_mount_point=p.getProperty("soap_server_mount_point");
-
-# server_host = "mirror.tusker.net"
-# server_host = "dtc.xen650202.gplhost.com"
-# server_port = 8089
 
 def testVPSServer():
 	  return "OK"
@@ -213,6 +202,7 @@ def changeVPSxmPassword(vpsname,password):
 def changeVPSsoapPassword(vpsname,password):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
+		# FIXME EGREGIOUS SECURITY ERROR, EVERYWHERE WHERE COMMANDS MODULE IS USED
 		output = commands.getstatusoutput("htpasswd -b /etc/dtc-xen/htpasswd %s %s" % (vpsname,password))
 		return "OK"
 	else:
@@ -381,6 +371,19 @@ tabsplitter = re.compile("[\t ]+").split
 tabcolonsplitter = re.compile("[\t :]+").split
 data_collection_lock = RLock()
 perfdata_dir = os.path.join("/","var","lib","dtc-xen","perfdata")
+
+class Server(Thread):
+	
+	def __init__(self,server):
+		Thread.__init__(self,name="Server thread")
+		self.server = server
+		self.setDaemon(True)
+	
+	@log_exceptions
+	def run(self):
+		logging.info("Starting server thread")
+		self.server.serve_forever()
+
 
 class DataCollector(Thread):
 	
@@ -790,7 +793,12 @@ if not Config.SSLserver:
 	raise RuntimeError, "this Python installation doesn't have OpenSSL and M2Crypto"
 
 ssl_context = SSL.Context()
-ssl_context.load_cert('/etc/dtc-xen/dtc-xen.cert.cert', '/etc/dtc-xen/privkey.pem', callback=_passphrase)
+
+def firstone(list):
+	for m in list:
+		if os.path.exists(m): return m
+
+ssl_context.load_cert(firstone(['/etc/dtc-xen/dtc-xen.cert.cert','/etc/pki/tls/certs/dtc-xen.crt']), firstone(['/etc/dtc-xen/privkey.pem','/etc/pki/tls/private/dtc-xen.key']), callback=_passphrase)
 
 soapserver = SOAPpy.SOAPServer((server_host, server_port), ssl_context = ssl_context)
 # No ssl 
@@ -824,17 +832,38 @@ soapserver.registerFunction(getCPUUsage)
 soapserver.registerFunction(getInstallableOS)
 soapserver.registerFunction(getVPSInstallLog)
 soapserver.registerFunction(getInstallableAPP)
+
+run_as_daemon = len(sys.argv) > 1 and "-D" in sys.argv[1:]
+
+if run_as_daemon:
+	# Daemonize requested.  Daemonize and write pid file to /var/run/dtc-xen.pid
+	logging.info("Attempting to daemonize...")
+	import daemon
+	daemon.daemonize()
+	pid = os.getpid()
+	pidfile =file("/var/run/dtc-xen.pid","w")
+	pidfile.write("%s"%pid)
+	pidfile.close()
+	logging.info("Daemonization successful -- running with PID %s"%pid)
+
+last_signal = None
+def sighandler(signum,frame):
+	global last_signal
+	last_signal = signum
+signal.signal(signal.SIGINT,sighandler)
+signal.signal(signal.SIGTERM,sighandler)
+
 collector = DataCollector()
 collector.start()
-while True:
-	try:
-		soapserver.serve_forever()
-	except KeyboardInterrupt:
-		logging.info("Shutting down due to SIGINT...")
-		#FIXME this program needs to capture and handle SIGTERM gracefully as well
-		sys.stdout.flush()
-		sys.exit(0)
-	except Exception, e:
-		logging.exception("Caught exception handling connection")
-
+server = Server(soapserver)
+server.start()
+signal.pause()
+logging.info("Shutting down due to signal %s..."%last_signal)
+if run_as_daemon:
+	try: os.unlink("/var/run/dtc-xen.pid")
+	except: pass
+if sys.stdout: sys.stdout.flush()
 logging.info("DTC SOAP server shut down")
+logging.shutdown()
+sys.exit(0)
+
