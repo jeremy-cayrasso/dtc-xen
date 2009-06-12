@@ -194,7 +194,7 @@ debian_fixups () {
 	# I call being cooperative ... and not respectful at all of the
 	# fact that the upstream of Xen puts the python libs of Xen in
 	# a folder that is in the default python path (and for a reason...).
-	if [ ! -e /usr/lib/xen -o /etc/alternatives/xen-default ] ; then
+	if [ ! -e /usr/lib/xen ] ; then
 		ln -s /etc/alternatives/xen-default /usr/lib/xen
 	fi
 	if [ ! -e /usr/lib/python2.5/site-packages/xen ] ; then
