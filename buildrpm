@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -e
+
+cd ` dirname "$0" `
+ver=`grep Version: dtc-xen.spec | awk ' { print $2 } ' `
+cd ..
+tar --exclude dtc-xen/.git -cvzf dtc-xen-$ver.tar.gz dtc-xen
+rpmbuild -ta dtc-xen-$ver.tar.gz
