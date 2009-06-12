@@ -213,7 +213,6 @@ OPENSSL=/usr/bin/openssl
 ################################
 if [ -e /etc/debian_version ] ; then
 	debian_get_config
-	write_debian_config_files
 	debian_fixups
 else
 	if [ ! -e ${DTCXEN_ETCPATH}/soap.conf ] ; then
@@ -225,6 +224,9 @@ else
 	. ${DTCXEN_ETCPATH}/dtc_create_vps.conf.sh
 fi
 create_ssl_cert
+if [ -e /etc/debian_version ] ; then
+	write_debian_config_files
+fi
 manage_htpasswd
 # Touch this file just to show that it's possible to edit it
 touch /etc/dtc-xen/authorized_keys2
