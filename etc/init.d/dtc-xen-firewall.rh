@@ -1,0 +1,204 @@
+#!/bin/sh
+
+# dtc-xen-firewall            DTC Xen VPS firewall
+# 
+# chkconfig: 345 99 00
+# description: DTC-Xen firewall is a rate-limiting firewall script that you can use on your
+# servers using DTC-Xen.
+# config: /etc/dtc-xen/dtc-xen-firewall-config
+#
+# Based on Postfix startup script distributed in Fedora
+
+. /etc/rc.d/init.d/functions
+. /etc/sysconfig/network
+
+IPTABLES=/sbin/iptables
+
+if [ -f /etc/dtc-xen/dtc-xen-firewall.sh ] ; then
+	. /etc/dtc-xen/dtc-xen-firewall.sh
+fi
+
+if [ -e /etc/dtc-xen/dtc-xen-firewall-config ] ; then
+	. /etc/dtc-xen/dtc-xen-firewall-config
+fi
+
+if [ -z ${soap_server_allowed_ip} ] ; then
+	soap_server_allowed_ip=0.0.0.0
+fi
+
+flush_input_chain () {
+	${IPTABLES} -F dtc-xen-input
+}
+
+create_dtc_xen_forward_chain () {
+	# Create the chain (if it doesn't exists, then it should be inserted in the INPUT or FORWARD chain)
+	if ${IPTABLES} --new-chain dtc-xen-in ; then
+		${IPTABLES} -I INPUT -j dtc-xen-in
+	fi
+	if ${IPTABLES} --new-chain dtc-xen-fw ; then
+		${IPTABLES} -I FORWARD -j dtc-xen-fw
+	fi
+	# If the chains already existed, flush them
+	${IPTABLES} -F dtc-xen-fw
+	${IPTABLES} -F dtc-xen-in
+}
+
+accept_localhost_traffic () {
+	${IPTABLES} -A dtc-xen-in -i lo -j ACCEPT
+}
+
+soap_server_limit () {
+	# Allow only our management server to connect
+	if ! [ ${soap_server_allowed_ip} = "0.0.0.0" ] ; then
+		${IPTABLES} -A dtc-xen-in -p tcp --dport 8089 -s ! ${soap_server_allowed_ip} -j REJECT
+	fi
+	if [ -z "${SOAP_ACCEPTING_RATE}" ] ; then
+		SOAP_ACCEPTING_RATE=20
+	fi
+	if [ -z "${SOAP_ACCEPTING_TIME}" ] ; then
+		SOAP_ACCEPTING_TIME=60
+	fi
+	# Rate limit connections to our SOAP server (20 connections per minutes should be more than enough...)
+	${IPTABLES} -A dtc-xen-in -p tcp --dport 8089 -m state --state NEW -m recent --set
+	${IPTABLES} -A dtc-xen-in -p tcp --dport 8089 -m state --state NEW -m recent --update --seconds ${SOAP_ACCEPTING_TIME} --hitcount ${SOAP_ACCEPTING_RATE} -j REJECT
+}
+
+port25_reject () {
+	${IPTABLES} -A dtc-xen-in -p tcp --dport 25 -j REJECT
+}
+
+call_add_custom_rules () {
+	if [ -e /etc/dtc-xen/dtc-xen-firewall-custom-rules ] ; then
+		. /etc/dtc-xen/dtc-xen-firewall-custom-rules
+		add_custom_rules
+	fi
+}
+
+limit_ssh_login_rate () {
+	if [ -z "${SSH_ACCEPTING_RATE}" ] ; then
+		SSH_ACCEPTING_RATE=10
+	fi
+	if [ -z "${SSH_ACCEPTING_TIME}" ] ; then
+		SSH_ACCEPTING_TIME=300
+	fi
+	if [ -z "${SSH_FORWARDING_RATE}" ] ; then
+		SSH_FORWARDING_RATE=5
+	fi
+	if [ -z "${SSH_FORWARDING_TIME}" ] ; then
+		SSH_FORWARDING_TIME=10
+	fi
+
+	# Anti DoS SSH : deny ssh for 300 seconds after 4 attempts
+	# This can't be too low because of the use of scp
+	# For the dom0 first:
+	${IPTABLES} -A dtc-xen-in -p tcp --dport 22 -m state --state NEW -m recent --set 
+	${IPTABLES} -A dtc-xen-in -p tcp --dport 22 -m state --state NEW -m recent --update --seconds ${SSH_ACCEPTING_TIME} --hitcount ${SSH_ACCEPTING_RATE} -j REJECT
+	# The for the domUs:
+	${IPTABLES} -A dtc-xen-fw -p tcp --dport 22 -m state --state NEW -m recent --set 
+	${IPTABLES} -A dtc-xen-fw -p tcp --dport 22 -m state --state NEW -m recent --update --seconds ${SSH_FORWARDING_TIME} --hitcount ${SSH_FORWARDING_RATE} -j REJECT
+}
+
+ping_flood_protect () {
+	if [ -z "${PING_ACCEPTING_RATE}" ] ; then
+		PING_ACCEPTING_RATE=5
+	fi
+	if [ -z "${PING_FORWARDING_RATE}" ] ; then
+		PING_FORWARDING_RATE=50
+	fi
+
+	# Limit for dom0
+	${IPTABLES} -A dtc-xen-in -p icmp --icmp-type echo-request -m limit --limit ${PING_ACCEPTING_RATE}/s -j RETURN
+	${IPTABLES} -A dtc-xen-in -p icmp --icmp-type echo-request -j DROP
+	# There is no reason why a 20 VPS would be ping more than 50 times per seconds
+	${IPTABLES} -A dtc-xen-fw -p icmp --icmp-type echo-request -m limit --limit ${PING_FORWARDING_RATE}/s -j RETURN
+	${IPTABLES} -A dtc-xen-fw -p icmp --icmp-type echo-request -j DROP
+}
+syn_flood_protect () {
+	if [ -z "${SYN_ACCEPTING_RATE}" ] ; then
+		SYN_ACCEPTING_RATE=10
+	fi
+	if [ -z "${SYN_FORWARDING_RATE}" ] ; then
+		SYN_FORWARDING_RATE=100
+	fi
+	# For dom0
+	${IPTABLES} -A dtc-xen-in -p tcp --syn -m limit --limit ${SYN_ACCEPTING_RATE}/s -j RETURN
+	${IPTABLES} -A dtc-xen-in -p tcp --syn -j DROP
+	# For VPS
+	${IPTABLES} -A dtc-xen-fw -p tcp --syn -m limit --limit ${SYN_FORWARDING_RATE}/s -j RETURN
+	${IPTABLES} -A dtc-xen-fw -p tcp --syn -j DROP
+}
+
+port_scanner_limitation () {
+	if [ -z "${GLOB_CONNECT_ACCEPTING_RATE}" ] ; then
+		GLOB_CONNECT_ACCEPTING_RATE=10
+	fi
+	if [ -z "${GLOB_CONNECT_FORWARDING_RATE}" ] ; then
+		GLOB_CONNECT_FORWARDING_RATE=1000
+	fi
+	#Furtive port scanner a bit more annoying...
+	${IPTABLES} -A dtc-xen-in -p tcp --tcp-flags SYN,ACK,FIN,RST RST -m limit --limit ${GLOB_CONNECT_ACCEPTING_RATE}/s -j RETURN
+	${IPTABLES} -A dtc-xen-in -p tcp --tcp-flags SYN,ACK,FIN,RST RST -j DROP
+	${IPTABLES} -A dtc-xen-fw -p tcp --tcp-flags SYN,ACK,FIN,RST RST -m limit --limit ${GLOB_CONNECT_FORWARDING_RATE}/s -j RETURN
+	${IPTABLES} -A dtc-xen-fw -p tcp --tcp-flags SYN,ACK,FIN,RST RST -j DROP
+}
+
+start() {
+	echo -n $"Starting DTC-Xen firewall: "
+		create_dtc_xen_forward_chain
+		accept_localhost_traffic
+		port25_reject
+		soap_server_limit
+		call_add_custom_rules
+		limit_ssh_login_rate
+		ping_flood_protect
+		syn_flood_protect
+		port_scanner_limitation
+	RETVAL=$?
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/dtc-xen-firewall
+	[ $RETVAL -eq 0 ] && success || failure
+        echo
+	return $RETVAL
+}
+
+stop() {
+	echo -n $"Shutting down DTC-Xen firewall: "
+	while ${IPTABLES} -D dtc-xen-in 1 2> /dev/null ; do true ; done
+	while ${IPTABLES} -D dtc-xen-fw 1 2> /dev/null ; do true ; done
+	rulenum=$(( `$IPTABLES -L INPUT -n | nl | grep dtc-xen-in | awk '{ print $1 }'` - 2 ))
+	${IPTABLES} -D INPUT $rulenum
+	rulenum=$(( `$IPTABLES -L FORWARD -n | nl | grep dtc-xen-fw | awk '{ print $1 }'` - 2 ))
+	${IPTABLES} -D FORWARD $rulenum
+	${IPTABLES} -X dtc-xen-in
+	${IPTABLES} -X dtc-xen-fw
+	RETVAL=$?
+	[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/dtc-xen-firewall
+	[ $RETVAL -eq 0 ] && success || failure
+	echo
+	return $RETVAL
+}
+
+# See how we were called.
+case "$1" in
+  start)
+	[ -f /var/lock/subsys/dtc-xen-firewall ] && exit 0
+	start
+	;;
+  stop)
+	[ -f /var/lock/subsys/dtc-xen-firewall ] || exit 0
+	stop
+	;;
+  condrestart)
+	[ -f /var/lock/subsys/dtc-xen-firewall ] || exit 0
+	stop
+	start
+	;;
+  restart)
+	stop
+	start
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|restart|condrestart}"
+	exit 2
+esac
+
+exit $?
