@@ -18,19 +18,31 @@ except ImportError: subprocess = False
 from M2Crypto import SSL
 import crypt
 from Properties import *
-# import xm stuff
-import xen.xm.main as xenxm
-try: from xen.xend.XendClient import server
-except: pass # exception silenced beacuse xen 3 not found
 
-# debug
+# some global variables
+run_as_daemon = None
+last_signal = None
 SOAPpy.Config.debug=1
-# FIXME
-# this could probably use a bit of help when run in the console instead of daemonized
-# by the way, this script seems not to be detaching from the controlling pty or daemonizing itself properly.  it's WRONG.
-# and it shouldn't even run as root!
-logging.basicConfig(filename="/var/log/dtc-xen.log",level=logging.INFO)
-logging.info("Starting DTC SOAP server...")
+
+
+def sighandler(signum,frame):
+	global last_signal
+	last_signal = signum
+
+def shutdown(error=0):
+	global run_as_daemon
+	global last_signal
+	logging.info("Shutting down due to signal %s..."%last_signal)
+	if run_as_daemon:
+		try: os.unlink("/var/run/dtc-xen.pid")
+		except: pass
+	for a in [sys.stdout,sys.stderr]:
+		if a:
+			try: a.flush()
+			except: pass
+	logging.info("DTC SOAP server shut down")
+	logging.shutdown()
+	sys.exit(error)
 
 # A generalized decorator for logging exceptions
 def log_exceptions(f):
@@ -46,16 +58,6 @@ def log_exceptions(f):
    func.func_name = f.func_name
    return func
 
-# Checking for Xen version
-logging.debug("Checking for Xen version")
-try:
-	func = getattr(xenxm.server, "xend_domain")
-	xen_version = 2
-except:
-	xen_version = 3
-
-logging.debug("Detected Xen version %s",xen_version)
-
 def firstexisting(list):
 	for m in list:
 		if os.path.exists(m): return m
@@ -65,7 +67,45 @@ def firsttrue(list):
 		if m: return m
 
 def provisioning_volgroup():
-	return subprocess.Popen(["dtc-xen-volgroup"], stdout=PIPE).communicate()[0].strip()
+	return subprocess.Popen(["dtc-xen-volgroup"], 
+	stdin=None,stdout=subprocess.PIPE,
+	stderr=None,close_fds=True).communicate()[0].strip()
+
+
+# ---------------- daemon starts here ----------------------
+
+run_as_daemon = len(sys.argv) > 1 and "-D" in sys.argv[1:]
+
+if run_as_daemon:
+	try:
+		logging.basicConfig(filename="/var/log/dtc-xen.log",level=logging.INFO)
+		h = logging.StreamHandler()
+		h.setLevel(logging.WARN)
+		logging.getLogger().addHandler(h)
+	except IOError:
+		# oops, the log file could not be opened
+		# just log everything to stderr
+		logging.basicConfig(level=logging.INFO)
+else:
+	logging.basicConfig(level=logging.DEBUG) # debug because started foreground
+
+logging.info("Starting DTC SOAP server...")
+
+if not os.path.exists("/proc/xen/privcmd"):
+	logging.error("/proc/xen/privcmd is not accessible, cannot start dtc-xen")
+	shutdown(1)
+
+# import xm stuff
+import xen.xm.main as xenxm
+try: from xen.xend.XendClient import server
+except: pass # exception silenced beacuse xen 3 not found
+
+# Checking for Xen version
+logging.debug("Checking for Xen version")
+if hasattr(xenxm.server, "xend_domain"): xen_version = 2
+else: xen_version = 3
+
+logging.debug("Detected Xen version %s",xen_version)
 
 # read config file
 config_file = firstexisting(['/etc/dtc-xen/dtc-xen.conf','/etc/dtc-xen/soap.conf'])
@@ -91,6 +131,8 @@ if cert_passphrase: logging.info("    Certificate passphrase: not configured")
 logging.info("    Administrator user: %s"%dtcxen_user)
 logging.info("    Provisioning from LVM volume group: %s"%server_lvmname)
 logging.info("    Provisioning mount point: %s"%vpsimage_mount_point)
+
+# --------------------- now we define the functions the daemon serves ------
 
 
 def testVPSServer():
@@ -203,18 +245,6 @@ def listStartedVPS():
 				domlist.insert(1,domain)
 		domlist.sort()
 		return (domlist)
-		# This is the old code...
-		# first check to see if we have a xend_domain method (for 2.x)
-		#try:
-		#	func = getattr(xenxm.server, "xend_domains")
-		#	if func:
-		#		doms = xenxm.server.xend_domains()
-		#	else:
-		#		logging.warn("Couldn't find xend_domains method")
-		#except:
-		#	doms = xenxm.server.xend.domains(1)
-		#doms.sort()
-		#return doms
 	else:
 		return "NOTOK"
 
@@ -856,8 +886,6 @@ soapserver.registerFunction(getInstallableOS)
 soapserver.registerFunction(getVPSInstallLog)
 soapserver.registerFunction(getInstallableAPP)
 
-run_as_daemon = len(sys.argv) > 1 and "-D" in sys.argv[1:]
-
 if run_as_daemon:
 	# Daemonize requested.  Daemonize and write pid file to /var/run/dtc-xen.pid
 	logging.info("Attempting to daemonize...")
@@ -869,10 +897,6 @@ if run_as_daemon:
 	pidfile.close()
 	logging.info("Daemonization successful -- running with PID %s"%pid)
 
-last_signal = None
-def sighandler(signum,frame):
-	global last_signal
-	last_signal = signum
 signal.signal(signal.SIGINT,sighandler)
 signal.signal(signal.SIGTERM,sighandler)
 
@@ -881,12 +905,5 @@ collector.start()
 server = Server(soapserver)
 server.start()
 signal.pause()
-logging.info("Shutting down due to signal %s..."%last_signal)
-if run_as_daemon:
-	try: os.unlink("/var/run/dtc-xen.pid")
-	except: pass
-if sys.stdout: sys.stdout.flush()
-logging.info("DTC SOAP server shut down")
-logging.shutdown()
-sys.exit(0)
+shutdown()
 
