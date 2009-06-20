@@ -25,7 +25,6 @@ _Description: SOAP server login:
 
 Template: dtc-xen/conf_soap_pass
 Type: password
-Default: dtc-xen
 _Description: SOAP server pass:
  Dtc-xen will generate a .htpasswd file for the login you have just
  configured.
@@ -64,14 +63,12 @@ _Description: Debian repository for VPS creation:
 
 Template: dtc-xen/conf_netmask
 Type: string
-Default: 255.255.255.0
 _Description: Network mask for the VPS:
  Please enter the network mask to use in the created Virtual Private
  Server's network settings.
 
 Template: dtc-xen/conf_network
 Type: string
-Default: 192.168.60.0
 _Description: Network address for the VPS:
  Please enter the network address to use in the created Virtual Private
  Server's network settings.
@@ -85,14 +82,12 @@ _Description: Broadcast address for the VPS:
 
 Template: dtc-xen/conf_gateway
 Type: string
-Default: 192.168.60.254
 _Description: Gateway address for the VPS:
  Please enter the network gateway address to use in the created
  Virtual Private Server's network settings.
 
 Template: dtc-xen/conf_linux_kernel_name
 Type: string
-Default: 2.6.26-1-xen-amd64
 _Description: Xen kernel release name:
  Please enter the kernel version number as it appears with the
  'uname -a' command. 
@@ -103,7 +98,6 @@ _Description: Xen kernel release name:
 
 Template: dtc-xen/conf_linux_domu_initrd
 Type: string
-Default: initrd.img-2.6.26-1-xen-amd64
 _Description: Name of the initrd image:
  Please enter the name of the initrd ram disk image to use when
  setting-up a Linux Xen startup file. Leave this blank to not
@@ -111,7 +105,6 @@ _Description: Name of the initrd image:
 
 Template: dtc-xen/conf_lvm_name
 Type: string
-Default: lvm1
 _Description: Volume group to create VPS in:
  Dtc-xen creates physical partitions in an existing LVM volume group
  .
