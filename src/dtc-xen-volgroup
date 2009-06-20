@@ -1,0 +1,20 @@
+#!/bin/sh
+
+set -e
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+
+[ -f /etc/dtc-xen/soap.conf ] && . /etc/dtc-xen/soap.conf
+[ -f /etc/dtc-xen/dtc-xen.conf ] && . /etc/dtc-xen/dtc-xen.conf
+
+if [ "$soap_server_lvmname" != "" ] ; then
+	echo "$soap_server_lvmname"
+	exit 0
+fi
+
+if [ "$provisioning_volgroup" != "" ] ; then
+	echo "$provisioning_volgroup"
+	exit 0
+fi
+
+vgdisplay -c -A | tail -n 1 | cut -d":" -f1 | awk '{print $1}'

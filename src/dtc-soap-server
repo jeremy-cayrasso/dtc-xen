@@ -56,15 +56,42 @@ except:
 
 logging.debug("Detected Xen version %s",xen_version)
 
+def firstexisting(list):
+	for m in list:
+		if os.path.exists(m): return m
+
+def firsttrue(list):
+	for m in list:
+		if m: return m
+
+def provisioning_volgroup():
+	return subprocess.Popen(["dtc-xen-volgroup"], stdout=PIPE).communicate()[0].strip()
+
 # read config file
+config_file = firstexisting(['/etc/dtc-xen/dtc-xen.conf','/etc/dtc-xen/soap.conf'])
 p=Properties()
-p.load(open('/etc/dtc-xen/soap.conf'))
-server_host=p.getProperty("soap_server_host");
-server_port=int(p.getProperty("soap_server_port"));
-cert_passphrase=p.getProperty("soap_server_pass_phrase");
-dtcxen_user=p.getProperty("soap_server_dtcxen_user");
-server_lvmname=p.getProperty("soap_server_lvmname");
-vpsimage_mount_point=p.getProperty("soap_server_mount_point");
+p.load(open(config_file))
+gp = p.getProperty
+server_host= firsttrue([ gp(x) for x in ["soap_server_host","listen_address"] ])
+server_port= int(firsttrue([ gp(x) for x in ["soap_server_port","listen_port"] ]))
+cert_passphrase= firsttrue([ gp(x) for x in ["soap_server_pass_phrase","cert_passphrase"] ])
+dtcxen_user=firsttrue([ gp(x) for x in ["soap_server_dtcxen_user","admin_user"] ])
+server_lvmname=provisioning_volgroup()
+vpsimage_mount_point=firsttrue([ gp(x) for x in [
+		"soap_server_mount_point",
+		"provisioning_mount_point"] ])
+del gp
+
+logging.info("Server using this configuration:")
+logging.info("    Configuration file: %s"%config_file)
+logging.info("    Listen address: %s"%server_host)
+logging.info("    Listen port: %s"%server_port)
+if cert_passphrase: logging.info("    Certificate passphrase: present")
+if cert_passphrase: logging.info("    Certificate passphrase: not configured")
+logging.info("    Administrator user: %s"%dtcxen_user)
+logging.info("    Provisioning from LVM volume group: %s"%server_lvmname)
+logging.info("    Provisioning mount point: %s"%vpsimage_mount_point)
+
 
 def testVPSServer():
 	  return "OK"
@@ -794,11 +821,7 @@ if not Config.SSLserver:
 
 ssl_context = SSL.Context()
 
-def firstone(list):
-	for m in list:
-		if os.path.exists(m): return m
-
-ssl_context.load_cert(firstone(['/etc/dtc-xen/dtc-xen.cert.cert','/etc/pki/tls/certs/dtc-xen.crt']), firstone(['/etc/dtc-xen/privkey.pem','/etc/pki/tls/private/dtc-xen.key']), callback=_passphrase)
+ssl_context.load_cert(firstexisting(['/etc/dtc-xen/dtc-xen.cert.cert','/etc/pki/tls/certs/dtc-xen.crt']), firstexisting(['/etc/dtc-xen/privkey.pem','/etc/pki/tls/private/dtc-xen.key']), callback=_passphrase)
 
 soapserver = SOAPpy.SOAPServer((server_host, server_port), ssl_context = ssl_context)
 # No ssl 

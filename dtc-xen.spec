@@ -19,10 +19,12 @@ Requires: chkconfig
 Requires: coreutils
 Requires: shadow-utils
 Requires: sudo
+Requires: gawk
 # for the htpasswd command:
 Requires: httpd
+BuildRequires: coreutils
 BuildRequires: gzip
-
+BuildRequires: sed
 
 %description
 DTC-Xen lets you create and manage Xen VPS instances remotely, monitor 
@@ -65,7 +67,7 @@ rm -rf %{buildroot}/*
 
 set -e
 
-mkdir -p %{buildroot}%{_sbindir} %{buildroot}%{_bindir} %{buildroot}%{_localstatedir}/lib/%{name}/{perfdata,states}
+mkdir -p %{buildroot}%{_sbindir} %{buildroot}%{_bindir} %{buildroot}%{_localstatedir}/lib/%{name}/{perfdata,states,mnt}
 mkdir -p %{buildroot}%{_mandir}/{1,8}
 mkdir -p %{buildroot}%{_datadir}/%{name}
 mkdir -p %{buildroot}%{_sysconfdir}/{%{name},logrotate.d}
@@ -74,10 +76,19 @@ mkdir -p %{buildroot}%{_initrddir}
 cp src/dtc* src/xm* src/vg* %{buildroot}%{_sbindir}
 chmod 755 %{buildroot}%{_sbindir}/*
 mv %{buildroot}%{_sbindir}/*userconsole* %{buildroot}%{_bindir}
+sed -i 's|/etc/dtc-xen|%{_sysconfdir}/%{name}|g' %{buildroot}%{_sbindir}/dtc-xen-volgroup
+
 
 cp src/{motd,soap.conf,bashrc} etc/dtc-xen/* %{buildroot}%{_sysconfdir}/%{name}
-sed -i 's/soap_server_host.*/soap_server_host=0.0.0.0/g' %{buildroot}%{_sysconfdir}/%{name}/soap.conf
-echo 'soap_server_dtcxen_user=dtc-xen' >> %{buildroot}%{_sysconfdir}/%{name}/soap.conf
+mv %{buildroot}%{_sysconfdir}/%{name}/soap.conf %{buildroot}%{_sysconfdir}/%{name}/dtc-xen.conf 
+sed -i 's/soap_server_host.*/listen_address=0.0.0.0/g' %{buildroot}%{_sysconfdir}/%{name}/dtc-xen.conf
+sed -i 's/soap_server_port=8089/listen_port=8089/g' %{buildroot}%{_sysconfdir}/%{name}/dtc-xen.conf
+echo 'admin_user=dtc-xen' >> %{buildroot}%{_sysconfdir}/%{name}/dtc-xen.conf
+echo '# cert_passphrase is to be used if the certificate you created has a passphrase' >> %{buildroot}%{_sysconfdir}/%{name}/dtc-xen.conf
+echo '#cert_passphrase=' >> %{buildroot}%{_sysconfdir}/%{name}/dtc-xen.conf
+echo '# provisioning_volgroup lets you choose which volume group to provision disk space from -- if left empty, it picks the first one on your system' >> %{buildroot}%{_sysconfdir}/%{name}/dtc-xen.conf
+echo '#provisioning_volgroup=' >> %{buildroot}%{_sysconfdir}/%{name}/dtc-xen.conf
+echo 'provisioning_mount_point=%{_localstatedir}/lib/%{name}/mnt' >> %{buildroot}%{_sysconfdir}/%{name}/dtc-xen.conf
 chmod 644 %{buildroot}%{_sysconfdir}/%{name}/*
 touch %{buildroot}%{_sysconfdir}/%{name}/htpasswd
 chmod 600 %{buildroot}%{_sysconfdir}/%{name}/*
@@ -112,8 +123,8 @@ exit 0
 oldumask=`umask`
 umask 077
 
-if [ ! -f /etc/pki/tls/private/dtc-xen.key ] ; then
-/usr/bin/openssl genrsa -rand /proc/apm:/proc/cpuinfo:/proc/dma:/proc/filesystems:/proc/interrupts:/proc/ioports:/proc/pci:/proc/rtc:/proc/uptime 1024 > /etc/pki/tls/private/dtc-xen.key 2> /dev/null
+if [ ! -f %{_sysconfdir}/pki/tls/private/dtc-xen.key ] ; then
+/usr/bin/openssl genrsa -rand /proc/apm:/proc/cpuinfo:/proc/dma:/proc/filesystems:/proc/interrupts:/proc/ioports:/proc/pci:/proc/rtc:/proc/uptime 1024 > %{_sysconfdir}/pki/tls/private/dtc-xen.key 2> /dev/null
 fi
 
 FQDN=`hostname`
@@ -121,10 +132,10 @@ if [ "x${FQDN}" = "x" ]; then
    FQDN=localhost.localdomain
 fi
 
-if [ ! -f /etc/pki/tls/certs/dtc-xen.crt ] ; then
-cat << EOF | /usr/bin/openssl req -new -key /etc/pki/tls/private/dtc-xen.key \
+if [ ! -f %{_sysconfdir}/pki/tls/certs/dtc-xen.crt ] ; then
+cat << EOF | /usr/bin/openssl req -new -key %{_sysconfdir}/pki/tls/private/dtc-xen.key \
          -x509 -days 365 -set_serial $RANDOM \
-         -out /etc/pki/tls/certs/dtc-xen.crt 2>/dev/null
+         -out %{_sysconfdir}/pki/tls/certs/dtc-xen.crt 2>/dev/null
 --
 SomeState
 SomeCity
@@ -138,8 +149,8 @@ fi
 umask $oldumask
 
 if [ "$1" == "1" ] ; then
-	echo "%{_bindir}/dtc-xen_userconsole" >> /etc/shells
-	echo "%xenusers       ALL= NOPASSWD: /usr/sbin/xm console xen*" >> /etc/sudoers
+	echo "%{_bindir}/dtc-xen_userconsole" >> %{_sysconfdir}/shells
+	[ -f %{_sysconfdir}/sudoers ] && echo "%xenusers       ALL= NOPASSWD: /usr/sbin/xm console xen*" >> %{_sysconfdir}/sudoers
 	/sbin/chkconfig --add %{name}
 	if [ -x /sbin/runlevel -a -x /sbin/service -a -x /bin/awk ] ; then
 		runlevel=` /sbin/runlevel | awk ' { print $2 } ' `
@@ -160,10 +171,12 @@ exit 0
 if [ "$1" == "0" ] ; then
 	if [ -x /sbin/service ] ; then /sbin/service %{name} stop ; fi
 	/sbin/chkconfig --del %{name}
-	without=`grep -v 'dtc-xen_userconsole' /etc/shells`
-	echo "$without" > /etc/shells
-	without=`grep -v '%xenusers' /etc/sudoers` 
-	echo "$without" > /etc/sudoers
+	without=`grep -v 'dtc-xen_userconsole' %{_sysconfdir}/shells`
+	echo "$without" > %{_sysconfdir}/shells
+	[ -f %{_sysconfdir}/sudoers ] && {
+		without=`grep -v '%xenusers' %{_sysconfdir}/sudoers` 
+		echo "$without" > %{_sysconfdir}/sudoers
+	}
 fi
 
 
@@ -206,13 +219,14 @@ fi
 %dir %{_sysconfdir}/%{name}
 %config(noreplace) %{_sysconfdir}/%{name}/bashrc
 %config(noreplace) %{_sysconfdir}/%{name}/motd
-%config(noreplace) %{_sysconfdir}/%{name}/soap.conf
-%attr(0600,root,root)  %config(noreplace) %{_sysconfdir}/%{name}/htpasswd
+%attr(0600,root,root) %config(noreplace) %{_sysconfdir}/%{name}/dtc-xen.conf
+%attr(0600,root,root) %config(noreplace) %{_sysconfdir}/%{name}/htpasswd
 %config(noreplace) %{_sysconfdir}/logrotate.d/*
 %config %{_initrddir}/%{name}
 %dir %{_localstatedir}/lib/%{name}
 %attr(0750,root,root) %{_localstatedir}/lib/%{name}/states
 %attr(0750,root,root) %{_localstatedir}/lib/%{name}/perfdata
+%attr(0750,root,root) %{_localstatedir}/lib/%{name}/mnt
 %{_datadir}/%{name}/*
 %{_mandir}/*/*
 
