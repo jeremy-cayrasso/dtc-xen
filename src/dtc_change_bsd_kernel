@@ -10,6 +10,14 @@ fi
 # Source the configuration in the config file!
 . /etc/dtc-xen/dtc_create_vps.conf.sh
 
+# Figure out the LVM name from dtc-xen.conf
+LVMNAME=`dtc-xen-volgroup`
+[ -z "$LVMNAME" ] && {
+	echo "Could not determine volume group from which to provision the volume" 1>&2
+	echo "You might want to set provisioning_volgroup in dtc-xen.conf" 1>&2
+	exit 78
+}
+
 #NODE_NUM=6501
 #DEBIAN_REPOS="http://65.apt-proxy.gplhost.com:9999/debian"
 #NETMASK=255.255.255.0
@@ -18,7 +26,6 @@ fi
 #GATEWAY=202.124.18.1
 
 # Things that might change
-if [ "$LVMNAME" = "" ] ; then LVMNAME=lvm1 ; fi
 VPSGLOBPATH=${VPS_MOUNTPOINT}
 #KERNELNAME="2.6.11.12-xenU"
 INSTALL_KERNELPATH="/boot/netbsd-INSTALL_XENU"

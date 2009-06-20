@@ -2,7 +2,7 @@
 
 if [ $# -lt 3 ]; then 
 	echo "Usage: $0 <xen id> <hdd size> <swap size> [lvm/vbd]"
-	exit
+	exit 64
 fi
 
 # Things that often change
@@ -11,7 +11,6 @@ fi
 . /etc/dtc-xen/dtc_create_vps.conf.sh
 
 # Things that might change
-# LVMNAME=lvm1
 VPSGLOBPATH=${VPS_MOUNTPOINT}
 
 # Things that most of then time don't change
@@ -21,6 +20,18 @@ VPSHOSTNAME=xen${NODE_NUM}${VPSNUM}
 VPSHDD=$2
 VPSMEM=$3
 IMAGE_TYPE=$4
+
+[ -z "$IMAGE_TYPE" ] && IMAGE_TYPE=lvm
+
+# Figure out the LVM name from dtc-xen.conf
+if [ "$IMAGE_TYPE" = "lvm" ] ; then
+	LVMNAME=`dtc-xen-volgroup`
+	[ -z "$LVMNAME" ] && {
+		echo "Could not determine volume group from which to provision the volume" 1>&2
+		echo "You might want to set provisioning_volgroup in dtc-xen.conf" 1>&2
+		exit 78
+	}
+fi
 
 # redirect stdout and stderr to log files, so we can see what happened during install
 
@@ -36,10 +47,6 @@ fi
 exec 1>$VPSGLOBPATH/$VPSNUM.setuplvm.stdout
 exec 2>$VPSGLOBPATH/$VPSNUM.setuplvm.stderr
 
-
-if [ -z ""$IMAGE_TYPE ]; then
-	IMAGE_TYPE=lvm
-fi
 
 LVCREATE=/sbin/lvcreate
 LVREMOVE=/sbin/lvremove
