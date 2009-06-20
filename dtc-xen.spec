@@ -26,6 +26,8 @@ BuildRequires: coreutils
 BuildRequires: gzip
 BuildRequires: sed
 
+BuildArch: noarch
+
 %description
 DTC-Xen lets you create and manage Xen VPS instances remotely, monitor 
 their status and shut them down.  You can use any SOAP client to
