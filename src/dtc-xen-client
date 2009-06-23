@@ -1,0 +1,14 @@
+#!/usr/bin/env python 
+import SOAPpy
+import sys
+
+url = sys.argv[1] # of the form https://dtc-xen:JDsPassword@dtcxenserver.example.com:8089/
+method = sys.argv[2]
+params = sys.argv[3:]
+
+server = SOAPpy.SOAPProxy(url)
+func = getattr(server,method)
+if params: result = func(*params)
+else:      result = func()
+
+print result

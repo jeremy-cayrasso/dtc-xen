@@ -30,6 +30,8 @@ SBIN_SH_SCRIPTS=dtc_kill_vps_disk xm_info_free_memory vgdisplay_free_size dtc_se
 dtc_change_bsd_kernel dtc_write_xenpv_conf dtc_install_centos dtc-xen_domUconf_standard dtc-xen_domUconf_network_debian \
 dtc-xen_domUconf_network_redhat dtc-xen_finish_install dtc-soap-server dtc-xen-volgroup
 
+BIN_SH_SCRIPTS=dtc-xen-client
+
 VARLIB_FOLDERS=states perfdata mnt
 
 THIRD_PARTY=daemon.py Properties.py
@@ -46,6 +48,7 @@ clean:
 # The utilities used by the soap server
 	rm $(DESTDIR)/bin/dtc-xen_userconsole
 	for i in $(SBIN_SH_SCRIPTS) ; do rm $$i ; done
+	for i in $(BIN_SH_SCRIPTS) ; do rm $$i ; done
 
 # DTC autodeploy script
 	rm $(DESTDIR)$(SHARE_DIR)/dtc-xen/dtc-panel_autodeploy.sh
@@ -70,11 +73,12 @@ install:
 		cp etc/init.d/dtc-xen debian/dtc-xen.init ; fi
 
 # The soap server
-	for i in $(SBIN_SH_SCRIPTS) ; do $(INSTALL) -m 0700 src/$$i $(DESTDIR)$(USRSBIN_DIR)/$$i ;  done
-	for i in $(THIRD_PARTY) ; do $(INSTALL) -m 0700 3rdparty/$$i $(DESTDIR)$(SHARE_DIR)/dtc-xen/$$i ; done
+	for i in $(SBIN_SH_SCRIPTS) ; do $(INSTALL) -m 0755 src/$$i $(DESTDIR)$(USRSBIN_DIR)/$$i ;  done
+	for i in $(BIN_SH_SCRIPTS) ; do $(INSTALL) -m 0755 src/$$i $(DESTDIR)$(USRBIN_DIR)/$$i ;  done
+	for i in $(THIRD_PARTY) ; do $(INSTALL) -m 0755 3rdparty/$$i $(DESTDIR)$(SHARE_DIR)/dtc-xen/$$i ; done
 
 # The utilities used by the soap server
-	$(INSTALL) -m 0700 src/dtc-xen_userconsole $(DESTDIR)/bin/dtc-xen_userconsole
+	$(INSTALL) -m 0755 src/dtc-xen_userconsole $(DESTDIR)/bin/dtc-xen_userconsole
 
 # DTC autodeploy script
 	$(INSTALL) -m 0755 src/dtc-panel_autodeploy.sh $(DESTDIR)$(SHARE_DIR)/dtc-xen/dtc-panel_autodeploy.sh
@@ -82,7 +86,7 @@ install:
 
 # Some configuration files
 	$(INSTALL) -m 0644 src/bashrc $(DESTDIR)$(SYSCONFIG_DIR)/dtc-xen/bashrc
-	$(INSTALL) -m 0677 src/motd $(DESTDIR)$(SYSCONFIG_DIR)/dtc-xen/motd
+	$(INSTALL) -m 0644 src/motd $(DESTDIR)$(SYSCONFIG_DIR)/dtc-xen/motd
 
 # man pages
 	$(INSTALL_DIR) -m 0775 $(DESTDIR)$(MAN_DIR)/man8

@@ -188,7 +188,7 @@ fi
 
 %files
 %defattr(0755,root,root,-)
-%doc doc/changelog doc/README.RPM doc/examples/* src/soap_client.py
+%doc doc/changelog doc/README.RPM doc/examples/*
 %{_sbindir}/*
 %{_bindir}/*
 %dir %{_sysconfdir}/dtc-xen
