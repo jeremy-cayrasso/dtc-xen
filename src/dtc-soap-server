@@ -98,16 +98,7 @@ if not os.path.exists("/proc/xen/privcmd"):
 	shutdown(1)
 
 # import xm stuff
-import xen.xm.main as xenxm
-try: from xen.xend.XendClient import server
-except: pass # exception silenced beacuse xen 3 not found
-
-# Checking for Xen version
-logging.debug("Checking for Xen version")
-if hasattr(xenxm.server, "xend_domain"): xen_version = 2
-else: xen_version = 3
-
-logging.debug("Detected Xen version %s",xen_version)
+import xen.xm.main
 
 # read config file
 config_file = firstexisting(['/etc/dtc-xen/dtc-xen.conf','/etc/dtc-xen/soap.conf'])
@@ -151,7 +142,7 @@ def startVPS(vpsname):
 		sys.stdout = localsysout
 		sys.stderr = localsyserr
 		try:
-			xenxm.main(xmargs)
+			xen.xm.main.main(xmargs)
 			logging.info("VPS %s started",vpsname)
 			return "OK","Started %s" % vpsname
 		except:
@@ -176,7 +167,7 @@ def destroyVPS(vpsname):
                 sys.stdout = localsysout
                 sys.stderr = localsyserr
 		try:
-			xenxm.main(xmargs)
+			xen.xm.main.main(xmargs)
 			logging.info("VPS %s destroyed",vpsname)
 			return "OK","Destroyed %s" % vpsname
 		except:
@@ -210,7 +201,7 @@ def shutdownVPS(vpsname):
                 sys.stdout = localsysout
                 sys.stderr = localsyserr
 		try:
-			xenxm.main(xmargs)
+			xen.xm.main.main(xmargs)
 			logging.info("VPS %s shut down",vpsname)
 			return "OK","Shut down %s" % vpsname
 		except:
@@ -592,9 +583,9 @@ def getNetworkUsage(vpsname):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
 		info = getVPSState(vpsname)
-		id = int(xenxm.sxp.child_value(info, 'id', '-1'))
+		id = int(xen.xm.main.sxp.child_value(info, 'id', '-1'))
 		if id == -1:
-			id = int(xenxm.sxp.child_value(info, 'domid', '-1'))
+			id = int(xen.xm.main.sxp.child_value(info, 'domid', '-1'))
 		networkDeviceName="eth0"
 		if vpsname=="Domain-0":
 			networkDeviceName="eth0"
@@ -669,12 +660,13 @@ def getCPUUsage(vpsname):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:	
 		info = getVPSState(vpsname)
-		return xenxm.sxp.child_value(info, 'cpu_time', '0')
+		return xen.xm.main.sxp.child_value(info, 'cpu_time', '0')
 	return "NOTOK"		
 
 def getVPSState(vpsname):
 	username = getUser()
         if username == dtcxen_user or username == vpsname:
+		# fixme: sed upon rpm build time to set the correct path for /var/lib
         	filename = "/var/lib/dtc-xen/states/%s" % vpsname
         	logging.debug("Checking %s for getVPSState", filename)
         	try:
@@ -686,7 +678,7 @@ def getVPSState(vpsname):
 				fsckpid = int(fd.readline())
 				logging.debug( "fsck process meant to be at %s" , fsckpid)
 				try:
-					returnstatus = os.waitpid(fsckpid, os.WNOHANG)			
+					returnstatus = os.waitpid(fsckpid, os.WNOHANG)
 					if returnstatus[1] == 0:
 						logging.debug( "Founded running fsck!")
 						fd.close()
@@ -722,23 +714,10 @@ def getVPSState(vpsname):
 			if e.errno == 2: logging.debug("No semaphore (fsck/mkos): continuing")
 			else: raise
 		try:
-			if xen_version == 3:
-				try:
-					info = server.xend.domain(vpsname)
-				except:
-					info = xenxm.server.xend.domain(vpsname)
-				return info
-			else:
-				logging.debug( "Calling xenxm.server xend_domain")
-				func = getattr(xenxm.server, "xend_domain")
-				logging.debug("After xenxm.server")
-				if func:
-					logging.debug("Calling xenxm.server.xend.domain(%s)" , vpsname)
-					info = xenxm.server.xend_domain(vpsname)
-					return info
-				else:
-					logging.debug("Couldn't find xend_domain method")
-		except:
+			try: info = server.xend.domain(vpsname)
+			except Exception: info = xen.xm.main.server.xend.domain(vpsname)
+			return info
+		except Exception:
 			return "Not running"
 	else:
 		return "NOTOK"
@@ -763,11 +742,11 @@ def getInstallableOS():
 	return folderlist
 
 #	d = {}
-#	d['dom'] = int(xenxm.sxp.child_value(info, 'id', '-1'))
-#	d['name'] = xenxm.sxp.child_value(info, 'name', '??')
-#	d['mem'] = int(xenxm.sxp.child_value(info, 'memory', '0'))
-#	d['cpu'] = int(xenxm.sxp.child_value(info, 'cpu', '0'))
-#	d['state'] = xenxm.sxp.child_value(info, 'state', '??')
+#	d['dom'] = int(xen.xm.main.sxp.child_value(info, 'id', '-1'))
+#	d['name'] = xen.xm.main.sxp.child_value(info, 'name', '??')
+#	d['mem'] = int(xen.xm.main.sxp.child_value(info, 'memory', '0'))
+#	d['cpu'] = int(xen.xm.main.sxp.child_value(info, 'cpu', '0'))
+#	d['state'] = xen.xm.main.sxp.child_value(info, 'state', '??')
 #	d['cpu_time'] = float(sxp.child_value(info, 'cpu_time', '0'))
 #	return d
 
