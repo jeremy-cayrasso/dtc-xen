@@ -810,7 +810,7 @@ def _authorize(*args, **kw):
 	logging.debug( "**kw =%s" , str(kw) )
 
 	# The socket object, useful for
-	logging.debug( "Peer connected: ",  c.connection.getpeername() )
+	logging.debug( "Peer connected: %s",  c.connection.getpeername() )
 
 	# get authorization info from HTTP headers
 	ah = c.httpheaders.get("Authorization","")
