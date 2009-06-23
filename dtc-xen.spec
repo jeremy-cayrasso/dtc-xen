@@ -23,6 +23,7 @@ Requires: gawk
 Requires: lvm2
 # for the htpasswd command:
 Requires: httpd
+Requires: yum
 BuildRequires: make
 BuildRequires: coreutils
 BuildRequires: gzip
