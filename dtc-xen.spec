@@ -44,19 +44,20 @@ Requires: iptables
 DTC-Xen firewall is a rate-limiting firewall script that you can use on your
 servers using DTC-Xen.
 
- If running in a production environment, you might want to have a basic
- firewall running on your dom0 to avoid having DoS attack. This is not the
- state-of-the-art, but just another attempt to make things a bit more smooth.
- Comments and contribution are more than welcome!
+If running in a production environment, you might want to have a basic
+firewall running on your dom0 to avoid having DoS attack. This is not the
+state-of-the-art, but just another attempt to make things a bit more smooth.
+Comments and contribution are more than welcome!
  
- The main principle of this firewall script is to rate limit connections to
- both your dom0 and your VPSes. It's principle is NOT block any connection. For
- example, dtc-xen-firewall denies ssh for 300 seconds after 10 attempts on your
- dom0, rate limit ping to 5 per seconds on your dom0 and to 50/s globally for
- all your VPS, and does the same kind of thing for SYN flood attacks. Take
- care, it also blocks any connection to the port 25, as in a normal dom0, you
- would install a mail server to send system messages to the administrators, but
- you don't want to accept any incoming message.
+The main principle of this firewall script is to rate limit connections to
+both your dom0 and your VPSes. It's principle is NOT block any connection. For
+example, dtc-xen-firewall denies ssh for 300 seconds after 10 attempts on your
+dom0, rate limit ping to 5 per seconds on your dom0 and to 50/s globally for
+all your VPS, and does the same kind of thing for SYN flood attacks. Take
+care, it also blocks any connection to the port 25, as in a normal dom0, you
+would install a mail server to send system messages to the administrators, but
+you don't want to accept any incoming message.
+
 
 %prep
 rm -rf %{buildroot}/*
