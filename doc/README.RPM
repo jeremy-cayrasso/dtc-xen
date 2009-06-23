@@ -3,7 +3,7 @@ NOTES FOR THE RPM EDITION
 
 After installation, you need to set the management password:
 
-   htpasswd /etc/dtc-xen/htpasswd -b <adminuser> <adminpassword>
+   htpasswd -b /etc/dtc-xen/htpasswd <adminuser> <adminpassword>
 
 This is the super user name and password that DTC-Xen will require
 when trying to connect to it with any SOAP client or DTC. The name

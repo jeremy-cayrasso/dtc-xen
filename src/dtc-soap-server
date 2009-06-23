@@ -798,33 +798,37 @@ def _authorize(*args, **kw):
 	# get authorization info from HTTP headers
 	ah = c.httpheaders.get("Authorization","")
 
-	if ah:
-		# decode and analyze the string for the username and password
-		# (we slice the string from 6 onwards to remove the "Basic ")
-		username, password = base64.decodestring(ah[6:].strip()).split(":")
-
-		logging.debug("Loading /etc/dtc-xen/htpasswd...")
-		fd = open('/etc/dtc-xen/htpasswd', 'r') 
-
-		for line in fd:
-			u, h = line.strip().split(':')
-			if u == username:
-				verify_pass = crypt.crypt(password, h[:2])
-				if verify_pass == h:
-					fd.close()
-					logging.debug( "Password matches the one in the file!")
-					return 1
-				else:
-					fd.close()
-					logging.debug("Password didn't match the one in .htpasswd")
-					return 0
-    
-		logging.debug("Couldn't find user in password file!")
-		return 0
-    
-	else:
+	if not ah:
 		logging.debug("NO authorization information in HTTP headers, refusing.")
 		return 0
+
+	# decode and analyze the string for the username and password
+	# (we slice the string from 6 onwards to remove the "Basic ")
+	try: username, password = base64.decodestring(ah[6:].strip()).split(":")
+	except ValueError: # moron user did not specify the user name and password
+		logging.debug("NO password information in HTTP headers, refusing.")
+		return 0
+	
+
+	logging.debug("Loading /etc/dtc-xen/htpasswd...")
+	fd = open('/etc/dtc-xen/htpasswd', 'r') 
+
+	for line in fd:
+		u, h = line.strip().split(':')
+		if u == username:
+			verify_pass = crypt.crypt(password, h[:2])
+			if verify_pass == h:
+				fd.close()
+				logging.debug( "Password matches the one in the file!")
+				return 1
+			else:
+				fd.close()
+				logging.debug("Password didn't match the one in .htpasswd")
+				return 0
+    
+	logging.debug("Couldn't find user in password file!")
+	return 0
+   
 
 def _passphrase(cert):
 	logging.debug("Pass phrase faked...")
