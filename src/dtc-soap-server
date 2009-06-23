@@ -75,21 +75,25 @@ def provisioning_volgroup():
 # ---------------- daemon starts here ----------------------
 
 run_as_daemon = len(sys.argv) > 1 and "-D" in sys.argv[1:]
+debug_logging = len(sys.argv) > 1 and "-v" in sys.argv[1:]
+
+if debug_logging: log_level = logging.DEBUG
+else: log_level = logging.INFO
 
 if run_as_daemon:
 	oldumask = os.umask(31)
 	try:
-		logging.basicConfig(filename="/var/log/dtc-xen.log",level=logging.INFO)
+		logging.basicConfig(filename="/var/log/dtc-xen.log",level=log_level)
 		h = logging.StreamHandler()
 		h.setLevel(logging.WARN)
 		logging.getLogger().addHandler(h)
 	except IOError:
 		# oops, the log file could not be opened
 		# just log everything to stderr
-		logging.basicConfig(level=logging.INFO)
+		logging.basicConfig(level=log_level)
 	os.umask(oldumask)
 else:
-	logging.basicConfig(level=logging.DEBUG) # debug because started foreground
+	logging.basicConfig(level=log_level) # debug because started foreground
 
 logging.info("Starting DTC SOAP server...")
 

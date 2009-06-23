@@ -2,7 +2,7 @@
 .SH NAME
 dtc-soap-server \- This is a SOAP server running over HTTPS with Auth to remotly start/stop/reinstall/fsck a VPS under Xen
 .SH SYNOPSIS
-.B dtc-soap-server [\fI-D\fR]
+.B dtc-soap-server [\fI-D\fR] [\fI-v\fR]
 
 .SH DESCRIPTION
 .B dtc-soap-server
@@ -20,6 +20,7 @@ the SSL certificate this program uses by replacing
 the files named dtc-xen.* inside /etc/pki/tls.
 
 The -D command line option daemonizes the server.
+The -v command line option elevates logging level to debug.
 
 .SH "VERSION"
 This documentation describes
