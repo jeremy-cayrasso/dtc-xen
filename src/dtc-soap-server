@@ -141,8 +141,9 @@ logging.info("    Provisioning mount point: %s"%vpsimage_mount_point)
 # --------------------- now we define the functions the daemon serves ------
 
 
-def testVPSServer():
-	  return "OK"
+def testVPSServer(*varargs):
+	  if not varargs: return "OK"
+	  else: return varargs
 
 def startVPS(vpsname):
 	username = getUser()
@@ -890,6 +891,10 @@ if run_as_daemon:
 	# Daemonize requested.  Daemonize and write pid file to /var/run/dtc-xen.pid
 	logging.info("Attempting to daemonize...")
 	import daemon
+	# unconditionally close stdin/stdout/stderr, otherwise yum reinstall fails
+	for fd in [0,1,2]:
+		try: os.close(fd)
+		except OSError: pass
 	daemon.daemonize()
 	pid = os.getpid()
 	pidfile =file("/var/run/dtc-xen.pid","w")
