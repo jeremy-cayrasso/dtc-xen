@@ -60,17 +60,15 @@ clean:
 
 install_dtc-xen-firewall:
 	$(INSTALL) -m 0640 etc/dtc-xen/dtc-xen-firewall-config $(DESTDIR)$(SYSCONFIG_DIR)/dtc-xen/dtc-xen-firewall-config
-	if [ $(DISTRO) = "centos" ] ; then \
-		$(INSTALL) -m 0755 etc/init.d/dtc-xen-firewall.rh $(DESTDIR)$(INITRD_DIR)/dtc-xen-firewall ; else \
-		cp etc/init.d/dtc-xen-firewall debian/dtc-xen-firewall.init ; fi
+	if [ ! $(DISTRO) = "debian" ] ; then \
+		$(INSTALL) -m 0755 etc/init.d/dtc-xen-firewall.rh $(DESTDIR)$(INITRD_DIR)/dtc-xen-firewall ; fi
 
 install:
 # Sysconfig stuffs
 	$(INSTALL) -m 0644 etc/logrotate.d/dtc-xen $(DESTDIR)$(SYSCONFIG_DIR)/logrotate.d/dtc-xen
 	# We do a cp for debian, so it will be used by dh_installinit in debian/rules, so we don't really care about the Unix rights
-	if [ $(DISTRO) = "centos" ] ; then \
-		$(INSTALL) -m 0755 etc/init.d/dtc-xen.rh $(DESTDIR)$(INITRD_DIR)/dtc-xen ; else \
-		cp etc/init.d/dtc-xen debian/dtc-xen.init ; fi
+	if [ ! $(DISTRO) = "debian" ] ; then \
+		$(INSTALL) -m 0755 etc/init.d/dtc-xen.rh $(DESTDIR)$(INITRD_DIR)/dtc-xen ; fi
 
 # The soap server
 	for i in $(SBIN_SH_SCRIPTS) ; do $(INSTALL) -m 0755 src/$$i $(DESTDIR)$(USRSBIN_DIR)/$$i ;  done
