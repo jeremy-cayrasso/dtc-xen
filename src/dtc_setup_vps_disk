@@ -26,11 +26,11 @@ IMAGE_TYPE=$4
 # Figure out the LVM name from dtc-xen.conf
 if [ "$IMAGE_TYPE" = "lvm" ] ; then
 	LVMNAME=`dtc-xen-volgroup`
-	[ -z "$LVMNAME" ] && {
+	if [ -z "$LVMNAME" ] ; then
 		echo "Could not determine volume group from which to provision the volume" 1>&2
 		echo "You might want to set provisioning_volgroup in dtc-xen.conf" 1>&2
 		exit 78
-	}
+	fi
 fi
 
 # redirect stdout and stderr to log files, so we can see what happened during install
