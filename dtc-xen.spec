@@ -194,6 +194,7 @@ fi
 %dir %{_sysconfdir}/dtc-xen
 %config(noreplace) %{_sysconfdir}/dtc-xen/bashrc
 %config(noreplace) %{_sysconfdir}/dtc-xen/motd
+%config(noreplace) %{_sysconfdir}/dtc-xen/sources.list
 %attr(0600,root,root) %config(noreplace) %{_sysconfdir}/dtc-xen/dtc-xen.conf
 %attr(0600,root,root) %config(noreplace) %{_sysconfdir}/dtc-xen/htpasswd
 %config(noreplace) %{_sysconfdir}/logrotate.d/*

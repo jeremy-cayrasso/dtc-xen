@@ -249,6 +249,10 @@ fi
 mkdir -p $XEN_USER_HOME
 for i in `seq -w 1 29`; do dtcaddxenuser xen$i ; done
 
+if [ -e /etc/dtc-xen/sources.list ] ; then
+	cp /etc/apt/sources.list /etc/dtc-xen
+fi
+
 # Install our init.d script
 if [ -e /etc/redhat-release ] ; then
 	if [ -x /etc/rc.d/init.d/dtc-xen ] ; then

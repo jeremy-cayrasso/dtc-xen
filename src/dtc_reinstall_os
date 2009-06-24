@@ -34,10 +34,10 @@ if [ $# -lt 5 ]; then
 fi
 
 # Source the configuration in the config file!
-. /etc/dtc-xen/dtc_create_vps.conf.sh
+. /etc/dtc-xen/dtc-xen.conf
 
 # Some defaults if not present in the conf file...
-if [ "$DEBIAN_RELEASE" = "" ] ; then DEBIAN_RELEASE=etch ; fi
+if [ "$DEBIAN_RELEASE" = "" ] ; then DEBIAN_RELEASE=lenny ; fi
 
 # Manage options in any order...
 REDIRECTOUTPUT=true
@@ -86,13 +86,32 @@ for i in $@ ; do
 	esac
 done
 
-VPSGLOBPATH=${VPS_MOUNTPOINT}
-#KERNELNAME="2.6.11.12-xenU"
-KERNELPATH="/boot/vmlinuz-${KERNELNAME}"
-BSDKERNELPATH="/boot/netbsd-INSTALL_XENU"
-#DEBIAN_BINARCH=i386
+# Finds the VG
+VPSGLOBPATH=${provisioning_mount_point}
+if [ "$IMAGE_TYPE" = "lvm" ] ; then
+	LVMNAME=`dtc-xen-volgroup`
+	if [ -z "$LVMNAME" ] ; then
+		echo "Could not determine volume group from which to provision the volume" 1>&2
+		echo "You might want to set provisioning_volgroup in dtc-xen.conf" 1>&2
+		exit 78
+	fi
+fi
 
-# Things that most of then time don't change
+# Finds the kernel name
+if [ -z "${KERNELPATH}" ] ; then
+	if [ -e /boot/vmlinuz-`uname -r` ] ; then
+		KERNELPATH=/boot/vmlinuz-`uname -r`
+	fi
+fi
+if [ -z "${KERNELPATH}" ] ; then
+	echo "Could not find the kernel image file!" 1>&2
+	exit 78
+fi
+
+if [ -z ${BSDKERNELPATH} ] ; then
+	BSDKERNELPATH="/boot/netbsd-INSTALL_XENU"
+fi
+
 VPSNUM=$1
 VPSNAME=xen${VPSNUM}
 VPSHOSTNAME=xen${NODE_NUM}${VPSNUM}
@@ -103,16 +122,18 @@ PASSWORD=$5
 DISTRO=$6
 IMAGE_TYPE=$7
 
-[ -z "$IMAGE_TYPE" ] && IMAGE_TYPE=lvm
+if [ -z "$IMAGE_TYPE" ] ; then
+	IMAGE_TYPE=lvm
+fi
 
 # Figure out the LVM name from dtc-xen.conf
 if [ "$IMAGE_TYPE" = "lvm" ] ; then
 	LVMNAME=`dtc-xen-volgroup`
-	[ -z "$LVMNAME" ] && {
+	if [ -z "$LVMNAME" ] ; then
 		echo "Could not determine volume group from which to provision the volume" 1>&2
 		echo "You might want to set provisioning_volgroup in dtc-xen.conf" 1>&2
 		exit 78
-	}
+	fi
 fi
 
 # Configure the first IP only (the user can setup the others)
@@ -318,7 +339,11 @@ elif [ "$DISTRO" = "centos" -o "$DISTRO" = "centos42" ] ; then
 elif [ "$DISTRO" = "debian" -o "$DISTRO" = "debian-dtc" ] ; then
 	/usr/sbin/dtc-xen_domUconf_network_debian ${VPSGLOBPATH}/${VPSNUM} ${IPADDR} ${NETMASK} ${NETWORK} ${BROADCAST} ${GATEWAY}
 
-	cp /etc/apt/sources.list ${VPSGLOBPATH}/${VPSNUM}/etc/apt
+	if [ -e /etc/dtc-xen/sources.list ] ; then
+		cp /etc/dtc-xen/sources.list ${VPSGLOBPATH}/${VPSNUM}/etc/apt
+	else
+		cp /etc/apt/sources.list ${VPSGLOBPATH}/${VPSNUM}/etc/apt
+	fi
 else
 	if [ -x /usr/share/dtc-xen-os/${DISTRO}/setup_network ] ; then
 		/usr/share/dtc-xen-os/${DISTRO}/setup_network ${VPSGLOBPATH}/${VPSNUM} ${IPADDR} ${NETMASK} ${NETWORK} ${BROADCAST} ${GATEWAY}
