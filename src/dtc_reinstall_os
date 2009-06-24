@@ -12,7 +12,7 @@ if [ $# -lt 5 ]; then
 	echo "<operating-system> can be one of the follwing:" > /dev/stderr
 	echo "debian, debian-dtc, centos, netbsd, xenpv, manual" > /dev/stderr
 	echo "or one of the operating system folder names present in /usr/share/dtc-xen-os" > /dev/stderr
-	echo "or one of the applicances folder names present in /usr/share/dtc-xen-app" > /dev/stderr
+	echo "or one of the appliances folder names present in /usr/share/dtc-xen-app" > /dev/stderr
 	echo "-------------------------------------------------------------------------" > /dev/stderr
 	echo "Options can be in any order and are:" > /dev/stderr
 	echo "                       [ -v ] : Do a more verboze install" > /dev/stderr
@@ -21,8 +21,9 @@ if [ $# -lt 5 ]; then
 	echo "Network option to setup inside the guest VPS:" > /dev/stderr
 	echo "        [ --netmask netmask ] : guest OS netmask" > /dev/stderr
 	echo "        [ --network network ] : guest OS network" > /dev/stderr
-	echo "    [ --broadcast broadcast ] : guest OS broadcast" > /dev/stderr
+	echo "        [ --broadcast broadcast ] : guest OS broadcast" > /dev/stderr
 	echo "        [ --gateway gateway ] : guest OS network gateway" > /dev/stderr
+	echo "        [ --nameservers dns1,dns2... ] : list of DNS servers" > /dev/stderr
 	echo "-------------------------------------------------------------------------" > /dev/stderr
 	echo "Options specific to Xen PV guests:" > /dev/stderr
 	echo "       [ --vnc-pass VNCPASS ] : VNC password for the physical console" > /dev/stderr
@@ -54,37 +55,42 @@ for i in $@ ; do
 		shift
 		;;
 	"--vnc-pass")
-		VNC_PASSWORD=$2
+		VNC_PASSWORD="$2"
 		shift
 		shift
 		;;
 	"--boot-iso")
-		BOOT_ISO=$2
+		BOOT_ISO="$2"
 		shift
 		shift
 		;;
 	"--release")
-		RELEASE=$2
+		RELEASE="$2"
 		shift
 		shift
 		;;
 	"--netmask")
-		NETMASK=$2
+		NETMASK="$2"
 		shift
 		shift
 		;;
 	"--network")
-		NETWORK=$2
+		NETWORK="$2"
 		shift
 		shift
 		;;
 	"--broadcast")
-		BROADCAST=$2
+		BROADCAST="$2"
 		shift
 		shift
 		;;
 	"--gateway")
-		GATEWAY=$2
+		GATEWAY="$2"
+		shift
+		shift
+		;;
+	"--nameservers")
+		NAMESERVERS="$2"
 		shift
 		shift
 		;;
@@ -345,18 +351,18 @@ echo "Setting-up network for distro ${DISTRO}..."
 if [ "$DISTRO" = "netbsd" -o "$DISTRO" = "xenpv" ] ; then
 	echo "Nothing to do: it's BSD or xenpv!"
 elif [ "$DISTRO" = "centos" -o "$DISTRO" = "centos42" ] ; then
-	/usr/sbin/dtc-xen_domUconf_network_redhat ${VPSGLOBPATH}/${VPSNUM} ${IPADDR} ${NETMASK} ${NETWORK} ${BROADCAST} ${GATEWAY}
+	/usr/sbin/dtc-xen_domUconf_network_redhat ${VPSGLOBPATH}/${VPSNUM} ${IPADDR} ${NETMASK} ${NETWORK} ${BROADCAST} ${GATEWAY} ${NAMESERVERS}
 elif [ "$DISTRO" = "debian" -o "$DISTRO" = "debian-dtc" ] ; then
-	/usr/sbin/dtc-xen_domUconf_network_debian ${VPSGLOBPATH}/${VPSNUM} ${IPADDR} ${NETMASK} ${NETWORK} ${BROADCAST} ${GATEWAY}
+	/usr/sbin/dtc-xen_domUconf_network_debian ${VPSGLOBPATH}/${VPSNUM} ${IPADDR} ${NETMASK} ${NETWORK} ${BROADCAST} ${GATEWAY} ${NAMESERVERS}
 
-	if [ -e /etc/dtc-xen/sources.list ] ; then
+	if [ -f /etc/dtc-xen/sources.list ] ; then
 		cp /etc/dtc-xen/sources.list ${VPSGLOBPATH}/${VPSNUM}/etc/apt
 	else
 		cp /etc/apt/sources.list ${VPSGLOBPATH}/${VPSNUM}/etc/apt
 	fi
 else
 	if [ -x /usr/share/dtc-xen-os/${DISTRO}/setup_network ] ; then
-		/usr/share/dtc-xen-os/${DISTRO}/setup_network ${VPSGLOBPATH}/${VPSNUM} ${IPADDR} ${NETMASK} ${NETWORK} ${BROADCAST} ${GATEWAY}
+		/usr/share/dtc-xen-os/${DISTRO}/setup_network ${VPSGLOBPATH}/${VPSNUM} ${IPADDR} ${NETMASK} ${NETWORK} ${BROADCAST} ${GATEWAY} ${NAMESERVERS}
 	else
 		echo "Not implemented for other distros yet"
 		exit 1
@@ -512,14 +518,14 @@ fi
 ##########################################
 if [ ! -z "${APPLIANCE}" ] ; then
 	echo "Setting up appliance boot-stage setup script ${APPLIANCE}..."
-	cp /usr/share/dtc-xen-app/${APPLIANCE}/setup-script ${VPSGLOBPATH}/${VPSNUM}/root/dtc-xen-applicance-setup
+	cp /usr/share/dtc-xen-app/${APPLIANCE}/setup-script ${VPSGLOBPATH}/${VPSNUM}/root/dtc-xen-appliance-setup
 	if [ -e /usr/share/dtc-xen-app/${APPLIANCE}/setup-folder ] ; then
 		cp -rf /usr/share/dtc-xen-app/${APPLIANCE}/setup-folder ${VPSGLOBPATH}/${VPSNUM}/root/
 	fi
 	echo "#!/bin/sh
 
 cd /root
-/root/dtc-xen-applicance-setup ${PASSWORD}
+/root/dtc-xen-appliance-setup ${PASSWORD}
 
 rm /etc/rc2.d/S99dtc-xen-appliance
 rm /etc/rc3.d/S99dtc-xen-appliance

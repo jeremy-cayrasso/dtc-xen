@@ -1,13 +1,14 @@
 #!/bin/sh
 
-VPS_PATH=${1}
-IPADDR=$2
-NETMASK=$3
-NETWORK=$4
-BROADCAST=$5
-GATEWAY=$6
+VPS_PATH="$1"
+IPADDR="$2"
+NETMASK="$3"
+NETWORK="$4"
+BROADCAST="$5"
+GATEWAY="$6"
+NAMESERVERS="$7"
 
-ETC=${VPS_PATH}/etc
+ETC="${VPS_PATH}/etc"
 
 # Configure the eth0
 echo "auto lo
@@ -23,4 +24,10 @@ iface eth0 inet static
 " >${ETC}/network/interfaces
 
 # Set the resolv.conf
-cp /etc/resolv.conf ${ETC}/resolv.conf
+if [ -n "$NAMESERVERS" ] ; then
+	oldifs="$IFS" ; IFS=,
+	for a in $NAMESERVERS ; do echo "nameserver $a" ; done
+	IFS="$oldifs"
+else
+	cp /etc/resolv.conf ${ETC}/resolv.conf
+fi
