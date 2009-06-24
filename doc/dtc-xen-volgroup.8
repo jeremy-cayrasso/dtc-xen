@@ -1,0 +1,15 @@
+.TH dtc-xen-volgroup 8
+.SH NAME
+dtc-xen-volgroup \- This script is a part of the SOAP server of dtc-xen running over HTTPS with Auth.
+.SH SYNOPSIS
+.B dtc-xen-volgroup
+
+.SH DESCRIPTION
+.B dtc-xen-volgroup
+This shell script is a part of the dtc-xen package that is to be used by the
+dtc panel to manage a Xen VPS server. It determines the name of the last volume
+group seen in the list of active volume groups, in order to create partitions
+for your VPS and avoid a painful configuration of your server. If you do not
+want that dtc-xen auto-determines the volume group for your VPS, as you have
+more than one in your system, then you can edit /etc/dtc-xen/dtc-xen.conf in
+order to override this script.
