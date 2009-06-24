@@ -1,7 +1,7 @@
 Name: dtc-xen
 Summary: DTC Xen VPS remote management suite
 Version: 0.0.1
-Release: 1
+Release: 7
 
 Group: System Environment/Daemons
 
@@ -213,5 +213,8 @@ fi
 %config %{_initrddir}/dtc-xen-firewall
 
 %changelog
+* Wed Jun 24 2009 Manuel Amador (Rudd-O) <rudd-o@rudd-o.com> 0.4.0-7
+- added debootstrap dependency
+
 * Fri Jun 11 2009 Manuel Amador (Rudd-O) <rudd-o@rudd-o.com> 0.4.0-1
 - initial release
