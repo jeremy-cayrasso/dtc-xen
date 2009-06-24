@@ -8,10 +8,10 @@ fi
 # Things that often change
 
 # Source the configuration in the config file!
-. /etc/dtc-xen/dtc_create_vps.conf.sh
+. /etc/dtc-xen/dtc-xen.conf
 
 # Things that might change
-VPSGLOBPATH=${VPS_MOUNTPOINT}
+VPSGLOBPATH=${provisioning_mount_point}
 
 # Things that most of then time don't change
 VPSNUM=$1
