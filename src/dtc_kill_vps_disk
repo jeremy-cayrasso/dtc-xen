@@ -8,10 +8,16 @@ fi
 # Things that often change
 
 # Source the configuration in the config file!
-. /etc/dtc-xen/dtc_create_vps.conf.sh
+if [ -f /etc/dtc-xen/dtc_create_vps.conf.sh ] ; then source /etc/dtc-xen/dtc_create_vps.conf.sh ; fi
+if [ -f /etc/dtc-xen/dtc-xen.conf ] ; then source /etc/dtc-xen/dtc-xen.conf ; fi
 
-# Things that might change
-VPSGLOBPATH=${VPS_MOUNTPOINT}
+# Figure out the VPS mount point
+if [ -n "$provisioning_mount_point" ]
+then
+	VPSGLOBPATH="$provisioning_mount_point"
+else
+	VPSGLOBPATH="$VPS_MOUNTPOINT"
+fi
 
 # Things that most of then time don't change
 VPSNUM=$1
@@ -19,7 +25,7 @@ VPSNAME=xen${VPSNUM}
 VPSHOSTNAME=xen${NODE_NUM}${VPSNUM}
 IMAGE_TYPE=$2
 
-[ -z "$IMAGE_TYPE" ] && IMAGE_TYPE=lvm
+if [ -z "$IMAGE_TYPE" ] ; then IMAGE_TYPE=lvm ; fi
 
 # Figure out the LVM name from dtc-xen.conf
 if [ "$IMAGE_TYPE" = "lvm" ] ; then
@@ -45,10 +51,6 @@ fi
 exec 1>$VPSGLOBPATH/$VPSNUM.setuplvm.stdout
 exec 2>$VPSGLOBPATH/$VPSNUM.setuplvm.stderr
 
-
-if [ -z ""$IMAGE_TYPE ]; then
-	IMAGE_TYPE=lvm
-fi
 
 LVCREATE=/sbin/lvcreate
 LVREMOVE=/sbin/lvremove

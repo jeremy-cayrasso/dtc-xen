@@ -10,8 +10,10 @@ if [ $# -lt 5 ]; then
 fi
 
 # Source the configuration in the config file!
-. /etc/dtc-xen/dtc_create_vps.conf.sh
+if [ -f /etc/dtc-xen/dtc_create_vps.conf.sh ] ; then source /etc/dtc-xen/dtc_create_vps.conf.sh ; fi
+if [ -f /etc/dtc-xen/dtc-xen.conf ] ; then source /etc/dtc-xen/dtc-xen.conf ; fi
 
+# Figure out the LVM name from dtc-xen.conf
 LVMNAME=`dtc-xen-volgroup`
 [ -z "$LVMNAME" ] && {
 	echo "Could not determine volume group from which to provision the volume" 1>&2
@@ -19,8 +21,14 @@ LVMNAME=`dtc-xen-volgroup`
 	exit 78
 }
 
+# Figure out the VPS mount point
+if [ -n "$provisioning_mount_point" ]
+then
+	VPSGLOBPATH="$provisioning_mount_point"
+else
+	VPSGLOBPATH="$VPS_MOUNTPOINT"
+fi
 
-VPSGLOBPATH=${VPS_MOUNTPOINT}
 INSTALL_KERNELPATH="/boot/netbsd-INSTALL_XENU"
 NORMAL_KERNELPATH="/boot/netbsd-XENU"
 

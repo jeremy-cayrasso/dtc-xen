@@ -34,10 +34,15 @@ if [ $# -lt 5 ]; then
 fi
 
 # Source the configuration in the config file!
-. /etc/dtc-xen/dtc-xen.conf
+if [ -f /etc/dtc-xen/dtc_create_vps.conf.sh ] ; then source /etc/dtc-xen/dtc_create_vps.conf.sh ; fi
+if [ -f /etc/dtc-xen/dtc-xen.conf ] ; then source /etc/dtc-xen/dtc-xen.conf ; fi
+
+if [ -n "$debian_release" ] ; then DEBIAN_RELEASE="$debian_release" ; fi
+if [ -n "$debian_repo" ] ; then DEBIAN_REPOS="$debian_repo" ; fi
 
 # Some defaults if not present in the conf file...
-if [ "$DEBIAN_RELEASE" = "" ] ; then DEBIAN_RELEASE=lenny ; fi
+if [ -z "$DEBIAN_RELEASE" ] ; then DEBIAN_RELEASE=lenny ; fi
+if [ -z "$DEBIAN_REPOS" ] ; then DEBIAN_REPOS="http://ftp.us.debian.org/debian/" ; fi
 
 # Manage options in any order...
 REDIRECTOUTPUT=true
@@ -86,8 +91,15 @@ for i in $@ ; do
 	esac
 done
 
-# Finds the VG
-VPSGLOBPATH=${provisioning_mount_point}
+# Figure out the VPS mount point
+if [ -n "$provisioning_mount_point" ]
+then
+	VPSGLOBPATH="$provisioning_mount_point"
+else
+	VPSGLOBPATH="$VPS_MOUNTPOINT"
+fi
+
+# Figure out the LVM name from dtc-xen.conf
 if [ "$IMAGE_TYPE" = "lvm" ] ; then
 	LVMNAME=`dtc-xen-volgroup`
 	if [ -z "$LVMNAME" ] ; then
@@ -122,9 +134,7 @@ PASSWORD=$5
 DISTRO=$6
 IMAGE_TYPE=$7
 
-if [ -z "$IMAGE_TYPE" ] ; then
-	IMAGE_TYPE=lvm
-fi
+if [ -z "$IMAGE_TYPE" ] ; then IMAGE_TYPE=lvm ; fi
 
 # Figure out the LVM name from dtc-xen.conf
 if [ "$IMAGE_TYPE" = "lvm" ] ; then

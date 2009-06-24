@@ -8,7 +8,8 @@ fi
 # Things that often change
 
 # Source the configuration in the config file!
-. /etc/dtc-xen/dtc_create_vps.conf.sh
+if [ -f /etc/dtc-xen/dtc_create_vps.conf.sh ] ; then source /etc/dtc-xen/dtc_create_vps.conf.sh ; fi
+if [ -f /etc/dtc-xen/dtc-xen.conf ] ; then source /etc/dtc-xen/dtc-xen.conf ; fi
 
 # Figure out the LVM name from dtc-xen.conf
 LVMNAME=`dtc-xen-volgroup`
@@ -25,12 +26,16 @@ LVMNAME=`dtc-xen-volgroup`
 #BROADCAST=202.124.18.255
 #GATEWAY=202.124.18.1
 
-# Things that might change
-VPSGLOBPATH=${VPS_MOUNTPOINT}
-#KERNELNAME="2.6.11.12-xenU"
+# Figure out the VPS mount point
+if [ -n "$provisioning_mount_point" ]
+then
+	VPSGLOBPATH="$provisioning_mount_point"
+else
+	VPSGLOBPATH="$VPS_MOUNTPOINT"
+fi
+
 INSTALL_KERNELPATH="/boot/netbsd-INSTALL_XENU"
 NORMAL_KERNELPATH="/boot/netbsd-XENU"
-#DEBIAN_BINARCH=i386
 
 # Things that most of then time don't change
 VPSNUM=$1
