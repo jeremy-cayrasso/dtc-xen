@@ -6,6 +6,7 @@ dtc_reinstall_os \- reinstall an operating system in a VM
 [
 .I -v
 ]
+[ OPTIONS ]
 .I VPS_NUMBER
 .I HDD_SIZE
 .I MEMORY_SIZE
@@ -20,24 +21,32 @@ dtc_reinstall_os \- reinstall an operating system in a VM
 
 .SH DESCRIPTION
 .B dtc_reinstall_os
+.IP
 This shell script is a part of the dtc-xen package that is to be used by the
 dtc panel to manage a Xen VPS server.
 
+.IP
 When doing it's setup, dtc_reinstall_os will copy the file
 /etc/dtc-xen/authorized_keys2 into the VPS's /root/.ssh/authorized_keys2, so
 the administrator has access to the VPS without the need of shutting it down.
 So it's a good idea to copy your shh public key in /etc/dtc-xen/authorized_keys2.
 
+.LP
 .B VPS_NUMBER
+.IP
 has to be a number between 01 and 29
 
+.LP
 .B HDD_SIZE
+.IP
 is not really used, but it's keeped to be consistant with dtc_setup_vps_disk
 
+.LP
 .B MEMORY_SIZE
 is the amount of memory in mega bytes that you want to have setup
 in the Xen startup file for this VPS
 
+.LP
 .B IP_ADDRESS
 is a list of IPs that you want to be set in the VM's startup file and
 in the VM's configuration. Note that the IPs have to be separated by spaces,
@@ -46,10 +55,12 @@ that only the first IP will be set in the VM's configuration, but the list will
 be set in the Xen startup file so you can use the anti-spoofing facilities of
 Xen if you need it (with untrusted users / unknown customers for example).
 
+.LP
 .B PASSWORD
 is the root password you wish to have setup inside the VPS. Not all operating
 system setup will suport it, but it's still a mandatory parameter.
 
+.LP
 .B [ DISTRO ]
 is an optional parameter that can be debian, centos, gentoo or netbsd.
 If ommited it will use debian as default. Note that for centos and gentoo,
@@ -61,6 +72,7 @@ and
 .B stage3-x86-2006.1.tar.bz2
 (if using i[3456]86 arch).
 
+.LP
 .B [ lvm | loopback ]
 You can then specify lvm or loopback. Currently the only value the script compares
 to is lvm (or anything else), but this might change in the future. If ommited, then
@@ -68,9 +80,41 @@ lvm loopback is used.
 
 .SH "OPTION"
 
-For the moment only the option \-v is used. Without \-v, dtc_reinstall_os normally
-outputs everything in /xen/XX.stderr and /xen/XX.stdout to keep a log of the
-installation. With \-v, the redirection of standard output and error is not done.
+If you don't set these options, then they have to be set in /etc/dtc-xen/dtc-xen.conf.
+
+.LP
+.B --netmask netmask
+.IP
+Guest OS netmask to setup.
+
+.LP
+.B --network network
+.IP
+Guest OS network to setup.
+
+.LP
+.B --broadcast broadcast
+.IP
+Guest OS broadcast to setup
+
+.LP
+.B --gateway gateway
+.IP
+Guest OS network gateway to setup
+
+.LP
+.B --nameservers dns1,dns2...
+.IP
+List of DNS servers in the /etc/resolv.conf of the VPS
+
+.LP
+.B -v
+.IP
+Without \-v, dtc_reinstall_os normally
+outputs everything in /var/lib/dtc-xen/mnt/XX.stderr and
+/var/lib/dtc-xen/mnt/XX.stdout (or wherever you have set the vps mountpoint to be),
+to keep a log of the installation. With \-v, the redirection of standard output and
+error is not done.
 
 .SH "EXAMPLE"
 
