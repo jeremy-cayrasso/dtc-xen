@@ -53,7 +53,7 @@ def log_exceptions(f):
            logging.debug("Function returned %s",ret)
            return ret
       except Exception,e:
-           logging.exception("Trapped exception in function call.  Thread: %s"%threading.currentThread())
+           logging.exception("Trapped exception in function call %s.  Thread: %s",f,threading.currentThread())
            raise
    func.func_name = f.func_name
    return func
@@ -77,23 +77,32 @@ def provisioning_volgroup():
 run_as_daemon = len(sys.argv) > 1 and "-D" in sys.argv[1:]
 debug_logging = len(sys.argv) > 1 and "-v" in sys.argv[1:]
 
-if debug_logging: log_level = logging.DEBUG
-else: log_level = logging.INFO
+def setup_logging():
+	global debug_logging
+	global run_as_daemon
 
-if run_as_daemon:
-	oldumask = os.umask(31)
-	try:
-		logging.basicConfig(filename="/var/log/dtc-xen.log",level=log_level)
-		h = logging.StreamHandler()
-		h.setLevel(logging.WARN)
-		logging.getLogger().addHandler(h)
-	except IOError:
-		# oops, the log file could not be opened
-		# just log everything to stderr
-		logging.basicConfig(level=log_level)
-	os.umask(oldumask)
-else:
-	logging.basicConfig(level=log_level) # debug because started foreground
+	if debug_logging: log_level = logging.DEBUG
+	else: log_level = logging.INFO
+
+	# nuke the old handlers -- they cause problems if kept registered after daemonization
+	for h in logging.root.handlers: logging.root.removeHandler(h)
+
+	if run_as_daemon:
+		oldumask = os.umask(31)
+		try:
+			logging.basicConfig(filename="/var/log/dtc-xen.log",level=log_level)
+			h = logging.StreamHandler()
+			h.setLevel(logging.WARN)
+			logging.getLogger().addHandler(h)
+		except IOError:
+			# oops, the log file could not be opened
+			# just log everything to stderr
+			logging.basicConfig(level=log_level)
+		os.umask(oldumask)
+	else:
+		logging.basicConfig(level=log_level) # debug because started foreground
+
+setup_logging()
 
 logging.info("Starting DTC SOAP server...")
 
@@ -436,7 +445,9 @@ class Server(Thread):
 	@log_exceptions
 	def run(self):
 		logging.info("Starting server thread")
-		self.server.serve_forever()
+		while True:
+			try: self.server.serve_forever()
+			except Exception: logging.exception("Server thread died, restarting")
 
 
 class DataCollector(Thread):
