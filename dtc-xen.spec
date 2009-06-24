@@ -24,6 +24,7 @@ Requires: lvm2
 # for the htpasswd command:
 Requires: httpd
 Requires: yum
+Requires: debootstrap
 BuildRequires: make
 BuildRequires: coreutils
 BuildRequires: gzip
