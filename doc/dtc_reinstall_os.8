@@ -1,4 +1,4 @@
-.TH dtc_reinstall_os.sh 8
+.TH dtc_reinstall_os 8
 .SH NAME
 dtc_reinstall_os \- reinstall an operating system in a VM
 .SH SYNOPSIS
@@ -7,16 +7,12 @@ dtc_reinstall_os \- reinstall an operating system in a VM
 .I -v
 ]
 [ OPTIONS ]
-.I VPS_NUMBER
-.I HDD_SIZE
-.I MEMORY_SIZE
-.I IP_ADDRESS
-.I PASSWORD
-[
-.I DISTRO
-]
-[
-.I lvm|loopback
+.I -vpsid <ID>
+.I -ram <RAM size MB>
+.I -nic <ip>[,<netmask>[,<broadcast>]]
+.I -pass <root-password>
+.I -os <operating-system>
+.I [ -gw <default-gateway> ]
 ]
 
 .SH DESCRIPTION
@@ -25,35 +21,57 @@ dtc_reinstall_os \- reinstall an operating system in a VM
 This shell script is a part of the dtc-xen package that is to be used by the
 dtc panel to manage a Xen VPS server.
 
+.SH DESCRIPTION
+.LP
+.I dtc-reinstall_os
+will bootstrap an operating system for you, so you can later use it in a
+virtual machine (a VPS). This script will be called by dtc-xen when you order
+it to install a VPS through the SOAP server.
+
+.I Additional configuration files
 .IP
 When doing it's setup, dtc_reinstall_os will copy the file
-/etc/dtc-xen/authorized_keys2 into the VPS's /root/.ssh/authorized_keys2, so
-the administrator has access to the VPS without the need of shutting it down.
-So it's a good idea to copy your shh public key in /etc/dtc-xen/authorized_keys2.
+/etc/dtc-xen/authorized_keys2 into the VPS's /root/.ssh/authorized_keys2 and
+/root/.ssh/authorized_key, so the administrator has access to the VPS without
+the need of shutting it down. So it's a good idea to copy your shh public key
+in /etc/dtc-xen/authorized_keys2. dtc_reinstall_os will also copy
+/etc/dtc-xen/motd into the /etc/motd of the VPS (and /etc/motd.tail if a
+Debian operating system is installed), and /etc/dtc-xen/bashrc into the
+/root/.bashrc.
 
+.SH PARAMETERS
 .LP
-.B VPS_NUMBER
+All parameters described here are mandatory. dtc_reinstall_os will exit if one
+of the parameters is missing.
+
+.B -vpsid <ID>
 .IP
-has to be a number between 01 and 29
+ID has to be a number between 01 and 99. Each time a new VPS is created, an
+associated user xen<ID> will be created on the system, using
+/usr/bin/dtc-xen_userconsole so your users can login into the system. When
+they login, "xm console xen<ID>" will in fact be their shell, so they can
+access the physical console of the VPS using ssh.
 
 .LP
-.B HDD_SIZE
+.B -ram <RAM size MB>
 .IP
-is not really used, but it's keeped to be consistant with dtc_setup_vps_disk
+This is the amount of memory in mega bytes that you want to have setup
+in the Xen startup file for this virtual machine.
 
 .LP
-.B MEMORY_SIZE
-is the amount of memory in mega bytes that you want to have setup
-in the Xen startup file for this VPS
-
-.LP
-.B IP_ADDRESS
-is a list of IPs that you want to be set in the VM's startup file and
-in the VM's configuration. Note that the IPs have to be separated by spaces,
-and thus you might want to use single quotes like this: '1.2.3.4 1.2.3.5'. Note
-that only the first IP will be set in the VM's configuration, but the list will
-be set in the Xen startup file so you can use the anti-spoofing facilities of
-Xen if you need it (with untrusted users / unknown customers for example).
+.B -nic <ip>[,<netmask>[,<broadcast>]]
+.IP
+This parameter defines the network configuration of the virtual machine,
+together with the -gw option (see below). There can be as many -nic option
+as you like. If there is more than one, then dtc_reinstall_os will setup
+a physical NIC configuration, and as many eth0:X virtual alias as needed.
+If the <netmask> or <broadcast> parameter is missing, then the values
+will be taken from /etc/dtc-xen/dtc-xen.conf. These variables are called
+NETMASK and BROADCAST. Note that each IP address will be added to the
+Xen startup configuration file of the virtual machine, so that you can
+use the anti-spoof facility of the Xen firewall (highly recommended, if
+you are reselling VPS). See Xen documentation on how to activate the
+anti-spoof feature of xend.
 
 .LP
 .B PASSWORD
