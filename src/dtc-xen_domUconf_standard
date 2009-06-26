@@ -1,12 +1,9 @@
 #!/bin/sh
 
-VPS_PATH=${1}
-VPSHOSTNAME=${2}
-NODE_DOMAIN_NAME=${3}
-KERNELNAME=${4}
-IPADDR=${5}
+# This script is shared by almost all Unix distributions, it's a good idea to call it.
 
-KERNELPATH="/boot/vmlinuz-${KERNELNAME}"
+. /usr/share/dtc-xen/dtc-xen-parse-param
+
 ETC=${VPS_PATH}/etc
 
 # Setup the fstab
@@ -14,13 +11,12 @@ echo "/dev/sda1	/	ext3	errors=remount-ro	0 0
 proc		/proc	proc	defaults		0 0
 /dev/sda2	none	swap	sw			0 0
 none		/dev/pts devpts	defaults		0 0
-
 " >${ETC}/fstab
 
 # Setup hostname and hosts
 echo "mx.${VPSHOSTNAME}.${NODE_DOMAIN_NAME}" >${ETC}/hostname
 echo "127.0.0.1	localhost.localdomain localhost
-${IPADDR} mx.${VPSHOSTNAME}.${NODE_DOMAIN_NAME} dtc.${VPSHOSTNAME}.${NODE_DOMAIN_NAME} ${VPSHOSTNAME}.${NODE_DOMAIN_NAME} ${VPSHOSTNAME}
+${FIRST_IP} ${VPS_FQDN} dtc.${VPS_DOMAIN} ${VPS_DOMAIN} ${VPSHOSTNAME}.${NODE_FQDN}
 
 # The following lines are desirable for IPv6 capable hosts
 ::1     ip6-localhost ip6-loopback
@@ -40,10 +36,9 @@ cd ${VPS_PATH}/dev
 cd ${OLDPWDDIR}
 
 # Fix the /dev/ptmx and /dev/pts device and folder
-rm -rf ${VPS_PATH}/dev/ptmx
+rm -rf ${VPS_PATH}/dev/ptmx ${VPS_PATH}/dev/pts
 mknod ${VPS_PATH}/dev/ptmx c 5 2
 chmod 666 ${VPS_PATH}/dev/ptmx
-rm -f ${VPS_PATH}/dev/pts
 mkdir ${VPS_PATH}/dev/pts
 
 # If we run on a non-debian non-64 bits system, disable the tls folder
@@ -62,12 +57,10 @@ echo "Copying kernel modules..."
 if [ ! -e ${VPS_PATH}/lib/modules ]; then
 	$MKDIR -p ${VPS_PATH}/lib/modules
 fi
-cp -auxf /lib/modules/${KERNELNAME} ${VPS_PATH}/lib/modules
+cp -auxf ${KMOD_PATH} ${VPS_PATH}/lib/modules
 cp -L ${KERNELPATH} ${VPS_PATH}/boot
-cp -L /boot/System.map-${KERNELNAME} ${VPS_PATH}/boot
-ln -s /boot/System.map-${KERNELNAME} ${VPS_PATH}/boot/System.map
-ln -s /boot/vmlinuz-${KERNELNAME} ${VPS_PATH}/boot/vmlinuz
-chroot ${VPS_PATH} /sbin/depmod -a ${KERNELNAME}
+ln -s ${KERNELPATH} ${VPS_PATH}/boot/vmlinuz
+chroot ${VPS_PATH} /sbin/depmod -a ${KERNEL_RELEASE}
 
 # Copy an eventual /etc/dtc-xen/authorized_keys2 file
 if [ -f /etc/dtc-xen/authorized_keys2 ] ; then
@@ -82,6 +75,6 @@ if [ -f /etc/dtc-xen/authorized_keys2 ] ; then
 fi
 
 # Customize the /root/.bashrc script
-sed "s/VPS_HOSTNAME/${VPSHOSTNAME}/" /etc/dtc-xen/bashrc >${VPS_PATH}/root/.bashrc
+sed "s/VPS_HOSTNAME/${VPS_FQDN}/" /etc/dtc-xen/bashrc >${VPS_PATH}/root/.bashrc
 
 exit 0

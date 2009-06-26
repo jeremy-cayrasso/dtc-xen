@@ -1,33 +1,38 @@
 #!/bin/sh
 
-VPS_PATH="$1"
-IPADDR="$2"
-NETMASK="$3"
-NETWORK="$4"
-BROADCAST="$5"
-GATEWAY="$6"
-NAMESERVERS="$7"
+. /usr/share/dtc-xen/dtc-xen-parse-param
 
 ETC="${VPS_PATH}/etc"
 
-# Configure the eth0
-echo "auto lo
+if [ -z "${NICS}" ] ; then
+	echo "auto lo
 iface lo inet loopback
-
-auto eth0
-iface eth0 inet static
-	address ${IPADDR}
-	netmask ${NETMASK}
-	network ${NETWORK}
-	broadcast ${BROADCAST}
-	gateway ${GATEWAY}
 " >${ETC}/network/interfaces
-
-# Set the resolv.conf
-if [ -n "$NAMESERVERS" ] ; then
-	oldifs="$IFS" ; IFS=,
-	for a in $NAMESERVERS ; do echo "nameserver $a" ; done
-	IFS="$oldifs"
-else
-	cp /etc/resolv.conf ${ETC}/resolv.conf
+	# Configure the eth0
+	N=0
+	for i in $NICS ; do
+		N_IP=`echo ${i} | cut -s -d"," -f1`
+		N_MASK=`echo ${i} | cut -s -d"," -f2`
+		N_BCAST=`echo ${i} | cut -s -d"," -f3`
+		N_NET=`ipcalc ${GUESSED_NET}/${GUESSED_MASK} | grep Netmask | awk '{print $2}'`
+		if [ ${N} = 0 ] ; then
+			DEVICE=eth0
+		else
+			DEVICE="eth0:${N}"
+		fi
+		echo "auto ${DEVICE}
+iface eth0 inet static
+	address ${N_IP}
+	netmask ${N_MASK}
+	network ${N_NET}
+	broadcast ${N_BCAST}
+" >>${ETC}/network/interfaces
+		if [ ${N} = 0 ] ; then
+			echo "gateway ${GATEWAY}
+" >>${ETC}/network/interfaces
+		fi
+		N=$(( ${N} + 1 ))
+	done
 fi
+# Set the resolv.conf
+echo "nameserver "`echo ${DNS} | cut -s -d"," -f1` > ${ETC}/resolv.conf

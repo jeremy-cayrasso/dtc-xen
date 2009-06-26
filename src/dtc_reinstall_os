@@ -15,6 +15,7 @@ if [ $# -lt 5 ]; then
 	echo "                  -pass <root-password> : root pass for the VPS OS"> /dev/stderr
 	echo "                 -os <operating-system> : System to setup"> /dev/stderr
 	echo "              [ -gw <default-gateway> ] : Default gateway"> /dev/stderr
+	echo "                 [ -dns <default-dns> ] : Default gateway in /etc/resolv.conf"> /dev/stderr
 	echo "-------------------------------------------------------------------------" > /dev/stderr
 	echo "All what is not enclosed with [] is mandatory!" > /dev/stderr
 	echo "You have to provide at least ONE -nic options" > /dev/stderr
@@ -33,12 +34,14 @@ if [ $# -lt 5 ]; then
 	echo "               [ --vnc-pass <VNCPASS> ] : VNC password for the physical console" > /dev/stderr
 	echo "              [ --boot-iso <file.iso> ] : CDROM device to boot on" > /dev/stderr
 	echo "                [ --disk-type lvm|vdb ] : Use LVM partition or disk image" > /dev/stderr
+	echo "         [ --initrd <initrd-full-path ] : Path to the kernel initrd image to boot with" > /dev/stderr
 	echo "         [ --kernel <kernel-full-path ] : Path to the kernel to boot with" > /dev/stderr
+	echo "     [ --kernel-release <kernel-mods> ] : Path to the kernel modules folder" > /dev/stderr
+	echo "          [ --kmod-path <kernel-mods> ] : Path to the kernel modules folder" > /dev/stderr
 	echo "         [ --initrd <initrd-full-path ] : Path to the kernel initrd image to boot with" > /dev/stderr
 	echo "" > /dev/stderr
 	echo "-------------------------------------------------------------------------" > /dev/stderr
-	echo "Example1: $0 -vpsid 01 -ram 256 -nic 192.168.9.2,255.255.255.0,192.168.9.255 -gw 192.168.9.1 \\" > /dev/stderr
-	echo "   -dns 192.168.9.1 -pass MyRootPass -os debian" > /dev/stderr
+	echo "Example1: $0 -v -vpsid 01 -ram 512 -nic 192.168.2.176,255.255.255.0,192.168.2.255 -pass xenisme -os debian -gw 192.168.2.1 -dns 192.168.2.1" > /dev/stderr
 	echo "" > /dev/stderr
 	echo "Example2: $0 -vpsid 02 -ram 512 -nic 192.168.9.2 -nic 192.168.9.3 -gw 192.168.9.1 \\" > /dev/stderr
 	echo "   -dns 192.168.9.1 -pass MyRootPass -os kde-nx-server-3.3.0" > /dev/stderr
@@ -65,63 +68,61 @@ for i in $@ ; do
 	echo "Found option: ${1} ${2}"
 	case "${1}" in
 	"-vpsid")
-		if [ -z ${2} ] ; then echo "Parameter for option -vpsid is missing" > /dev/stderr ; DO_EXIT="yes" ; fi
+		if [ -z "${2}" ] ; then echo "Parameter for option -vpsid is missing" > /dev/stderr ; DO_EXIT="yes" ; fi
 		VPSNUM="${2}"
 		shift
 		shift
 		;;
 	"-ram")
-		if [ -z ${2} ] ; then echo "Parameter for option -ram is missing" > /dev/stderr ; DO_EXIT="yes" ; fi
+		if [ -z "${2}" ] ; then echo "Parameter for option -ram is missing" > /dev/stderr ; DO_EXIT="yes" ; fi
 		VPSMEM="${2}"
 		shift
 		shift
 		;;
 	"-nic")
-		if [ -z ${2} ] ; then echo "Parameter for option -nic is missing" > /dev/stderr ; exit 1 ; fi
+		if [ -z "${2}" ] ; then echo "Parameter for option -nic is missing" > /dev/stderr ; exit 1 ; fi
 		# Manage the nics to give it as parameters to the setup-vps-network script
 		PARAM=${2}
 		if [ -z ""`echo ${PARAM} | cut -s -d"," -f2` ] ; then
-			if [ -z ${NETMASK} ] ; then
+			if [ -z "${NETMASK}" ] ; then
 				echo "Parameter NETMASK not found: either edit /etc/dtc-xen/dtc-xen.conf or use a netmask parameter" > /dev/stderr ; exit 1
 			fi
 			PARAM="${PARAM},${NETMASK}"
 		fi
 		if [ -z ""`echo ${PARAM} | cut -s -d"," -f3` ] ; then
-			if [ -z ${BROADCAST} ] ; then
+			if [ -z "${BROADCAST}" ] ; then
 				echo "Parameter BROADCAST not found: either edit /etc/dtc-xen/dtc-xen.conf or use a netmask parameter" > /dev/stderr ; exit 1
 			fi
 			PARAM="${PARAM},${NETMASK},${BROADCAST}"
 		fi
-		if [ -n ${NICS} ] ; then
+		if [ "${NUM_NIC}" = 0 ] ; then
+			ALL_IPADDRS=`echo ${PARAM} | cut -d"," -f1`
+			FW_NICS_CMD="-nic ${PARAM}"
 			NICS=$NICS"
 "${PARAM}
 		else
+			ALL_IPADDRS="${ALL_IPADDRS} "`echo ${PARAM} | cut -d"," -f1`
+			FW_NICS_CMD="${FW_NICS_CMD} -nic ${PARAM}"
 			NICS=${PARAM}
 		fi
 		NUM_NIC=$(( ${NUM_NIC} + 1 ))
-		# This one is for the xen startup file
-		if [ -z "${ALL_IPADDRS}" ] ; then
-			ALL_IPADDRS=`echo ${PARAM} | cut -d"," -f1`
-		else
-			ALL_IPADDRS="${ALL_IPADDRS} "`echo ${PARAM} | cut -d"," -f1`
-		fi
 		shift
 		shift
 		;;
 	"-pass")
-		if [ -z ${2} ] ; then echo "Parameter for option -pass is missing" > /dev/stderr ; DO_EXIT="yes" ; fi
+		if [ -z "${2}" ] ; then echo "Parameter for option -pass is missing" > /dev/stderr ; DO_EXIT="yes" ; fi
 		PASSWORD=${2}
 		shift
 		shift
 		;;
 	"-os")
-		if [ -z ${2} ] ; then echo "Parameter for option -os is missing" > /dev/stderr ; DO_EXIT="yes" ; fi
+		if [ -z "${2}" ] ; then echo "Parameter for option -os is missing" > /dev/stderr ; DO_EXIT="yes" ; fi
 		DISTRO=${2}
 		shift
 		shift
 		;;
 	"-gw")
-		if [ -z ${2} ] ; then echo "Parameter for option -gw is missing" > /dev/stderr ; DO_EXIT="yes" ; fi
+		if [ -z "${2}" ] ; then echo "Parameter for option -gw is missing" > /dev/stderr ; DO_EXIT="yes" ; fi
 		GATEWAY="$2"
 		shift
 		shift
@@ -131,26 +132,14 @@ for i in $@ ; do
 		shift
 		;;
 	"--vnc-pass")
-		if [ -z ${2} ] ; then echo "Parameter for option --vnc-pass is missing" > /dev/stderr ; DO_EXIT="yes" ; fi
+		if [ -z "${2}" ] ; then echo "Parameter for option --vnc-pass is missing" > /dev/stderr ; DO_EXIT="yes" ; fi
 		VNC_PASSWORD="$2"
 		shift
 		shift
 		;;
 	"--boot-iso")
-		if [ -z ${2} ] ; then echo "Parameter for option --boot-iso is missing" > /dev/stderr ; DO_EXIT="yes" ; fi
+		if [ -z "${2}" ] ; then echo "Parameter for option --boot-iso is missing" > /dev/stderr ; DO_EXIT="yes" ; fi
 		BOOT_ISO="$2"
-		shift
-		shift
-		;;
-	"--kernel")
-		if [ -z ${2} ] ; then echo "Parameter for option --kernel is missing" > /dev/stderr ; DO_EXIT="yes" ; fi
-		KERNELPATH="$2"
-		shift
-		shift
-		;;
-	"--initrd")
-		if [ -z ${2} ] ; then echo "Parameter for option --initrd is missing" > /dev/stderr ; DO_EXIT="yes" ; fi
-		INITRDPATH=${2}
 		shift
 		shift
 		;;
@@ -159,35 +148,73 @@ for i in $@ ; do
 		shift
 		shift
 		;;
+	"--vps-fqdn")
+		if [ -z "${2}" ] ; then echo "Parameter for option --vps-fqdn is missing" > /dev/stderr ; DO_EXIT="yes" ; fi
+		VPS_FQDN=${2}
+		shift
+		shift
+		;;
+	"--vps-domain")
+		if [ -z "${2}" ] ; then echo "Parameter for option --vps-domain is missing" > /dev/stderr ; DO_EXIT="yes" ; fi
+		VPS_DOMAIN=${2}
+		shift
+		shift
+		;;
+	"--kernel")
+		if [ -z "${2}" ] ; then echo "Parameter for option --kernel is missing" > /dev/stderr ; DO_EXIT="yes" ; fi
+		KERNELPATH="$2"
+		shift
+		shift
+		;;
+	"--kernel-release")
+		if [ -z "${2}" ] ; then echo "Parameter for option --kernel-name is missing" > /dev/stderr ; DO_EXIT="yes" ; fi
+		KERNEL_RELEASE=${2}
+		shift
+		shift
+		;;
+	"--kmod-path")
+		if [ -z "${2}" ] ; then echo "Parameter for option --kmod-path is missing" > /dev/stderr ; DO_EXIT="yes" ; fi
+		KMOD_PATH=${2}
+		shift
+		shift
+		;;
+	"--initrd")
+		if [ -z "${2}" ] ; then echo "Parameter for option --initrd is missing" > /dev/stderr ; DO_EXIT="yes" ; fi
+		INITRDPATH=${2}
+		shift
+		shift
+		;;
+	*)
+		;;
 	esac
 done
 
-if [ -z ${VPSNUM} ] ; then
+if [ -z "${VPSNUM}" ] ; then
 	echo "No VPS number. Please use -vpsid <id>." > /dev/stderr
 	DO_EXIT="yes"
 fi
 
-if [ -z ${VPSMEM} ] ; then
+if [ -z "${VPSMEM}" ] ; then
 	echo "No RAM size. Please use -ram <size MB>" > /dev/stderr
 	DO_EXIT="yes"
 fi
 
-if [ -z ${GATEWAY} ] ; then
+if [ -z "${GATEWAY}" ] ; then
 	echo "No gateway ip. Please use -gw <gateway-IP> or edit /etc/dtc-xen/dtc-xen.conf" > /dev/stderr
 	DO_EXIT="yes"
 fi
 
-if [ -z ${PASSWORD} ] ; then
+if [ -z "${PASSWORD}" ] ; then
 	echo "No root pass. Please use -pass <root-password>" > /dev/stderr
 	DO_EXIT="yes"
 fi
 
-if [ -z ${DISTRO} ] ; then
+if [ -z "${DISTRO}" ] ; then
 	echo "No distribution selected, please use -os <linux-distribution>" > /dev/stderr
 	DO_EXIT="yes"
 fi
 
-if [ -z ${KERNELPATH} ] ; then
+if [ -z "${KERNELPATH}" ] ; then
 	TESTME=/boot/vmlinuz-`uname -r`
 	if [ -e ${TESTME} ] ; then
 		KERNELPATH=${TESTME}
@@ -196,13 +223,36 @@ if [ -z ${KERNELPATH} ] ; then
 	fi
 fi
 
-if [ -z ${INITRDPATH} ] ; then
-	TESTME=/boot/initrd.img-`uname -r`
+if [ -z "${KERNEL_RELEASE}" ] ; then
+	KERNEL_RELEASE="uname -r"
+fi
+
+if [ -z "${KMOD_PATH}" ] ; then
+	TESTME=/lib/modules/`uname -r`
 	if [ -e ${TESTME} ] ; then
+		KMOD_PATH=/lib/modules/`uname -r`
+	else
+		echo "No kernel was found. Either use --kmod-path, or define a KMOD_PATH in /etc/dtc-xen/dtc-xen.conf, or make sure you have installed Xen" > /dev/stderr
+	fi
+fi
+
+if [ -z "${INITRDPATH}" ] ; then
+	TESTME=/boot/initrd.img-`uname -r`
+	if [ -e "${TESTME}" ] ; then
 		INITRDPATH=${TESTME}
 	else
-		echo "WARNING! No initrd image found! Will continue without an initial ramdisk image." > /dev/stderr
+		TESTME=/boot/initrd-`uname -r`.img
+		if [ -e "${TESTME}" ] ; then
+			INITRDPATH=${TESTME}
+		else
+			echo "WARNING! No initrd image found! Will continue without an initial ramdisk image." > /dev/stderr
+		fi
 	fi
+fi
+
+if [ -z "${DNS}" ] ; then
+	DNS=`grep "nameserver" /etc/resolv.conf | head -n 1`
+	echo "WARNING! No dns defined, guessed: ${DNS}"
 fi
 
 if [ ${DO_EXIT} = "yes" ] ; then
@@ -211,14 +261,14 @@ if [ ${DO_EXIT} = "yes" ] ; then
 fi
 
 # Figure out the VPS mount point
-if [ -n "$provisioning_mount_point" ] ; then
-	VPSGLOBPATH="$provisioning_mount_point"
+if [ -n "${provisioning_mount_point}" ] ; then
+	VPSGLOBPATH="${provisioning_mount_point}"
 else
 	VPSGLOBPATH="$VPS_MOUNTPOINT"
 fi
 
 # Figure out the LVM name from dtc-xen.conf
-if [ "$IMAGE_TYPE" = "lvm" ] ; then
+if [ "${IMAGE_TYPE}" = "lvm" ] ; then
 	LVMNAME=`dtc-xen-volgroup`
 	if [ -z "$LVMNAME" ] ; then
 		echo "Could not determine volume group from which to provision the volume" 1>&2
@@ -238,12 +288,22 @@ if [ -z "${KERNELPATH}" ] ; then
 	exit 78
 fi
 
-if [ -z ${BSDKERNELPATH} ] ; then
+if [ -z "${BSDKERNELPATH}" ] ; then
 	BSDKERNELPATH="/boot/netbsd-INSTALL_XENU"
 fi
 
 VPSNAME=xen${VPSNUM}
-VPSHOSTNAME="xen${VPSNUM}."`hostname --fqdn`
+NODE_FQDN=`hostname --fqdn`
+# Manuel, what we have been discussing about using mx.xenXX.dom0-fqdn or xenXX.dom0-fqdn by default
+# is right here! I believe we should give an entire domain to each VPS, so I want "mx.", but maybe
+# can make this configurable, there's an option now as you see, this is just the default...
+if [ -z "${VPS_FQDN}" ] ; then
+	VPS_FQDN="mx.${VPSNAME}.${NODE_FQDN}"
+fi
+if [ -z "${VPS_DOMAIN}" ] ; then
+	VPS_DOMAIN="${VPSNAME}.${NODE_FQDN}"
+fi
+
 
 if [ -z "$IMAGE_TYPE" ] ; then IMAGE_TYPE=lvm ; fi
 
@@ -317,6 +377,10 @@ MOUNT=/bin/mount
 UMOUNT=/bin/umount
 DEBOOTSTRAP=/usr/sbin/debootstrap
 
+# We forward always this list of parameters to all scripts:
+KERNEL_P="--kernel ${KERNELPATH} --kernel-release ${KERNEL_RELEASE} --kmod-path ${KMOD_PATH} --initrd ${INITRDPATH}"
+FW_PARAMS="-vpsid ${VPSNUM} --vps-fqdn ${VPS_FQDN} --vps-domain ${VPS_DOMAIN} --node-fqdn ${NODE_FQDN} ${FW_NICS_CMD} -dns ${DNS} -gw ${GATEWAY} ${KERNEL_P}"
+
 ######################################
 ### REDIRECTION OF STANDARD OUTPUT ###
 ######################################
@@ -341,10 +405,10 @@ fi
 ### FORMAT THE PARTITION ###
 ############################
 
-echo "Seleted ${VPSNAME}: ${VPSHDD}MB HDD and ${VPSMEM}MB RAM";
-if [ "$DISTRO" = "xenpv" ] ; then
-	echo "Not formating disks, xenpv will use emulated hard drives."
-elif [ "$DISTRO" = "netbsd" -o "$DISTRO" = "xenpv" ] ; then
+echo "Seleted ${VPSNAME}: ${VPSHDD}MB HDD and ${VPSMEM}MB RAM"
+if [ "${DISTRO}" = "xenhvm" ] ; then
+	echo "Not formating disks, xen HVM will use emulated hard drives."
+elif [ "$DISTRO" = "netbsd" ] ; then
 	echo "Not formating disks, NetBSD will use emulated hard drives."
 else
 	echo "Creating disks..."
@@ -357,7 +421,6 @@ else
 	$MKDIR -p ${VPSGLOBPATH}/${VPSNUM}
 	if [ "$IMAGE_TYPE" = "lvm" ]; then
 		$MKFS -q /dev/${LVMNAME}/${VPSNAME}
-	#	$LVCREATE -L${VPSMEM} -n${VPSNAME}swap ${LVMNAME}
 		$MKSWAP /dev/${LVMNAME}/${VPSNAME}swap
 
 		if grep ${VPSNAME} /etc/fstab >/dev/null ; then
@@ -403,7 +466,7 @@ fi
 
 # get the most recent centos release.  it WILL FAIL once centos version hits 10.  But, hell, I'm a hacky hack.
 CENTOS_DIR=`ls -d /usr/src/centos* 2> /dev/null | tr ' ' '\n' | sort -r | head -1`
-if [ "$DISTRO" = "xenpv" -o "$DISTRO" = "netbsd" ] ; then
+if [ "$DISTRO" = "xenhvm" -o "$DISTRO" = "netbsd" ] ; then
 	echo "There's nothing to bootstrap, as you will use the provided distribution installer in this case."
 elif [ "$DISTRO" = "centos" ] ; then
 	/usr/sbin/dtc_install_centos /var/lib/dtc-xen/yum "$VPSGLOBPATH/$VPSNUM"
@@ -437,13 +500,13 @@ fi
 
 echo "Customizing vps fstab, hosts, hostname, and capability kernel module for distro ${DISTRO}..."
 if [ "$DISTRO" = "debian" -o "$DISTRO" = "debian-dtc" -o "$DISTRO" = "centos" ] ; then
-	/usr/sbin/dtc-xen_domUconf_standard ${VPSGLOBPATH}/${VPSNUM} ${VPSHOSTNAME} ${NODE_DOMAIN_NAME} ${KERNELNAME} ${IPADDR}
+	/usr/sbin/dtc-xen_domUconf_standard ${FW_PARAMS}
 	if [ "$DISTRO" = "debian" -o "$DISTRO" = "debian-dtc" ] ; then
 		sed "s/VPS_HOSTNAME/${VPSHOSTNAME}/" /etc/dtc-xen/motd >${VPSGLOBPATH}/${VPSNUM}/etc/motd.tail
 	fi
 else
 	if [ -x /usr/share/dtc-xen-os/${DISTRO}/custom_os ] ; then
-		/usr/share/dtc-xen-os/${DISTRO}/custom_os ${VPSGLOBPATH}/${VPSNUM} ${VPSHOSTNAME} ${NODE_DOMAIN_NAME} ${KERNELNAME} ${IPADDR}
+		/usr/share/dtc-xen-os/${DISTRO}/custom_os ${FW_PARAMS}
 	fi
 fi
 
@@ -453,12 +516,12 @@ fi
 
 # handle the network setup
 echo "Setting-up network for distro ${DISTRO}..."
-if [ "$DISTRO" = "netbsd" -o "$DISTRO" = "xenpv" ] ; then
-	echo "Nothing to do: it's BSD or xenpv!"
+if [ "$DISTRO" = "netbsd" -o "$DISTRO" = "xenhvm" ] ; then
+	echo "Nothing to do: it's BSD or xenhvm!"
 elif [ "$DISTRO" = "centos" -o "$DISTRO" = "centos42" ] ; then
-	/usr/sbin/dtc-xen_domUconf_network_redhat ${VPSGLOBPATH}/${VPSNUM} ${IPADDR} ${NETMASK} ${NETWORK} ${BROADCAST} ${GATEWAY} ${NAMESERVERS}
+	/usr/sbin/dtc-xen_domUconf_network_redhat ${FW_PARAMS}
 elif [ "$DISTRO" = "debian" -o "$DISTRO" = "debian-dtc" ] ; then
-	/usr/sbin/dtc-xen_domUconf_network_debian ${VPSGLOBPATH}/${VPSNUM} ${IPADDR} ${NETMASK} ${NETWORK} ${BROADCAST} ${GATEWAY} ${NAMESERVERS}
+	/usr/sbin/dtc-xen_domUconf_network_debian ${FW_PARAMS}
 
 	if [ -f /etc/dtc-xen/sources.list ] ; then
 		cp /etc/dtc-xen/sources.list ${VPSGLOBPATH}/${VPSNUM}/etc/apt
@@ -467,7 +530,7 @@ elif [ "$DISTRO" = "debian" -o "$DISTRO" = "debian-dtc" ] ; then
 	fi
 else
 	if [ -x /usr/share/dtc-xen-os/${DISTRO}/setup_network ] ; then
-		/usr/share/dtc-xen-os/${DISTRO}/setup_network ${VPSGLOBPATH}/${VPSNUM} ${IPADDR} ${NETMASK} ${NETWORK} ${BROADCAST} ${GATEWAY} ${NAMESERVERS}
+		/usr/share/dtc-xen-os/${DISTRO}/setup_network ${FW_PARAMS}
 	else
 		echo "Not implemented for other distros yet"
 		exit 1
@@ -478,7 +541,7 @@ fi
 ### XEN STARTUP FILE CREATION ###
 #################################
 
-if [ "$DISTRO" = "xenpv" ] ; then
+if [ "$DISTRO" = "xenhvm" ] ; then
 	echo -n "kernel = \"/usr/lib/xen/boot/hvmloader\"
 builder = 'hvm'
 memory = ${VPSMEM}

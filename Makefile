@@ -81,6 +81,8 @@ install:
 # DTC autodeploy script
 	$(INSTALL) -m 0755 src/dtc-panel_autodeploy.sh $(DESTDIR)$(SHARE_DIR)/dtc-xen/dtc-panel_autodeploy.sh
 	$(INSTALL) -m 0644 src/selection_config_file $(DESTDIR)$(SHARE_DIR)/dtc-xen/selection_config_file
+# The parameter parser
+	$(INSTALL) -m 0755 src/dtc-xen-parse-param $(DESTDIR)$(SHARE_DIR)/dtc-xen/dtc-xen-parse-param
 
 # Some configuration files
 	$(INSTALL) -m 0644 src/bashrc $(DESTDIR)$(SYSCONFIG_DIR)/dtc-xen/bashrc

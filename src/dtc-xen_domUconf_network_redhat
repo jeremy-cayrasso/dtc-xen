@@ -1,36 +1,36 @@
 #!/bin/sh
 
-VPS_PATH="$1"
-IPADDR="$2"
-NETMASK="$3"
-NETWORK="$4"
-BROADCAST="$5"
-GATEWAY="$6"
-NAMESERVERS="$7"
+. /usr/share/dtc-xen/dtc-xen-parse-param
 
 ETC="${VPS_PATH}/etc"
 
 # Configure the eth0
-echo "DEVICE=eth0
+if [ -z "${NICS}" ] ; then
+	N=0
+	for i in $NICS ; do
+		N_IP=`echo ${i} | cut -s -d"," -f1`
+		N_MASK=`echo ${i} | cut -s -d"," -f2`
+		N_BCAST=`echo ${i} | cut -s -d"," -f3`
+		N_NET=`ipcalc ${GUESSED_NET}/${GUESSED_MASK} | grep Netmask | awk '{print $2}'`
+		if [ ${N} = 0 ] ; then
+			DEVICE="eth0"
+		else
+			DEVICE="eth0:${N}"
+		fi
+echo "DEVICE=${DEVICE}
 BOOTPROTO=static
-BROADCAST=${BROADCAST}
-IPADDR=${IPADDR}
-NETMASK=${NETMASK}
-NETWORK=${NETWORK}
+BROADCAST=${N_BCAST}
+IPADDR=${N_IP}
+NETMASK=${N_MASK}
+NETWORK=${N_NET}
 ONBOOT=yes
-" >${ETC}/sysconfig/network-scripts/ifcfg-eth0
-
-# Set the gateway file
-echo "NETWORKING=yes
-HOSTNAME=xen${NODE_NUM}${VPSNUM}
+" >${ETC}/sysconfig/network-scripts/ifcfg-${DEVICE}
+	done
+	# Set the gateway file
+	echo "NETWORKING=yes
+HOSTNAME=${VPS_FQDN}
 GATEWAY=${GATEWAY}
 " >${ETC}/sysconfig/network
 
 # Set the resolv.conf
-if [ -n "$NAMESERVERS" ] ; then
-	oldifs="$IFS" ; IFS=,
-	for a in $NAMESERVERS ; do echo "nameserver $a" ; done
-	IFS="$oldifs"
-else
-	cp /etc/resolv.conf ${ETC}/resolv.conf
-fi
+echo "nameserver "`echo ${DNS} | cut -s -d"," -f1` > ${ETC}/resolv.conf
