@@ -1,6 +1,6 @@
 Name: dtc-xen
 Summary: DTC Xen VPS remote management suite
-Version: 0.0.1
+Version: 0.5.0
 Release: 7
 
 Group: System Environment/Daemons
@@ -71,7 +71,7 @@ rm -rf %{buildroot}/*
 
 set -e
 
-make install DESTDIR=%{buildroot} DISTRO=centos SYSCONFIG_DIR=%{_sysconfdir} USRSBIN_DIR=%{_sbindir} INITRD_DIR=%{_initrddir} \
+make install DESTDIR=%{buildroot} DISTRO=centos SYSCONFIG_DIR=%{_sysconfdir} USRSBIN_DIR=%{_sbindir} USRBIN_DIR=%{_bindir} INITRD_DIR=%{_initrddir} \
 	MAN_DIR=%{_mandir} SHARE_DIR=%{_datadir} VARLIB_DIR=%{_localstatedir}/lib SHARE_DOC_DIR=%{_defaultdocdir} USRBIN_DIR=%{_bindir}
 
 sed -i 's/root adm/root root/g' %{buildroot}%{_sysconfdir}/logrotate.d/dtc-xen
@@ -125,7 +125,10 @@ fi
 umask $oldumask
 
 if [ "$1" == "1" ] ; then
+# Manuel: this below will setup MULTIPLE TIMES dtc-xen_userconsole in /etc/shells
+# if we also install multiple times the package. Please fix!!!
 	echo "%{_bindir}/dtc-xen_userconsole" >> %{_sysconfdir}/shells
+# same here, please do a grep as test first
 	[ -f %{_sysconfdir}/sudoers ] && echo "%xenusers       ALL= NOPASSWD: /usr/sbin/xm console xen*" >> %{_sysconfdir}/sudoers
 	/sbin/chkconfig --add dtc-xen
 	if [ -x /sbin/runlevel -a -x /sbin/service -a -x /bin/awk ] ; then
@@ -142,7 +145,6 @@ fi
 
 exit 0
 
-
 %preun
 if [ "$1" == "0" ] ; then
 	if [ -x /sbin/service ] ; then /sbin/service dtc-xen stop ; fi
@@ -157,6 +159,9 @@ fi
 
 
 %postun
+# Manuel: are you 100% sure you should delete the group? That
+# seems a bad idea to me, as when reinstalling, it could change
+# the GID of some already existing files. Know what I mean???
 if [ "$1" == "0" ] ; then
 	/usr/sbin/groupdel xenusers
 fi

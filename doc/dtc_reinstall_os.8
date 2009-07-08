@@ -13,21 +13,22 @@ dtc_reinstall_os \- reinstall an operating system in a VM
 .I -pass <root-password>
 .I -os <operating-system>
 .I [ -gw <default-gateway> ]
-]
+.I [ -dns <dns1-ip>[,<dns2-ip>] ]
 
-.SH DESCRIPTION
-.B dtc_reinstall_os
-.IP
-This shell script is a part of the dtc-xen package that is to be used by the
-dtc panel to manage a Xen VPS server.
 
 .SH DESCRIPTION
 .LP
 .I dtc-reinstall_os
-will bootstrap an operating system for you, so you can later use it in a
-virtual machine (a VPS). This script will be called by dtc-xen when you order
-it to install a VPS through the SOAP server.
+This shell script is a part of the dtc-xen package that is to be used by the
+dtc panel to manage a Xen VPS server.
 
+dtc_reinstall_os will bootstrap an operating system for you, so you can later
+use it in a virtual machine (a VM), otherwise called a virtual private server
+(a VPS). This script will be called by dtc-xen when you order it to install a
+VPS through the SOAP server of dtc-xen. You can as well use it directly on the
+shell if you don't have a DTC control panel server already setup.
+
+.LP
 .I Additional configuration files
 .IP
 When doing it's setup, dtc_reinstall_os will copy the file
@@ -39,11 +40,29 @@ in /etc/dtc-xen/authorized_keys2. dtc_reinstall_os will also copy
 Debian operating system is installed), and /etc/dtc-xen/bashrc into the
 /root/.bashrc.
 
+Another very important configuration file is /etc/dtc-xen/dtc-xen.conf, that
+will hold the configuration for both this script, and the SOAP server of
+dtc-xen itself.
+
 .SH PARAMETERS
 .LP
+.I Parameters and options conventions
+.IP
 All parameters described here are mandatory. dtc_reinstall_os will exit if one
-of the parameters is missing.
+of the parameters is missing from both the configuration file
+/etc/dtc-xen/dtc-xen.conf and the command line. If a parameter is on both the
+configuration file and the command line, then the command line has priority.
+The parameters not marked like [ this ] are not mandatory in the command line,
+if and only if, they are defined in the configuration file. If a parameter is
+defined in the configuration file, then it can be omitted from the command line.
+The parameters defined above \-like <this> are mandatory. Options are always
+defined with a double minus sign, while mandatory parameters have only a single
+minus sign.
 
+All the parameters defined in this section (eg: PARAMETERS) are the mandatory
+on the command line.
+
+.LP
 .B -vpsid <ID>
 .IP
 ID has to be a number between 01 and 99. Each time a new VPS is created, an
@@ -62,68 +81,68 @@ in the Xen startup file for this virtual machine.
 .B -nic <ip>[,<netmask>[,<broadcast>]]
 .IP
 This parameter defines the network configuration of the virtual machine,
-together with the -gw option (see below). There can be as many -nic option
-as you like. If there is more than one, then dtc_reinstall_os will setup
-a physical NIC configuration, and as many eth0:X virtual alias as needed.
+together with the \-gw option (see below). There can be as many \-nic parameter
+as you need. If there is more than one, then dtc_reinstall_os will setup
+a physical NIC configuration, and as many eth0:X virtual alias as needed to
+match the number of \-nic parameters on the command line.
+
 If the <netmask> or <broadcast> parameter is missing, then the values
-will be taken from /etc/dtc-xen/dtc-xen.conf. These variables are called
-NETMASK and BROADCAST. Note that each IP address will be added to the
+will be taken from /etc/dtc-xen/dtc-xen.conf. It is mandatory to have at
+least the netmask and broadcast defined in either the command line or in
+the configuration file. These variables are called NETMASK and BROADCAST
+in /etc/dtc-xen/dtc-xen.conf. Note that each IP address will be added to the
 Xen startup configuration file of the virtual machine, so that you can
 use the anti-spoof facility of the Xen firewall (highly recommended, if
 you are reselling VPS). See Xen documentation on how to activate the
-anti-spoof feature of xend.
+anti-spoof feature of xend, but in short, you should use something like
+this: (network-script 'network-bridge antispoof=yes') while network-bridge
+can be replaced by the network scheme that you need. DTC-Xen will NOT
+touch the /etc/xen/xend-config.sxp file, it's up to you to customize it
+to your needs before using dtc-xen.
 
 .LP
-.B PASSWORD
-is the root password you wish to have setup inside the VPS. Not all operating
-system setup will suport it, but it's still a mandatory parameter.
-
-.LP
-.B [ DISTRO ]
-is an optional parameter that can be debian, centos, gentoo or netbsd.
-If ommited it will use debian as default. Note that for centos and gentoo,
-you need to have the install files downloaded in /usr/src/gentoo:
-.B portage-latest.tar.bz2
-and
-.B stage3-amd64-2006.1.tar.bz2
-(if using amd64 arch) or
-.B stage3-x86-2006.1.tar.bz2
-(if using i[3456]86 arch).
-
-.LP
-.B [ lvm | loopback ]
+.B -gw <gateway>
+.IP
 You can then specify lvm or loopback. Currently the only value the script compares
-to is lvm (or anything else), but this might change in the future. If ommited, then
+to is lvm (or anything else), but this might change in the future. If omitted, then
 lvm loopback is used.
+
+.LP
+.B [ -dns <dns1-ip>[,<dns2-ip>] ]
+.IP
+This defines the default DNS to be setup in /etc/resolv.conf in the
+VPS that will be setup. If not present, then dtc-xen will use the file
+in /etc/resolv.conf of your dom0 to find the DNS to use.
+
+.LP
+.B -pass <PASSWORD>
+.IP
+This is the root password you wish to have setup inside the VPS. Not all
+operating system setup will support it, but it's still a mandatory parameter.
+If this parameter is not used, then the VPS will be setup without a root
+password, which is, as opposed to many people think, very fine. The user
+will just need to log into his VPS and setup the root password using the
+passwd utility.
+
+.LP
+.B -os <unix-distribution>
+.IP
+This parameter that can be debian, centos, or netbsd for a default setup
+of dtc-xen. It can also be set to any of the folder names present in
+/usr/share/dtc-xen-os, so that dtc-xen will use the setup script of the
+dtc-xen-os module to initialize a partition.
+
+This parameter can also be the name of any folder present in
+/usr/share/dtc-xen-app. These are appliances that will be installed
+automatically at the first boot of the VPS. They depend on the support
+of the unix distribution that is supported by dtc-xen, or any of the
+dtc-xen-os module installed in the system.
 
 .SH "OPTION"
 
-If you don't set these options, then they have to be set in /etc/dtc-xen/dtc-xen.conf.
-
 .LP
-.B --netmask netmask
-.IP
-Guest OS netmask to setup.
-
-.LP
-.B --network network
-.IP
-Guest OS network to setup.
-
-.LP
-.B --broadcast broadcast
-.IP
-Guest OS broadcast to setup
-
-.LP
-.B --gateway gateway
-.IP
-Guest OS network gateway to setup
-
-.LP
-.B --nameservers dns1,dns2...
-.IP
-List of DNS servers in the /etc/resolv.conf of the VPS
+If you don't set these options, then they may have to be set in
+/etc/dtc-xen/dtc-xen.conf. Some options can be omitted completely.
 
 .LP
 .B -v
@@ -133,6 +152,55 @@ outputs everything in /var/lib/dtc-xen/mnt/XX.stderr and
 /var/lib/dtc-xen/mnt/XX.stdout (or wherever you have set the vps mountpoint to be),
 to keep a log of the installation. With \-v, the redirection of standard output and
 error is not done.
+
+.LP
+.B --vnc-pass <VNCPASS>
+.IP
+VNC password for the physical console of your HVM VPS. See the Xen
+documentation if you don't know what is HVM or full virtualization.
+If this parameter is omitted, then the VPS will be setup to NOT use
+the VNC server (recommended when in production).
+
+.LP
+.B --boot-iso <file.iso>
+.IP
+Name of the ISO file stored in /var/lib/dtc-xen/ttyssh_home/xenXX/ folder
+so the VPS can be set to boot on it. If this parameter is omitted, then the
+VPS will boot on the hard drive. Note that your users would, in a normal
+scheme, upload the ISO file using FTP and the ssh physical console password
+they have set using DTC. The list of uploaded ISO files will then be
+presented in the user interface. Because these ISO files can be sometimes
+big, it is advised to protect your /var filesystem by using a dedicated
+partition for /var/lib/dtc-xen/ttyssh_home, in order to avoid that your
+users fill up the /var space with ISO files.
+
+.LP
+.B --initrd
+.IP
+Full path to the init ram disk image to setup in the startup configuration
+file for this VPS. This parameter is normally to be defined in
+/etc/dtc-xen/dtc-xen.conf as it should normally not be changed often.
+
+.LP
+.B --kernel
+.IP
+Full path to the kernel boot image to setup in the startup configuration
+file for this VPS. This parameter is normally to be defined in
+/etc/dtc-xen/dtc-xen.conf as it should normally not be changed often.
+
+.LP
+.B --kernel-release
+.IP
+Kernel release number that will be used when setting-up this VPS. To be
+used only if you are using the \-\-initrd and \-\-kernel options, and if the
+release number is different from the one of your dom0. This will be used
+to run a depmod \-a <kernel-release-number> in the VPS partition.
+
+.LP
+.B --kmod-path
+.IP
+Full path to the kernel modules to be used when copying the kernel modules
+in the VPS.
 
 .SH "EXAMPLE"
 

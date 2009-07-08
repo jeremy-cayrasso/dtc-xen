@@ -31,6 +31,7 @@ ONBOOT=yes
 HOSTNAME=${VPS_FQDN}
 GATEWAY=${GATEWAY}
 " >${ETC}/sysconfig/network
+fi
 
 # Set the resolv.conf
 echo "nameserver "`echo ${DNS} | cut -s -d"," -f1` > ${ETC}/resolv.conf

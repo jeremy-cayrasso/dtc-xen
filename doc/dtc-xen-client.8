@@ -1,0 +1,21 @@
+.TH dtc-xen-client 8
+.SH NAME
+dtc-xen-client \- tests the dtc-xen soap daemon
+.SH SYNOPSIS
+.B dtc-xen-client <url> <method> <params>
+
+.SH DESCRIPTION
+
+This shell script is part of the dtc-xen package, generally to be used by the
+dtc panel to install a new a Xen VPS server. This script is used only to be
+able to test the SOAP server of DTC-Xen.
+
+.SH EXAMPLE
+
+The below will start the VPS called xen01 using the command "xm create xen01"
+
+dtc-xen-client https://dtc-xen:mypass@dtcxenserver.example.com:8089/ startVPS xen01
+
+See
+.B http://www.gplhost.com/software-dtc-xen.html
+for updates.

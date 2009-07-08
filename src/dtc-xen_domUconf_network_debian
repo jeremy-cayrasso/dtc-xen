@@ -36,3 +36,7 @@ iface eth0 inet static
 fi
 # Set the resolv.conf
 echo "nameserver "`echo ${DNS} | cut -s -d"," -f1` > ${ETC}/resolv.conf
+
+if [ -z ""`echo ${DNS} | cut -s -d"," -f2` ] ; then
+	echo `echo ${DNS} | cut -s -d"," -f2` >>${ETC}/resolv.conf
+fi

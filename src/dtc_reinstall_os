@@ -15,10 +15,11 @@ if [ $# -lt 5 ]; then
 	echo "                  -pass <root-password> : root pass for the VPS OS"> /dev/stderr
 	echo "                 -os <operating-system> : System to setup"> /dev/stderr
 	echo "              [ -gw <default-gateway> ] : Default gateway"> /dev/stderr
-	echo "                 [ -dns <default-dns> ] : Default gateway in /etc/resolv.conf"> /dev/stderr
+	echo "     [ -dns <default-dns-ip>[,<dns2>] ] : Default DNS server(s) in /etc/resolv.conf"> /dev/stderr
 	echo "-------------------------------------------------------------------------" > /dev/stderr
 	echo "All what is not enclosed with [] is mandatory!" > /dev/stderr
-	echo "You have to provide at least ONE -nic options" > /dev/stderr
+	echo "You have to provide at least ONE -nic options, as dtc-xen doesn't support bootstraping" > /dev/stderr
+	echo "an operating system without a network setup" > /dev/stderr
 	echo "If the netmask and broadcast are omited, the setup of the host OS will be used" > /dev/stderr
 	echo "-------------------------------------------------------------------------" > /dev/stderr
 	echo "" > /dev/stderr
@@ -29,19 +30,19 @@ if [ $# -lt 5 ]; then
 	echo "" > /dev/stderr
 	echo "Options:" > /dev/stderr
 	echo "                                 [ -v ] : Print the log in the standard output" > /dev/stderr
-	echo "[ -dns <default-dns>[,<default-dns2>] ] : One or 2 DNS"> /dev/stderr
-	echo "Options specific to Xen PV guests:" > /dev/stderr
-	echo "               [ --vnc-pass <VNCPASS> ] : VNC password for the physical console" > /dev/stderr
-	echo "              [ --boot-iso <file.iso> ] : CDROM device to boot on" > /dev/stderr
+	echo "General options:" > /dev/stderr
 	echo "                [ --disk-type lvm|vdb ] : Use LVM partition or disk image" > /dev/stderr
 	echo "         [ --initrd <initrd-full-path ] : Path to the kernel initrd image to boot with" > /dev/stderr
 	echo "         [ --kernel <kernel-full-path ] : Path to the kernel to boot with" > /dev/stderr
 	echo "     [ --kernel-release <kernel-mods> ] : Path to the kernel modules folder" > /dev/stderr
 	echo "          [ --kmod-path <kernel-mods> ] : Path to the kernel modules folder" > /dev/stderr
 	echo "         [ --initrd <initrd-full-path ] : Path to the kernel initrd image to boot with" > /dev/stderr
+	echo "Options specific to Xen HVM guests:" > /dev/stderr
+	echo "               [ --vnc-pass <VNCPASS> ] : VNC password for the physical console" > /dev/stderr
+	echo "              [ --boot-iso <file.iso> ] : CDROM device to boot on" > /dev/stderr
 	echo "" > /dev/stderr
 	echo "-------------------------------------------------------------------------" > /dev/stderr
-	echo "Example1: $0 -v -vpsid 01 -ram 512 -nic 192.168.2.176,255.255.255.0,192.168.2.255 -pass xenisme -os debian -gw 192.168.2.1 -dns 192.168.2.1" > /dev/stderr
+	echo "Example1: $0 -v -vpsid 01 -ram 512 -nic 192.168.2.176,255.255.255.0,192.168.2.255 -pass MyRootPass -os debian -gw 192.168.2.1 -dns 192.168.2.1" > /dev/stderr
 	echo "" > /dev/stderr
 	echo "Example2: $0 -vpsid 02 -ram 512 -nic 192.168.9.2 -nic 192.168.9.3 -gw 192.168.9.1 \\" > /dev/stderr
 	echo "   -dns 192.168.9.1 -pass MyRootPass -os kde-nx-server-3.3.0" > /dev/stderr
@@ -476,8 +477,8 @@ elif [ "$DISTRO" = "debian" -o "$DISTRO" = "debian-dtc" ] ; then
 	else
 		ADD_LIBC=""
 	fi
-	echo $DEBOOTSTRAP --verbose --include=${ADD_LIBC}module-init-tools,locales,udev --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
-	$DEBOOTSTRAP --verbose --include=${ADD_LIBC}module-init-tools,locales,udev --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS} || debret=$?
+	echo $DEBOOTSTRAP --verbose --include=${ADD_LIBC}module-init-tools,locales,udev,joe,screen --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
+	$DEBOOTSTRAP --verbose --include=${ADD_LIBC}module-init-tools,locales,udev,joe,screen --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS} || debret=$?
 	if [ "$debret" != "" ]; then
 		echo "Failed to install $DISTRO via bootstrap!!"
 		exit $debret
@@ -498,7 +499,7 @@ fi
 ### OS CUSTOMIZATION ###
 ########################
 
-echo "Customizing vps fstab, hosts, hostname, and capability kernel module for distro ${DISTRO}..."
+echo "Customizing vps fstab, hosts and hostname for distro ${DISTRO}..."
 if [ "$DISTRO" = "debian" -o "$DISTRO" = "debian-dtc" -o "$DISTRO" = "centos" ] ; then
 	/usr/sbin/dtc-xen_domUconf_standard ${FW_PARAMS}
 	if [ "$DISTRO" = "debian" -o "$DISTRO" = "debian-dtc" ] ; then
