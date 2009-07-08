@@ -4,16 +4,16 @@ dtc_reinstall_os \- reinstall an operating system in a VM
 .SH SYNOPSIS
 .B dtc_reinstall_os
 [
-.I -v
+.B -v
 ]
 [ OPTIONS ]
-.I -vpsid <ID>
-.I -ram <RAM size MB>
-.I -nic <ip>[,<netmask>[,<broadcast>]]
-.I -pass <root-password>
-.I -os <operating-system>
-.I [ -gw <default-gateway> ]
-.I [ -dns <dns1-ip>[,<dns2-ip>] ]
+.B -vpsid <ID>
+.B -ram <RAM size MB>
+.B -nic <ip>[,<netmask>[,<broadcast>]]
+.B -pass <root-password>
+.B -os <operating-system>
+[ -gw <default-gateway> ]
+[ -dns <dns1-ip>[,<dns2-ip>] ]
 
 
 .SH DESCRIPTION
@@ -202,14 +202,35 @@ to run a depmod \-a <kernel-release-number> in the VPS partition.
 Full path to the kernel modules to be used when copying the kernel modules
 in the VPS.
 
-.SH "EXAMPLE"
+.SH "EXAMPLES"
 
-.B dtc_reinstall_os 16 15360 256 '66.2.45.2 66.2.45.3' debian lvm
+.LP
+.B.I Example1:
+.IP
+dtc_reinstall_os \-v \-vpsid 01 \-ram 512 \-nic 192.168.2.176,255.255.255.0,192.168.2.255 \-pass MyRootPass \-os debian \-gw 192.168.2.1 \-dns 192.168.2.1
 
-This will setup the VM called xen16, build it's startup file in /etc/xen/xen16 with
-a vif containing ip=66.2.45.2 66.2.45.3 and 256 MB of RAM, setting-up a debian
-stable operating system with 66.2.45.2 setup as eth0 IP address (66.2.45.3 is to
-be added later on manually in /etc/network/interfaces later).
+.LP
+This will setup the VM called xen01, build it's startup file in /etc/xen/xen01
+with a vif containing ip=192.168.2.176 and 512 MB of RAM, setting-up a debian
+operating system with the /etc/network/interfaces using 192.168.2.176 as IP,
+255.255.255.0 as netmask, 192.168.2.255 as broadcast, 192.168.2.1 as gateway,
+and 192.168.2.1 as DNS.
+
+.LP
+.B.I Example2:
+.IP
+dtc_reinstall_os \-vpsid 02 \-ram 1024 \-nic 192.168.9.2 \-nic 192.168.9.3 \-gw 192.168.9.1 \-pass MyRootPass \-os kde-nx-server-3.3.0
+
+.LP
+This will setup the VM called xen02, build it's startup file in /etc/xen/xen02
+with a vif containing ip=192.168.9.2 and 192.168.9.3 and 1 GB of RAM,
+setting-up a debian operating system with the /etc/network/interfaces using
+192.168.2.176 as IP for eth0, and eth0:1 with 192.168.9.3. The gateway
+192.168.9.1 will be used for eth0, the broadcast, network, and netmask
+addresses will be used from the default in /etc/dtc-xen/dtc-xen.conf (as they
+are omitted here, it's mandatory that this config file has been edited to
+match your network and in order to use dtc_reinstall_os this way). The dom0
+/etc/resolv.conf will be used to set the VPS's /etc/resolv.conf.
 
 .SH "SEE ALSO"
 
