@@ -343,10 +343,8 @@ def reportInstalledIso(vpsname):
 		files = [ os.path.basename(f) for f in glob.glob(path+"/*.iso") if os.path.isfile(f) ]
 		return files
 
-# Take care! This time, the vpsname has to be only the number (eg XX and not xenXX)
-def reinstallVPSos(vpsname,ostype,hddsize,ramsize,ipaddr,password,imagetype='lvm'):
-
 def reinstallVPSos(vpsname,ostype,ramsize,password,nics=None,gateway=None,dns=None):
+	# Take care! This time, the vpsname has to be only the number (eg XX and not xenXX)
 	# nicspecs is a series of NIC specifications
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
@@ -371,6 +369,7 @@ def reinstallVPSos(vpsname,ostype,ramsize,password,nics=None,gateway=None,dns=No
 			"-os", ostype ]
 		if gateway: args = args + [ "-gateway", gateway ]
 		if dns: args = args + [ "-dns", dns ]
+		if type(nics) in (str,unicode): nics = [ s.strip() for s in nics.split("\n") if s.strip() ]
 		if nics:
 			nicargs = []
 			for nic in nics:
