@@ -51,9 +51,18 @@ fi
 exec 1>$VPSGLOBPATH/$VPSNUM.setuplvm.stdout
 exec 2>$VPSGLOBPATH/$VPSNUM.setuplvm.stderr
 
-
-LVCREATE=/sbin/lvcreate
-LVREMOVE=/sbin/lvremove
+if [ -x /sbin/lvcreate -a /sbin/lvremove ] ; then
+	LVCREATE=/sbin/lvcreate
+	LVREMOVE=/sbin/lvremove
+else
+	if [ -x /usr/sbin/lvcreate -a /usr/sbin/lvremove ] ; then
+		LVCREATE=/usr/sbin/lvcreate
+		LVREMOVE=/usr/sbin/lvremove
+	else
+		echo "Could not find lvcreate and lvremove binaries!" > /dev/stderr
+		exit 1
+	fi
+fi
 
 echo "Seleted ${VPSNAME}";
 echo "Destroying disks..."
