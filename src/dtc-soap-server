@@ -345,6 +345,9 @@ def reportInstalledIso(vpsname):
 
 # Take care! This time, the vpsname has to be only the number (eg XX and not xenXX)
 def reinstallVPSos(vpsname,ostype,hddsize,ramsize,ipaddr,password,imagetype='lvm'):
+
+def reinstallVPSos(vpsname,ostype,ramsize,password,nics=None,gateway=None,dns=None):
+	# nicspecs is a series of NIC specifications
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
 		logging.info("Reinstalling %s on VPS %s",ostype,vpsname)  #maybe these should be notices if notices are below info severity
@@ -361,9 +364,20 @@ def reinstallVPSos(vpsname,ostype,hddsize,ramsize,ipaddr,password,imagetype='lvm
 		# FIXME idea: we could reuse the log isntead of a file, a stringio or something that reflects all the log activity into the logging module
 		# that way everything goes into /var/log/dtc-soap-server.log
 		# brilliant? you be the judge
-		args = ["/usr/sbin/dtc_reinstall_os", "-v", vpsname, hddsize,
-			ramsize, "%s" % ipaddr, password, ostype, imagetype]
-			
+		args = ["/usr/sbin/dtc_reinstall_os", "-v",
+			"-vpsid", vpsname,
+			"-ram", ramsize,
+			"-pass", password,
+			"-os", ostype ]
+		if gateway: args = args + [ "-gateway", gateway ]
+		if dns: args = args + [ "-dns", dns ]
+		if nics:
+			nicargs = []
+			for nic in nics:
+				nicargs.append("-nic")
+				nicargs.append(nic)
+			args = args + nics
+		
 		logging.debug("Running %s in subprocess",args)
 		if subprocess:
 			proc = subprocess.Popen(args,stdout=log,stderr=subprocess.STDOUT,close_fds=True,cwd="/")
