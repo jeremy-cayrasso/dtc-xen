@@ -377,7 +377,7 @@ def reinstallVPSos(vpsname,ostype,ramsize,password,nics=None,gateway=None,dns=No
 			for nic in nics:
 				nicargs.append("-nic")
 				nicargs.append(nic)
-			args = args + nics
+			args = args + nicargs
 		
 		logging.debug("Running %s in subprocess",args)
 		if subprocess:
