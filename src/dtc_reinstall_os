@@ -294,7 +294,7 @@ if [ -z "${BSDKERNELPATH}" ] ; then
 fi
 
 VPSNAME=xen${VPSNUM}
-NODE_FQDN=`hostname --fqdn`
+NODE_FQDN=`hostname`
 # Manuel, what we have been discussing about using mx.xenXX.dom0-fqdn or xenXX.dom0-fqdn by default
 # is right here! I believe we should give an entire domain to each VPS, so I want "mx.", but maybe
 # can make this configurable, there's an option now as you see, this is just the default...
