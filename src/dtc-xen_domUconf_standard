@@ -44,7 +44,7 @@ mkdir ${VPS_PATH}/dev/pts
 # If we run on a non-debian non-64 bits system, disable the tls folder
 FOUNDED_ARCH=`uname -m`
 if [ $FOUNDED_ARCH = "i386" -o $FOUNDED_ARCH = "i486" -o $FOUNDED_ARCH = "i586" -o $FOUNDED_ARCH = "i686" ] ; then
-	if ! [ -f ${VPS_PATH}/debian_version ] ; then
+	if ! [ -f ${VPS_PATH}/etc/debian_version ] ; then
 		if [ -d "${VPS_PATH}/lib/tls" ] ; then
 			echo "Disabling lib/tls"
 			mv ${VPS_PATH}/lib/tls ${VPS_PATH}/lib/tls.disabled
@@ -56,6 +56,29 @@ fi
 echo "Copying kernel modules..."
 if [ ! -e ${VPS_PATH}/lib/modules ]; then
 	$MKDIR -p ${VPS_PATH}/lib/modules
+fi
+if [ -z "${KERNEL_RELEASE}" ] ; then
+	KERNEL_RELEASE=`uname -r`
+fi
+if [ -z "${KMOD_PATH}" ] ; then
+	if [ -d "/lib/modules/${KERNEL_RELEASE}" ] ; then
+		KMOD_PATH="/lib/modules/${KERNEL_RELEASE}"
+	fi
+fi
+if [ -z "${KERNELPATH}" ] ; then
+	if [ -f "/boot/vmlinuz-${KERNEL_RELEASE}" ] ; then
+		KERNELPATH="/boot/vmlinuz-${KERNEL_RELEASE}"
+	fi
+fi
+if [ -z "${INITRDPATH}" ] ; then
+	# CentOS style
+	if [ -f "/boot/initrd-${KERNEL_RELEASE}.img" ] ; then
+		INITRDPATH="/boot/initrd-${KERNEL_RELEASE}.img"
+	fi
+	# Debian style
+	if [ -f "/boot/initrd.img-${KERNEL_RELEASE}" ] ; then
+		INITRDPATH="/boot/initrd.img-${KERNEL_RELEASE}"
+	fi
 fi
 cp -auxf ${KMOD_PATH} ${VPS_PATH}/lib/modules
 cp -L ${KERNELPATH} ${VPS_PATH}/boot
@@ -77,6 +100,6 @@ if [ -f /etc/dtc-xen/authorized_keys2 ] ; then
 fi
 
 # Customize the /root/.bashrc script
-sed "s/VPS_HOSTNAME/${VPS_FQDN}/" /etc/dtc-xen/bashrc >${VPS_PATH}/root/.bashrc
+sed "s/VPS_HOSTNAME/xen${VPSNUM}.${NODE_FQDN}/" /etc/dtc-xen/bashrc >${VPS_PATH}/root/.bashrc
 
 exit 0

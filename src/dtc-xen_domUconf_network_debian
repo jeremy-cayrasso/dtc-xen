@@ -4,7 +4,7 @@
 
 ETC="${VPS_PATH}/etc"
 
-if [ -z "${NICS}" ] ; then
+if [ ! -z "${NICS}" ] ; then
 	echo "auto lo
 iface lo inet loopback
 " >${ETC}/network/interfaces
@@ -14,7 +14,15 @@ iface lo inet loopback
 		N_IP=`echo ${i} | cut -s -d"," -f1`
 		N_MASK=`echo ${i} | cut -s -d"," -f2`
 		N_BCAST=`echo ${i} | cut -s -d"," -f3`
-		N_NET=`ipcalc ${GUESSED_NET}/${GUESSED_MASK} | grep Netmask | awk '{print $2}'`
+		N_NET=`ipcalc -n ${N_IP} ${N_MASK}`
+		TMP=`mktemp`
+		echo $N_NET >$TMP
+		if grep "=" $TMP ; then
+			N_NET=`echo $N_NET | cut -d"=" -f2`
+		else
+			N_NET=`echo $N_NET | grep Netmask | awk '{print $2}'`
+		fi
+		rm -f $TMP
 		if [ ${N} = 0 ] ; then
 			DEVICE=eth0
 		else
@@ -25,12 +33,11 @@ iface eth0 inet static
 	address ${N_IP}
 	netmask ${N_MASK}
 	network ${N_NET}
-	broadcast ${N_BCAST}
-" >>${ETC}/network/interfaces
+	broadcast ${N_BCAST}" >>${ETC}/network/interfaces
 		if [ ${N} = 0 ] ; then
-			echo "gateway ${GATEWAY}
-" >>${ETC}/network/interfaces
+			echo "	gateway ${GATEWAY}" >>${ETC}/network/interfaces
 		fi
+		echo "" >>${ETC}/network/interfaces
 		N=$(( ${N} + 1 ))
 	done
 fi
