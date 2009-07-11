@@ -66,7 +66,7 @@ NUM_NIC=0
 REDIRECTOUTPUT=true
 VNC_PASSWORD=`dd if=/dev/random bs=64 count=1 2>|/dev/null | md5sum | cut -d' ' -f1`
 for i in $@ ; do
-	echo "Found option: ${1} ${2}"
+#	echo "Found option: ${1} ${2}"
 	case "${1}" in
 	"-vpsid")
 		if [ -z "${2}" ] ; then echo "Parameter for option -vpsid is missing" > /dev/stderr ; DO_EXIT="yes" ; fi
@@ -225,7 +225,7 @@ if [ -z "${KERNELPATH}" ] ; then
 fi
 
 if [ -z "${KERNEL_RELEASE}" ] ; then
-	KERNEL_RELEASE="uname -r"
+	KERNEL_RELEASE=`uname -r`
 fi
 
 if [ -z "${KMOD_PATH}" ] ; then

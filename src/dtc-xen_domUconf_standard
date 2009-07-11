@@ -53,38 +53,17 @@ if [ $FOUNDED_ARCH = "i386" -o $FOUNDED_ARCH = "i486" -o $FOUNDED_ARCH = "i586" 
 fi
 
 # Setup the kernel
-echo "Copying kernel modules..."
+echo "Installing kernel and modules..."
 if [ ! -e ${VPS_PATH}/lib/modules ]; then
 	$MKDIR -p ${VPS_PATH}/lib/modules
 fi
-if [ -z "${KERNEL_RELEASE}" ] ; then
-	KERNEL_RELEASE=`uname -r`
-fi
-if [ -z "${KMOD_PATH}" ] ; then
-	if [ -d "/lib/modules/${KERNEL_RELEASE}" ] ; then
-		KMOD_PATH="/lib/modules/${KERNEL_RELEASE}"
-	fi
-fi
-if [ -z "${KERNELPATH}" ] ; then
-	if [ -f "/boot/vmlinuz-${KERNEL_RELEASE}" ] ; then
-		KERNELPATH="/boot/vmlinuz-${KERNEL_RELEASE}"
-	fi
-fi
-if [ -z "${INITRDPATH}" ] ; then
-	# CentOS style
-	if [ -f "/boot/initrd-${KERNEL_RELEASE}.img" ] ; then
-		INITRDPATH="/boot/initrd-${KERNEL_RELEASE}.img"
-	fi
-	# Debian style
-	if [ -f "/boot/initrd.img-${KERNEL_RELEASE}" ] ; then
-		INITRDPATH="/boot/initrd.img-${KERNEL_RELEASE}"
-	fi
-fi
+echo "cp -auxf ${KMOD_PATH} ${VPS_PATH}/lib/modules"
 cp -auxf ${KMOD_PATH} ${VPS_PATH}/lib/modules
 cp -L ${KERNELPATH} ${VPS_PATH}/boot
 if [ ! -e ${VPS_PATH}/boot/vmlinuz ] ; then
 	ln -s ${KERNELPATH} ${VPS_PATH}/boot/vmlinuz
 fi
+echo "chroot ${VPS_PATH} /sbin/depmod -a ${KERNEL_RELEASE}"
 chroot ${VPS_PATH} /sbin/depmod -a ${KERNEL_RELEASE}
 
 # Copy an eventual /etc/dtc-xen/authorized_keys2 file
@@ -96,6 +75,10 @@ if [ -f /etc/dtc-xen/authorized_keys2 ] ; then
 	if [ -d "${VPS_PATH}/root/.ssh" -a ! -e "${VPS_PATH}/root/.ssh/authorized_keys2" ] ; then
 		cp /etc/dtc-xen/authorized_keys2 "${VPS_PATH}/root/.ssh/authorized_keys2"
 		chmod 600 "${VPS_PATH}/root/.ssh/authorized_keys2"
+	fi
+	if [ -d "${VPS_PATH}/root/.ssh" -a ! -e "${VPS_PATH}/root/.ssh/authorized_keys" ] ; then
+		cp /etc/dtc-xen/authorized_keys2 "${VPS_PATH}/root/.ssh/authorized_keys"
+		chmod 600 "${VPS_PATH}/root/.ssh/authorized_keys"
 	fi
 fi
 
