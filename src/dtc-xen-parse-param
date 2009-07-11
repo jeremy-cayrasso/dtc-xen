@@ -20,7 +20,7 @@ for i in $@ ; do
                 # Manage the nics to give it as parameters to the setup-vps-network script
                 if [ "${NUM_NIC}" = 0 ] ; then
                         ALL_IPADDRS=`echo ${PARAM} | cut -d"," -f1`
-			FIRST_IP=echo ${PARAM} | cut -s -d"," -f1
+			FIRST_IP=`echo ${PARAM} | cut -s -d"," -f1`
                         FW_NICS_CMD="-nic ${PARAM}"
                         NICS=$NICS"
 "${PARAM}
@@ -54,7 +54,7 @@ for i in $@ ; do
 		shift
 		;;
 	"-dns")
-		DNS=${1}
+		DNS=${2}
 		shift
 		shift
 		;;
@@ -68,7 +68,7 @@ for i in $@ ; do
                 shift
                 shift
                 ;;
-	"-kmod-path")
+	"--kmod-path")
 		KMOD_PATH="${2}"
 		shift
 		shift
@@ -82,4 +82,4 @@ for i in $@ ; do
 done
 
 KERNEL_P="--kernel ${KERNELPATH} --kernel-release ${KERNEL_RELEASE} --kmod-path ${KMOD_PATH} --initrd ${INITRDPATH}"
-FW_PARAMS="-vpsid ${VPSNUM} --vps-fqdn ${VPS_FQDN} --vps-domain ${VPS_DOMAIN} --node-fqdn ${NODE_FQDN} ${FW_NICS_CMD} -dns ${DNS} -gw ${GATEWAY} ${KERNEL_P}"
+FW_PARAMS="-path ${VPS_PATH} -vpsid ${VPSNUM} --vps-fqdn ${VPS_FQDN} --vps-domain ${VPS_DOMAIN} --node-fqdn ${NODE_FQDN} ${FW_NICS_CMD} -dns ${DNS} -gw ${GATEWAY} ${KERNEL_P}"

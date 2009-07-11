@@ -28,7 +28,7 @@ ONBOOT=yes
 	done
 	# Set the gateway file
 	echo "NETWORKING=yes
-HOSTNAME=${VPS_FQDN}
+HOSTNAME=mx.xen${VPSNUM}.${NODE_FQDN}
 GATEWAY=${GATEWAY}
 " >${ETC}/sysconfig/network
 fi

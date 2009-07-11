@@ -14,9 +14,9 @@ none		/dev/pts devpts	defaults		0 0
 " >${ETC}/fstab
 
 # Setup hostname and hosts
-echo "mx.${VPSHOSTNAME}.${NODE_DOMAIN_NAME}" >${ETC}/hostname
+echo "mx.xen${VPSNUM}.${NODE_FQDN}" >${ETC}/hostname
 echo "127.0.0.1	localhost.localdomain localhost
-${FIRST_IP} ${VPS_FQDN} dtc.${VPS_DOMAIN} ${VPS_DOMAIN} ${VPSHOSTNAME}.${NODE_FQDN}
+${FIRST_IP} mx.xen${VPSNUM}.${NODE_FQDN} dtc.xen${VPSNUM}.${NODE_FQDN} xen${VPSNUM}.${NODE_FQDN}
 
 # The following lines are desirable for IPv6 capable hosts
 ::1     ip6-localhost ip6-loopback
@@ -59,7 +59,9 @@ if [ ! -e ${VPS_PATH}/lib/modules ]; then
 fi
 cp -auxf ${KMOD_PATH} ${VPS_PATH}/lib/modules
 cp -L ${KERNELPATH} ${VPS_PATH}/boot
-ln -s ${KERNELPATH} ${VPS_PATH}/boot/vmlinuz
+if [ ! -e ${VPS_PATH}/boot/vmlinuz ] ; then
+	ln -s ${KERNELPATH} ${VPS_PATH}/boot/vmlinuz
+fi
 chroot ${VPS_PATH} /sbin/depmod -a ${KERNEL_RELEASE}
 
 # Copy an eventual /etc/dtc-xen/authorized_keys2 file

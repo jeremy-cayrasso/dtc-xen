@@ -145,7 +145,7 @@ for i in $@ ; do
 		shift
 		;;
 	"-dns")
-		DNS=${1}
+		DNS=${2}
 		shift
 		shift
 		;;
@@ -380,7 +380,7 @@ DEBOOTSTRAP=/usr/sbin/debootstrap
 
 # We forward always this list of parameters to all scripts:
 KERNEL_P="--kernel ${KERNELPATH} --kernel-release ${KERNEL_RELEASE} --kmod-path ${KMOD_PATH} --initrd ${INITRDPATH}"
-FW_PARAMS="-vpsid ${VPSNUM} --vps-fqdn ${VPS_FQDN} --vps-domain ${VPS_DOMAIN} --node-fqdn ${NODE_FQDN} ${FW_NICS_CMD} -dns ${DNS} -gw ${GATEWAY} ${KERNEL_P}"
+FW_PARAMS="-path ${VPSGLOBPATH}/${VPSNUM} -vpsid ${VPSNUM} --vps-fqdn ${VPS_FQDN} --vps-domain ${VPS_DOMAIN} --node-fqdn ${NODE_FQDN} ${FW_NICS_CMD} -dns ${DNS} -gw ${GATEWAY} ${KERNEL_P}"
 
 ######################################
 ### REDIRECTION OF STANDARD OUTPUT ###
