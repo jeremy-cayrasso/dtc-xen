@@ -369,7 +369,9 @@ def reinstallVPSos(vpsname,ostype,ramsize,password,nics=None,gateway=None,dns=No
 			"-os", ostype ]
 		if gateway: args = args + [ "-gateway", gateway ]
 		if dns: args = args + [ "-dns", dns ]
-		if type(nics) in (str,unicode): nics = [ s.strip() for s in nics.split("\n") if s.strip() ]
+		if type(nics) in (str,unicode):
+			if "+" in nics: nics = [ s.strip() for s in nics.split("+") if s.strip() ]
+			else: nics = [ s.strip() for s in nics.split("\n") if s.strip() ]
 		if nics:
 			nicargs = []
 			for nic in nics:
