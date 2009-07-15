@@ -34,8 +34,8 @@ else
 	VPSGLOBPATH="$VPS_MOUNTPOINT"
 fi
 
-INSTALL_KERNELPATH="/boot/netbsd-INSTALL_XENU"
-NORMAL_KERNELPATH="/boot/netbsd-XENU"
+INSTALL_KERNELPATH="${bsd_install_kernel_path}"
+NORMAL_KERNELPATH="${bsd_kernel_path}"
 
 # Things that most of then time don't change
 VPSNUM=$1
