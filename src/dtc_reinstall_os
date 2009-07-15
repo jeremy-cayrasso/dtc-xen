@@ -382,6 +382,31 @@ DEBOOTSTRAP=/usr/sbin/debootstrap
 KERNEL_P="--kernel ${KERNELPATH} --kernel-release ${KERNEL_RELEASE} --kmod-path ${KMOD_PATH} --initrd ${INITRDPATH}"
 FW_PARAMS="-path ${VPSGLOBPATH}/${VPSNUM} -vpsid ${VPSNUM} --vps-fqdn ${VPS_FQDN} --vps-domain ${VPS_DOMAIN} --node-fqdn ${NODE_FQDN} ${FW_NICS_CMD} -dns ${DNS} -gw ${GATEWAY} ${KERNEL_P}"
 
+#####################################################
+### Check / creation of the DTC-Xen user / group ####
+#####################################################
+GETENT=getent
+XENUSERS=xenusers
+XEN_USER_HOME=/var/lib/dtc-xen/ttyssh_home
+if ${GETENT} passwd xen${VPSNUM} >/dev/null ; then
+	echo "User xen${VPSNUM} already exists: skipping creation!"
+else
+	if [ -x /usr/sbin/useradd ] ; then
+		if [ ! -x /bin/bash ] ; then
+			echo "Could not find the bash shell!"
+			exit 1
+		fi
+		/usr/sbin/useradd --home "${XEN_USER_HOME}/xen${VPSNUM}" -m -s /bin/bash -g ${XENUSERS} xen${VPSNUM}
+	else
+		echo "Cound not find the useradd binary!"
+		exit 1
+	fi
+fi
+# Modify an eventual wrong old config
+mkdir -p "${XEN_USER_HOME}/xen${VPSNUM}/.ssh"
+chown -R xen${VPSNUM}:${XENUSERS} "${XEN_USER_HOME}/xen${VPSNUM}"
+usermod -d "${XEN_USER_HOME}/${1}" -g ${XENUSERS} -s /bin/dtc-xen_userconsole ${1}
+
 ######################################
 ### REDIRECTION OF STANDARD OUTPUT ###
 ######################################
