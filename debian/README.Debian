@@ -1,13 +1,16 @@
+  /\   BEWARE! DTC-Xen has evolved, and all configuration is now in the file
+ /!!\  /etc/dtc-xen/dtc-xen.conf. Upgrading from version prior 0.4 means that
+------ you HAVE to edit things in this file.
+
 Here is what you MUST do to have a working setup:
 
 0. Quick & durty setup without reading the rest of this text
 ------------------------------------------------------------
-* apt-get install dtc-xen
-* check your /etc/hosts so that nodeXXXX.example.com corresponds to what
-you have set in debconf.
-* ln -s /usr/share/dtc-xen /var/www/dtc-xen
-* /usr/sbin/dtc-xen_finish_install
-* /etc/init.d/dtc-xen restart
+0. apt-get install dtc-xen
+1. eventually set your password in /etc/dtc-xen/htpasswd
+2. /usr/sbin/dtc-xen_finish_install
+3. /etc/init.d/dtc-xen restart
+4. fix dtc-xen so it doesn't need post-install manual operations
 
 If you want to know why you have to do all this by hand, read further,
 otherwise, stop reading, you are already good to go.
@@ -16,21 +19,15 @@ otherwise, stop reading, you are already good to go.
 ------------------------------
 When the package is setup in non-interactive mode, the password for
 /etc/dtc-xen/htpasswd is set randomly. In that case, you will need to setup
-a new password by running dpkg-reconfigure dtc-xen.
+a new password by running dpkg-reconfigure dtc-xen, or type the following:
 
-2. Hostname of the SOAP server so it can binds to an IP
--------------------------------------------------------
-Note also that if the package is not configured correctly, then the SOAP server
-wont be able to bind as the hostname will be wrong. Once again,
-dpkg-reconfigure dtc-xen will solve this problem. Of course, making this
-hostname resolvable for example by editing your /etc/hosts or your DNS IS
-mandatory.
+htpasswd /etc/dtc-xen/htpasswd dtc-xen
 
-3. Updating the sshd config
+2. Updating the sshd config
 ---------------------------
 After installing dtc-xen, your users are still not able to login using the
-normal username xenYY@nodeXXXX.example.com. This is for 2 reasons. First,
-the /etc/sudoers must be updated so your users have the rights to start
+normal username xenYY@your-xen-server-hostname.com. This is for 2 reasons.
+First, the /etc/sudoers must be updated so your users have the rights to start
 "xm console xenYY". Second, for security reasons, the port forwarding of
 your ssh server MUST be disabled, otherwise a nasty user could use it to get
 access to the telnet port of the VPS they don't own. This is why after the
@@ -38,20 +35,21 @@ setup of the dtc-xen package, you should run on the shell:
 
 /usr/sbin/dtc-xen_finish_install
 
-4. Restarting the SOAP server after install/upgrade
+3. Restarting the SOAP server after install/upgrade
 ---------------------------------------------------
 Last thing, this is a known bug. When the package postinst scripts is ran, it
 starts the soap server. For an unknown reason, when it's done like this, your
 soap server will NOT be able to execute debootstrap and make it setup a Debian
-VPS until you restart dtc-xen's SOAP server. So right after a setup or an
-upgrade, issue:
+VPS until you restart dtc-xen's SOAP server, possibly because the sbin folder
+is not in the path (still to investigate). So right after a setup or an install
+or an upgrade, issue:
 
 /etc/init.d/dtc-xen restart
 
 and your should be good to go (and setup Debian VPS with debootstrap
 automatically using DTC's web interface).
 
-5. Contribute helping enhancements
+4. Contribute helping enhancements
 ----------------------------------
 If you think that all of the above is borring, and that all should be
 automated, then you are free to try and help us to make all this Debian

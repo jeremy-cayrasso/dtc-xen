@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dtc-xen 20070422\n"
 "Report-Msgid-Bugs-To: dtc-xen@packages.debian.org\n"
-"POT-Creation-Date: 2009-03-27 14:26+0800\n"
+"POT-Creation-Date: 2009-07-16 05:42+0800\n"
 "PO-Revision-Date: 2007-04-22 00:52-0600\n"
 "Last-Translator: Praveen|പ്രവീണ്‍ A|എ <pravi.a@gmail.com>\n"
 "Language-Team: Swathanthra|സ്വതന്ത്ര Malayalam|മലയാളം Computing|കമ്പ്യൂട്ടിങ്ങ് <smc-"
@@ -21,26 +21,12 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:1001
-msgid "Server port:"
-msgstr "സേവക പോര്‍ട്ട്:"
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:1001
-#, fuzzy
-msgid ""
-"Default is 8089. Please enter the port the dtc-xen SOAP server will bind to."
-msgstr "ദയവായി സേവകന്‍ ഏത് പോര്‍ട്ടിലേയ്ക്കാണുറപ്പിയ്ക്കാന്‍ പോകുന്നതെന്ന് നല്‍കുക."
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:2001
 msgid "SOAP server login:"
 msgstr "സോപ് സേവക ലോഗിന്‍:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:2001
+#: ../dtc-xen.templates:1001
 #, fuzzy
 msgid ""
 "Dtc-xen will start it's Python based SOAP server to listen for incoming "
@@ -53,19 +39,19 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:2001
+#: ../dtc-xen.templates:1001
 msgid "Please enter the login name to connect to the server."
 msgstr "ദയവായി സേവകനുമായി ബന്ധപ്പെടാനുള്ള ലോഗിന്‍ നാമം നല്‍കുക."
 
 #. Type: password
 #. Description
-#: ../dtc-xen.templates:3001
+#: ../dtc-xen.templates:2001
 msgid "SOAP server pass:"
 msgstr "സോപ് സേവക അടയാളം:"
 
 #. Type: password
 #. Description
-#: ../dtc-xen.templates:3001
+#: ../dtc-xen.templates:2001
 msgid ""
 "Dtc-xen will generate a .htpasswd file for the login you have just "
 "configured."
@@ -74,72 +60,19 @@ msgstr ""
 
 #. Type: password
 #. Description
-#: ../dtc-xen.templates:3001
+#: ../dtc-xen.templates:2001
 msgid "Please enter the password to use in that file."
 msgstr "ദയവായി ആ ഫയലിലുപയോഗിയ്ക്കേണ്ട അടയാളവാക്ക് നല്‍കുക."
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:4001
-#, fuzzy
-msgid "Server domain name:"
-msgstr "സേവക ഹോസ്റ്റ്നാമം:"
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:4001
-#, fuzzy
-msgid ""
-"Please enter the domain name for the dtc-xen server. This will be used as a "
-"part of the URL by the SOAP dtc panel client like nodeXXXX.example.com."
-msgstr ""
-"ദയവായി ഡിടിസി-സെന്‍ സേവകന്റെ ഡൊമൈന്‍ നാമം നല്‍കുക. സോപ് ഡിടിസി പാനല്‍ ക്ലയന്റ് ഇത് "
-"യുആര്‍എല്ലിന്റെ ഭാഗമായി ഉപയോഗിയ്ക്കുന്നതായിരിയ്ക്കും."
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:5001
-msgid "VPS Server node number:"
-msgstr "വിപിഎസ് സേവക നോഡ് സംഖ്യ:"
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:5001
-#, fuzzy
-msgid "Please enter the value to use to set up VPS numbering."
-msgstr "ദയവായി വിപിഎസ്  (മായാ സ്വകാര്യ സെര്‍വര്‍) നമ്പറിങ്ങ് ഒരുക്കാനുപയോഗിയ്ക്കേണ്ട വില നല്‍കുക."
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:5001
-#, fuzzy
-msgid ""
-"Assuming this value is 'XXXX', the VPS numbers will be 'xenXXXXYY', YY being "
-"the VPS number itself (xenYY), and XXXX being the Xen server number. This "
-"node number must be 4 or 5 characters long."
-msgstr ""
-"ഈ വില 'XXXX'ആണെന്ന് വിചാരിച്ചാല്‍, നോഡ് സംഖ്യ 'xenXXXXYY' ആയിരിയ്ക്കും, വിപിഎസ് സംഖ്യ "
-"തന്നെയാണ് YY (xenYY). ഈ നോഡ് സംഖ്യ നാലോ അഞ്ചോ അക്ഷരങ്ങള്‍ നീളമുള്ളതാകണമെന്ന് നിര്‍ബന്ധമുണ്ട്."
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:5001
-msgid ""
-"As a consequence of this choice, the server's hostname will be nodeXXXX."
-"example.com (which you can later add in your DTC control panel)."
-msgstr ""
-"ഈ തിരഞ്ഞെടുപ്പിന്റെ പരിണിതഫലമായി സെര്‍വറിന്റെ ഹോസ്റ്റ്നാമം nodeXXXX.example.com (അത് "
-"നിങ്ങള്‍ക്ക് നിങ്ങളുടെ ഡിടിസി നിയന്ത്രണ പാനലില്‍ പിന്നീട് കൂട്ടിച്ചേര്‍ക്കാവുന്നതാണ്)എന്നായിരിയ്ക്കും."
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:6001
+#: ../dtc-xen.templates:3001
 msgid "Debian repository for VPS creation:"
 msgstr "വിപിഎസ് സൃഷ്ടിയ്ക്കാന്‍ വേണ്ട് ഡെബിയന്‍ ശേഖരം:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:6001
+#: ../dtc-xen.templates:3001
 #, fuzzy
 msgid ""
 "Please enter the repository to use for creating the VPS (Virtual Private "
@@ -154,13 +87,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:7001
+#: ../dtc-xen.templates:4001
 msgid "Network mask for the VPS:"
 msgstr "വിപിഎസിന് വേണ്ട ശൃംഘലാ മാസ്ക്:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:7001
+#: ../dtc-xen.templates:4001
 msgid ""
 "Please enter the network mask to use in the created Virtual Private Server's "
 "network settings."
@@ -170,13 +103,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:8001
+#: ../dtc-xen.templates:5001
 msgid "Network address for the VPS:"
 msgstr "വിപിഎസിന് വേണ്ട ശൃംഘലാ വിലാസം:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:8001
+#: ../dtc-xen.templates:5001
 msgid ""
 "Please enter the network address to use in the created Virtual Private "
 "Server's network settings."
@@ -186,13 +119,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:9001
+#: ../dtc-xen.templates:6001
 msgid "Broadcast address for the VPS:"
 msgstr "വിപിഎസിന് വേണ്ട പ്രക്ഷേപണ വിലാസം:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:9001
+#: ../dtc-xen.templates:6001
 msgid ""
 "Please enter the network broadcast address to use in the created Virtual "
 "Private Server's network settings."
@@ -202,13 +135,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:10001
+#: ../dtc-xen.templates:7001
 msgid "Gateway address for the VPS:"
 msgstr "വിപിഎസിന് വേണ്ട ഗേയ്റ്റ്‌വേ വിലാസം"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:10001
+#: ../dtc-xen.templates:7001
 msgid ""
 "Please enter the network gateway address to use in the created Virtual "
 "Private Server's network settings."
@@ -218,13 +151,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:11001
+#: ../dtc-xen.templates:8001
 msgid "Xen kernel release name:"
 msgstr "സെന്‍ കെര്‍ണല്‍ റിലീസ് നാമം:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:11001
+#: ../dtc-xen.templates:8001
 msgid ""
 "Please enter the kernel version number as it appears with the 'uname -a' "
 "command."
@@ -232,7 +165,7 @@ msgstr "ദയവായി 'uname -a'എന്ന് ആജ്ഞയില്‍
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:11001
+#: ../dtc-xen.templates:8001
 msgid ""
 "A kernel domU with that name must be located in /boot (example: vmlinuz-"
 "2.6.16.27-xenU) and its corresponding modules must be in /lib/modules."
@@ -242,13 +175,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:12001
+#: ../dtc-xen.templates:9001
 msgid "Name of the initrd image:"
 msgstr ""
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:12001
+#: ../dtc-xen.templates:9001
 msgid ""
 "Please enter the name of the initrd ram disk image to use when setting-up a "
 "Linux Xen startup file. Leave this blank to not setup your domU with a "
@@ -257,19 +190,19 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:13001
+#: ../dtc-xen.templates:10001
 msgid "Volume group to create VPS in:"
 msgstr "വിപിഎസ് സൃഷ്ടിയ്ക്കാനുള്ള വാള്യം ഗ്രൂപ്പ്:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:13001
+#: ../dtc-xen.templates:10001
 msgid "Dtc-xen creates physical partitions in an existing LVM volume group"
 msgstr "Dtc-xen നിലവിലുള്ള എല്‍വിഎം വാള്യം ഗ്രൂപ്പില്‍ ഭൌതിക ഭാഗങ്ങള്‍ സൃഷ്ടിയ്ക്കും"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:13001
+#: ../dtc-xen.templates:10001
 #, fuzzy
 msgid ""
 "Please enter that volume group name. The volume group size must fit all the "
@@ -284,13 +217,13 @@ msgstr ""
 
 #. Type: note
 #. Description
-#: ../dtc-xen.templates:14001
+#: ../dtc-xen.templates:11001
 msgid "How to finish the install"
 msgstr ""
 
 #. Type: note
 #. Description
-#: ../dtc-xen.templates:14001
+#: ../dtc-xen.templates:11001
 msgid ""
 "To finish the installation, you need to launch /usr/sbin/dtc-"
 "xen_finish_install."
@@ -299,7 +232,7 @@ msgstr ""
 
 #. Type: note
 #. Description
-#: ../dtc-xen.templates:14001
+#: ../dtc-xen.templates:11001
 #, fuzzy
 msgid ""
 "This script will remove port forwarding from the current sshd_config file "
@@ -313,7 +246,7 @@ msgstr ""
 
 #. Type: note
 #. Description
-#: ../dtc-xen.templates:14001
+#: ../dtc-xen.templates:11001
 msgid ""
 "Please note that the system is currently safe (connections to a physical "
 "console as xenXX will be rejected because the /etc/sudoers is not changed), "
@@ -326,13 +259,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:15001
+#: ../dtc-xen.templates:12001
 msgid "VPS mountpoint:"
 msgstr "വിപിഎസ് മൌണ്ട്പോയിന്റ്:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:15001
+#: ../dtc-xen.templates:12001
 msgid ""
 "In order to do the setup of the VPS it's managing, dtc-xen will mount an LVM "
 "device or a file loopback on the dom0 of your Xen server, and then use it as "
@@ -345,17 +278,63 @@ msgstr ""
 
 #. Type: select
 #. Description
-#: ../dtc-xen.templates:16001
+#: ../dtc-xen.templates:13001
 msgid "Debian os to setup:"
 msgstr ""
 
 #. Type: select
 #. Description
-#: ../dtc-xen.templates:16001
+#: ../dtc-xen.templates:13001
 msgid ""
 "Select the Debian operating system that you want to have setup when dtc-xen "
 "creates a new VM instance with debootstrap."
 msgstr ""
+
+#~ msgid "Server port:"
+#~ msgstr "സേവക പോര്‍ട്ട്:"
+
+#, fuzzy
+#~ msgid ""
+#~ "Default is 8089. Please enter the port the dtc-xen SOAP server will bind "
+#~ "to."
+#~ msgstr "ദയവായി സേവകന്‍ ഏത് പോര്‍ട്ടിലേയ്ക്കാണുറപ്പിയ്ക്കാന്‍ പോകുന്നതെന്ന് നല്‍കുക."
+
+#, fuzzy
+#~ msgid "Server domain name:"
+#~ msgstr "സേവക ഹോസ്റ്റ്നാമം:"
+
+#, fuzzy
+#~ msgid ""
+#~ "Please enter the domain name for the dtc-xen server. This will be used as "
+#~ "a part of the URL by the SOAP dtc panel client like nodeXXXX.example.com."
+#~ msgstr ""
+#~ "ദയവായി ഡിടിസി-സെന്‍ സേവകന്റെ ഡൊമൈന്‍ നാമം നല്‍കുക. സോപ് ഡിടിസി പാനല്‍ ക്ലയന്റ് ഇത് "
+#~ "യുആര്‍എല്ലിന്റെ ഭാഗമായി ഉപയോഗിയ്ക്കുന്നതായിരിയ്ക്കും."
+
+#~ msgid "VPS Server node number:"
+#~ msgstr "വിപിഎസ് സേവക നോഡ് സംഖ്യ:"
+
+#, fuzzy
+#~ msgid "Please enter the value to use to set up VPS numbering."
+#~ msgstr ""
+#~ "ദയവായി വിപിഎസ്  (മായാ സ്വകാര്യ സെര്‍വര്‍) നമ്പറിങ്ങ് ഒരുക്കാനുപയോഗിയ്ക്കേണ്ട വില നല്‍കുക."
+
+#, fuzzy
+#~ msgid ""
+#~ "Assuming this value is 'XXXX', the VPS numbers will be 'xenXXXXYY', YY "
+#~ "being the VPS number itself (xenYY), and XXXX being the Xen server "
+#~ "number. This node number must be 4 or 5 characters long."
+#~ msgstr ""
+#~ "ഈ വില 'XXXX'ആണെന്ന് വിചാരിച്ചാല്‍, നോഡ് സംഖ്യ 'xenXXXXYY' ആയിരിയ്ക്കും, വിപിഎസ് സംഖ്യ "
+#~ "തന്നെയാണ് YY (xenYY). ഈ നോഡ് സംഖ്യ നാലോ അഞ്ചോ അക്ഷരങ്ങള്‍ നീളമുള്ളതാകണമെന്ന് നിര്‍ബന്ധമുണ്ട്."
+
+#~ msgid ""
+#~ "As a consequence of this choice, the server's hostname will be nodeXXXX."
+#~ "example.com (which you can later add in your DTC control panel)."
+#~ msgstr ""
+#~ "ഈ തിരഞ്ഞെടുപ്പിന്റെ പരിണിതഫലമായി സെര്‍വറിന്റെ ഹോസ്റ്റ്നാമം nodeXXXX.example.com (അത് "
+#~ "നിങ്ങള്‍ക്ക് നിങ്ങളുടെ ഡിടിസി നിയന്ത്രണ പാനലില്‍ പിന്നീട് കൂട്ടിച്ചേര്‍ക്കാവുന്നതാണ്)"
+#~ "എന്നായിരിയ്ക്കും."
 
 #~ msgid "Installation completion"
 #~ msgstr "ഇന്‍സ്റ്റളേഷന്‍ പൂര്‍ത്തിയായി"

@@ -1,7 +1,6 @@
 #!/usr/bin/make -f
 
 # Set to something else if you want to install elsewhere than /
-# but take care of the effects of the "make clean" !!!
 # DESTDIR=""
 
 # Set DISTRO=centos if you want to build for CentOS or other
@@ -99,8 +98,6 @@ install:
 # A bit of doc
 #	if [ $(DISTRO) = "centos" ] ; then \
 #		$(INSTALL) -m 0640 doc/README.RPM $(DESTDIR)$(SHARE_DOC_DIR)/dtc-xen/README.RPM ; fi
-#	$(INSTALL) -m 0644 doc/examples/dtc_create_vps.conf.sh $(DESTDIR)$(SHARE_DOC_DIR)/dtc-xen/examples/dtc_create_vps.conf.sh
-#	$(INSTALL) -m 0644 doc/examples/soap.conf $(DESTDIR)$(SHARE_DOC_DIR)/dtc-xen/examples/soap.conf
 
 # Our default configuration file
 	$(INSTALL) -m 0600 etc/dtc-xen/dtc-xen.conf $(DESTDIR)$(SYSCONFIG_DIR)/dtc-xen/dtc-xen.conf

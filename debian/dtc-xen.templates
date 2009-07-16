@@ -6,12 +6,6 @@
 #
 # Even minor modifications require translation updates and such
 # changes should be coordinated with translators and reviewers.
-Template: dtc-xen/conf_soap_port
-Type: string
-Default: 8089
-_Description: Server port:
- Default is 8089. Please enter the port the dtc-xen SOAP server will bind to.
-
 Template: dtc-xen/conf_soap_login
 Type: string
 Default: dtc-xen
@@ -30,27 +24,6 @@ _Description: SOAP server pass:
  configured.
  .
  Please enter the password to use in that file.
-
-Template: dtc-xen/conf_soap_domain_name
-Type: string
-Default: example.com
-_Description: Server domain name:
- Please enter the domain name for the dtc-xen server. This will be used as a
- part of the URL by the SOAP dtc panel client like nodeXXXX.example.com.
-
-Template: dtc-xen/conf_node_number
-Type: string
-Default: 0101
-_Description: VPS Server node number:
- Please enter the value to use to set up VPS numbering.
- .
- Assuming this value is 'XXXX', the VPS numbers will be 'xenXXXXYY',
- YY being the VPS number itself (xenYY), and XXXX being the Xen server number.
- This node number must be 4 or 5 characters long.
- .
- As a consequence of this choice, the server's hostname will be
- nodeXXXX.example.com (which you can later add in your DTC control
- panel).
 
 Template: dtc-xen/conf_debian_repository
 Type: string
@@ -142,7 +115,7 @@ _Description: VPS mountpoint:
 
 Template: dtc-xen/conf_debian_release
 Type: select
-Choices: sarge, etch, lenny, sid
+Choices: etch, lenny, squeeze, sid
 Default: lenny
 _Description: Debian os to setup:
  Select the Debian operating system that you want to have setup when dtc-xen

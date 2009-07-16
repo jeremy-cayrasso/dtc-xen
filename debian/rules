@@ -6,7 +6,6 @@ clean:
 	dh_testdir
 	dh_testroot
 	dh_clean
-	rm -f debian/dtc-xen.init debian/dtc-xen-firewall.init
 
 	# As per advice from Christian Perrier
 	debconf-updatepo

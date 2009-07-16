@@ -6,8 +6,9 @@ if [ $# -lt 3 ]; then
 fi
 
 # Source the configuration in the config file!
-if [ -f /etc/dtc-xen/dtc_create_vps.conf.sh ] ; then source /etc/dtc-xen/dtc_create_vps.conf.sh ; fi
-if [ -f /etc/dtc-xen/dtc-xen.conf ] ; then source /etc/dtc-xen/dtc-xen.conf ; fi
+if [ -f /etc/dtc-xen/dtc-xen.conf ] ; then
+	. /etc/dtc-xen/dtc-xen.conf
+fi
 
 # Figure out the VPS mount point
 if [ -n "$provisioning_mount_point" ]

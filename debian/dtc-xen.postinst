@@ -12,23 +12,16 @@ debian_get_config () {
 	. /usr/share/debconf/confmodule
 	db_version 2.0
 
-	db_get dtc-xen/conf_soap_port
-	conf_soap_port=$RET
 	db_get dtc-xen/conf_soap_login
 	conf_soap_login=$RET
 	db_get dtc-xen/conf_soap_pass
 	conf_soap_pass=$RET
-	db_get dtc-xen/conf_soap_domain_name
-	conf_soap_domain_name=$RET
-	db_get dtc-xen/conf_node_number
-	conf_node_number=$RET
-	conf_soap_hostname="node${conf_node_number}.${conf_soap_domain_name}"
 	db_get dtc-xen/conf_debian_repository
 	conf_debian_repository=$RET
+	db_get dtc-xen/conf_debian_release
+	conf_debian_release=$RET
 	db_get dtc-xen/conf_netmask
 	conf_netmask=$RET
-	db_get dtc-xen/conf_network
-	conf_network=$RET
 	db_get dtc-xen/conf_broadcast
 	conf_broadcast=$RET
 	db_get dtc-xen/conf_gateway
@@ -41,45 +34,43 @@ debian_get_config () {
 	conf_lvm_name=$RET
 	db_get dtc-xen/conf_vps_mountpoint
 	conf_vps_mountpoint=$RET
-	db_get dtc-xen/conf_debian_release
-	conf_debian_release=$RET
 	db_get dtc-xen/conf_info_finish_setup
 	db_unregister dtc-xen/conf_soap_pass
 	db_stop
 }
 
+# Parameter:
+# $1: field to search for
+# $2: value to configure in it
+replace_config_value () {
+	# Calculate the head and tail
+	LINE_NUM=`grep -n ${1}= /etc/dtc-xen/dtc-xen.conf | cut -d":" -f1`
+	NUM_LINES=`cat /etc/dtc-xen/dtc-xen.conf | wc -l`
+	HEAD=$((${LINE_NUM} - 1 ))
+	TAIL=$((${NUM_LINES} - ${LINE_NUM} ))
+	# Do the field edition
+	TMP_FILE=`mktemp`
+	head -n ${HEAD} /etc/dtc-xen/dtc-xen.conf >${TMP_FILE}
+	echo "${1}=${2}" >>${TMP_FILE}
+	tail -n ${TAIL} /etc/dtc-xen/dtc-xen.conf >>${TMP_FILE}
+	cat <${TMP_FILE} >/etc/dtc-xen/dtc-xen.conf
+	rm -f ${TMP_FILE}
+}
+
 write_debian_config_files () {
-	# Create the python config file
-	echo "# This is the configuration file for the DTC soap server dtc-xen
-# Please make soap_server_host correspond to NODE_NUM and NODE_DOMAIN_NAME in
-# dtc_create_vps.conf.sh as the postinst of dtc-xen might overwrite the value
-# this way
-soap_server_host=node${conf_node_number}.${conf_soap_domain_name}
-soap_server_port=${conf_soap_port}
-soap_server_pass_phrase=${conf_ssl_passphrase}
-soap_server_dtcxen_user=${conf_soap_login}
-soap_server_lvmname=${conf_lvm_name}
-soap_server_mount_point=$conf_vps_mountpoint
-" >${DTCXEN_ETCPATH}/soap.conf
-
-	# Create the sh config file for dtc_reinstall_os and dtc_setup_disk
-	echo "#!/bin/sh
-# This the configuration file for dtc-xen setup scripts (called uppon VM reinstallation)
-
-NODE_NUM=$conf_node_number
-NODE_DOMAIN_NAME=$conf_soap_domain_name
-DEBIAN_REPOS=\"$conf_debian_repository\"
-NETMASK=$conf_netmask
-NETWORK=$conf_network
-BROADCAST=$conf_broadcast
-GATEWAY=$conf_gateway
-LVMNAME=$conf_lvm_name
-VPS_MOUNTPOINT=$conf_vps_mountpoint
-DEBIAN_RELEASE=$conf_debian_release
-
-KERNELNAME=$conf_linux_kernel_name
-INITRDNAME=$conf_linux_domu_initrd
-" > ${DTCXEN_ETCPATH}/dtc_create_vps.conf.sh
+	replace_config_value provisioning_volgroup ${conf_lvm_name}
+	replace_config_value provisioning_mount_point ${conf_vps_mountpoint}
+	replace_config_value debian_repo ${conf_debian_repository}
+	replace_config_value debian_release ${conf_debian_release}
+	replace_config_value GATEWAY ${conf_gateway}
+	replace_config_value NETMASK ${conf_netmask}
+	replace_config_value BROADCAST ${conf_broadcast}
+	replace_config_value KERNEL_RELEASE ${conf_linux_kernel_name}
+	replace_config_value KMOD_PATH "/lib/modules/${conf_linux_kernel_name}"
+	replace_config_value KERNELPATH "/boot/vmlinuz-${conf_linux_kernel_name}"
+	if [ -f "/boot/initrd.img-${conf_linux_kernel_name}" ] ; then
+		replace_config_value INITRDPATH "/boot/initrd.img-${conf_linux_kernel_name}"
+	fi
 }
 
 create_ssl_cert () {
@@ -157,19 +148,6 @@ manage_htpasswd () {
 	$HTPASSWD -cb $DTCXEN_ETCPATH/htpasswd ${conf_soap_login} ${conf_soap_pass}
 }
 
-dtcaddxenuser () {
-	if getent passwd ${1} >/dev/null ; then
-		echoIfVerbose "User already exists "${1}
-	else
-		echoIfVerbose "Adding user "${1}
-		adduser --quiet --disabled-password --ingroup xenusers --home ${XEN_USER_HOME}/${1} --shell /bin/dtc-xen_userconsole --gecos dtc-xen-user ${1}
-	fi
-	# make sure all the settings are correct as per this version of the package, and create the .ssh dir for uploading the ssh public key file
-	mkdir -p "${XEN_USER_HOME}/${1}/.ssh"
-	chown -R ${1}:xenusers "${XEN_USER_HOME}/${1}"
-	usermod -d "${XEN_USER_HOME}/${1}" -g xenusers -s /bin/dtc-xen_userconsole ${1}
-}
-
 # All this function should NOT exist.
 # These are ISSUES in Debian that I'm really not happy off...
 # Fellow maintainers, please fix your packages
@@ -211,29 +189,15 @@ OPENSSL=/usr/bin/openssl
 ################################
 ### EXECUTION STARTS HERE!!! ###
 ################################
-if [ -e /etc/debian_version ] ; then
-	debian_get_config
-	debian_fixups
-else
-	if [ ! -e ${DTCXEN_ETCPATH}/soap.conf ] ; then
-		cp /usr/share/doc/dtc-xen/examples/soap.conf ${DTCXEN_ETCPATH}/soap.conf
-	fi
-	if [ ! -e ${DTCXEN_ETCPATH}/dtc_create_vps.conf.sh ] ; then
-		cp /usr/share/doc/dtc-xen/examples/dtc_create_vps.conf.sh ${DTCXEN_ETCPATH}/dtc_create_vps.conf.sh
-	fi
-	. ${DTCXEN_ETCPATH}/dtc_create_vps.conf.sh
-fi
+debian_get_config
+debian_fixups
 create_ssl_cert
-if [ -e /etc/debian_version ] ; then
-	write_debian_config_files
-fi
+write_debian_config_files
 manage_htpasswd
-# Touch this file just to show that it's possible to edit it
 touch /etc/dtc-xen/authorized_keys2
-
 # Make it safer...
-chmod 600 ${DTCXEN_ETCPATH}/*
-
+chmod 644 ${DTCXEN_ETCPATH}/*
+chmod 600 ${DTCXEN_ETCPATH}/dtc-xen.conf
 # This is to be able to mount the VPS partitions in order to bootstrap.
 mkdir -p ${conf_vps_mountpoint}
 # Manage the dtc-xen users, so people can log through the physical console
@@ -247,21 +211,18 @@ else
 	groupadd xenusers
 fi
 mkdir -p $XEN_USER_HOME
-for i in `seq -w 1 29`; do dtcaddxenuser xen$i ; done
 
 if [ -e /etc/dtc-xen/sources.list ] ; then
 	cp /etc/apt/sources.list /etc/dtc-xen
 fi
 
-# Install our init.d script
-if [ -e /etc/redhat-release ] ; then
-	if [ -x /etc/rc.d/init.d/dtc-xen ] ; then
-		echo "TODO: CentOS startup links"
-		chkconfig --add dtc-xen
-		if [ -x /sbin/service ] ; then
-			service start dtc-xen
-		fi
-	fi
+# Delete the old configuration files as we don't use them anymore,
+# and we don't want to confuse our users.
+if [ -e /etc/dtc-xen/dtc_create_vps.conf.sh ] ; then
+	rm -f /etc/dtc-xen/dtc_create_vps.conf.sh
+fi
+if [ -e /etc/dtc-xen/soap.conf ] ; then
+	rm -f /etc/dtc-xen/soap.conf
 fi
 
 #DEBHELPER#

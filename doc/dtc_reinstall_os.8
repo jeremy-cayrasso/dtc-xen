@@ -7,13 +7,13 @@ dtc_reinstall_os \- reinstall an operating system in a VM
 .B -v
 ]
 [ OPTIONS ]
-.B -vpsid <ID>
-.B -ram <RAM size MB>
-.B -nic <ip>[,<netmask>[,<broadcast>]]
-.B -pass <root-password>
-.B -os <operating-system>
-[ -gw <default-gateway> ]
-[ -dns <dns1-ip>[,<dns2-ip>] ]
+.B \-vpsid <ID>
+.B \-ram <RAM size MB>
+.B \-nic <ip>[,<netmask>[,<broadcast>]]
+.B \-pass <root-password>
+.B \-os <operating-system>
+[ \-gw <default-gateway> ]
+[ \-dns <dns1-ip>[,<dns2-ip>] ]
 
 
 .SH DESCRIPTION
@@ -205,7 +205,7 @@ in the VPS.
 .SH "EXAMPLES"
 
 .LP
-.B.I Example1:
+.B .I Example1:
 .IP
 dtc_reinstall_os \-v \-vpsid 01 \-ram 512 \-nic 192.168.2.176,255.255.255.0,192.168.2.255 \-pass MyRootPass \-os debian \-gw 192.168.2.1 \-dns 192.168.2.1
 
@@ -217,7 +217,7 @@ operating system with the /etc/network/interfaces using 192.168.2.176 as IP,
 and 192.168.2.1 as DNS.
 
 .LP
-.B.I Example2:
+.B .I Example2:
 .IP
 dtc_reinstall_os \-vpsid 02 \-ram 1024 \-nic 192.168.9.2 \-nic 192.168.9.3 \-gw 192.168.9.1 \-pass MyRootPass \-os kde-nx-server-3.3.0
 

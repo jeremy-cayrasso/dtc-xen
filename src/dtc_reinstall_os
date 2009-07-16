@@ -50,8 +50,9 @@ if [ $# -lt 5 ]; then
 fi
 
 # Source the configuration in the config file!
-if [ -f /etc/dtc-xen/dtc_create_vps.conf.sh ] ; then source /etc/dtc-xen/dtc_create_vps.conf.sh ; fi
-if [ -f /etc/dtc-xen/dtc-xen.conf ] ; then source /etc/dtc-xen/dtc-xen.conf ; fi
+if [ -f /etc/dtc-xen/dtc-xen.conf ] ; then
+	. /etc/dtc-xen/dtc-xen.conf
+fi
 
 if [ -n "$debian_release" ] ; then DEBIAN_RELEASE="$debian_release" ; fi
 if [ -n "$debian_repo" ] ; then DEBIAN_REPOS="$debian_repo" ; fi
@@ -289,10 +290,6 @@ if [ -z "${KERNELPATH}" ] ; then
 	exit 78
 fi
 
-if [ -z "${BSDKERNELPATH}" ] ; then
-	BSDKERNELPATH="/boot/netbsd-INSTALL_XENU"
-fi
-
 VPSNAME=xen${VPSNUM}
 NODE_FQDN=`hostname`
 # Manuel, what we have been discussing about using mx.xenXX.dom0-fqdn or xenXX.dom0-fqdn by default
@@ -318,23 +315,9 @@ if [ "$IMAGE_TYPE" = "lvm" ] ; then
 	fi
 fi
 
-# Configure the first IP only (the user can setup the others)
-IPADDR=`echo ${ALL_IPADDRS} | cut -d' ' -f1`
-
-calcMacAddr () {
-	CHARCNT=`echo -n ${NODE_NUM} | wc -m`
-	if [ "${CHARCNT}" = "5" ] ; then
-		MINOR_NUM=`echo ${NODE_NUM} | awk '{print substr($0,4,2)}'`
-		MAJOR_NUM=`echo ${NODE_NUM} | awk '{print substr($0,2,2)}'`
-		MEGA_NUM=`echo ${NODE_NUM} | awk '{print substr($0,1,1)}'`
-	else
-		MINOR_NUM=`echo ${NODE_NUM} | awk '{print substr($0,3,2)}'`
-		MAJOR_NUM=`echo ${NODE_NUM} | awk '{print substr($0,1,2)}'`
-		MEGA_NUM="0"
-	fi
-	MAC_ADDR=`echo 00:00:2$MEGA_NUM:$MAJOR_NUM:$MINOR_NUM:$VPSNUM`
-}
-calcMacAddr
+if [ ! -z "${vps_mac_prefix}" ] ; then
+	MAC_ADDR=${vps_mac_prefix}:${VPSNUM}
+fi
 
 FOUNDED_ARCH=`uname -m`
 
@@ -566,7 +549,11 @@ fi
 #################################
 ### XEN STARTUP FILE CREATION ###
 #################################
-
+if [ ! -z "${MAC_ADDR}" ] ; then
+	XEN_WRITE_MAC="mac=${MAC_ADDR}, "
+else
+	XEN_WRITE_MAC=""
+fi
 if [ "$DISTRO" = "xenhvm" ] ; then
 	echo -n "kernel = \"/usr/lib/xen/boot/hvmloader\"
 builder = 'hvm'
@@ -576,7 +563,7 @@ vcpus=1
 #pae=0
 #acpi=0
 #apic=0
-vif = [ 'type=ioemu, mac=${MAC_ADDR}, ip=${ALL_IPADDRS}' ]
+vif = [ 'type=ioemu, ${XEN_WRITE_MAC}ip=${ALL_IPADDRS}' ]
 disk=[ 'phy:/dev/mapper/${LVMNAME}-xen${VPSNUM},ioemu:hda,w'" >/etc/xen/${VPSNAME}
 	# Add all *.iso files to the config file
 	HDDLIST="bcdefghijklmnopqrstuvwxyz"
@@ -604,10 +591,10 @@ nographic=1" >>/etc/xen/${VPSNAME}
 	fi
 	echo "serial='pty'" >>/etc/xen/${VPSNAME}
 elif [ "$DISTRO" = "netbsd" ] ; then
-	echo "kernel = \"${BSDKERNELPATH}\"
+	echo "kernel = \"${bsd_kernel_path}\"
 memory = ${VPSMEM}
 name = \"${VPSNAME}\"
-vif = [ 'mac=${MAC_ADDR}, ip=${ALL_IPADDRS}' ]
+vif = [ '${XEN_WRITE_MAC}ip=${ALL_IPADDRS}' ]
 " >/etc/xen/${VPSNAME}
 	if [ "$IMAGE_TYPE" = "lvm" ]; then
 		echo "disk = [ 'phy:/dev/mapper/${LVMNAME}-xen${VPSNUM},0x3,w' ]
@@ -629,7 +616,7 @@ else
 	echo "memory = ${VPSMEM}
 name = \"${VPSNAME}\"
 #cpu = -1   # leave to Xen to pick
-vif = [ 'mac=${MAC_ADDR}, ip=${ALL_IPADDRS}' ]
+vif = [ '${XEN_WRITE_MAC}ip=${ALL_IPADDRS}' ]
 " >> /etc/xen/${VPSNAME}
 
 	# Set the HDDs

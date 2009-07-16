@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dtc-xen 0.3.13-1\n"
 "Report-Msgid-Bugs-To: dtc-xen@packages.debian.org\n"
-"POT-Creation-Date: 2009-03-27 14:26+0800\n"
+"POT-Creation-Date: 2009-07-16 05:42+0800\n"
 "PO-Revision-Date: 2008-03-01 20:07+0200\n"
 "Last-Translator: Esko Arajärvi <edu@iki.fi>\n"
 "Language-Team: Finnish <debian-l10n-finnish@lists.debian.org>\n"
@@ -15,25 +15,12 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:1001
-msgid "Server port:"
-msgstr "Palvelimen portti:"
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:1001
-msgid ""
-"Default is 8089. Please enter the port the dtc-xen SOAP server will bind to."
-msgstr "Oletus on 8089. Anna portti, jota dtc-xenin SOAP-palvelin kuuntelee."
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:2001
 msgid "SOAP server login:"
 msgstr "SOAP-palvelimen tunnus:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:2001
+#: ../dtc-xen.templates:1001
 #, fuzzy
 msgid ""
 "Dtc-xen will start it's Python based SOAP server to listen for incoming "
@@ -46,19 +33,19 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:2001
+#: ../dtc-xen.templates:1001
 msgid "Please enter the login name to connect to the server."
 msgstr "Anna käyttäjätunnus, jota käytetään otettaessa yhteys palvelimelle."
 
 #. Type: password
 #. Description
-#: ../dtc-xen.templates:3001
+#: ../dtc-xen.templates:2001
 msgid "SOAP server pass:"
 msgstr "SOAP-palvelimen salasana:"
 
 #. Type: password
 #. Description
-#: ../dtc-xen.templates:3001
+#: ../dtc-xen.templates:2001
 msgid ""
 "Dtc-xen will generate a .htpasswd file for the login you have just "
 "configured."
@@ -68,69 +55,19 @@ msgstr ""
 
 #. Type: password
 #. Description
-#: ../dtc-xen.templates:3001
+#: ../dtc-xen.templates:2001
 msgid "Please enter the password to use in that file."
 msgstr "Anna salasana, jota käytetään kyseisessä tiedostossa."
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:4001
-msgid "Server domain name:"
-msgstr "Palvelimen verkkoaluenimi:"
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:4001
-msgid ""
-"Please enter the domain name for the dtc-xen server. This will be used as a "
-"part of the URL by the SOAP dtc panel client like nodeXXXX.example.com."
-msgstr ""
-"Anna dtc-xen-palvelimen verkkoaluenimi. Tätä käytetään osana SOAP dtc -"
-"paneeliasiakkaan URLia, kuten nodeXXXX.esimerkki.fi."
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:5001
-msgid "VPS Server node number:"
-msgstr "VPS-palvelimen solmun numero:"
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:5001
-msgid "Please enter the value to use to set up VPS numbering."
-msgstr "Anna arvo, jota käytetään VPS:ien numerointiin."
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:5001
-#, fuzzy
-msgid ""
-"Assuming this value is 'XXXX', the VPS numbers will be 'xenXXXXYY', YY being "
-"the VPS number itself (xenYY), and XXXX being the Xen server number. This "
-"node number must be 4 or 5 characters long."
-msgstr ""
-"Jos arvo on ”XXXX”, solmun numero tulee olemaan ”xenXXXXYY”, jossa YY on VPS:"
-"n oma numero (xenYY). Tämä solmun numero voi olla 4 tai 5 merkkiä pitkä."
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:5001
-msgid ""
-"As a consequence of this choice, the server's hostname will be nodeXXXX."
-"example.com (which you can later add in your DTC control panel)."
-msgstr ""
-"Tämän valinnan seurauksena palvelimen verkkonimi tulee olemaan nodeXXXX."
-"esimerkki.fi (jonka voit myöhemmin lisätä DTC-kontrollipaneliisi)."
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:6001
+#: ../dtc-xen.templates:3001
 msgid "Debian repository for VPS creation:"
 msgstr "Debian-varasto VPS:n lyontia varten:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:6001
+#: ../dtc-xen.templates:3001
 msgid ""
 "Please enter the repository to use for creating the VPS (Virtual Private "
 "Server). The current /etc/apt/sources.list file will be copied to the "
@@ -144,13 +81,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:7001
+#: ../dtc-xen.templates:4001
 msgid "Network mask for the VPS:"
 msgstr "VPS:n verkon peitto:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:7001
+#: ../dtc-xen.templates:4001
 msgid ""
 "Please enter the network mask to use in the created Virtual Private Server's "
 "network settings."
@@ -158,13 +95,13 @@ msgstr "Anna verkon peitto, jota käytetään luodun VPS:n verkkoasetuksissa."
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:8001
+#: ../dtc-xen.templates:5001
 msgid "Network address for the VPS:"
 msgstr "VPS:n verkko-osoite:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:8001
+#: ../dtc-xen.templates:5001
 msgid ""
 "Please enter the network address to use in the created Virtual Private "
 "Server's network settings."
@@ -172,13 +109,13 @@ msgstr "Anna verkko-osoite, jota käytetään luodun VPS:n verkko-asetuksissa."
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:9001
+#: ../dtc-xen.templates:6001
 msgid "Broadcast address for the VPS:"
 msgstr "VPS:n yleislähetysosoite:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:9001
+#: ../dtc-xen.templates:6001
 msgid ""
 "Please enter the network broadcast address to use in the created Virtual "
 "Private Server's network settings."
@@ -187,13 +124,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:10001
+#: ../dtc-xen.templates:7001
 msgid "Gateway address for the VPS:"
 msgstr "VPS:n yhdyskäytäväosoite:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:10001
+#: ../dtc-xen.templates:7001
 msgid ""
 "Please enter the network gateway address to use in the created Virtual "
 "Private Server's network settings."
@@ -203,13 +140,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:11001
+#: ../dtc-xen.templates:8001
 msgid "Xen kernel release name:"
 msgstr "Xen-ytimen julkaisunimi:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:11001
+#: ../dtc-xen.templates:8001
 msgid ""
 "Please enter the kernel version number as it appears with the 'uname -a' "
 "command."
@@ -219,7 +156,7 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:11001
+#: ../dtc-xen.templates:8001
 msgid ""
 "A kernel domU with that name must be located in /boot (example: vmlinuz-"
 "2.6.16.27-xenU) and its corresponding modules must be in /lib/modules."
@@ -229,13 +166,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:12001
+#: ../dtc-xen.templates:9001
 msgid "Name of the initrd image:"
 msgstr ""
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:12001
+#: ../dtc-xen.templates:9001
 msgid ""
 "Please enter the name of the initrd ram disk image to use when setting-up a "
 "Linux Xen startup file. Leave this blank to not setup your domU with a "
@@ -244,13 +181,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:13001
+#: ../dtc-xen.templates:10001
 msgid "Volume group to create VPS in:"
 msgstr "Levynideryhmä, johon VPS luodaan:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:13001
+#: ../dtc-xen.templates:10001
 msgid "Dtc-xen creates physical partitions in an existing LVM volume group"
 msgstr ""
 "Dtc-xen luo fyysisiä osioita olemassa olevaan loogiseen levynideryhmään "
@@ -258,7 +195,7 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:13001
+#: ../dtc-xen.templates:10001
 #, fuzzy
 msgid ""
 "Please enter that volume group name. The volume group size must fit all the "
@@ -273,13 +210,13 @@ msgstr ""
 
 #. Type: note
 #. Description
-#: ../dtc-xen.templates:14001
+#: ../dtc-xen.templates:11001
 msgid "How to finish the install"
 msgstr "Kuinka asennus päätetään"
 
 #. Type: note
 #. Description
-#: ../dtc-xen.templates:14001
+#: ../dtc-xen.templates:11001
 msgid ""
 "To finish the installation, you need to launch /usr/sbin/dtc-"
 "xen_finish_install."
@@ -287,7 +224,7 @@ msgstr "Päättääksesi asennuksen aja /usr/sbin/dtc-xen_finish_install."
 
 #. Type: note
 #. Description
-#: ../dtc-xen.templates:14001
+#: ../dtc-xen.templates:11001
 #, fuzzy
 msgid ""
 "This script will remove port forwarding from the current sshd_config file "
@@ -302,7 +239,7 @@ msgstr ""
 
 #. Type: note
 #. Description
-#: ../dtc-xen.templates:14001
+#: ../dtc-xen.templates:11001
 msgid ""
 "Please note that the system is currently safe (connections to a physical "
 "console as xenXX will be rejected because the /etc/sudoers is not changed), "
@@ -315,13 +252,13 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:15001
+#: ../dtc-xen.templates:12001
 msgid "VPS mountpoint:"
 msgstr "VPS:n liitoskohta:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:15001
+#: ../dtc-xen.templates:12001
 #, fuzzy
 msgid ""
 "In order to do the setup of the VPS it's managing, dtc-xen will mount an LVM "
@@ -339,13 +276,13 @@ msgstr ""
 
 #. Type: select
 #. Description
-#: ../dtc-xen.templates:16001
+#: ../dtc-xen.templates:13001
 msgid "Debian os to setup:"
 msgstr "Asetettava Debian-käyttöjärjestelmä:"
 
 #. Type: select
 #. Description
-#: ../dtc-xen.templates:16001
+#: ../dtc-xen.templates:13001
 #, fuzzy
 msgid ""
 "Select the Debian operating system that you want to have setup when dtc-xen "
@@ -353,3 +290,45 @@ msgid ""
 msgstr ""
 "Valitse Debian-käyttöjärjestelmä, jonka haluat asentaa, kun dtc-xen luo "
 "uuden virtuaalikoneen."
+
+#~ msgid "Server port:"
+#~ msgstr "Palvelimen portti:"
+
+#~ msgid ""
+#~ "Default is 8089. Please enter the port the dtc-xen SOAP server will bind "
+#~ "to."
+#~ msgstr ""
+#~ "Oletus on 8089. Anna portti, jota dtc-xenin SOAP-palvelin kuuntelee."
+
+#~ msgid "Server domain name:"
+#~ msgstr "Palvelimen verkkoaluenimi:"
+
+#~ msgid ""
+#~ "Please enter the domain name for the dtc-xen server. This will be used as "
+#~ "a part of the URL by the SOAP dtc panel client like nodeXXXX.example.com."
+#~ msgstr ""
+#~ "Anna dtc-xen-palvelimen verkkoaluenimi. Tätä käytetään osana SOAP dtc -"
+#~ "paneeliasiakkaan URLia, kuten nodeXXXX.esimerkki.fi."
+
+#~ msgid "VPS Server node number:"
+#~ msgstr "VPS-palvelimen solmun numero:"
+
+#~ msgid "Please enter the value to use to set up VPS numbering."
+#~ msgstr "Anna arvo, jota käytetään VPS:ien numerointiin."
+
+#, fuzzy
+#~ msgid ""
+#~ "Assuming this value is 'XXXX', the VPS numbers will be 'xenXXXXYY', YY "
+#~ "being the VPS number itself (xenYY), and XXXX being the Xen server "
+#~ "number. This node number must be 4 or 5 characters long."
+#~ msgstr ""
+#~ "Jos arvo on ”XXXX”, solmun numero tulee olemaan ”xenXXXXYY”, jossa YY on "
+#~ "VPS:n oma numero (xenYY). Tämä solmun numero voi olla 4 tai 5 merkkiä "
+#~ "pitkä."
+
+#~ msgid ""
+#~ "As a consequence of this choice, the server's hostname will be nodeXXXX."
+#~ "example.com (which you can later add in your DTC control panel)."
+#~ msgstr ""
+#~ "Tämän valinnan seurauksena palvelimen verkkonimi tulee olemaan nodeXXXX."
+#~ "esimerkki.fi (jonka voit myöhemmin lisätä DTC-kontrollipaneliisi)."
