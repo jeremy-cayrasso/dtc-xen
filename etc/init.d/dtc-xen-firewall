@@ -115,10 +115,10 @@ ping_flood_protect () {
 
 	# Limit for dom0
 	${IPTABLES} -A dtc-xen-in -p icmp --icmp-type echo-request -m limit --limit ${PING_ACCEPTING_RATE}/s -j RETURN
-	${IPTABLES} -A dtc-xen-in -p icmp --icmp-type echo-request -j DROP
+	${IPTABLES} -A dtc-xen-in -p icmp --icmp-type echo-request -j LOGDROP
 	# There is no reason why a 20 VPS would be ping more than 50 times per seconds
 	${IPTABLES} -A dtc-xen-fw -p icmp --icmp-type echo-request -m limit --limit ${PING_FORWARDING_RATE}/s -j RETURN
-	${IPTABLES} -A dtc-xen-fw -p icmp --icmp-type echo-request -j DROP
+	${IPTABLES} -A dtc-xen-fw -p icmp --icmp-type echo-request -j LOGDROP
 }
 syn_flood_protect () {
 	if [ -z "${SYN_ACCEPTING_RATE}" ] ; then
@@ -129,10 +129,10 @@ syn_flood_protect () {
 	fi
 	# For dom0
 	${IPTABLES} -A dtc-xen-in -p tcp --syn -m limit --limit ${SYN_ACCEPTING_RATE}/s -j RETURN
-	${IPTABLES} -A dtc-xen-in -p tcp --syn -j DROP
+	${IPTABLES} -A dtc-xen-in -p tcp --syn -j LOGDROP
 	# For VPS
 	${IPTABLES} -A dtc-xen-fw -p tcp --syn -m limit --limit ${SYN_FORWARDING_RATE}/s -j RETURN
-	${IPTABLES} -A dtc-xen-fw -p tcp --syn -j DROP
+	${IPTABLES} -A dtc-xen-fw -p tcp --syn -j LOGDROP
 }
 
 port_scanner_limitation () {
@@ -144,14 +144,22 @@ port_scanner_limitation () {
 	fi
 	#Furtive port scanner a bit more annoying...
 	${IPTABLES} -A dtc-xen-in -p tcp --tcp-flags SYN,ACK,FIN,RST RST -m limit --limit ${GLOB_CONNECT_ACCEPTING_RATE}/s -j RETURN
-	${IPTABLES} -A dtc-xen-in -p tcp --tcp-flags SYN,ACK,FIN,RST RST -j DROP
+	${IPTABLES} -A dtc-xen-in -p tcp --tcp-flags SYN,ACK,FIN,RST RST -j LOGDROP
 	${IPTABLES} -A dtc-xen-fw -p tcp --tcp-flags SYN,ACK,FIN,RST RST -m limit --limit ${GLOB_CONNECT_FORWARDING_RATE}/s -j RETURN
-	${IPTABLES} -A dtc-xen-fw -p tcp --tcp-flags SYN,ACK,FIN,RST RST -j DROP
+	${IPTABLES} -A dtc-xen-fw -p tcp --tcp-flags SYN,ACK,FIN,RST RST -j LOGDROP
+}
+
+setup-log-chain () {
+	${IPTABLES} -N LOGDROP > /dev/null 2> /dev/null
+	${IPTABLES} -F LOGDROP
+	${IPTABLES} -A LOGDROP -m limit --limit 1/s -j LOG --log-prefix "LOGDROP: "
+	${IPTABLES} -A LOGDROP -j DROP
 }
 
 case "${1}" in
 	start)
 		# flush-input-chain
+		setup-log-chain
 		create_dtc_xen_forward_chain
 		accept_localhost_traffic
 		port25_reject
