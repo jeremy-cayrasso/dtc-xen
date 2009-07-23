@@ -85,27 +85,28 @@ for i in $@ ; do
 		if [ -z "${2}" ] ; then echo "Parameter for option -nic is missing" > /dev/stderr ; exit 1 ; fi
 		# Manage the nics to give it as parameters to the setup-vps-network script
 		PARAM=${2}
+		PARAM_TMP=${2}
 		if [ -z ""`echo ${PARAM} | cut -s -d"," -f2` ] ; then
 			if [ -z "${NETMASK}" ] ; then
 				echo "Parameter NETMASK not found: either edit /etc/dtc-xen/dtc-xen.conf or use a netmask parameter" > /dev/stderr ; exit 1
 			fi
 			PARAM="${PARAM},${NETMASK}"
 		fi
-		if [ -z ""`echo ${PARAM} | cut -s -d"," -f3` ] ; then
+		if [ -z ""`echo ${PARAM_TMP} | cut -s -d"," -f3` ] ; then
 			if [ -z "${BROADCAST}" ] ; then
-				echo "Parameter BROADCAST not found: either edit /etc/dtc-xen/dtc-xen.conf or use a netmask parameter" > /dev/stderr ; exit 1
+				echo "Parameter BROADCAST not found: either edit /etc/dtc-xen/dtc-xen.conf or use a broadcast parameter" > /dev/stderr ; exit 1
 			fi
-			PARAM="${PARAM},${NETMASK},${BROADCAST}"
+			PARAM="${PARAM},${BROADCAST}"
 		fi
 		if [ "${NUM_NIC}" = 0 ] ; then
+			ALL_IPADDRS="${ALL_IPADDRS} "`echo ${PARAM} | cut -d"," -f1`
+			FW_NICS_CMD="${FW_NICS_CMD} -nic ${PARAM}"
+			NICS=${PARAM}
+		else
 			ALL_IPADDRS=`echo ${PARAM} | cut -d"," -f1`
 			FW_NICS_CMD="-nic ${PARAM}"
 			NICS=$NICS"
 "${PARAM}
-		else
-			ALL_IPADDRS="${ALL_IPADDRS} "`echo ${PARAM} | cut -d"," -f1`
-			FW_NICS_CMD="${FW_NICS_CMD} -nic ${PARAM}"
-			NICS=${PARAM}
 		fi
 		NUM_NIC=$(( ${NUM_NIC} + 1 ))
 		shift
@@ -608,8 +609,8 @@ else
 	echo "kernel = \"${KERNELPATH}\"" > /etc/xen/${VPSNAME}
 
 	# Set a initrd image if configured
-	if ! [ -z "${INITRDNAME}" ] ; then
-		echo "ramdisk = \"/boot/${INITRDNAME}\"" >> /etc/xen/${VPSNAME}
+	if ! [ -z "${INITRDPATH}" ] ; then
+		echo "ramdisk = \"${INITRDPATH}\"" >> /etc/xen/${VPSNAME}
 	fi
 
 	# Set memory, domU name and vif
