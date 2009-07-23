@@ -44,7 +44,7 @@ debian_get_config () {
 # $2: value to configure in it
 replace_config_value () {
 	# Calculate the head and tail
-	LINE_NUM=`grep -n ${1}= /etc/dtc-xen/dtc-xen.conf | cut -d":" -f1`
+	LINE_NUM=`grep -n ${1}= /etc/dtc-xen/dtc-xen.conf | tail -n 1 | cut -d":" -f1`
 	NUM_LINES=`cat /etc/dtc-xen/dtc-xen.conf | wc -l`
 	HEAD=$((${LINE_NUM} - 1 ))
 	TAIL=$((${NUM_LINES} - ${LINE_NUM} ))
