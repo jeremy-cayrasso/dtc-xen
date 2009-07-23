@@ -27,11 +27,11 @@ else
 	fi
 fi
 
-if grep -q "/bin/dtc-xen_userconsole" /etc/shells ; then
-	echo "/etc/shells already knows /bin/dtc-xen_userconsole"
+if grep -q "/usr/bin/dtc-xen_userconsole" /etc/shells ; then
+	echo "/etc/shells already knows /usr/bin/dtc-xen_userconsole"
 else
 	echo "Adding /bin/dtc-xen_userconsole to /etc/shells"
-	echo "/bin/dtc-xen_userconsole" >>/etc/shells
+	echo "/usr/bin/dtc-xen_userconsole" >>/etc/shells
 fi
 
 FOUNDED_ARCH=`uname -m`
