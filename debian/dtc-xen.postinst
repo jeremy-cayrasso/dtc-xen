@@ -71,7 +71,7 @@ write_debian_config_files () {
 	if [ -f "/boot/initrd.img-${conf_linux_kernel_name}" ] ; then
 		replace_config_value INITRDPATH "/boot/initrd.img-${conf_linux_kernel_name}"
 	fi
-	replace_config_value cert_passphrase ${conf_ssl_passphrase}
+	replace_config_value cert_passphrase ${cert_passphrase}
 }
 
 create_ssl_cert () {
@@ -83,7 +83,7 @@ create_ssl_cert () {
 	if [ -e ${DTCXEN_ETCPATH}/dtc-xen.conf ] ; then
 		. ${DTCXEN_ETCPATH}/dtc-xen.conf
 	fi
-	if [ -z ${cert_passphrase} ] ; then
+	if [ -z "${cert_passphrase}" ] ; then
 		cert_passphrase=`dd if=/dev/random bs=64 count=1 2>|/dev/null | md5sum | cut -d' ' -f1`
 	fi
 
@@ -91,7 +91,7 @@ create_ssl_cert () {
 	echoIfVerbose "---> Generating SSL certs for the SOAP python server"
 	rm -f $DTCXEN_ETCPATH/privkey.pem $DTCXEN_ETCPATH/dtc-xen.cert.csr $DTCXEN_ETCPATH/dtc-xen.cert.cert $DTCXEN_ETCPATH/dtc-xen.cert.key
 	CERTPASS_TMP_FILE=`${MKTEMP} certfilepass.XXXXXX`  || exit 1
-	echo $conf_ssl_passphrase >$CERTPASS_TMP_FILE
+	echo $cert_passphrase >$CERTPASS_TMP_FILE
 	OLD_UMASK=`umask`
 	umask 077
 	( echo "US"; echo "the-state"; echo "My-ocation"; echo "GPLHost"; echo "No-unit"; echo $conf_soap_hostname;

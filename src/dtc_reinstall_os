@@ -388,7 +388,7 @@ fi
 # Modify an eventual wrong old config
 mkdir -p "${XEN_USER_HOME}/xen${VPSNUM}/.ssh"
 chown -R xen${VPSNUM}:${XENUSERS} "${XEN_USER_HOME}/xen${VPSNUM}"
-usermod -d "${XEN_USER_HOME}/${1}" -g ${XENUSERS} -s /bin/dtc-xen_userconsole ${1}
+usermod -d "${XEN_USER_HOME}/${1}" -g ${XENUSERS} -s /usr/bin/dtc-xen_userconsole ${1}
 
 ######################################
 ### REDIRECTION OF STANDARD OUTPUT ###

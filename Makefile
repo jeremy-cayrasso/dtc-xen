@@ -47,7 +47,7 @@ clean:
 	rm $(DESTDIR)$(USRSBIN_DIR)/dtc-xen_finish_install
 
 # The utilities used by the soap server
-	rm $(DESTDIR)/bin/dtc-xen_userconsole
+	rm $(DESTDIR)/usr/bin/dtc-xen_userconsole
 	for i in $(SBIN_SH_SCRIPTS) ; do rm $(DESTDIR)$(USRSBIN_DIR)/$$i ; done
 	for i in $(BIN_SH_SCRIPTS) ; do rm $(DESTDIR)$(USRBIN_DIR)/$$i ; done
 
@@ -77,7 +77,7 @@ install:
 	for i in $(THIRD_PARTY) ; do $(INSTALL) -m 0755 3rdparty/$$i $(DESTDIR)$(SHARE_DIR)/dtc-xen/$$i ; done
 
 # The utilities used by the soap server
-	$(INSTALL) -m 0755 src/dtc-xen_userconsole $(DESTDIR)/bin/dtc-xen_userconsole
+	$(INSTALL) -m 0755 src/dtc-xen_userconsole $(DESTDIR)/usr/bin/dtc-xen_userconsole
 
 # DTC autodeploy script
 	$(INSTALL) -m 0755 src/dtc-panel_autodeploy.sh $(DESTDIR)$(SHARE_DIR)/dtc-xen/dtc-panel_autodeploy.sh
