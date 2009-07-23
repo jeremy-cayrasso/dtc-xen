@@ -71,6 +71,7 @@ write_debian_config_files () {
 	if [ -f "/boot/initrd.img-${conf_linux_kernel_name}" ] ; then
 		replace_config_value INITRDPATH "/boot/initrd.img-${conf_linux_kernel_name}"
 	fi
+	replace_config_value cert_passphrase ${conf_ssl_passphrase}
 }
 
 create_ssl_cert () {
@@ -78,50 +79,28 @@ create_ssl_cert () {
 	CWD=`pwd`
 	cd $DTCXEN_ETCPATH
 
-	# Check if all the files of the cert are present
-	TEST=false
-	if [ ! -e $DTCXEN_ETCPATH/privkey.pem ] ; then
-		TEST=true
-	fi
-	if [ ! -e $DTCXEN_ETCPATH/dtc-xen.cert.csr ] ; then
-		TEST=true
-	fi
-	if [ ! -e $DTCXEN_ETCPATH/dtc-xen.cert.cert ] ; then
-		 TEST=true
-	fi
-	if [ ! -e $DTCXEN_ETCPATH/dtc-xen.cert.key ] ; then
-		TEST=true
-	fi
-
 	# Check if we have an old passphrase stored!
-	if [ -e ${DTCXEN_ETCPATH}/soap.conf ] ; then
-		conf_ssl_passphrase=`grep soap_server_pass_phrase ${DTCXEN_ETCPATH}/soap.conf | cut -d"=" -f 2`
-		if [ -z ""$conf_ssl_passphrase ] ; then
-			echoIfVerbose "Detected empty password: regenerating it!"
-			conf_ssl_passphrase=`dd if=/dev/random bs=64 count=1 2>|/dev/null | md5sum | cut -d' ' -f1`
-		fi
-		TEST=true
-	else
-		conf_ssl_passphrase=`dd if=/dev/random bs=64 count=1 2>|/dev/null | md5sum | cut -d' ' -f1`
+	if [ -e ${DTCXEN_ETCPATH}/dtc-xen.conf ] ; then
+		. ${DTCXEN_ETCPATH}/dtc-xen.conf
+	fi
+	if [ -z ${cert_passphrase} ] ; then
+		cert_passphrase=`dd if=/dev/random bs=64 count=1 2>|/dev/null | md5sum | cut -d' ' -f1`
 	fi
 
-	# If one is missing, just regenerate the cert from scratch !
-	if [ ${TEST} = "true" ] ; then
-		# If the config file exist, read the passphrase from the file
-		echoIfVerbose "---> Generating SSL certs for the SOAP python server"
-		rm -f $DTCXEN_ETCPATH/privkey.pem $DTCXEN_ETCPATH/dtc-xen.cert.csr $DTCXEN_ETCPATH/dtc-xen.cert.cert $DTCXEN_ETCPATH/dtc-xen.cert.key
-		CERTPASS_TMP_FILE=`${MKTEMP} certfilepass.XXXXXX`  || exit 1
-		echo $conf_ssl_passphrase >$CERTPASS_TMP_FILE
-		OLD_UMASK=`umask`
-		umask 077
-		( echo "US"; echo "the-state"; echo "My-ocation"; echo "GPLHost"; echo "No-unit"; echo $conf_soap_hostname;
-		echo "webmaster@"$conf_soap_hostname; echo "challenge pass";
-		echo $conf_cert_organization; ) | $OPENSSL req -passout file:$CERTPASS_TMP_FILE -new > $DTCXEN_ETCPATH/dtc-xen.cert.csr
-		$OPENSSL rsa -passin file:$CERTPASS_TMP_FILE -in $DTCXEN_ETCPATH/privkey.pem -out $DTCXEN_ETCPATH/dtc-xen.cert.key
-		$OPENSSL x509 -in $DTCXEN_ETCPATH/dtc-xen.cert.csr -out $DTCXEN_ETCPATH/dtc-xen.cert.cert -req -signkey $DTCXEN_ETCPATH/dtc-xen.cert.key -days 3650
-		umask $OLD_UMASK
-		rm $CERTPASS_TMP_FILE
-	fi
+	# If the config file exist, read the passphrase from the file
+	echoIfVerbose "---> Generating SSL certs for the SOAP python server"
+	rm -f $DTCXEN_ETCPATH/privkey.pem $DTCXEN_ETCPATH/dtc-xen.cert.csr $DTCXEN_ETCPATH/dtc-xen.cert.cert $DTCXEN_ETCPATH/dtc-xen.cert.key
+	CERTPASS_TMP_FILE=`${MKTEMP} certfilepass.XXXXXX`  || exit 1
+	echo $conf_ssl_passphrase >$CERTPASS_TMP_FILE
+	OLD_UMASK=`umask`
+	umask 077
+	( echo "US"; echo "the-state"; echo "My-ocation"; echo "GPLHost"; echo "No-unit"; echo $conf_soap_hostname;
+	echo "webmaster@"$conf_soap_hostname; echo "challenge pass";
+	echo $conf_cert_organization; ) | $OPENSSL req -passout file:$CERTPASS_TMP_FILE -new > $DTCXEN_ETCPATH/dtc-xen.cert.csr
+	$OPENSSL rsa -passin file:$CERTPASS_TMP_FILE -in $DTCXEN_ETCPATH/privkey.pem -out $DTCXEN_ETCPATH/dtc-xen.cert.key
+	$OPENSSL x509 -in $DTCXEN_ETCPATH/dtc-xen.cert.csr -out $DTCXEN_ETCPATH/dtc-xen.cert.cert -req -signkey $DTCXEN_ETCPATH/dtc-xen.cert.key -days 3650
+	umask $OLD_UMASK
+	rm $CERTPASS_TMP_FILE
 	cd $CWD
 }
 
