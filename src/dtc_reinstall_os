@@ -69,6 +69,11 @@ VNC_PASSWORD=`dd if=/dev/random bs=64 count=1 2>|/dev/null | md5sum | cut -d' ' 
 for i in $@ ; do
 #	echo "Found option: ${1} ${2}"
 	case "${1}" in
+	"--short-circuit")
+		# This one is for debug purposes, do not use...
+		SHORT_CIRCUIT="yes"
+		shift
+		;;
 	"-vpsid")
 		if [ -z "${2}" ] ; then echo "Parameter for option -vpsid is missing" > /dev/stderr ; DO_EXIT="yes" ; fi
 		VPSNUM="${2}"
@@ -430,8 +435,12 @@ else
 
 	$MKDIR -p ${VPSGLOBPATH}/${VPSNUM}
 	if [ "$IMAGE_TYPE" = "lvm" ]; then
-		$MKFS -q /dev/${LVMNAME}/${VPSNAME}
-		$MKSWAP /dev/${LVMNAME}/${VPSNAME}swap
+		if [ -z "${SHORT_CIRCUIT}" ] ; then
+			$MKFS -q /dev/${LVMNAME}/${VPSNAME}
+			$MKSWAP /dev/${LVMNAME}/${VPSNAME}swap
+		else
+			echo "Not doing MKFS: debuging..."
+		fi
 
 		if grep ${VPSNAME} /etc/fstab >/dev/null ; then
 			echo "LV already exists in fstab: skipping"
@@ -479,15 +488,23 @@ CENTOS_DIR=`ls -d /usr/src/centos* 2> /dev/null | tr ' ' '\n' | sort -r | head -
 if [ "$DISTRO" = "xenhvm" -o "$DISTRO" = "netbsd" ] ; then
 	echo "There's nothing to bootstrap, as you will use the provided distribution installer in this case."
 elif [ "$DISTRO" = "centos" ] ; then
-	/usr/sbin/dtc_install_centos /var/lib/dtc-xen/yum "$VPSGLOBPATH/$VPSNUM"
+	if [ -z "${SHORT_CIRCUIT}" ] ; then
+		/usr/sbin/dtc_install_centos /var/lib/dtc-xen/yum "$VPSGLOBPATH/$VPSNUM"
+	else
+		echo "Not bootstraping: debuging..."
+	fi
 elif [ "$DISTRO" = "debian" -o "$DISTRO" = "debian-dtc" ] ; then
 	if [ ${DEBIAN_BINARCH} = "i386" ] ; then
 		ADD_LIBC="libc6-xen,"
 	else
 		ADD_LIBC=""
 	fi
-	echo $DEBOOTSTRAP --verbose --include=${ADD_LIBC}module-init-tools,locales,udev,joe,screen --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
-	$DEBOOTSTRAP --verbose --include=${ADD_LIBC}module-init-tools,locales,udev,joe,screen --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS} || debret=$?
+	if [ -z "${SHORT_CIRCUIT}" ] ; then
+		echo $DEBOOTSTRAP --verbose --include=${ADD_LIBC}module-init-tools,locales,udev,joe,screen --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS}
+		$DEBOOTSTRAP --verbose --include=${ADD_LIBC}module-init-tools,locales,udev,joe,screen --arch ${DEBIAN_BINARCH} ${DEBIAN_RELEASE} ${VPSGLOBPATH}/${VPSNUM} ${DEBIAN_REPOS} || debret=$?
+	else
+		echo "Not bootstraping: debuging..."
+	fi
 	if [ "$debret" != "" ]; then
 		echo "Failed to install $DISTRO via bootstrap!!"
 		exit $debret
