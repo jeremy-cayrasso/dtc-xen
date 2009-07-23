@@ -11,15 +11,10 @@ if [ -z "${NICS}" ] ; then
 		N_IP=`echo ${i} | cut -s -d"," -f1`
 		N_MASK=`echo ${i} | cut -s -d"," -f2`
 		N_BCAST=`echo ${i} | cut -s -d"," -f3`
-		N_NET=`ipcalc -n ${N_IP} ${N_MASK}`
-		TMP=`mktemp`
-		echo $N_NET >$TMP
-		if grep "=" $TMP ; then
-			N_NET=`echo $N_NET | cut -d"=" -f2`
-		else
-			N_NET=`echo $N_NET | grep Netmask | awk '{print $2}'`
+		N_NET=`ipcalc -n ${N_IP} ${N_MASK} | grep Network | awk '{print $2}' | cut -d"/" -f1`
+		if [ -z "${N_NET}" ] ; then
+			N_NET=`ipcalc -n ${N_IP} ${N_MASK} | cut -d"=" -f2`
 		fi
-		rm -f $TMP
 		if [ ${N} = 0 ] ; then
 			DEVICE="eth0"
 		else

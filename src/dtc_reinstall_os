@@ -253,7 +253,7 @@ if [ -z "${INITRDPATH}" ] ; then
 fi
 
 if [ -z "${DNS}" ] ; then
-	DNS=`grep "nameserver" /etc/resolv.conf | head -n 1`
+	DNS=`grep "nameserver" /etc/resolv.conf | head -n 1 | cut -d" " -f2`
 	echo "WARNING! No dns defined, guessed: ${DNS}"
 fi
 
