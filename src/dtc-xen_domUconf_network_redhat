@@ -5,7 +5,7 @@
 ETC="${VPS_PATH}/etc"
 
 # Configure the eth0
-if [ -z "${NICS}" ] ; then
+if [ ! -z "${NICS}" ] ; then
 	N=0
 	for i in $NICS ; do
 		N_IP=`echo ${i} | cut -s -d"," -f1`
@@ -28,6 +28,7 @@ NETMASK=${N_MASK}
 NETWORK=${N_NET}
 ONBOOT=yes
 " >${ETC}/sysconfig/network-scripts/ifcfg-${DEVICE}
+		N=$(( ${N} + 1 ))
 	done
 	# Set the gateway file
 	echo "NETWORKING=yes
