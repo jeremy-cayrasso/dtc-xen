@@ -75,8 +75,6 @@ make install DESTDIR=%{buildroot} DISTRO=centos SYSCONFIG_DIR=%{_sysconfdir} USR
 	MAN_DIR=%{_mandir} SHARE_DIR=%{_datadir} VARLIB_DIR=%{_localstatedir}/lib SHARE_DOC_DIR=%{_defaultdocdir} USRBIN_DIR=%{_bindir}
 
 sed -i 's/root adm/root root/g' %{buildroot}%{_sysconfdir}/logrotate.d/dtc-xen
-mkdir -p %{buildroot}%{_bindir}/
-mv %{buildroot}/bin/*userconsole* %{buildroot}%{_bindir}/
 sed -i 's|^provisioning_mount_point.*|provisioning_mount_point=%{_localstatedir}/lib/dtc-xen/mnt|g' %{buildroot}%{_sysconfdir}/dtc-xen/dtc-xen.conf
 touch %{buildroot}%{_sysconfdir}/dtc-xen/htpasswd
 chmod 600 %{buildroot}%{_sysconfdir}/dtc-xen/htpasswd
