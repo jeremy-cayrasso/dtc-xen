@@ -511,7 +511,7 @@ elif [ "$DISTRO" = "debian" -o "$DISTRO" = "debian-dtc" ] ; then
 	fi
 else
 	if [ -e /usr/share/dtc-xen-os/${DISTRO}/install_os ] ; then
-		/usr/share/dtc-xen-os/${DISTRO}/install_os ${VPSGLOBPATH} ${VPSNUM}
+		/usr/share/dtc-xen-os/${DISTRO}/install_os ${FW_PARAMS}
 	else
 		echo "Currently, you will have to manually install your distro... sorry :)"
 		echo "The filesystem is mounted on ${VPSGLOBPATH}/${VPSNUM}"
