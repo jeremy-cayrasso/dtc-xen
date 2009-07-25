@@ -102,7 +102,7 @@ install:
 # Our default configuration file
 	$(INSTALL) -m 0600 etc/dtc-xen/dtc-xen.conf $(DESTDIR)$(SYSCONFIG_DIR)/dtc-xen/dtc-xen.conf
 	if [ ! $(DISTRO) = "debian" ] ; then \
-		$(INSTALL) -m 0644 etc/dtc-xen/sources.list $(DESTDIR)$(SYSCONFIG_DIR)/dtc-xen/sources.list \
+		$(INSTALL) -m 0644 etc/dtc-xen/sources.list $(DESTDIR)$(SYSCONFIG_DIR)/dtc-xen/sources.list ;\
 		$(INSTALL) -m 0644 etc/dtc-xen/inittab $(DESTDIR)$(SYSCONFIG_DIR)/dtc-xen/inittab ; fi
 
 # the runtime directories
