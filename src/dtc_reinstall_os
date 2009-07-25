@@ -490,6 +490,10 @@ if [ "$DISTRO" = "xenhvm" -o "$DISTRO" = "netbsd" ] ; then
 elif [ "$DISTRO" = "centos" ] ; then
 	if [ -z "${SHORT_CIRCUIT}" ] ; then
 		/usr/sbin/dtc_install_centos /var/lib/dtc-xen/yum "$VPSGLOBPATH/$VPSNUM"
+		# Copy the CentOS inittab if dom0 is CentOS as well, otherwise no console...
+		if [ -f /etc/redhat-release ] ; then
+			cp /etc/dtc-xen/inttab $VPSGLOBPATH/$VPSNUM/etc
+		fi
 	else
 		echo "Not bootstraping: debuging..."
 	fi
