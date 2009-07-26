@@ -576,6 +576,9 @@ if [ ! -z "${MAC_ADDR}" ] ; then
 else
 	XEN_WRITE_MAC=""
 fi
+if [ -f /etc/redhat-release ] ; then
+	BRIDGE_DIRECTIVE=", bridge=xenbr0"
+fi
 if [ "$DISTRO" = "xenhvm" ] ; then
 	echo -n "kernel = \"/usr/lib/xen/boot/hvmloader\"
 builder = 'hvm'
@@ -585,7 +588,7 @@ vcpus=1
 #pae=0
 #acpi=0
 #apic=0
-vif = [ 'type=ioemu, ${XEN_WRITE_MAC}ip=${ALL_IPADDRS}' ]
+vif = [ 'type=ioemu, ${XEN_WRITE_MAC}ip=${ALL_IPADDRS}${BRIDGE_DIRECTIVE}' ]
 disk=[ 'phy:/dev/mapper/${LVMNAME}-xen${VPSNUM},ioemu:hda,w'" >/etc/xen/${VPSNAME}
 	# Add all *.iso files to the config file
 	HDDLIST="bcdefghijklmnopqrstuvwxyz"
@@ -616,7 +619,7 @@ elif [ "$DISTRO" = "netbsd" ] ; then
 	echo "kernel = \"${bsd_kernel_path}\"
 memory = ${VPSMEM}
 name = \"${VPSNAME}\"
-vif = [ '${XEN_WRITE_MAC}ip=${ALL_IPADDRS}' ]
+vif = [ '${XEN_WRITE_MAC}ip=${ALL_IPADDRS}${BRIDGE_DIRECTIVE}' ]
 " >/etc/xen/${VPSNAME}
 	if [ "$IMAGE_TYPE" = "lvm" ]; then
 		echo "disk = [ 'phy:/dev/mapper/${LVMNAME}-xen${VPSNUM},0x3,w' ]
@@ -638,7 +641,7 @@ else
 	echo "memory = ${VPSMEM}
 name = \"${VPSNAME}\"
 #cpu = -1   # leave to Xen to pick
-vif = [ '${XEN_WRITE_MAC}ip=${ALL_IPADDRS}' ]
+vif = [ '${XEN_WRITE_MAC}ip=${ALL_IPADDRS}${BRIDGE_DIRECTIVE}' ]
 " >> /etc/xen/${VPSNAME}
 
 	# Set the HDDs
