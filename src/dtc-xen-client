@@ -12,4 +12,19 @@ func = getattr(server,method)
 if params: result = func(*params)
 else:      result = func()
 
-print result
+
+def print_recursive(r,depth=0):
+	prefix = "    " * depth
+	if type(r) in (list,SOAPpy.Types.arrayType,SOAPpy.Types.typedArrayType):
+		if type(r) == SOAPpy.Types.arrayType: ty = "array"
+		elif type(r) == SOAPpy.Types.typedArrayType: ty = "typedArray"
+		elif type(r) == list: ty = "list"
+		else: assert False
+		print prefix + "%s: ["%ty
+		for e in r:
+			print_recursive(e,depth+1)
+		print prefix + "]"
+	else:
+		print prefix, type(r), repr(r)
+
+print_recursive(result)

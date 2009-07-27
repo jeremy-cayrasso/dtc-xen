@@ -744,12 +744,18 @@ def getVPSState(vpsname):
 		except IOError,e: # FIXME WHY is this trapped?
 			if e.errno == 2: logging.debug("No semaphore (fsck/mkos): continuing")
 			else: raise
-		try:
-			try: info = server.xend.domain(vpsname)
-			except Exception: info = xen.xm.main.server.xend.domain(vpsname)
-			return info
-		except Exception:
-			return "Not running"
+		output,error = subprocess.Popen(["/usr/sbin/xm","list",vpsname],
+			stdout=subprocess.PIPE,
+			stderr=subprocess.PIPE).communicate()
+		if error: return "Not running"
+		values = [ s.strip() for s in output.splitlines() ][-1].split()
+		names = ["id","domid","maxmem","vcpus","state","cpuseconds"]
+		info = dict( zip(names,values) )
+		for val in "maxmem vcpus domid".split(): info[val] = int(info[val])
+		for val in "cpuseconds".split(): info[val] = float(info[val])
+		thelist = ["domain"]
+		thelist.extend( [ i for i in info.items() ] )
+		return thelist
 	else:
 		return "NOTOK"
 
