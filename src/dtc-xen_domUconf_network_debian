@@ -24,7 +24,7 @@ iface lo inet loopback
 			DEVICE="eth0:${N}"
 		fi
 		echo "auto ${DEVICE}
-iface eth0 inet static
+iface ${DEVICE} inet static
 	address ${N_IP}
 	netmask ${N_MASK}
 	network ${N_NET}
