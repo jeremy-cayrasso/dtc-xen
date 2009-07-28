@@ -104,12 +104,12 @@ for i in $@ ; do
 			PARAM="${PARAM},${BROADCAST}"
 		fi
 		if [ "${NUM_NIC}" = 0 ] ; then
-			ALL_IPADDRS="${ALL_IPADDRS} "`echo ${PARAM} | cut -d"," -f1`
-			FW_NICS_CMD="${FW_NICS_CMD} -nic ${PARAM}"
-			NICS=${PARAM}
-		else
 			ALL_IPADDRS=`echo ${PARAM} | cut -d"," -f1`
 			FW_NICS_CMD="-nic ${PARAM}"
+			NICS=${PARAM}
+		else
+			ALL_IPADDRS="${ALL_IPADDRS} "`echo ${PARAM} | cut -d"," -f1`
+			FW_NICS_CMD="${FW_NICS_CMD} -nic ${PARAM}"
 			NICS=$NICS"
 "${PARAM}
 		fi
