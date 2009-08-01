@@ -419,8 +419,6 @@ fi
 ############################
 ### FORMAT THE PARTITION ###
 ############################
-
-echo "Seleted ${VPSNAME}: ${VPSHDD}MB HDD and ${VPSMEM}MB RAM"
 if [ "${DISTRO}" = "xenhvm" ] ; then
 	echo "Not formating disks, xen HVM will use emulated hard drives."
 elif [ "$DISTRO" = "netbsd" ] ; then
