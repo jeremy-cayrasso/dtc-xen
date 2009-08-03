@@ -1,0 +1,792 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:tns="###SERVER_ADDRESS###" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" targetNamespace="###SERVER_ADDRESS###">
+<types>
+<s:schema elementFormDefault="qualified" targetNamespace="###SERVER_ADDRESS###">
+<s:element name="testVPSServer">
+<s:complexType>
+
+</s:complexType>
+</s:element>
+<s:element name="testVPSServerResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="testVPSServer" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="startVPS">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="vpsname" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="startVPSResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="startVPS" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="destroyVPS">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="vpsname" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="destroyVPSResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="destroyVPS" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="killVPS">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="vpsname" type="s:string" />
+<s:element minOccurs="1" maxOccurs="1" name="imagetype" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="killVPSResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="killVPS" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="shutdownVPS">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="vpsname" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="shutdownVPSResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="shutdownVPS" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="listStartedVPS">
+<s:complexType>
+
+</s:complexType>
+</s:element>
+<s:element name="listStartedVPSResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="listStartedVPS" type="tns:ArrayOfstring" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="getVPSState">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="vpsname" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="getVPSStateResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="getVPSState" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="changeVPSxmPassword">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="vpsname" type="s:string" />
+<s:element minOccurs="1" maxOccurs="1" name="password" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="changeVPSxmPasswordResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="changeVPSxmPassword" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="changeVPSsoapPassword">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="vpsname" type="s:string" />
+<s:element minOccurs="1" maxOccurs="1" name="password" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="changeVPSsoapPasswordResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="changeVPSsoapPassword" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="changeVPSsshKey">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="vpsname" type="s:string" />
+<s:element minOccurs="1" maxOccurs="1" name="keystring" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="changeVPSsshKeyResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="changeVPSsshKey" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="reportInstalledIso">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="vpsname" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="reportInstalledIsoResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="reportInstalledIso" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="reinstallVPSos">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="vpsname" type="s:string" />
+<s:element minOccurs="1" maxOccurs="1" name="ostype" type="s:string" />
+<s:element minOccurs="1" maxOccurs="1" name="hddsize" type="s:string" />
+<s:element minOccurs="1" maxOccurs="1" name="ramsize" type="s:string" />
+<s:element minOccurs="1" maxOccurs="1" name="ipaddr" type="s:string" />
+<s:element minOccurs="1" maxOccurs="1" name="password" type="s:string" />
+<s:element minOccurs="1" maxOccurs="1" name="imagetype" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="reinstallVPSosResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="reinstallVPSos" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="fsckVPSpartition">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="vpsname" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="fsckVPSpartitionResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="fsckVPSpartition" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="changeBSDkernel">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="vpsname" type="s:string" />
+<s:element minOccurs="1" maxOccurs="1" name="ramsize" type="s:string" />
+<s:element minOccurs="1" maxOccurs="1" name="kerneltype" type="s:string" />
+<s:element minOccurs="1" maxOccurs="1" name="allipaddrs" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="changeBSDkernelResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="changeBSDkernel" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="writeXenPVconf">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="vpsname" type="s:string" />
+<s:element minOccurs="1" maxOccurs="1" name="ramsize" type="s:string" />
+<s:element minOccurs="1" maxOccurs="1" name="allipaddrs" type="s:string" />
+<s:element minOccurs="1" maxOccurs="1" name="vncpassword" type="s:string" />
+<s:element minOccurs="1" maxOccurs="1" name="howtoboot" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="writeXenPVconfResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="writeXenPVconf" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="setupLVMDisks">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="vpsname" type="s:string" />
+<s:element minOccurs="1" maxOccurs="1" name="hddsize" type="s:string" />
+<s:element minOccurs="1" maxOccurs="1" name="swapsize" type="s:string" />
+<s:element minOccurs="1" maxOccurs="1" name="imagetype" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="setupLVMDisksResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="setupLVMDisks" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="getCollectedPerformanceData">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="count" type="s:int" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="getCollectedPerformanceDataResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="getCollectedPerformanceData" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="getNetworkUsage">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="vpsname" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="getNetworkUsageResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="getNetworkUsage" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="getIOUsage">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="vpsname" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="getIOUsageResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="getIOUsage" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="getCPUUsage">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="vpsname" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="getCPUUsageResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="getCPUUsage" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="getInstallableOS">
+<s:complexType>
+
+</s:complexType>
+</s:element>
+<s:element name="getInstallableOSResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="getInstallableOS" type="tns:ArrayOfstring" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="getVPSInstallLog">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="vpsname" type="s:string" />
+<s:element minOccurs="1" maxOccurs="1" name="numlines" type="s:int" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="getVPSInstallLogResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="getVPSInstallLog" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:element name="getInstallableAPP">
+<s:complexType>
+
+</s:complexType>
+</s:element>
+<s:element name="getInstallableAPPResponse">
+<s:complexType>
+<s:sequence>
+<s:element minOccurs="1" maxOccurs="1" name="getInstallableAPP" type="tns:ArrayOfstring" />
+</s:sequence>
+</s:complexType>
+</s:element>
+<s:complexType name="ArrayOfstring">
+<s:sequence>
+<s:element minOccurs="0" maxOccurs="unbounded" name="string" type="s:string" />
+</s:sequence>
+</s:complexType>
+</s:schema></types><message name="testVPSServerSoapIn">
+<part name="parameters" element="tns:testVPSServer" />
+</message>
+<message name="testVPSServerSoapOut">
+<part name="parameters" element="tns:testVPSServerResponse" />
+</message>
+<message name="startVPSSoapIn">
+<part name="parameters" element="tns:startVPS" />
+</message>
+<message name="startVPSSoapOut">
+<part name="parameters" element="tns:startVPSResponse" />
+</message>
+<message name="destroyVPSSoapIn">
+<part name="parameters" element="tns:destroyVPS" />
+</message>
+<message name="destroyVPSSoapOut">
+<part name="parameters" element="tns:destroyVPSResponse" />
+</message>
+<message name="killVPSSoapIn">
+<part name="parameters" element="tns:killVPS" />
+</message>
+<message name="killVPSSoapOut">
+<part name="parameters" element="tns:killVPSResponse" />
+</message>
+<message name="shutdownVPSSoapIn">
+<part name="parameters" element="tns:shutdownVPS" />
+</message>
+<message name="shutdownVPSSoapOut">
+<part name="parameters" element="tns:shutdownVPSResponse" />
+</message>
+<message name="listStartedVPSSoapIn">
+<part name="parameters" element="tns:listStartedVPS" />
+</message>
+<message name="listStartedVPSSoapOut">
+<part name="parameters" element="tns:listStartedVPSResponse" />
+</message>
+<message name="getVPSStateSoapIn">
+<part name="parameters" element="tns:getVPSState" />
+</message>
+<message name="getVPSStateSoapOut">
+<part name="parameters" element="tns:getVPSStateResponse" />
+</message>
+<message name="changeVPSxmPasswordSoapIn">
+<part name="parameters" element="tns:changeVPSxmPassword" />
+</message>
+<message name="changeVPSxmPasswordSoapOut">
+<part name="parameters" element="tns:changeVPSxmPasswordResponse" />
+</message>
+<message name="changeVPSsoapPasswordSoapIn">
+<part name="parameters" element="tns:changeVPSsoapPassword" />
+</message>
+<message name="changeVPSsoapPasswordSoapOut">
+<part name="parameters" element="tns:changeVPSsoapPasswordResponse" />
+</message>
+<message name="changeVPSsshKeySoapIn">
+<part name="parameters" element="tns:changeVPSsshKey" />
+</message>
+<message name="changeVPSsshKeySoapOut">
+<part name="parameters" element="tns:changeVPSsshKeyResponse" />
+</message>
+<message name="reportInstalledIsoSoapIn">
+<part name="parameters" element="tns:reportInstalledIso" />
+</message>
+<message name="reportInstalledIsoSoapOut">
+<part name="parameters" element="tns:reportInstalledIsoResponse" />
+</message>
+<message name="reinstallVPSosSoapIn">
+<part name="parameters" element="tns:reinstallVPSos" />
+</message>
+<message name="reinstallVPSosSoapOut">
+<part name="parameters" element="tns:reinstallVPSosResponse" />
+</message>
+<message name="fsckVPSpartitionSoapIn">
+<part name="parameters" element="tns:fsckVPSpartition" />
+</message>
+<message name="fsckVPSpartitionSoapOut">
+<part name="parameters" element="tns:fsckVPSpartitionResponse" />
+</message>
+<message name="changeBSDkernelSoapIn">
+<part name="parameters" element="tns:changeBSDkernel" />
+</message>
+<message name="changeBSDkernelSoapOut">
+<part name="parameters" element="tns:changeBSDkernelResponse" />
+</message>
+<message name="writeXenPVconfSoapIn">
+<part name="parameters" element="tns:writeXenPVconf" />
+</message>
+<message name="writeXenPVconfSoapOut">
+<part name="parameters" element="tns:writeXenPVconfResponse" />
+</message>
+<message name="setupLVMDisksSoapIn">
+<part name="parameters" element="tns:setupLVMDisks" />
+</message>
+<message name="setupLVMDisksSoapOut">
+<part name="parameters" element="tns:setupLVMDisksResponse" />
+</message>
+<message name="getCollectedPerformanceDataSoapIn">
+<part name="parameters" element="tns:getCollectedPerformanceData" />
+</message>
+<message name="getCollectedPerformanceDataSoapOut">
+<part name="parameters" element="tns:getCollectedPerformanceDataResponse" />
+</message>
+<message name="getNetworkUsageSoapIn">
+<part name="parameters" element="tns:getNetworkUsage" />
+</message>
+<message name="getNetworkUsageSoapOut">
+<part name="parameters" element="tns:getNetworkUsageResponse" />
+</message>
+<message name="getIOUsageSoapIn">
+<part name="parameters" element="tns:getIOUsage" />
+</message>
+<message name="getIOUsageSoapOut">
+<part name="parameters" element="tns:getIOUsageResponse" />
+</message>
+<message name="getCPUUsageSoapIn">
+<part name="parameters" element="tns:getCPUUsage" />
+</message>
+<message name="getCPUUsageSoapOut">
+<part name="parameters" element="tns:getCPUUsageResponse" />
+</message>
+<message name="getInstallableOSSoapIn">
+<part name="parameters" element="tns:getInstallableOS" />
+</message>
+<message name="getInstallableOSSoapOut">
+<part name="parameters" element="tns:getInstallableOSResponse" />
+</message>
+<message name="getVPSInstallLogSoapIn">
+<part name="parameters" element="tns:getVPSInstallLog" />
+</message>
+<message name="getVPSInstallLogSoapOut">
+<part name="parameters" element="tns:getVPSInstallLogResponse" />
+</message>
+<message name="getInstallableAPPSoapIn">
+<part name="parameters" element="tns:getInstallableAPP" />
+</message>
+<message name="getInstallableAPPSoapOut">
+<part name="parameters" element="tns:getInstallableAPPResponse" />
+</message>
+<portType name="productionServiceSoap">
+<operation name="testVPSServer">
+<input message="tns:testVPSServerSoapIn" />
+<output message="tns:testVPSServerSoapOut" />
+</operation>
+<operation name="startVPS">
+<input message="tns:startVPSSoapIn" />
+<output message="tns:startVPSSoapOut" />
+</operation>
+<operation name="destroyVPS">
+<input message="tns:destroyVPSSoapIn" />
+<output message="tns:destroyVPSSoapOut" />
+</operation>
+<operation name="killVPS">
+<input message="tns:killVPSSoapIn" />
+<output message="tns:killVPSSoapOut" />
+</operation>
+<operation name="shutdownVPS">
+<input message="tns:shutdownVPSSoapIn" />
+<output message="tns:shutdownVPSSoapOut" />
+</operation>
+<operation name="listStartedVPS">
+<input message="tns:listStartedVPSSoapIn" />
+<output message="tns:listStartedVPSSoapOut" />
+</operation>
+<operation name="getVPSState">
+<input message="tns:getVPSStateSoapIn" />
+<output message="tns:getVPSStateSoapOut" />
+</operation>
+<operation name="changeVPSxmPassword">
+<input message="tns:changeVPSxmPasswordSoapIn" />
+<output message="tns:changeVPSxmPasswordSoapOut" />
+</operation>
+<operation name="changeVPSsoapPassword">
+<input message="tns:changeVPSsoapPasswordSoapIn" />
+<output message="tns:changeVPSsoapPasswordSoapOut" />
+</operation>
+<operation name="changeVPSsshKey">
+<input message="tns:changeVPSsshKeySoapIn" />
+<output message="tns:changeVPSsshKeySoapOut" />
+</operation>
+<operation name="reportInstalledIso">
+<input message="tns:reportInstalledIsoSoapIn" />
+<output message="tns:reportInstalledIsoSoapOut" />
+</operation>
+<operation name="reinstallVPSos">
+<input message="tns:reinstallVPSosSoapIn" />
+<output message="tns:reinstallVPSosSoapOut" />
+</operation>
+<operation name="fsckVPSpartition">
+<input message="tns:fsckVPSpartitionSoapIn" />
+<output message="tns:fsckVPSpartitionSoapOut" />
+</operation>
+<operation name="changeBSDkernel">
+<input message="tns:changeBSDkernelSoapIn" />
+<output message="tns:changeBSDkernelSoapOut" />
+</operation>
+<operation name="writeXenPVconf">
+<input message="tns:writeXenPVconfSoapIn" />
+<output message="tns:writeXenPVconfSoapOut" />
+</operation>
+<operation name="setupLVMDisks">
+<input message="tns:setupLVMDisksSoapIn" />
+<output message="tns:setupLVMDisksSoapOut" />
+</operation>
+<operation name="getCollectedPerformanceData">
+<input message="tns:getCollectedPerformanceDataSoapIn" />
+<output message="tns:getCollectedPerformanceDataSoapOut" />
+</operation>
+<operation name="getNetworkUsage">
+<input message="tns:getNetworkUsageSoapIn" />
+<output message="tns:getNetworkUsageSoapOut" />
+</operation>
+<operation name="getIOUsage">
+<input message="tns:getIOUsageSoapIn" />
+<output message="tns:getIOUsageSoapOut" />
+</operation>
+<operation name="getCPUUsage">
+<input message="tns:getCPUUsageSoapIn" />
+<output message="tns:getCPUUsageSoapOut" />
+</operation>
+<operation name="getInstallableOS">
+<input message="tns:getInstallableOSSoapIn" />
+<output message="tns:getInstallableOSSoapOut" />
+</operation>
+<operation name="getVPSInstallLog">
+<input message="tns:getVPSInstallLogSoapIn" />
+<output message="tns:getVPSInstallLogSoapOut" />
+</operation>
+<operation name="getInstallableAPP">
+<input message="tns:getInstallableAPPSoapIn" />
+<output message="tns:getInstallableAPPSoapOut" />
+</operation>
+</portType>
+<binding name="productionServiceSoap" type="tns:productionServiceSoap">
+<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
+<operation name="testVPSServer">
+<soap:operation soapAction="###SERVER_ADDRESS###/testVPSServer" style="document" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="startVPS">
+<soap:operation soapAction="###SERVER_ADDRESS###/startVPS" style="document" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="destroyVPS">
+<soap:operation soapAction="###SERVER_ADDRESS###/destroyVPS" style="document" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="killVPS">
+<soap:operation soapAction="###SERVER_ADDRESS###/killVPS" style="document" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="shutdownVPS">
+<soap:operation soapAction="###SERVER_ADDRESS###/shutdownVPS" style="document" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="listStartedVPS">
+<soap:operation soapAction="###SERVER_ADDRESS###/listStartedVPS" style="document" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="getVPSState">
+<soap:operation soapAction="###SERVER_ADDRESS###/getVPSState" style="document" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="changeVPSxmPassword">
+<soap:operation soapAction="###SERVER_ADDRESS###/changeVPSxmPassword" style="document" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="changeVPSsoapPassword">
+<soap:operation soapAction="###SERVER_ADDRESS###/changeVPSsoapPassword" style="document" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="changeVPSsshKey">
+<soap:operation soapAction="###SERVER_ADDRESS###/changeVPSsshKey" style="document" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="reportInstalledIso">
+<soap:operation soapAction="###SERVER_ADDRESS###/reportInstalledIso" style="document" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="reinstallVPSos">
+<soap:operation soapAction="###SERVER_ADDRESS###/reinstallVPSos" style="document" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="fsckVPSpartition">
+<soap:operation soapAction="###SERVER_ADDRESS###/fsckVPSpartition" style="document" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="changeBSDkernel">
+<soap:operation soapAction="###SERVER_ADDRESS###/changeBSDkernel" style="document" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="writeXenPVconf">
+<soap:operation soapAction="###SERVER_ADDRESS###/writeXenPVconf" style="document" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="setupLVMDisks">
+<soap:operation soapAction="###SERVER_ADDRESS###/setupLVMDisks" style="document" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="getCollectedPerformanceData">
+<soap:operation soapAction="###SERVER_ADDRESS###/getCollectedPerformanceData" style="document" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="getNetworkUsage">
+<soap:operation soapAction="###SERVER_ADDRESS###/getNetworkUsage" style="document" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="getIOUsage">
+<soap:operation soapAction="###SERVER_ADDRESS###/getIOUsage" style="document" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="getCPUUsage">
+<soap:operation soapAction="###SERVER_ADDRESS###/getCPUUsage" style="document" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="getInstallableOS">
+<soap:operation soapAction="###SERVER_ADDRESS###/getInstallableOS" style="document" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="getVPSInstallLog">
+<soap:operation soapAction="###SERVER_ADDRESS###/getVPSInstallLog" style="document" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+<operation name="getInstallableAPP">
+<soap:operation soapAction="###SERVER_ADDRESS###/getInstallableAPP" style="document" />
+<input>
+<soap:body use="literal" />
+</input>
+<output>
+<soap:body use="literal" />
+</output>
+</operation>
+</binding>
+<service name="productionService">
+<port name="productionServiceSoap" binding="tns:productionServiceSoap">
+<soap:address location="###SERVER_ADDRESS###" />
+</port>
+</service>
+</definitions>
