@@ -4,14 +4,19 @@
 
 NUM_NIC=0
 for i in $@ ; do
-        case "${1}" in
-        "-path")
-        	VPS_PATH="${2}"
-        	shift
-        	shift
-        	;;
-        "-vpsid")
-                VPSNUM="${2}"
+	case "${1}" in
+	"-path")
+		VPS_PATH="${2}"
+		shift
+		shift
+		;;
+	"--mac")
+		MAC_ADDR="${2}"
+		shift
+		shift
+		;;
+	"-vpsid")
+		VPSNUM="${2}"
                 shift
                 shift
                 ;;
@@ -78,8 +83,27 @@ for i in $@ ; do
 		shift
 		shift
 		;;
+	"--vnc-pass")
+		VNC_PASSWORD="${2}"
+		shift
+		shift
+		;;
+	"--boot-iso")
+		BOOT_ISO="${2}"
+		shift
+		shift
+		;;
 	esac
 done
 
+# Calculate the command line to forward between scripts
+HVM_PARMS=""
+if [ -z "${VNC_PASSWORD}" ] ; then
+	HVM_PARMS="--vnc-pass ${VNC_PASSWORD}"
+fi
+if [ -z "${BOOT_ISO}" ] ; then
+	HVM_PARMS="${HVM_PARMS} --boot-iso ${BOOT_ISO}"
+fi
+
 KERNEL_P="--kernel ${KERNELPATH} --kernel-release ${KERNEL_RELEASE} --kmod-path ${KMOD_PATH} --initrd ${INITRDPATH}"
-FW_PARAMS="-path ${VPS_PATH} -vpsid ${VPSNUM} --vps-fqdn ${VPS_FQDN} --vps-domain ${VPS_DOMAIN} --node-fqdn ${NODE_FQDN} ${FW_NICS_CMD} -dns ${DNS} -gw ${GATEWAY} ${KERNEL_P}"
+FW_PARAMS="-path ${VPS_PATH} -vpsid ${VPSNUM} --vps-fqdn ${VPS_FQDN} --vps-domain ${VPS_DOMAIN} --node-fqdn ${NODE_FQDN} ${FW_NICS_CMD} -dns ${DNS} -gw ${GATEWAY} ${KERNEL_P} ${HVM_PARMS}"

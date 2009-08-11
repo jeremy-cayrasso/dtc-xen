@@ -369,8 +369,16 @@ UMOUNT=/bin/umount
 DEBOOTSTRAP=/usr/sbin/debootstrap
 
 # We forward always this list of parameters to all scripts:
+HVM_PARMS=""
+if [ -z "${VNC_PASSWORD}" ] ; then
+	HVM_PARMS="--vnc-pass ${VNC_PASSWORD}"
+fi
+if [ -z "${BOOT_ISO}" ] ; then
+	HVM_PARMS="${HVM_PARMS} --boot-iso ${BOOT_ISO}"
+fi
+
 KERNEL_P="--kernel ${KERNELPATH} --kernel-release ${KERNEL_RELEASE} --kmod-path ${KMOD_PATH} --initrd ${INITRDPATH}"
-FW_PARAMS="-path ${VPSGLOBPATH}/${VPSNUM} -vpsid ${VPSNUM} --vps-fqdn ${VPS_FQDN} --vps-domain ${VPS_DOMAIN} --node-fqdn ${NODE_FQDN} ${FW_NICS_CMD} -dns ${DNS} -gw ${GATEWAY} ${KERNEL_P}"
+FW_PARAMS="-path ${VPSGLOBPATH}/${VPSNUM} -vpsid ${VPSNUM} --vps-fqdn ${VPS_FQDN} --vps-domain ${VPS_DOMAIN} --node-fqdn ${NODE_FQDN} ${FW_NICS_CMD} -dns ${DNS} -gw ${GATEWAY} ${KERNEL_P} ${HVM_PARMS}"
 
 #####################################################
 ### Check / creation of the DTC-Xen user / group ####
