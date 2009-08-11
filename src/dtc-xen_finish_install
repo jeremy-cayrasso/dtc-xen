@@ -10,10 +10,12 @@ else
 	echo "%xenusers       ALL= NOPASSWD: /usr/sbin/xm console xen*" >>/etc/sudoers
 fi
 
-chown root:xenusers /bin/dtc-xen_userconsole
-chmod -s /bin/dtc-xen_userconsole
+chown root:xenusers /usr/bin/dtc-xen_userconsole
+chmod -s /usr/bin/dtc-xen_userconsole
 
-mkdir -p /xen
+if ! [ -e /xen ] ; then
+	ln -s /var/lib/dtc-xen/mnt /xen
+fi
 
 if grep "AllowTcpForwarding no" /etc/ssh/sshd_config ; then
 	echo "Port forwarding seems to be disabled already!"
