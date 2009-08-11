@@ -37,10 +37,11 @@ if [ $# -lt 5 ]; then
 	echo "     [ --kernel-release <kernel-mods> ] : Path to the kernel modules folder" > /dev/stderr
 	echo "          [ --kmod-path <kernel-mods> ] : Path to the kernel modules folder" > /dev/stderr
 	echo "         [ --initrd <initrd-full-path ] : Path to the kernel initrd image to boot with" > /dev/stderr
+	echo "                         [ --vps-fqdn ] : Customizes the hostname of the VPS" > /dev/stderr
+	echo "                              [ --mac ] : MAC address of the VPS"
 	echo "Options specific to Xen HVM guests:" > /dev/stderr
 	echo "               [ --vnc-pass <VNCPASS> ] : VNC password for the physical console" > /dev/stderr
 	echo "              [ --boot-iso <file.iso> ] : CDROM device to boot on" > /dev/stderr
-	echo "                         [ --vps-fqdn ] : Customizes the hostname of the VPS" > /dev/stderr
 	echo "" > /dev/stderr
 	echo "-------------------------------------------------------------------------" > /dev/stderr
 	echo "Example1: $0 -v -vpsid 01 -ram 512 -nic 192.168.2.176,255.255.255.0,192.168.2.255 -pass MyRootPass -os debian -gw 192.168.2.1 -dns 192.168.2.1" > /dev/stderr
@@ -84,6 +85,11 @@ for i in $@ ; do
 	"-ram")
 		if [ -z "${2}" ] ; then echo "Parameter for option -ram is missing" > /dev/stderr ; DO_EXIT="yes" ; fi
 		VPSMEM="${2}"
+		shift
+		shift
+		;;
+	"--mac")
+		MAC_ADDR="${2}"
 		shift
 		shift
 		;;
@@ -322,8 +328,10 @@ if [ "$IMAGE_TYPE" = "lvm" ] ; then
 	fi
 fi
 
-if [ ! -z "${vps_mac_prefix}" ] ; then
-	MAC_ADDR=${vps_mac_prefix}:${VPSNUM}
+if [ -z "${MAC_ADDR}" ] ; then
+	if [ ! -z "${vps_mac_prefix}" ] ; then
+		MAC_ADDR=${vps_mac_prefix}:${VPSNUM}
+	fi
 fi
 
 FOUNDED_ARCH=`uname -m`
@@ -378,7 +386,13 @@ if [ -z "${BOOT_ISO}" ] ; then
 fi
 
 KERNEL_P="--kernel ${KERNELPATH} --kernel-release ${KERNEL_RELEASE} --kmod-path ${KMOD_PATH} --initrd ${INITRDPATH}"
-FW_PARAMS="-path ${VPSGLOBPATH}/${VPSNUM} -vpsid ${VPSNUM} --vps-fqdn ${VPS_FQDN} --vps-domain ${VPS_DOMAIN} --node-fqdn ${NODE_FQDN} ${FW_NICS_CMD} -dns ${DNS} -gw ${GATEWAY} ${KERNEL_P} ${HVM_PARMS}"
+FW_PARAMS="-path ${VPSGLOBPATH}/${VPSNUM} -vpsid ${VPSNUM} --vps-fqdn ${VPS_FQDN} --vps-domain ${VPS_DOMAIN} --node-fqdn ${NODE_FQDN} ${FW_NICS_CMD} -dns ${DNS} -gw ${GATEWAY} ${KERNEL_P}"
+if [ -n "${MAC_ADDR}" ] ; then
+	FW_PARAMS="${FW_PARAMS} --mac ${MAC_ADDR}"
+fi
+if [ -z "${HVM_PARMS}" ] ; then
+	FW_PARAMS="${FW_PARAMS} ${HVM_PARMS}"
+fi
 
 #####################################################
 ### Check / creation of the DTC-Xen user / group ####
