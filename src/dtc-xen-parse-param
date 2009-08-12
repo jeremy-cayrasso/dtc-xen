@@ -2,11 +2,25 @@
 
 # To be included by each scripts for parsing
 
+# Figure out the LVM name from dtc-xen.conf
+LVMNAME=`dtc-xen-volgroup`
+if [ -z "$LVMNAME" ] ; then
+	echo "Could not determine volume group from which to provision the volume" 1>&2
+	echo "You might want to set provisioning_volgroup in dtc-xen.conf" 1>&2
+	exit 78
+fi
+
+
 NUM_NIC=0
 for i in $@ ; do
 	case "${1}" in
 	"-path")
 		VPS_PATH="${2}"
+		shift
+		shift
+		;;
+	"-os")
+		DISTRO=${2}
 		shift
 		shift
 		;;

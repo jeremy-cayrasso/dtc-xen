@@ -29,7 +29,7 @@ dtc-xen-client.8
 
 SBIN_SH_SCRIPTS=dtc_kill_vps_disk xm_info_free_memory vgdisplay_free_size dtc_setup_vps_disk dtc_reinstall_os \
 dtc_change_bsd_kernel dtc_write_xenpv_conf dtc_install_centos dtc-xen_domUconf_standard dtc-xen_domUconf_network_debian \
-dtc-xen_domUconf_network_redhat dtc-xen_finish_install dtc-soap-server dtc-xen-volgroup
+dtc-xen_domUconf_network_redhat dtc-xen_finish_install dtc-soap-server dtc-xen-volgroup dtc-xen_domU_gen_xen_conf
 
 BIN_SH_SCRIPTS=dtc-xen-client
 

@@ -386,7 +386,7 @@ if [ -z "${BOOT_ISO}" ] ; then
 fi
 
 KERNEL_P="--kernel ${KERNELPATH} --kernel-release ${KERNEL_RELEASE} --kmod-path ${KMOD_PATH} --initrd ${INITRDPATH}"
-FW_PARAMS="-path ${VPSGLOBPATH}/${VPSNUM} -vpsid ${VPSNUM} --vps-fqdn ${VPS_FQDN} --vps-domain ${VPS_DOMAIN} --node-fqdn ${NODE_FQDN} ${FW_NICS_CMD} -dns ${DNS} -gw ${GATEWAY} ${KERNEL_P}"
+FW_PARAMS="-os ${DISTRO} -path ${VPSGLOBPATH}/${VPSNUM} -vpsid ${VPSNUM} --vps-fqdn ${VPS_FQDN} --vps-domain ${VPS_DOMAIN} --node-fqdn ${NODE_FQDN} ${FW_NICS_CMD} -dns ${DNS} -gw ${GATEWAY} ${KERNEL_P}"
 if [ -n "${MAC_ADDR}" ] ; then
 	FW_PARAMS="${FW_PARAMS} --mac ${MAC_ADDR}"
 fi
@@ -504,6 +504,16 @@ if [ -e /usr/share/dtc-xen-app/${DISTRO}/depends ] ; then
 	DISTRO=`cat /usr/share/dtc-xen-app/${DISTRO}/depends`
 fi
 
+# Rebuild the params since DISTRO might have change.
+FW_PARAMS="-os ${DISTRO} -path ${VPSGLOBPATH}/${VPSNUM} -vpsid ${VPSNUM} --vps-fqdn ${VPS_FQDN} --vps-domain ${VPS_DOMAIN} --node-fqdn ${NODE_FQDN} ${FW_NICS_CMD} -dns ${DNS} -gw ${GATEWAY} ${KERNEL_P}"
+if [ -n "${MAC_ADDR}" ] ; then
+	FW_PARAMS="${FW_PARAMS} --mac ${MAC_ADDR}"
+fi
+if [ -z "${HVM_PARMS}" ] ; then
+	FW_PARAMS="${FW_PARAMS} ${HVM_PARMS}"
+fi
+
+
 # get the most recent centos release.  it WILL FAIL once centos version hits 10.  But, hell, I'm a hacky hack.
 CENTOS_DIR=`ls -d /usr/src/centos* 2> /dev/null | tr ' ' '\n' | sort -r | head -1`
 if [ "$DISTRO" = "xenhvm" -o "$DISTRO" = "netbsd" ] ; then
@@ -592,116 +602,7 @@ fi
 #################################
 ### XEN STARTUP FILE CREATION ###
 #################################
-if [ ! -z "${MAC_ADDR}" ] ; then
-	XEN_WRITE_MAC="mac=${MAC_ADDR}, "
-else
-	XEN_WRITE_MAC=""
-fi
-if [ -f /etc/redhat-release ] ; then
-	BRIDGE_DIRECTIVE=", bridge=xenbr0"
-fi
-if [ "$DISTRO" = "xenhvm" ] ; then
-	echo -n "kernel = \"/usr/lib/xen/boot/hvmloader\"
-builder = 'hvm'
-memory = ${VPSMEM}
-name = \"${VPSNAME}\"
-vcpus=1
-#pae=0
-#acpi=0
-#apic=0
-vif = [ 'type=ioemu, ${XEN_WRITE_MAC}ip=${ALL_IPADDRS}${BRIDGE_DIRECTIVE}' ]
-disk=[ 'phy:/dev/mapper/${LVMNAME}-xen${VPSNUM},ioemu:hda,w'" >/etc/xen/${VPSNAME}
-	# Add all *.iso files to the config file
-	HDDLIST="bcdefghijklmnopqrstuvwxyz"
-	INCREMENT=1
-	for i in `find /var/lib/dtc-xen/ttyssh_home/xen${VPSNUM} -mindepth 1 -maxdepth 1 -iname '*.iso' | cut -d'/' -f5 | tr \\\r\\\n ,\ ` ; do
-		DRIVE_LETTER=`echo ${HDDLIST} | awk '{print substr($0,$INCREMENT,1)}'`
-		INCREMENT=$(( $INCREMENT + 1))
-		echo -n ,\'file:/var/lib/dtc-xen/ttyssh_home/xen${VPSNUM}/$i,hd${DRIVE_LETTER}:cdrom,r\' >>/etc/xen/${VPSNAME}
-		echo $i
-	done
-	# Set the VPN password
-	echo " ]
-vfb = [ \"type=vnc,vncdisplay=${VPSNUM},vncpasswd=XXXX\" ]" >>/etc/xen/${VPSNAME}
-	# Set the boot cd if variable is set
-	if [ -z "${BOOT_ISO}" -a -e /var/lib/dtc-xen/ttyssh_home/xen${VPSNUM}/${BOOT_ISO} ] ; then
-		echo "cdrom=\"/var/lib/dtc-xen/ttyssh_home/xen${VPSNUM}/${BOOT_ISO}\"
-boot=\"d\"
-nographic=0
-vnc=1
-stdvga=1" >>/etc/xen/${VPSNAME}
-	# Otherwise boot on the HDD
-	else
-		echo "boot=\"c\"
-nographic=1" >>/etc/xen/${VPSNAME}
-	fi
-	echo "serial='pty'" >>/etc/xen/${VPSNAME}
-elif [ "$DISTRO" = "netbsd" ] ; then
-	echo "kernel = \"${bsd_kernel_path}\"
-memory = ${VPSMEM}
-name = \"${VPSNAME}\"
-vif = [ '${XEN_WRITE_MAC}ip=${ALL_IPADDRS}${BRIDGE_DIRECTIVE}' ]
-" >/etc/xen/${VPSNAME}
-	if [ "$IMAGE_TYPE" = "lvm" ]; then
-		echo "disk = [ 'phy:/dev/mapper/${LVMNAME}-xen${VPSNUM},0x3,w' ]
-" >>/etc/xen/${VPSNAME}
-	else
-		echo "disk = [ 'file:$VPSGLOBPATH/${VPSNAME}.img,0x301,w' ]
-" >>/etc/xen/${VPSNAME}
-	fi
-else
-	# Set the configured kernel name
-	echo "kernel = \"${KERNELPATH}\"" > /etc/xen/${VPSNAME}
-
-	# Set a initrd image if configured
-	if ! [ -z "${INITRDPATH}" ] ; then
-		echo "ramdisk = \"${INITRDPATH}\"" >> /etc/xen/${VPSNAME}
-	fi
-
-	# Set memory, domU name and vif
-	echo "memory = ${VPSMEM}
-name = \"${VPSNAME}\"
-#cpu = -1   # leave to Xen to pick
-vif = [ '${XEN_WRITE_MAC}ip=${ALL_IPADDRS}${BRIDGE_DIRECTIVE}' ]
-" >> /etc/xen/${VPSNAME}
-
-	# Set the HDDs
-	if [ "$IMAGE_TYPE" = "lvm" ]; then
-		echo "disk = [ 'phy:/dev/mapper/${LVMNAME}-xen${VPSNUM},sda1,w','phy:/dev/mapper/${LVMNAME}-xen${VPSNUM}swap,sda2,w' ]
-" >> /etc/xen/${VPSNAME}
-	else
-		echo "disk = [ 'file:$VPSGLOBPATH/${VPSNAME}.img,sda1,w','file:$VPSGLOBPATH/${VPSNAME}.swap.img,sda2,w' ]
-" >> /etc/xen/${VPSNAME}
-	fi
-
-	# Set the boot parameters (runlevel and tty)
-	if [ "$DISTRO" = "slackware" ]; then
-		echo "root = \"/dev/sda1 ro\"
-# Sets runlevel 3.
-extra = \"3 TERM=xterm xencons=tty console=tty1\"
-" >>/etc/xen/${VPSNAME}
-	else
-		# Use different extra = depending on the dom0 OS type
-		if [ -z "${XENU_EXTRA_PARM}" ] ; then
-			# CentOS doesn't need the: TERM=xterm xencons=tty console=tty1
-			if [ -f /etc/redhat-release ] ; then
-				XENU_EXTRA_PARM="extra = \"4\""
-			# Debian domU wont have console without: TERM=xterm xencons=tty console=tty1
-			else
-				XENU_EXTRA_PARM="extra = \"4 TERM=xterm xencons=tty console=tty1\""
-			fi
-		fi
-		echo "root = \"/dev/sda1 ro\"
-# Sets runlevel 4.
-${XENU_EXTRA_PARM}
-" >>/etc/xen/${VPSNAME}
-	fi
-fi
-
-# The reboot autostart
-if [ ! -e /etc/xen/auto/${VPSNAME} ] ; then
-	ln -s ../${VPSNAME} /etc/xen/auto/${VPSNAME}
-fi
+/usr/sbin/dtc-xen_domU_gen_xen_conf ${FW_PARAMS}
 
 ########################
 ### SOME LAST THINGS ###
