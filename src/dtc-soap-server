@@ -106,12 +106,12 @@ setup_logging()
 
 logging.info("Starting DTC SOAP server...")
 
-if not os.path.exists("/proc/xen/privcmd"):
-	logging.error("/proc/xen/privcmd is not accessible, cannot start dtc-xen")
-	shutdown(1)
+#if not os.path.exists("/proc/xen/privcmd"):
+#	logging.error("/proc/xen/privcmd is not accessible, cannot start dtc-xen")
+#	shutdown(1)
 
 # import xm stuff
-import xen.xm.main
+#import xen.xm.main
 
 # read config file
 config_file = firstexisting(['/etc/dtc-xen/dtc-xen.conf','/etc/dtc-xen/soap.conf'])
@@ -156,7 +156,8 @@ def startVPS(vpsname):
 		sys.stdout = localsysout
 		sys.stderr = localsyserr
 		try:
-			xen.xm.main.main(xmargs)
+#			xen.xm.main.main(xmargs)
+			subprocess.Popen(["/usr/sbin/xm","create",vpsname])
 			logging.info("VPS %s started",vpsname)
 			return "OK","Started %s" % vpsname
 		except:
@@ -181,7 +182,8 @@ def destroyVPS(vpsname):
                 sys.stdout = localsysout
                 sys.stderr = localsyserr
 		try:
-			xen.xm.main.main(xmargs)
+#			xen.xm.main.main(xmargs)
+			subprocess.Popen(["/usr/sbin/xm","destroy",vpsname])
 			logging.info("VPS %s destroyed",vpsname)
 			return "OK","Destroyed %s" % vpsname
 		except:
@@ -215,7 +217,8 @@ def shutdownVPS(vpsname):
                 sys.stdout = localsysout
                 sys.stderr = localsyserr
 		try:
-			xen.xm.main.main(xmargs)
+#			xen.xm.main.main(xmargs)
+			subprocess.Popen(["/usr/sbin/xm","shutdown",vpsname])
 			logging.info("VPS %s shut down",vpsname)
 			return "OK","Shut down %s" % vpsname
 		except:
@@ -609,91 +612,6 @@ def getCollectedPerformanceData(count=None):
 	else:
 		return "NOTOK"
 
-
-def getNetworkUsage(vpsname):
-	username = getUser()
-	if username == dtcxen_user or username == vpsname:
-		info = getVPSState(vpsname)
-		id = int(xen.xm.main.sxp.child_value(info, 'id', '-1'))
-		if id == -1:
-			id = int(xen.xm.main.sxp.child_value(info, 'domid', '-1'))
-		networkDeviceName="eth0"
-		if vpsname=="Domain-0":
-			networkDeviceName="eth0"
-		else:
-			networkDeviceName="vif%s" % id
-			networkDeviceName=networkDeviceName.replace("-","")
-			# Rudd-O: added workaround for device matching vif-1 -> vif1 -- Damien: is this okay?
-		incount = 0
-		outcount = 0
-		if os.path.exists("/proc/net/dev"):
-			devinfoFile=open("/proc/net/dev", 'r')
-			try:
-				for line in devinfoFile:
-					line=line.strip()
-					# split the line into device, and the rest
-					columns=line.split(':')
-					if len(columns) == 1:
-						continue
-					device,stats=columns
-					# strip off whitespace so we can match
-					device = device.strip().split(".")[0]
-					if device == networkDeviceName:
-						columns=stats.split()
-						incount = incount + int(columns[0])
-						outcount = outcount + int(columns[8])
-			finally:
-				devinfoFile.close()
-			return "%d,%d" % (incount,outcount)
-		else:
-			return "NOTOK"
-			
-# return the accumulated IO stat of a VPS disk and swap
-def getIOUsage(vpsname):
-	username = getUser()
-	if username == dtcxen_user or username == vpsname:	
-		disk="/dev/mapper/%s-%s" % (server_lvmname,vpsname)
-		swap="/dev/mapper/%s-%sswap" % (server_lvmname,vpsname)
-		
-		if os.path.exists(disk):
-			diskStat = os.stat(disk)
-			swapStat = os.stat(swap)
-			diskMinor=os.minor(diskStat.st_rdev)
-			swapMinor=os.minor(swapStat.st_rdev)
-	
-			diskBlock="/sys/block/dm-%s/stat" % diskMinor
-			diskBlockFile=open(diskBlock,'r')
-			diskIOStat=0
-			try:
-				blockStats = diskBlockFile.readline()
-				columns=blockStats.split()
-				# read the disk IO total from column 11
-				diskIOStat=columns[10]
-			finally:
-			  diskBlockFile.close()
-			        
-			swapBlock="/sys/block/dm-%s/stat" % swapMinor
-			swapBlockFile=open(swapBlock)
-			swapIOStat=0
-			try:
-				blockStats = swapBlockFile.readline()
-				columns=blockStats.split()
-        # read the swap IO total from column 11
-				swapIOStat=columns[10]
-			finally:
-			  swapBlockFile.close()
-			        
-			return diskIOStat,swapIOStat
-	return "NOTOK"		
-	
-# return the accumulated IO stat of a VPS disk and swap
-def getCPUUsage(vpsname):
-	username = getUser()
-	if username == dtcxen_user or username == vpsname:	
-		info = getVPSState(vpsname)
-		return xen.xm.main.sxp.child_value(info, 'cpu_time', '0')
-	return "NOTOK"		
-
 def getVPSState(vpsname):
 	username = getUser()
         if username == dtcxen_user or username == vpsname:
@@ -777,15 +695,6 @@ def getVPSInstallLog(vpsname,numlines):
 def getInstallableOS():
 	folderlist = os.listdir('/usr/share/dtc-xen-os/')
 	return folderlist
-
-#	d = {}
-#	d['dom'] = int(xen.xm.main.sxp.child_value(info, 'id', '-1'))
-#	d['name'] = xen.xm.main.sxp.child_value(info, 'name', '??')
-#	d['mem'] = int(xen.xm.main.sxp.child_value(info, 'memory', '0'))
-#	d['cpu'] = int(xen.xm.main.sxp.child_value(info, 'cpu', '0'))
-#	d['state'] = xen.xm.main.sxp.child_value(info, 'state', '??')
-#	d['cpu_time'] = float(sxp.child_value(info, 'cpu_time', '0'))
-#	return d
 
 def getInstallableAPP():
 	folderlist = os.listdir('/usr/share/dtc-xen-app/')
@@ -901,9 +810,6 @@ soapserver.registerFunction(changeBSDkernel)
 soapserver.registerFunction(writeXenPVconf)
 soapserver.registerFunction(setupLVMDisks)
 soapserver.registerFunction(getCollectedPerformanceData)
-soapserver.registerFunction(getNetworkUsage)
-soapserver.registerFunction(getIOUsage)
-soapserver.registerFunction(getCPUUsage)
 soapserver.registerFunction(getInstallableOS)
 soapserver.registerFunction(getVPSInstallLog)
 soapserver.registerFunction(getInstallableAPP)
