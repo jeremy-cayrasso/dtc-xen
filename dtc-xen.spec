@@ -1,6 +1,6 @@
 Name: dtc-xen
 Summary: DTC Xen VPS remote management suite
-Version: 0.5.0
+Version: __VERSION__
 Release: 7
 
 Group: System Environment/Daemons
@@ -63,7 +63,7 @@ you don't want to accept any incoming message.
 
 %prep
 rm -rf %{buildroot}/*
-%setup -q -n %{name}
+%setup -q
 
 %build
 

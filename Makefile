@@ -108,3 +108,17 @@ install:
 # the runtime directories
 	for i in $(VARLIB_FOLDERS) ; do $(INSTALL_DIR) -m 0750 $(DESTDIR)$(VARLIB_DIR)/dtc-xen/$$i ; done
 	$(INSTALL_DIR) -m 0757 $(DESTDIR)$(VARLIB_DIR)/dtc-xen/ttyssh_home
+
+dist:
+	./dist
+
+deb:
+	./deb
+
+rpm:
+	$(MAKE) dist
+	VERS=`head -n 1 debian/changelog | cut -d'(' -f2 | cut -d')' -f1 | cut -d'-' -f1` ; \
+	PKGNAME=`head -n 1 debian/changelog | cut -d' ' -f1` ; \
+	cd .. ; rpmbuild -ta $${PKGNAME}-$${VERS}.tar.gz
+
+.PHONY: dist deb rpm install install_dtc-xen-firewall clean default
