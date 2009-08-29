@@ -19,6 +19,11 @@ for i in $@ ; do
 		shift
 		shift
 		;;
+	"-ram")
+		VPSMEM="${2}"
+		shift
+		shift
+		;;
 	"-os")
 		DISTRO=${2}
 		shift
@@ -120,7 +125,7 @@ if [ -z "${BOOT_ISO}" ] ; then
 fi
 
 KERNEL_P="--kernel ${KERNELPATH} --kernel-release ${KERNEL_RELEASE} --kmod-path ${KMOD_PATH} --initrd ${INITRDPATH}"
-FW_PARAMS="-path ${VPS_PATH} -vpsid ${VPSNUM} --vps-fqdn ${VPS_FQDN} --vps-domain ${VPS_DOMAIN} --node-fqdn ${NODE_FQDN} ${FW_NICS_CMD} -dns ${DNS} -gw ${GATEWAY} ${KERNEL_P}"
+FW_PARAMS="-path ${VPS_PATH} -ram ${VPSMEM} -vpsid ${VPSNUM} --vps-fqdn ${VPS_FQDN} --vps-domain ${VPS_DOMAIN} --node-fqdn ${NODE_FQDN} ${FW_NICS_CMD} -dns ${DNS} -gw ${GATEWAY} ${KERNEL_P}"
 if [ -n "${MAC_ADDR}" ] ; then
 	FW_PARAMS="${FW_PARAMS} --mac ${MAC_ADDR}"
 fi
