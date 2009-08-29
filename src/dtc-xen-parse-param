@@ -112,6 +112,16 @@ for i in $@ ; do
 		shift
 		shift
 		;;
+	"--disk-type")
+		IMAGE_TYPE="${2}"
+		shift
+		shift
+		;;
+	"--lvm-name")
+		LVMNAME="${2}"
+		shift
+		shift
+		;;
 	esac
 done
 
@@ -125,10 +135,13 @@ if [ -z "${BOOT_ISO}" ] ; then
 fi
 
 KERNEL_P="--kernel ${KERNELPATH} --kernel-release ${KERNEL_RELEASE} --kmod-path ${KMOD_PATH} --initrd ${INITRDPATH}"
-FW_PARAMS="-path ${VPS_PATH} -ram ${VPSMEM} -vpsid ${VPSNUM} --vps-fqdn ${VPS_FQDN} --vps-domain ${VPS_DOMAIN} --node-fqdn ${NODE_FQDN} ${FW_NICS_CMD} -dns ${DNS} -gw ${GATEWAY} ${KERNEL_P}"
+FW_PARAMS="--disk-type ${IMAGE_TYPE} -path ${VPS_PATH} -ram ${VPSMEM} -vpsid ${VPSNUM} --vps-fqdn ${VPS_FQDN} --vps-domain ${VPS_DOMAIN} --node-fqdn ${NODE_FQDN} ${FW_NICS_CMD} -dns ${DNS} -gw ${GATEWAY} ${KERNEL_P}"
 if [ -n "${MAC_ADDR}" ] ; then
 	FW_PARAMS="${FW_PARAMS} --mac ${MAC_ADDR}"
 fi
 if [ -z "${HVM_PARMS}" ] ; then
 	FW_PARAMS="${FW_PARAMS} ${HVM_PARMS}"
+fi
+if [ -z "${LVMNAME}" ] ; then
+	FW_PARAMS="${FW_PARAMS} --lvm-name ${LVMNAME}"
 fi

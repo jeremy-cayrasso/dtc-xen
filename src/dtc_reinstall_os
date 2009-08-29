@@ -199,6 +199,12 @@ for i in $@ ; do
 		shift
 		shift
 		;;
+	"--disk-type")
+		if [ -z "${2}" ] ; then echo "Parameter for option --disk-type is missing" > /dev/stderr ; DO_EXIT="yes" ; fi
+		IMAGE_TYPE=${2}
+		shift
+		shift
+		;;
 	*)
 		;;
 	esac
@@ -282,6 +288,10 @@ else
 	VPSGLOBPATH="$VPS_MOUNTPOINT"
 fi
 
+if [ -z "${IMAGE_TYPE}" ] ; then
+	IMAGE_TYPE=lvm
+fi
+
 # Figure out the LVM name from dtc-xen.conf
 if [ "${IMAGE_TYPE}" = "lvm" ] ; then
 	LVMNAME=`dtc-xen-volgroup`
@@ -313,19 +323,6 @@ if [ -z "${VPS_FQDN}" ] ; then
 fi
 if [ -z "${VPS_DOMAIN}" ] ; then
 	VPS_DOMAIN="${VPSNAME}.${NODE_FQDN}"
-fi
-
-
-if [ -z "$IMAGE_TYPE" ] ; then IMAGE_TYPE=lvm ; fi
-
-# Figure out the LVM name from dtc-xen.conf
-if [ "$IMAGE_TYPE" = "lvm" ] ; then
-	LVMNAME=`dtc-xen-volgroup`
-	if [ -z "$LVMNAME" ] ; then
-		echo "Could not determine volume group from which to provision the volume" 1>&2
-		echo "You might want to set provisioning_volgroup in dtc-xen.conf" 1>&2
-		exit 78
-	fi
 fi
 
 if [ -z "${MAC_ADDR}" ] ; then
@@ -377,22 +374,28 @@ UMOUNT=/bin/umount
 DEBOOTSTRAP=/usr/sbin/debootstrap
 
 # We forward always this list of parameters to all scripts:
-HVM_PARMS=""
-if [ -z "${VNC_PASSWORD}" ] ; then
-	HVM_PARMS="--vnc-pass ${VNC_PASSWORD}"
-fi
-if [ -z "${BOOT_ISO}" ] ; then
-	HVM_PARMS="${HVM_PARMS} --boot-iso ${BOOT_ISO}"
-fi
+calc_formard_parms (){
+	HVM_PARMS=""
+	if [ -z "${VNC_PASSWORD}" ] ; then
+		HVM_PARMS="--vnc-pass ${VNC_PASSWORD}"
+	fi
+	if [ -z "${BOOT_ISO}" ] ; then
+		HVM_PARMS="${HVM_PARMS} --boot-iso ${BOOT_ISO}"
+	fi
 
-KERNEL_P="--kernel ${KERNELPATH} --kernel-release ${KERNEL_RELEASE} --kmod-path ${KMOD_PATH} --initrd ${INITRDPATH}"
-FW_PARAMS="-os ${DISTRO} -ram ${VPSMEM} -path ${VPSGLOBPATH}/${VPSNUM} -vpsid ${VPSNUM} --vps-fqdn ${VPS_FQDN} --vps-domain ${VPS_DOMAIN} --node-fqdn ${NODE_FQDN} ${FW_NICS_CMD} -dns ${DNS} -gw ${GATEWAY} ${KERNEL_P}"
-if [ -n "${MAC_ADDR}" ] ; then
-	FW_PARAMS="${FW_PARAMS} --mac ${MAC_ADDR}"
-fi
-if [ -z "${HVM_PARMS}" ] ; then
-	FW_PARAMS="${FW_PARAMS} ${HVM_PARMS}"
-fi
+	KERNEL_P="--kernel ${KERNELPATH} --kernel-release ${KERNEL_RELEASE} --kmod-path ${KMOD_PATH} --initrd ${INITRDPATH}"
+	FW_PARAMS="--disk-type ${IMAGE_TYPE} -os ${DISTRO} -ram ${VPSMEM} -path ${VPSGLOBPATH}/${VPSNUM} -vpsid ${VPSNUM} --vps-fqdn ${VPS_FQDN} --vps-domain ${VPS_DOMAIN} --node-fqdn ${NODE_FQDN} ${FW_NICS_CMD} -dns ${DNS} -gw ${GATEWAY} ${KERNEL_P}"
+	if [ -n "${MAC_ADDR}" ] ; then
+		FW_PARAMS="${FW_PARAMS} --mac ${MAC_ADDR}"
+	fi
+	if [ -z "${HVM_PARMS}" ] ; then
+		FW_PARAMS="${FW_PARAMS} ${HVM_PARMS}"
+	fi
+	if [ -z "${LVMNAME}" ] ; then
+		FW_PARAMS="${FW_PARAMS} --lvm-name ${LVMNAME}"
+	fi
+}
+calc_formard_parms
 
 #####################################################
 ### Check / creation of the DTC-Xen user / group ####
@@ -505,14 +508,7 @@ if [ -e /usr/share/dtc-xen-app/${DISTRO}/depends ] ; then
 fi
 
 # Rebuild the params since DISTRO might have change.
-FW_PARAMS="-os ${DISTRO} -ram ${VPSMEM} -path ${VPSGLOBPATH}/${VPSNUM} -vpsid ${VPSNUM} --vps-fqdn ${VPS_FQDN} --vps-domain ${VPS_DOMAIN} --node-fqdn ${NODE_FQDN} ${FW_NICS_CMD} -dns ${DNS} -gw ${GATEWAY} ${KERNEL_P}"
-if [ -n "${MAC_ADDR}" ] ; then
-	FW_PARAMS="${FW_PARAMS} --mac ${MAC_ADDR}"
-fi
-if [ -z "${HVM_PARMS}" ] ; then
-	FW_PARAMS="${FW_PARAMS} ${HVM_PARMS}"
-fi
-
+calc_formard_parms
 
 # get the most recent centos release.  it WILL FAIL once centos version hits 10.  But, hell, I'm a hacky hack.
 CENTOS_DIR=`ls -d /usr/src/centos* 2> /dev/null | tr ' ' '\n' | sort -r | head -1`
