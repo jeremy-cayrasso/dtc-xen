@@ -505,7 +505,7 @@ if [ -e /usr/share/dtc-xen-app/${DISTRO}/depends ] ; then
 fi
 
 # Rebuild the params since DISTRO might have change.
-FW_PARAMS="-os ${DISTRO} -path ${VPSGLOBPATH}/${VPSNUM} -vpsid ${VPSNUM} --vps-fqdn ${VPS_FQDN} --vps-domain ${VPS_DOMAIN} --node-fqdn ${NODE_FQDN} ${FW_NICS_CMD} -dns ${DNS} -gw ${GATEWAY} ${KERNEL_P}"
+FW_PARAMS="-os ${DISTRO} -ram ${VPSMEM} -path ${VPSGLOBPATH}/${VPSNUM} -vpsid ${VPSNUM} --vps-fqdn ${VPS_FQDN} --vps-domain ${VPS_DOMAIN} --node-fqdn ${NODE_FQDN} ${FW_NICS_CMD} -dns ${DNS} -gw ${GATEWAY} ${KERNEL_P}"
 if [ -n "${MAC_ADDR}" ] ; then
 	FW_PARAMS="${FW_PARAMS} --mac ${MAC_ADDR}"
 fi
