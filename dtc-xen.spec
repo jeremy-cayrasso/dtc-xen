@@ -1,7 +1,7 @@
 Name: dtc-xen
 Summary: DTC Xen VPS remote management suite
 Version: __VERSION__
-Release: 7
+Release: 8
 
 Group: System Environment/Daemons
 
