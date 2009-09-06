@@ -25,7 +25,7 @@ DISTRO?=debian
 MAN8_PAGES=vgdisplay_free_size.8 dtc-soap-server.8 xm_info_free_memory.8 dtc_change_bsd_kernel.8 dtc_reinstall_os.8 \
 dtc_setup_vps_disk.8 dtc-xen_finish_install.8 dtc_install_centos.8 dtc_kill_vps_disk.8 dtc_write_xenpv_conf.8 \
 dtc-xen_domUconf_network_debian.8 dtc-xen_domUconf_network_redhat.8 dtc-xen_domUconf_standard.8 dtc-xen-volgroup.8 \
-dtc-xen-client.8
+dtc-xen-client.8 dtc-xen_domU_gen_xen_conf.8
 
 SBIN_SH_SCRIPTS=dtc_kill_vps_disk xm_info_free_memory vgdisplay_free_size dtc_setup_vps_disk dtc_reinstall_os \
 dtc_change_bsd_kernel dtc_write_xenpv_conf dtc_install_centos dtc-xen_domUconf_standard dtc-xen_domUconf_network_debian \
