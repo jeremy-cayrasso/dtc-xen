@@ -113,7 +113,11 @@ dist:
 	./dist
 
 deb:
-	./deb
+	if [ -z $(SIGN)"" ] ; then \
+		./deb ; \
+	else \
+		./deb --sign ; \
+	fi
 
 rpm:
 	$(MAKE) dist
