@@ -1,9 +1,49 @@
-dtc-xen (0.5.0-1) unstable; urgency=low
+dtc-xen (0.5.1-1) unstable; urgency=low
 
   * New upstream release.
-  * Bumped standard-version.
+  * Added Spanish debconf translation thanks to Francisco Javier Cuadrado
+    <fcocuadrado@gmail.com> (Closes: #511480, #524832).
+  * Added Swedish debconf translation thanks to Martin Bagge
+    <brother@bsnet.se> (Closes: #513777).
+  * Updated French debconf translation thanks to Florentin Duneau
+    <fduneau@gmail.com> (Closes: #522988).
+  * Updated French debconf translation thanks to Helge Kreutzmann
+    <debian@helgefjell.de> (Closes: #524400).
+  * Updated Russian debconf translation thanks to Yuri Kozlov
+    <yuray@komyakino.ru> (Closes: #527112).
+  * Updated Finish debconf translation thanks to Esko Arajärvi <edu@iki.fi>
+    (Closes: #530278).
+  * Updated Czech debconf translation thanks to Michal Šimunek
+    <michal.simunek@gmail.com> (Closes: #532231).
+  * Added Slovak debconf translation thanks to helix84 <helix84@centrum.sk>
+    (Closes: #532968).
 
- -- Thomas Goirand <thomas@goirand.fr>  Thu, 11 Jun 2009 15:08:32 +0800
+ -- Thomas Goirand <thomas@goirand.fr>  Sun, 06 Sep 2009 16:53:49 +0800
+
+dtc-xen (0.3.24-1) unstable; urgency=low
+
+  * New upstream release with the following correction:
+    - Bug fix that corrects overflow problem with integers in IO and net data
+    collection graphs.
+
+ -- Thomas Goirand <thomas@goirand.fr>  Tue, 21 Oct 2008 12:26:08 +0800
+
+dtc-xen (0.3.23-1) unstable; urgency=low
+
+  * New upstream release correcting the dtc_change_bsd_kernel shell script
+    so it takes the VG name from the config file of dtc-xen.
+  * Improved the README.Debian as requested by the release team.
+
+ -- Thomas Goirand <thomas@goirand.fr>  Tue, 16 Sep 2008 19:10:03 +0800
+
+dtc-xen (0.3.21-1) unstable; urgency=low
+
+  * New upstream release correcting the killVPS() method that was notworking.
+  * Removed the link in /var/www to satisfy the Debian policy.
+  * Added comments in README.Debian on how to manually activate the stats page.
+  * Added missing man page for dtc_kill_vps_disk.
+
+ -- Thomas Goirand <thomas@goirand.fr>  Thu, 28 Aug 2008 13:21:05 +0800
 
 dtc-xen (0.3.19-1) unstable; urgency=low
 
