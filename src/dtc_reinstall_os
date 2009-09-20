@@ -568,6 +568,15 @@ else
 	fi
 fi
 
+echo -n "Setting root password... "
+chroot ${VPSGLOBPATH}/${VPSNUM} sh -c "echo root:$PASSWORD | chpasswd"
+
+if [ $? -eq 0 ] ; then
+    echo "[OK]"
+else
+    echo "[FAIL]"
+fi
+
 ####################################
 ### NETWORK CONFIG CUSTOMIZATION ###
 ####################################
