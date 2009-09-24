@@ -368,7 +368,6 @@ def reinstallVPSos(vpsname,ostype,ramsize,password,nics=None,gateway=None,dns=No
 		args = ["/usr/sbin/dtc_reinstall_os", "-v",
 			"-vpsid", vpsname,
 			"-ram", ramsize,
-			"-pass", password,
 			"-os", ostype ]
 		if gateway: args = args + [ "-gw", gateway ]
 		if dns: args = args + [ "-dns", dns ]
@@ -382,9 +381,11 @@ def reinstallVPSos(vpsname,ostype,ramsize,password,nics=None,gateway=None,dns=No
 				nicargs.append(nic)
 			args = args + nicargs
 		
+		newenv = os.environ.copy()
+		newenv['PASSWORD'] = password
 		logging.debug("Running %s in subprocess",args)
 		if subprocess:
-			proc = subprocess.Popen(args,stdout=log,stderr=subprocess.STDOUT,close_fds=True,cwd="/")
+			proc = subprocess.Popen(args,stdout=log,stderr=subprocess.STDOUT,close_fds=True,cwd="/",env=newenv)
 			spawnedpid = proc.pid
 			def wait_for_child(): # watcher thread target
 				try:
