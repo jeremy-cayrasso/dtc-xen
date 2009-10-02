@@ -53,10 +53,10 @@ soap_server_limit () {
 		${IPTABLES} -A dtc-xen-in -p tcp --dport 8089 -s ! ${soap_server_allowed_ip} -j REJECT
 	fi
 	if [ -z "${SOAP_ACCEPTING_RATE}" ] ; then
-		SOAP_ACCEPTING_RATE=20
+		SOAP_ACCEPTING_RATE=10
 	fi
 	if [ -z "${SOAP_ACCEPTING_TIME}" ] ; then
-		SOAP_ACCEPTING_TIME=60
+		SOAP_ACCEPTING_TIME=5
 	fi
 	# Rate limit connections to our SOAP server (20 connections per minutes should be more than enough...)
 	${IPTABLES} -A dtc-xen-in -p tcp --dport 8089 -m state --state NEW -m recent --set

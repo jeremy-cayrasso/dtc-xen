@@ -11,8 +11,8 @@
 # the defined time.
 
 # Connection rate to the dtc-xen SOAP server
-#SOAP_ACCEPTING_RATE=20
-#SOAP_ACCEPTING_TIME=60
+#SOAP_ACCEPTING_RATE=10
+#SOAP_ACCEPTING_TIME=5
 
 # Rate limits for ssh connections (prevents brute force, dictionnary and DoS)
 #SSH_ACCEPTING_RATE=10
