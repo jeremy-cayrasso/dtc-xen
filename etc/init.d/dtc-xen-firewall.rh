@@ -50,7 +50,7 @@ accept_localhost_traffic () {
 soap_server_limit () {
 	# Allow only our management server to connect
 	if ! [ ${soap_server_allowed_ip} = "0.0.0.0" ] ; then
-		${IPTABLES} -A dtc-xen-in -p tcp --dport 8089 -s ! ${soap_server_allowed_ip} -j REJECT
+		${IPTABLES} -A dtc-xen-in -p tcp --dport 8089 -s ! ${soap_server_allowed_ip} -j LOGREJECT
 	fi
 	if [ -z "${SOAP_ACCEPTING_RATE}" ] ; then
 		SOAP_ACCEPTING_RATE=10
@@ -60,11 +60,11 @@ soap_server_limit () {
 	fi
 	# Rate limit connections to our SOAP server (20 connections per minutes should be more than enough...)
 	${IPTABLES} -A dtc-xen-in -p tcp --dport 8089 -m state --state NEW -m recent --set
-	${IPTABLES} -A dtc-xen-in -p tcp --dport 8089 -m state --state NEW -m recent --update --seconds ${SOAP_ACCEPTING_TIME} --hitcount ${SOAP_ACCEPTING_RATE} -j REJECT
+	${IPTABLES} -A dtc-xen-in -p tcp --dport 8089 -m state --state NEW -m recent --update --seconds ${SOAP_ACCEPTING_TIME} --hitcount ${SOAP_ACCEPTING_RATE} -j LOGREJECT
 }
 
 port25_reject () {
-	${IPTABLES} -A dtc-xen-in -p tcp --dport 25 -j REJECT
+	${IPTABLES} -A dtc-xen-in -p tcp --dport 25 -j LOGREJECT
 }
 
 call_add_custom_rules () {
@@ -92,10 +92,10 @@ limit_ssh_login_rate () {
 	# This can't be too low because of the use of scp
 	# For the dom0 first:
 	${IPTABLES} -A dtc-xen-in -p tcp --dport 22 -m state --state NEW -m recent --set 
-	${IPTABLES} -A dtc-xen-in -p tcp --dport 22 -m state --state NEW -m recent --update --seconds ${SSH_ACCEPTING_TIME} --hitcount ${SSH_ACCEPTING_RATE} -j REJECT
+	${IPTABLES} -A dtc-xen-in -p tcp --dport 22 -m state --state NEW -m recent --update --seconds ${SSH_ACCEPTING_TIME} --hitcount ${SSH_ACCEPTING_RATE} -j LOGREJECT
 	# The for the domUs:
 	${IPTABLES} -A dtc-xen-fw -p tcp --dport 22 -m state --state NEW -m recent --set 
-	${IPTABLES} -A dtc-xen-fw -p tcp --dport 22 -m state --state NEW -m recent --update --seconds ${SSH_FORWARDING_TIME} --hitcount ${SSH_FORWARDING_RATE} -j REJECT
+	${IPTABLES} -A dtc-xen-fw -p tcp --dport 22 -m state --state NEW -m recent --update --seconds ${SSH_FORWARDING_TIME} --hitcount ${SSH_FORWARDING_RATE} -j LOGREJECT
 }
 
 ping_flood_protect () {
@@ -108,10 +108,10 @@ ping_flood_protect () {
 
 	# Limit for dom0
 	${IPTABLES} -A dtc-xen-in -p icmp --icmp-type echo-request -m limit --limit ${PING_ACCEPTING_RATE}/s -j RETURN
-	${IPTABLES} -A dtc-xen-in -p icmp --icmp-type echo-request -j DROP
+	${IPTABLES} -A dtc-xen-in -p icmp --icmp-type echo-request -j LOGDROP
 	# There is no reason why a 20 VPS would be ping more than 50 times per seconds
 	${IPTABLES} -A dtc-xen-fw -p icmp --icmp-type echo-request -m limit --limit ${PING_FORWARDING_RATE}/s -j RETURN
-	${IPTABLES} -A dtc-xen-fw -p icmp --icmp-type echo-request -j DROP
+	${IPTABLES} -A dtc-xen-fw -p icmp --icmp-type echo-request -j LOGDROP
 }
 syn_flood_protect () {
 	if [ -z "${SYN_ACCEPTING_RATE}" ] ; then
@@ -122,10 +122,10 @@ syn_flood_protect () {
 	fi
 	# For dom0
 	${IPTABLES} -A dtc-xen-in -p tcp --syn -m limit --limit ${SYN_ACCEPTING_RATE}/s -j RETURN
-	${IPTABLES} -A dtc-xen-in -p tcp --syn -j DROP
+	${IPTABLES} -A dtc-xen-in -p tcp --syn -j LOGDROP
 	# For VPS
 	${IPTABLES} -A dtc-xen-fw -p tcp --syn -m limit --limit ${SYN_FORWARDING_RATE}/s -j RETURN
-	${IPTABLES} -A dtc-xen-fw -p tcp --syn -j DROP
+	${IPTABLES} -A dtc-xen-fw -p tcp --syn -j LOGDROP
 }
 
 port_scanner_limitation () {
@@ -137,13 +137,27 @@ port_scanner_limitation () {
 	fi
 	#Furtive port scanner a bit more annoying...
 	${IPTABLES} -A dtc-xen-in -p tcp --tcp-flags SYN,ACK,FIN,RST RST -m limit --limit ${GLOB_CONNECT_ACCEPTING_RATE}/s -j RETURN
-	${IPTABLES} -A dtc-xen-in -p tcp --tcp-flags SYN,ACK,FIN,RST RST -j DROP
+	${IPTABLES} -A dtc-xen-in -p tcp --tcp-flags SYN,ACK,FIN,RST RST -j LOGDROP
 	${IPTABLES} -A dtc-xen-fw -p tcp --tcp-flags SYN,ACK,FIN,RST RST -m limit --limit ${GLOB_CONNECT_FORWARDING_RATE}/s -j RETURN
-	${IPTABLES} -A dtc-xen-fw -p tcp --tcp-flags SYN,ACK,FIN,RST RST -j DROP
+	${IPTABLES} -A dtc-xen-fw -p tcp --tcp-flags SYN,ACK,FIN,RST RST -j LOGDROP
 }
+
+setup_log_chain() {
+	${IPTABLES} -N LOGDROP > /dev/null 2> /dev/null
+        ${IPTABLES} -F LOGDROP
+        ${IPTABLES} -A LOGDROP -m limit --limit 1/s -j LOG --log-prefix "LOGDROP: "
+        ${IPTABLES} -A LOGDROP -j DROP
+
+        ${IPTABLES} -N LOGREJECT > /dev/null 2> /dev/null
+        ${IPTABLES} -F LOGREJECT
+        ${IPTABLES} -A LOGREJECT -m limit --limit 1/s -j LOG --log-prefix "LOGREJECT: "
+        ${IPTABLES} -A LOGREJECT -j REJECT
+}
+
 
 start() {
 	echo -n $"Starting DTC-Xen firewall: "
+		setup_log_chain
 		create_dtc_xen_forward_chain
 		accept_localhost_traffic
 		port25_reject

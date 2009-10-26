@@ -57,7 +57,7 @@ accept_localhost_traffic () {
 soap_server_limit () {
 	# Allow only our management server to connect
 	if ! [ ${soap_server_allowed_ip} = "0.0.0.0" ] ; then
-		${IPTABLES} -A dtc-xen-in -p tcp --dport 8089 -s ! ${soap_server_allowed_ip} -j REJECT
+		${IPTABLES} -A dtc-xen-in -p tcp --dport 8089 -s ! ${soap_server_allowed_ip} -j LOGREJECT
 	fi
 	if [ -z "${SOAP_ACCEPTING_RATE}" ] ; then
 		SOAP_ACCEPTING_RATE=10
@@ -67,11 +67,11 @@ soap_server_limit () {
 	fi
 	# Rate limit connections to our SOAP server (20 connections per minutes should be more than enough...)
 	${IPTABLES} -A dtc-xen-in -p tcp --dport 8089 -m state --state NEW -m recent --set
-	${IPTABLES} -A dtc-xen-in -p tcp --dport 8089 -m state --state NEW -m recent --update --seconds ${SOAP_ACCEPTING_TIME} --hitcount ${SOAP_ACCEPTING_RATE} -j REJECT
+	${IPTABLES} -A dtc-xen-in -p tcp --dport 8089 -m state --state NEW -m recent --update --seconds ${SOAP_ACCEPTING_TIME} --hitcount ${SOAP_ACCEPTING_RATE} -j LOGREJECT
 }
 
 port25_reject () {
-	${IPTABLES} -A dtc-xen-in -p tcp --dport 25 -j REJECT
+	${IPTABLES} -A dtc-xen-in -p tcp --dport 25 -j LOGREJECT
 }
 
 call_add_custom_rules () {
@@ -99,10 +99,10 @@ limit_ssh_login_rate () {
 	# This can't be too low because of the use of scp
 	# For the dom0 first:
 	${IPTABLES} -A dtc-xen-in -p tcp --dport 22 -m state --state NEW -m recent --set 
-	${IPTABLES} -A dtc-xen-in -p tcp --dport 22 -m state --state NEW -m recent --update --seconds ${SSH_ACCEPTING_TIME} --hitcount ${SSH_ACCEPTING_RATE} -j REJECT
+	${IPTABLES} -A dtc-xen-in -p tcp --dport 22 -m state --state NEW -m recent --update --seconds ${SSH_ACCEPTING_TIME} --hitcount ${SSH_ACCEPTING_RATE} -j LOGREJECT
 	# The for the domUs:
 	${IPTABLES} -A dtc-xen-fw -p tcp --dport 22 -m state --state NEW -m recent --set 
-	${IPTABLES} -A dtc-xen-fw -p tcp --dport 22 -m state --state NEW -m recent --update --seconds ${SSH_FORWARDING_TIME} --hitcount ${SSH_FORWARDING_RATE} -j REJECT
+	${IPTABLES} -A dtc-xen-fw -p tcp --dport 22 -m state --state NEW -m recent --update --seconds ${SSH_FORWARDING_TIME} --hitcount ${SSH_FORWARDING_RATE} -j LOGREJECT
 }
 
 ping_flood_protect () {
@@ -149,17 +149,22 @@ port_scanner_limitation () {
 	${IPTABLES} -A dtc-xen-fw -p tcp --tcp-flags SYN,ACK,FIN,RST RST -j LOGDROP
 }
 
-setup-log-chain () {
+setup_log_chain () {
 	${IPTABLES} -N LOGDROP > /dev/null 2> /dev/null
 	${IPTABLES} -F LOGDROP
 	${IPTABLES} -A LOGDROP -m limit --limit 1/s -j LOG --log-prefix "LOGDROP: "
 	${IPTABLES} -A LOGDROP -j DROP
+
+	${IPTABLES} -N LOGREJECT > /dev/null 2> /dev/null
+        ${IPTABLES} -F LOGREJECT
+        ${IPTABLES} -A LOGREJECT -m limit --limit 1/s -j LOG --log-prefix "LOGREJECT: "
+        ${IPTABLES} -A LOGREJECT -j REJECT
 }
 
 case "${1}" in
 	start)
 		# flush-input-chain
-		setup-log-chain
+		setup_log_chain
 		create_dtc_xen_forward_chain
 		accept_localhost_traffic
 		port25_reject
