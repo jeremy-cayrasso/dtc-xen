@@ -6,6 +6,7 @@ dtc-xen (0.5.3-1) unstable; urgency=low
   * Added Japaneese Debconf translation thanks to Hideki Yamane (Debian-JP\)
     <henrich@debian.or.jp> (Closes: #551969).
   * Changed the provided statement in the init script header.
+  * Bumped Standards-Version.
 
  -- Thomas Goirand <thomas@goirand.fr>  Sun, 08 Nov 2009 12:46:47 +0800
 
