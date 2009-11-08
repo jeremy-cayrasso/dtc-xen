@@ -182,7 +182,7 @@ for i in $@ ; do
 		shift
 		;;
 	"--kernel-release")
-		if [ -z "${2}" ] ; then echo "Parameter for option --kernel-name is missing" > /dev/stderr ; DO_EXIT="yes" ; fi
+		if [ -z "${2}" ] ; then echo "Parameter for option --kernel-release is missing" > /dev/stderr ; DO_EXIT="yes" ; fi
 		KERNEL_RELEASE=${2}
 		shift
 		shift
