@@ -60,7 +60,7 @@ soap_server_limit () {
 		${IPTABLES} -A dtc-xen-in -p tcp --dport 8089 -s ! ${soap_server_allowed_ip} -j LOGREJECT
 	fi
 	if [ -z "${SOAP_ACCEPTING_RATE}" ] ; then
-		SOAP_ACCEPTING_RATE=10
+		SOAP_ACCEPTING_RATE=20
 	fi
 	if [ -z "${SOAP_ACCEPTING_TIME}" ] ; then
 		SOAP_ACCEPTING_TIME=5
