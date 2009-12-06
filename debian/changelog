@@ -3,7 +3,7 @@ dtc-xen (0.5.3-1) unstable; urgency=low
   * New upstream release.
   * Added Swedish Debconf translation thanks to Martin Bagge <brother@bsnet.se>
    (Closes: #551946).
-  * Added Japaneese Debconf translation thanks to Hideki Yamane (Debian-JP\)
+  * Added Japaneese Debconf translation thanks to Hideki Yamane (Debian-JP)
     <henrich@debian.or.jp> (Closes: #551969).
   * Changed the provided statement in the init script header.
   * Bumped Standards-Version.
