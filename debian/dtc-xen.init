@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ### BEGIN INIT INFO
-# Provides:          dtc-xen-soap-server
+# Provides:          dtc-xen
 # Required-Start:    $all
 # Required-Stop:
 # Should-Start:      $local_fs
