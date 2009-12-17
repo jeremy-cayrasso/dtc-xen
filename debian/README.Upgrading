@@ -1,0 +1,10 @@
+If you are upgrading from a version prior 0.5.x, then you need to fix the path
+of the xenXX user console. To do this, simply do the following:
+
+for i in `seq 1 9` ; do
+	sudo usermod -s /usr/bin/dtc-xen_userconsole xen0${i}
+done
+for i in `seq 0 9` ; do
+	sudo usermod -s /usr/bin/dtc-xen_userconsole xen1${i}
+	sudo usermod -s /usr/bin/dtc-xen_userconsole xen2${i}
+done
