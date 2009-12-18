@@ -27,7 +27,7 @@ case "$1" in
         ;;
 
 	stop)
-		log_daemon_msg "Stoping python SOAP server" "dtc-soap-server"
+		log_daemon_msg "Stopping python SOAP server" "dtc-soap-server"
 		start-stop-daemon --stop --oknodo --pidfile /var/run/dtc-xen-soap-server.pid
 		log_end_msg $?
 	;;
