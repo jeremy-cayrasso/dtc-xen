@@ -411,7 +411,7 @@ else
 			echo "Could not find the bash shell!"
 			exit 1
 		fi
-		/usr/sbin/useradd --home "${XEN_USER_HOME}/xen${VPSNUM}" -m -s /bin/bash -g ${XENUSERS} xen${VPSNUM}
+		/usr/sbin/useradd --home "${XEN_USER_HOME}/xen${VPSNUM}" -m -s /usr/bin/dtc-xen_userconsole -g ${XENUSERS} xen${VPSNUM}
 	else
 		echo "Cound not find the useradd binary!"
 		exit 1
@@ -420,7 +420,7 @@ fi
 # Modify an eventual wrong old config
 mkdir -p "${XEN_USER_HOME}/xen${VPSNUM}/.ssh"
 chown -R xen${VPSNUM}:${XENUSERS} "${XEN_USER_HOME}/xen${VPSNUM}"
-usermod -d "${XEN_USER_HOME}/${VPSNUM}" -g ${XENUSERS} -s /usr/bin/dtc-xen_userconsole xen${VPSNUM}
+usermod -d "${XEN_USER_HOME}/xen${VPSNUM}" -g ${XENUSERS} -s /usr/bin/dtc-xen_userconsole xen${VPSNUM}
 
 ######################################
 ### REDIRECTION OF STANDARD OUTPUT ###
