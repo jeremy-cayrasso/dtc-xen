@@ -89,3 +89,5 @@ apt-get --force-yes --assume-yes --reinstall install debconf
 
 # Finally start the dtc shell installer and we are done!
 /usr/share/dtc/admin/install/install
+
+apache2ctl start
