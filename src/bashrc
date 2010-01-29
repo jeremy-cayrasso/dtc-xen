@@ -8,7 +8,7 @@ NO_COL="\[\033[0m\]"
  LBLUE="\[\033[1;36m\]"
    RED="\[\033[1;31m\]"
 
-export PS1=${RED}'\u'${LGRAY}@${BLUE}GPLHost${LGRAY}:${LBLUE}'VPS_HOSTNAME'${LGRAY}'>_'${NO_COL}' \w\$ '
+export PS1=${RED}'\u'${LGRAY}@${BLUE}E-cvi${LGRAY}:${LBLUE}'VPS_HOSTNAME'${LGRAY}'>_'${NO_COL}' \w\$ '
 umask 022
 
 # You may uncomment the following lines if you want `ls' to be colorized:
