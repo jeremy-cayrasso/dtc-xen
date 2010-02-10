@@ -10,6 +10,7 @@ import commands
 from StringIO import StringIO
 from SOAPpy import *
 import logging
+from logging.handlers import SysLogHandler
 import threading
 import glob
 import signal
@@ -28,6 +29,11 @@ SOAPpy.Config.debug=1
 def sighandler(signum,frame):
 	global last_signal
 	last_signal = signum
+	if last_signal == signal.SIGHUP:
+		logging.info("Logging restarting...")
+		logging.shutdown()
+		setup_logging()
+				
 
 def shutdown(error=0):
 	global run_as_daemon
@@ -90,10 +96,11 @@ def setup_logging():
 	if run_as_daemon:
 		oldumask = os.umask(31)
 		try:
-			logging.basicConfig(filename="/var/log/dtc-xen.log",level=log_level)
+			logging.basicConfig(filename="/var/log/dtc-xen.log",level=log_level,format='%(asctime)s %(levelname)s %(message)s')
 			h = logging.StreamHandler()
 			h.setLevel(logging.WARN)
 			logging.getLogger().addHandler(h)
+
 		except IOError:
 			# oops, the log file could not be opened
 			# just log everything to stderr
@@ -832,6 +839,7 @@ if run_as_daemon:
 
 signal.signal(signal.SIGINT,sighandler)
 signal.signal(signal.SIGTERM,sighandler)
+signal.signal(signal.SIGHUP,sighandler)
 
 collector = DataCollector()
 collector.start()
