@@ -27,7 +27,7 @@ vcpus=1
 #acpi=0
 #apic=0
 vif = [ 'type=ioemu, ${XEN_WRITE_MAC}ip=${ALL_IPADDRS}${BRIDGE_DIRECTIVE}' ]
-disk=[ 'phy:/dev/mapper/${LVMNAME}-xen${VPSNUM},ioemu:hda,w'" >/etc/xen/${VPSNAME}
+disk=[ 'phy:/dev/mapper/${FSTAB_LVMNAME}-xen${VPSNUM},ioemu:hda,w'" >/etc/xen/${VPSNAME}
 	# Add all *.iso files to the config file
 	HDDLIST="bcdefghijklmnopqrstuvwxyz"
 	INCREMENT=1
@@ -60,7 +60,7 @@ name = \"${VPSNAME}\"
 vif = [ '${XEN_WRITE_MAC}ip=${ALL_IPADDRS}${BRIDGE_DIRECTIVE}' ]
 " >/etc/xen/${VPSNAME}
 	if [ "$IMAGE_TYPE" = "lvm" ]; then
-		echo "disk = [ 'phy:/dev/mapper/${LVMNAME}-xen${VPSNUM},0x3,w' ]
+		echo "disk = [ 'phy:/dev/mapper/${FSTAB_LVMNAME}-xen${VPSNUM},0x3,w' ]
 " >>/etc/xen/${VPSNAME}
 	else
 		echo "disk = [ 'file:$VPSGLOBPATH/${VPSNAME}.img,0x301,w' ]
@@ -84,7 +84,7 @@ vif = [ '${XEN_WRITE_MAC}ip=${ALL_IPADDRS}${BRIDGE_DIRECTIVE}' ]
 
 	# Set the HDDs
 	if [ "$IMAGE_TYPE" = "lvm" ]; then
-		echo "disk = [ 'phy:/dev/mapper/${LVMNAME}-xen${VPSNUM},sda1,w','phy:/dev/mapper/${LVMNAME}-xen${VPSNUM}swap,sda2,w' ]
+		echo "disk = [ 'phy:/dev/mapper/${FSTAB_LVMNAME}-xen${VPSNUM},sda1,w','phy:/dev/mapper/${FSTAB_LVMNAME}-xen${VPSNUM}swap,sda2,w' ]
 " >> /etc/xen/${VPSNAME}
 	else
 		echo "disk = [ 'file:$VPSGLOBPATH/${VPSNAME}.img,sda1,w','file:$VPSGLOBPATH/${VPSNAME}.swap.img,sda2,w' ]

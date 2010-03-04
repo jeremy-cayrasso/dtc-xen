@@ -300,6 +300,7 @@ if [ "${IMAGE_TYPE}" = "lvm" ] ; then
 		echo "You might want to set provisioning_volgroup in dtc-xen.conf" 1>&2
 		exit 78
 	fi
+	FSTAB_LVMNAME=${LVMNAME//-/--}
 fi
 
 # Finds the kernel name
@@ -469,8 +470,6 @@ else
 		if grep ${VPSNAME} /etc/fstab >/dev/null ; then
 			echo "LV already exists in fstab: skipping"
 		else
-			# if there are - in the LVM name, mapper changes it to --
-			FSTAB_LVMNAME=${LVMNAME//-/--}
 			echo "/dev/mapper/${FSTAB_LVMNAME}-${VPSNAME}  ${VPSGLOBPATH}/${VPSNUM} ext3    defaults,noauto 0 0" >>/etc/fstab
 		fi
 
