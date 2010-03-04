@@ -469,7 +469,9 @@ else
 		if grep ${VPSNAME} /etc/fstab >/dev/null ; then
 			echo "LV already exists in fstab: skipping"
 		else
-			echo "/dev/mapper/${LVMNAME}-${VPSNAME}  ${VPSGLOBPATH}/${VPSNUM} ext3    defaults,noauto 0 0" >>/etc/fstab
+			# if there are - in the LVM name, mapper changes it to --
+			FSTAB_LVMNAME=${LVMNAME//-/--}
+			echo "/dev/mapper/${FSTAB_LVMNAME}-${VPSNAME}  ${VPSGLOBPATH}/${VPSNUM} ext3    defaults,noauto 0 0" >>/etc/fstab
 		fi
 
 	else
