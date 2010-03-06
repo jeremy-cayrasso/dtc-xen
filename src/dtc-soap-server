@@ -606,6 +606,7 @@ def getCollectedPerformanceData(count=None):
 	"""
 	username = getUser()
         if username == dtcxen_user:
+		logging.info("getCollectedPerformanceData called.")
 		samples = []
 		try:
 			data_collection_lock.acquire()
