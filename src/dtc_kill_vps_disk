@@ -36,8 +36,8 @@ if [ "$IMAGE_TYPE" = "lvm" ] ; then
 		echo "You might want to set provisioning_volgroup in dtc-xen.conf" 1>&2
 		exit 78
 	}
-	FSTAB_LVMNAME=${LVMNAME//-/--}
 fi
+FSTAB_LVMNAME=`echo ${LVMNAME} | sed -e 's/-/--/g'`
 
 # redirect stdout and stderr to log files, so we can see what happened during install
 

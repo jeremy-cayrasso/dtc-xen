@@ -300,8 +300,8 @@ if [ "${IMAGE_TYPE}" = "lvm" ] ; then
 		echo "You might want to set provisioning_volgroup in dtc-xen.conf" 1>&2
 		exit 78
 	fi
-	FSTAB_LVMNAME=${LVMNAME//-/--}
 fi
+FSTAB_LVMNAME=`echo ${LVMNAME} | sed -e 's/-/--/g'`
 
 # Finds the kernel name
 if [ -z "${KERNELPATH}" ] ; then
