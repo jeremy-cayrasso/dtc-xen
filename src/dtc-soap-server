@@ -147,7 +147,7 @@ logging.info("    Provisioning mount point: %s"%vpsimage_mount_point)
 
 # --------------------- now we define the functions the daemon serves ------
 
-
+logging.info("Start to define functions...")
 def testVPSServer(*varargs):
 	  if not varargs: return "OK"
 	  else: return varargs
@@ -452,6 +452,7 @@ def getgroupid(group):
 	entry = grp.getgrnam(group)
 	return entry[2]
 
+logging.info("Finished defining functions.")
 from threading import Thread,RLock
 from subprocess import Popen,PIPE
 import re
@@ -461,6 +462,8 @@ tabsplitter = re.compile("[\t ]+").split
 tabcolonsplitter = re.compile("[\t :]+").split
 data_collection_lock = RLock()
 perfdata_dir = os.path.join("/","var","lib","dtc-xen","perfdata")
+
+logging.info("Setup Performance Data directory at %s" % perfdata_dir)
 
 class Server(Thread):
 	
@@ -795,9 +798,12 @@ if not Config.SSLserver:
 	### This is wrong.  IT should just raise Import Error.  FIXME
 	raise RuntimeError, "this Python installation doesn't have OpenSSL and M2Crypto"
 
+logging.info("Starting SSL context to secure webservice...")
 ssl_context = SSL.Context()
 
 ssl_context.load_cert(firstexisting(['/etc/dtc-xen/dtc-xen.cert.cert','/etc/pki/tls/certs/dtc-xen.crt']), firstexisting(['/etc/dtc-xen/privkey.pem','/etc/pki/tls/private/dtc-xen.key']), callback=_passphrase)
+
+logging.info("Starting SOAP server to serve webserivce requests...")
 
 soapserver = SOAPpy.SOAPServer((server_host, server_port), ssl_context = ssl_context)
 # No ssl 
@@ -806,6 +812,8 @@ soapserver = SOAPpy.SOAPServer((server_host, server_port), ssl_context = ssl_con
 #let's make some functions log exceptions, arguments and retvalues
 for f in [startVPS,destroyVPS,reinstallVPSos,getVPSState,getCollectedPerformanceData]: f = log_exceptions(f)
 # this is required because really really really old python versions don't support decorators
+
+logging.info("Register functions with the SOAP server...")
 
 soapserver.registerFunction(_authorize)
 soapserver.registerFunction(testVPSServer)
@@ -843,6 +851,8 @@ if run_as_daemon:
 	pidfile.write("%s"%pid)
 	pidfile.close()
 	logging.info("Daemonization successful -- running with PID %s"%pid)
+else:
+	logging.info("Not running as a daemon (running as a normal process)")
 
 signal.signal(signal.SIGINT,sighandler)
 signal.signal(signal.SIGTERM,sighandler)
