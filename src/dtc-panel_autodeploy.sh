@@ -75,6 +75,8 @@ export LC_ALL="en_US.UTF-8"
 locale-gen
 apt-get --force-yes --assume-yes install dtc-toaster
 
+apache2ctl start
+
 # Set debconf back to medium priority, using Dialog
 echo "debconf debconf/frontend select Dialog
 debconf debconf/frontend seen true
