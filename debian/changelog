@@ -1,3 +1,14 @@
+dtc-xen (0.5.6-1) unstable; urgency=low
+
+  * New upstream release fixing:
+    - [v0.5.5] Fixed syslogd logging with timestamp
+    - [v0.5.5] SIGHUP handler
+    - [v0.5.6] Automatically change - to -- for /dev/mapper LVMNAME
+    - [v0.5.6] Logs even if missing vif device on a running VM
+    - [v0.5.6] Add extra logging to see where we fail on restarts
+
+ -- Thomas Goirand <thomas@goirand.fr>  Thu, 18 Mar 2010 05:43:25 +0800
+
 dtc-xen (0.5.4-1) unstable; urgency=high
 
   * New upstream release.

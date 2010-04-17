@@ -9,6 +9,7 @@ if [ -z "$LVMNAME" ] ; then
 	echo "You might want to set provisioning_volgroup in dtc-xen.conf" 1>&2
 	exit 78
 fi
+FSTAB_LVMNAME=`echo ${LVMNAME} | sed -e 's/-/--/g'`
 
 
 NUM_NIC=0

@@ -10,6 +10,7 @@ import commands
 from StringIO import StringIO
 from SOAPpy import *
 import logging
+from logging.handlers import SysLogHandler
 import threading
 import glob
 import signal
@@ -28,6 +29,11 @@ SOAPpy.Config.debug=1
 def sighandler(signum,frame):
 	global last_signal
 	last_signal = signum
+	if last_signal == signal.SIGHUP:
+		logging.info("Logging restarting...")
+		logging.shutdown()
+		setup_logging()
+				
 
 def shutdown(error=0):
 	global run_as_daemon
@@ -90,10 +96,11 @@ def setup_logging():
 	if run_as_daemon:
 		oldumask = os.umask(31)
 		try:
-			logging.basicConfig(filename="/var/log/dtc-xen.log",level=log_level)
+			logging.basicConfig(filename="/var/log/dtc-xen.log",level=log_level,format='%(asctime)s %(levelname)s %(message)s')
 			h = logging.StreamHandler()
 			h.setLevel(logging.WARN)
 			logging.getLogger().addHandler(h)
+
 		except IOError:
 			# oops, the log file could not be opened
 			# just log everything to stderr
@@ -140,7 +147,7 @@ logging.info("    Provisioning mount point: %s"%vpsimage_mount_point)
 
 # --------------------- now we define the functions the daemon serves ------
 
-
+logging.info("Start to define functions...")
 def testVPSServer(*varargs):
 	  if not varargs: return "OK"
 	  else: return varargs
@@ -445,6 +452,7 @@ def getgroupid(group):
 	entry = grp.getgrnam(group)
 	return entry[2]
 
+logging.info("Finished defining functions.")
 from threading import Thread,RLock
 from subprocess import Popen,PIPE
 import re
@@ -454,6 +462,8 @@ tabsplitter = re.compile("[\t ]+").split
 tabcolonsplitter = re.compile("[\t :]+").split
 data_collection_lock = RLock()
 perfdata_dir = os.path.join("/","var","lib","dtc-xen","perfdata")
+
+logging.info("Setup Performance Data directory at %s" % perfdata_dir)
 
 class Server(Thread):
 	
@@ -531,13 +541,19 @@ class DataCollector(Thread):
 				name,xid,mem,cpu,state,cpu_time=domain[0:6]
 				cpu_time = float(cpu_time)
 				# if cpu time was measured the last time, and it was less than this one, get the difference
-				vifdiscard,net_inbytes,a,a,a,a,a,a,a,net_outbytes,a,a,a,a,a,a,a=tabcolonsplitter(
-					[
-						re.sub("sdkljflsdkjfsdlfj.*:","",o).strip()
-						for o in procnetdev_readout
-						if o.startswith("vif%s.0:"%xid)
-					] [0]
-				)
+				findvif = [
+                                                re.sub("sdkljflsdkjfsdlfj.*:","",o).strip()
+                                                for o in procnetdev_readout
+                                                if o.startswith("vif%s.0:"%xid)
+                                          ]
+                                # handle the condition where the vif interface isn't up yet, or has been shutdown
+                                if len(findvif) > 0:
+                                        vifdiscard,net_inbytes,a,a,a,a,a,a,a,net_outbytes,a,a,a,a,a,a,a=tabcolonsplitter(
+                                                 findvif [0]
+                                        )
+                                else:
+                                        logging.info("Could not find vif%s.0!"%xid)
+
 				net_inbytes,net_outbytes = int(net_inbytes),int(net_outbytes)
 
 				def get_blocks_dm(minor):
@@ -599,6 +615,7 @@ def getCollectedPerformanceData(count=None):
 	"""
 	username = getUser()
         if username == dtcxen_user:
+		logging.info("getCollectedPerformanceData called.")
 		samples = []
 		try:
 			data_collection_lock.acquire()
@@ -781,9 +798,12 @@ if not Config.SSLserver:
 	### This is wrong.  IT should just raise Import Error.  FIXME
 	raise RuntimeError, "this Python installation doesn't have OpenSSL and M2Crypto"
 
+logging.info("Starting SSL context to secure webservice...")
 ssl_context = SSL.Context()
 
 ssl_context.load_cert(firstexisting(['/etc/dtc-xen/dtc-xen.cert.cert','/etc/pki/tls/certs/dtc-xen.crt']), firstexisting(['/etc/dtc-xen/privkey.pem','/etc/pki/tls/private/dtc-xen.key']), callback=_passphrase)
+
+logging.info("Starting SOAP server to serve webserivce requests...")
 
 soapserver = SOAPpy.SOAPServer((server_host, server_port), ssl_context = ssl_context)
 # No ssl 
@@ -792,6 +812,8 @@ soapserver = SOAPpy.SOAPServer((server_host, server_port), ssl_context = ssl_con
 #let's make some functions log exceptions, arguments and retvalues
 for f in [startVPS,destroyVPS,reinstallVPSos,getVPSState,getCollectedPerformanceData]: f = log_exceptions(f)
 # this is required because really really really old python versions don't support decorators
+
+logging.info("Register functions with the SOAP server...")
 
 soapserver.registerFunction(_authorize)
 soapserver.registerFunction(testVPSServer)
@@ -829,9 +851,12 @@ if run_as_daemon:
 	pidfile.write("%s"%pid)
 	pidfile.close()
 	logging.info("Daemonization successful -- running with PID %s"%pid)
+else:
+	logging.info("Not running as a daemon (running as a normal process)")
 
 signal.signal(signal.SIGINT,sighandler)
 signal.signal(signal.SIGTERM,sighandler)
+signal.signal(signal.SIGHUP,sighandler)
 
 collector = DataCollector()
 collector.start()

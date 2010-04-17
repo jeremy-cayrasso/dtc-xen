@@ -21,6 +21,7 @@ LVMNAME=`dtc-xen-volgroup`
 	echo "You might want to set provisioning_volgroup in dtc-xen.conf" 1>&2
 	exit 78
 }
+FSTAB_LVMNAME=`echo ${LVMNAME} | sed -e 's/-/--/g'`
 
 # Figure out the VPS mount point
 if [ -n "$provisioning_mount_point" ]
@@ -54,7 +55,7 @@ builder = 'hvm'
 memory = ${RAMSIZE}
 name = \"${VPSNAME}\"
 vif = [ 'type=ioemu, ${XEN_WRITE_MAC}ip=${ALL_IPADDRS}' ]
-disk=[ 'phy:/dev/mapper/${LVMNAME}-xen${VPSNUM},ioemu:hda,w'" >/etc/xen/${VPSNAME}
+disk=[ 'phy:/dev/mapper/${FSTAB_LVMNAME}-xen${VPSNUM},ioemu:hda,w'" >/etc/xen/${VPSNAME}
 # Set the additional cdrom drives: add all *.iso files to the config file
 HDDLIST="bcdefghijklmnopqrstuvwxyz"
 INCREMENT=2

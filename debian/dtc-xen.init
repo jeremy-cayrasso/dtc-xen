@@ -22,13 +22,13 @@ PYTHON=/usr/bin/python
 case "$1" in
 	start)
 		log_daemon_msg "Starting python SOAP server" "dtc-soap-server"
-		start-stop-daemon --start -b --quiet --pidfile /var/run/dtc-xen-soap-server.pid --make-pidfile --exec $PYTHON /usr/sbin/dtc-soap-server
+		start-stop-daemon --start --pidfile /var/run/dtc-xen.pid --exec $PYTHON /usr/sbin/dtc-soap-server -- -D
 		log_end_msg $?
         ;;
 
 	stop)
 		log_daemon_msg "Stopping python SOAP server" "dtc-soap-server"
-		start-stop-daemon --stop --oknodo --pidfile /var/run/dtc-xen-soap-server.pid
+		start-stop-daemon --stop --oknodo --pidfile /var/run/dtc-xen.pid
 		log_end_msg $?
 	;;
 

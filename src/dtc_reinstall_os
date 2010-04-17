@@ -301,6 +301,7 @@ if [ "${IMAGE_TYPE}" = "lvm" ] ; then
 		exit 78
 	fi
 fi
+FSTAB_LVMNAME=`echo ${LVMNAME} | sed -e 's/-/--/g'`
 
 # Finds the kernel name
 if [ -z "${KERNELPATH}" ] ; then
@@ -469,7 +470,7 @@ else
 		if grep ${VPSNAME} /etc/fstab >/dev/null ; then
 			echo "LV already exists in fstab: skipping"
 		else
-			echo "/dev/mapper/${LVMNAME}-${VPSNAME}  ${VPSGLOBPATH}/${VPSNUM} ext3    defaults,noauto 0 0" >>/etc/fstab
+			echo "/dev/mapper/${FSTAB_LVMNAME}-${VPSNAME}  ${VPSGLOBPATH}/${VPSNUM} ext3    defaults,noauto 0 0" >>/etc/fstab
 		fi
 
 	else

@@ -37,6 +37,7 @@ if [ "$IMAGE_TYPE" = "lvm" ] ; then
 		exit 78
 	}
 fi
+FSTAB_LVMNAME=`echo ${LVMNAME} | sed -e 's/-/--/g'`
 
 # redirect stdout and stderr to log files, so we can see what happened during install
 

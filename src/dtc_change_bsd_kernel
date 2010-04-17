@@ -19,6 +19,7 @@ LVMNAME=`dtc-xen-volgroup`
 	echo "You might want to set provisioning_volgroup in dtc-xen.conf" 1>&2
 	exit 78
 }
+FSTAB_LVMNAME=`echo ${LVMNAME} | sed -e 's/-/--/g'`
 
 #NODE_NUM=6501
 #DEBIAN_REPOS="http://65.apt-proxy.gplhost.com:9999/debian"
@@ -71,7 +72,7 @@ echo "kernel = \"${KERNELPATH}\"
 memory = ${RAMSIZE}
 name = \"${VPSNAME}\"
 vif = [ '${XEN_WRITE_MAC}ip=${ALL_IPADDRS}' ]
-disk = [ 'phy:/dev/mapper/${LVMNAME}-${VPSNAME},0x3,w' ]
+disk = [ 'phy:/dev/mapper/${FSTAB_LVMNAME}-${VPSNAME},0x3,w' ]
 " >/etc/xen/${VPSNAME}
 if [ ! -e /etc/xen/auto/${VPSNAME} ] ; then
 	ln -s ../${VPSNAME} /etc/xen/auto/${VPSNAME}
