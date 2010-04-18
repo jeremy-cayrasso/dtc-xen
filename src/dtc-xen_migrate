@@ -1,0 +1,55 @@
+#!/bin/sh
+
+set -e
+
+. /etc/dtc-xen/dtc-xen.conf
+
+print_usage () {
+	echo "Usage: dtc-xen <vps-id> <destination-node> [remote-vps-id]"
+}
+
+if [ $# -lt 2 -o $# -gt 3 ] ; then
+	print_usage
+	exit 1
+fi
+
+VPS_ID=${1}
+DEST_NODE=${2}
+if [ -z "${3}" ] ; then
+	VPS_REMOTE_ID=${3}
+else
+	VPS_REMOTE_ID=${VPS_ID}
+fi
+
+VG=`dtc-xen-volgroup`
+DEST_VG=`ssh ${DEST_NODE} 'dtc-xen-volgroup'`
+RAM=`cat /etc/xen/xen${VPS_ID} | grep memory | awk '{print $3}'`
+HDD=`lvdisplay -c /dev/${VG}/xen${VPS_ID} | cut -d":" -f7`
+HDD=$((${HDD} / 2048 ))
+
+echo "Migrating xen${VPS_ID} to ${DEST_NODE}:${VPS_REMOTE_ID} HDD: ${HDD}MB on ${DEST_VG}, RAM: ${RAM}"
+echo "=> Creating HDD space on ${DEST_NODE}"
+ssh $DEST_NODE "dtc_setup_vps_disk $VPS_REMOTE_ID ${HDD} ${RAM}"
+echo "=> Formating remote partitions"
+ssh $DEST_NODE "mkfs.ext3 /dev/${DEST_VG}/xen${VPS_REMOTE_ID}"
+ssh $DEST_NODE "mkswap /dev/${DEST_VG}/xen${VPS_REMOTE_ID}swap"
+echo "=> mounting partition"
+ssh $DEST_NODE "mount /var/lib/dtc-xen/mnt/${VPS_REMOTE_ID}"
+echo "=> Shutting down VPS"
+xm shutdown xen${VPS_ID}
+xm console xen${VPS_ID}
+echo "=> Mounting partition"
+mount /var/lib/dtc-xen/mnt/${VPS_ID}
+echo "=> Synchronizing content with rsync"
+nice rsync -e ssh -azvp --numeric-ids /var/lib/dtc-xen/mnt/${VPS_ID}/ node0180.gplhost.com:/var/lib/dtc-xen/mnt/${VPS_REMOTE_ID}
+echo "=> Building remote configuration file"
+scp /etc/xen/xen${VPS_ID} ${DEST_NODE}:/etc/xen/xen${VPS_REMOTE_ID}
+REMOTE_MAC_PREFIX=`ssh ${DEST_NODE} "cat /etc/dtc-xen/dtc-xen.conf | grep vps_mac_prefix  | cut -d'=' -f2"`
+ssh ${DEST_NODE} "sed -i s/${VG}/${DEST_VG}/ /etc/xen/xen${VPS_REMOTE_ID} && sed -i s/${VG}/${DEST_VG}/ /etc/xen/xen${VPS_REMOTE_ID} && sed -i s/${vps_mac_prefix}:${VPS_ID}/$REMOTE_MAC_PREFIX:${VPS_REMOTE_ID}/ /etc/xen/xen${VPS_REMOTE_ID} && sed -i s/xen${VPS_ID}/xen${VPS_REMOTE_ID}/ /etc/xen/xen${VPS_REMOTE_ID}"
+echo "=> Unmounting remote"
+ssh ${DEST_NODE} "umount /var/lib/dtc-xen/mnt/${VPS_REMOTE_ID}"
+echo "=> Starting ${DEST_NODE}:${VPS_REMOTE_ID}"
+ssh ${DEST_NODE} "xm create xen${VPS_REMOTE_ID}"
+echo "=> Unmounting local VM partition"
+umount /var/lib/dtc-xen/mnt/${VPS_ID}
+echo "DONE! You check xen${VPS_REMOTE_ID} on ${DEST_NODE} is working correctly now!"

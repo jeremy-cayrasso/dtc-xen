@@ -1,0 +1,43 @@
+.TH dtc-xen_migrate 8
+.SH NAME
+dtc-xen_migrate \- migrate a VPS to another Xen server
+.SH SYNOPSIS
+.B LOCAL_VPS_ID
+.I DESTINATION_HOSTNAME
+[
+.I DEST_VPS_ID
+]
+
+.SH DESCRIPTION
+.B dtc-xen_migrate
+This shell script is a part of the dtc-xen package that is to be used by the
+dtc panel to manage a Xen VPS server. Note that you need rsync in both the
+source and the destination dom0.
+
+This script is used to move the content of a Xen virtual machine (VM) managed
+with dtc-xen to another Xen server of the same type. The VM destination will
+first be prepared, then the local VM will be shut down, then it's content
+will be transfered over using rsync.
+
+Note that this is NOT a live migration, and down time of approximatively the
+time needed for the rsync will occure.
+
+.SH PARAMETERS
+.B LOCAL_VPS_ID
+The DTC-Xen id of the VM, from 00 to 99.
+
+.B DESTINATION_HOSTNAME
+Destination Xen server hostname to migrate to.
+
+.B DEST_VPS_ID
+Destination DTC-Xen id of the VM, from 00 to 99.
+
+.SH EXAMPLE
+
+.B dtc-xen_migrate 19 alpha.example.com 21
+
+This will migrate the content of xen19 on the local machine to the destination
+server alpha.example.com using xen21 as VM name.
+
+.SH "SEE ALSO"
+dtc_reinstall_os(8), dtc_kill_vps_disk(8)
