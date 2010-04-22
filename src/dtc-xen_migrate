@@ -41,7 +41,7 @@ xm console xen${VPS_ID}
 echo "=> Mounting partition"
 mount /var/lib/dtc-xen/mnt/${VPS_ID}
 echo "=> Synchronizing content with rsync"
-nice rsync -e ssh -azvp --numeric-ids /var/lib/dtc-xen/mnt/${VPS_ID}/ node0180.gplhost.com:/var/lib/dtc-xen/mnt/${VPS_REMOTE_ID}
+nice rsync -e ssh -azvp --numeric-ids /var/lib/dtc-xen/mnt/${VPS_ID}/ ${DEST_NODE}:/var/lib/dtc-xen/mnt/${VPS_REMOTE_ID}
 echo "=> Building remote configuration file"
 scp /etc/xen/xen${VPS_ID} ${DEST_NODE}:/etc/xen/xen${VPS_REMOTE_ID}
 REMOTE_MAC_PREFIX=`ssh ${DEST_NODE} "cat /etc/dtc-xen/dtc-xen.conf | grep vps_mac_prefix  | cut -d'=' -f2"`
