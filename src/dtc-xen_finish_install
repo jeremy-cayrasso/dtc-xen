@@ -25,7 +25,12 @@ else
 	else
 		echo "AllowTcpForwarding no" >>/etc/ssh/sshd_config
 		echo "Disabling ssh port forwarding for security reasons"
-		echo "Please type: \"killall -HUP sshd\" right after this package is setup!!!"
+		if [ -x /usr/sbin/invoke-rc.d -a /etc/init.d/ssh ] ; then
+			echo "Restarting ssh daemon"
+			invoke-rc.d ssh restart
+		else
+			echo "Please restart the ssh daemon or do a \"killall -HUP sshd\" right after this package is setup!!!"
+		fi
 	fi
 fi
 
