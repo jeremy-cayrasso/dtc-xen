@@ -1,4 +1,4 @@
-dtc-xen (0.5.7-1) unstable; urgency=low
+dtc-xen (0.5.8-1) unstable; urgency=low
 
   * New upstream release fixing:
     - [v0.5.5] Fixed syslogd logging with timestamp
@@ -7,6 +7,13 @@ dtc-xen (0.5.7-1) unstable; urgency=low
     - [v0.5.6] Logs even if missing vif device on a running VM
     - [v0.5.6] Add extra logging to see where we fail on restarts
     - [v0.5.7] Added dtc-xen_migrate script
+    - [v0.5.8] Implemented a -HUP signal catching in the soap daemon, so it can
+      reopen the dtc-xen.log file after a rotate by logrotate.
+    - [v0.5.8] Made a separate reload) statement in the init.d script of dtc-xen
+    - [v0.5.8] Switched the logrotate.d file of dtc-xen.log to use realod) and
+      not restart.
+    - [v0.5.8] Fixed a typo in the logrotate.d file where it was not checking
+      against the correct /var/run/dtc-xen.pid filename for reloading.
 
  -- Thomas Goirand <thomas@goirand.fr>  Sun, 18 Apr 2010 23:34:38 +0800
 

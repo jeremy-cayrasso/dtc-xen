@@ -7,8 +7,8 @@
 	create 640 root adm
 	sharedscripts
 	postrotate
-		if [ -f /var/run/dtc-xen-soap-server.pid ] ; then
-			/etc/init.d/dtc-xen restart > /dev/null
+		if [ -f /var/run/dtc-xen.pid ] ; then
+			/etc/init.d/dtc-xen reload > /dev/null 2>&1
 		fi
 	endscript
 }
