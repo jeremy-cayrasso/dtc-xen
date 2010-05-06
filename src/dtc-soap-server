@@ -115,8 +115,7 @@ def setup_logging():
 	else: log_level = logging.INFO
 
 	# nuke the old handlers -- they cause problems if kept registered after daemonization
-	for h in logging.root.handlers: 
-		logging.root.removeHandler(h)
+	del logging.getLogger().handlers[:]
 
 	if run_as_daemon:
 		oldumask = os.umask(31)
