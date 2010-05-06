@@ -19,21 +19,45 @@ except ImportError: subprocess = False
 from M2Crypto import SSL
 import crypt
 from Properties import *
+from threading import Thread,RLock
+from subprocess import Popen,PIPE
+import re
+import time
+import pickle
+
 
 # some global variables
 run_as_daemon = None
 last_signal = None
 SOAPpy.Config.debug=1
 
+server_host = None
+server_port = None
+cert_passphrase = None
+dtcxen_user = None
+server_lvmname = None
+vpsimage_mount_point = None
+perfdata_dir = None
+tabsplitter = None
+tabcolonsplitter = None
+data_collection_lock = None
+keepRunning = 1
 
 def sighandler(signum,frame):
 	global last_signal
 	last_signal = signum
 	if last_signal == signal.SIGHUP:
-		logging.info("Logging restarting...")
-		logging.shutdown()
-		setup_logging()
-				
+		try:
+			logging.info("Logging restarting...")
+			logging.shutdown()
+			setup_logging()
+		except Exception,e:
+			logging.exception("Trapped exception in function call.  Thread: %s",threading.currentThread())
+			raise
+	if last_signal == signal.SIGTERM:
+		shutdown()
+	if last_signal == signal.SIGINT:
+		shutdown()
 
 def shutdown(error=0):
 	global run_as_daemon
@@ -91,7 +115,8 @@ def setup_logging():
 	else: log_level = logging.INFO
 
 	# nuke the old handlers -- they cause problems if kept registered after daemonization
-	for h in logging.root.handlers: logging.root.removeHandler(h)
+	for h in logging.root.handlers: 
+		logging.root.removeHandler(h)
 
 	if run_as_daemon:
 		oldumask = os.umask(31)
@@ -109,45 +134,48 @@ def setup_logging():
 	else:
 		logging.basicConfig(level=log_level) # debug because started foreground
 
-setup_logging()
+def startup():
+	setup_logging()
 
-logging.info("Starting DTC SOAP server...")
+	logging.info("Starting DTC SOAP server...")
 
-#if not os.path.exists("/proc/xen/privcmd"):
-#	logging.error("/proc/xen/privcmd is not accessible, cannot start dtc-xen")
-#	shutdown(1)
+	#if not os.path.exists("/proc/xen/privcmd"):
+	#	logging.error("/proc/xen/privcmd is not accessible, cannot start dtc-xen")
+	#	shutdown(1)
 
-# import xm stuff
-#import xen.xm.main
+	# import xm stuff
+	#import xen.xm.main
 
-# read config file
-config_file = firstexisting(['/etc/dtc-xen/dtc-xen.conf','/etc/dtc-xen/soap.conf'])
-p=Properties()
-p.load(open(config_file))
-gp = p.getProperty
-server_host= firsttrue([ gp(x) for x in ["soap_server_host","listen_address"] ])
-server_port= int(firsttrue([ gp(x) for x in ["soap_server_port","listen_port"] ]))
-cert_passphrase= firsttrue([ gp(x) for x in ["soap_server_pass_phrase","cert_passphrase"] ])
-dtcxen_user=firsttrue([ gp(x) for x in ["soap_server_dtcxen_user","admin_user"] ])
-server_lvmname=provisioning_volgroup()
-vpsimage_mount_point=firsttrue([ gp(x) for x in [
-		"soap_server_mount_point",
-		"provisioning_mount_point"] ])
-del gp
+	# read config file
+	config_file = firstexisting(['/etc/dtc-xen/dtc-xen.conf','/etc/dtc-xen/soap.conf'])
+	p=Properties()
+	p.load(open(config_file))
+	gp = p.getProperty
+	global server_host,server_port,cert_passphrase,dtcxen_user,server_lvmname,vpsimage_mount_point
+	server_host= firsttrue([ gp(x) for x in ["soap_server_host","listen_address"] ])
+	server_port= int(firsttrue([ gp(x) for x in ["soap_server_port","listen_port"] ]))
+	cert_passphrase= firsttrue([ gp(x) for x in ["soap_server_pass_phrase","cert_passphrase"] ])
+	dtcxen_user=firsttrue([ gp(x) for x in ["soap_server_dtcxen_user","admin_user"] ])
+	server_lvmname=provisioning_volgroup()
+	vpsimage_mount_point=firsttrue([ gp(x) for x in [
+			"soap_server_mount_point",
+			"provisioning_mount_point"] ])
+	del gp
 
-logging.info("Server using this configuration:")
-logging.info("    Configuration file: %s"%config_file)
-logging.info("    Listen address: %s"%server_host)
-logging.info("    Listen port: %s"%server_port)
-if cert_passphrase: logging.info("    Certificate passphrase: present")
-if cert_passphrase: logging.info("    Certificate passphrase: not configured")
-logging.info("    Administrator user: %s"%dtcxen_user)
-logging.info("    Provisioning from LVM volume group: %s"%server_lvmname)
-logging.info("    Provisioning mount point: %s"%vpsimage_mount_point)
+	logging.info("Server using this configuration:")
+	logging.info("    Configuration file: %s"%config_file)
+	logging.info("    Listen address: %s"%server_host)
+	logging.info("    Listen port: %s"%server_port)
+	if cert_passphrase: logging.info("    Certificate passphrase: present")
+	else: logging.info("    Certificate passphrase: not configured")
+	logging.info("    Administrator user: %s"%dtcxen_user)
+	logging.info("    Provisioning from LVM volume group: %s"%server_lvmname)
+	logging.info("    Provisioning mount point: %s"%vpsimage_mount_point)
 
-# --------------------- now we define the functions the daemon serves ------
+	# --------------------- now we define the functions the daemon serves ------
 
-logging.info("Start to define functions...")
+	logging.info("Start to define functions...")
+
 def testVPSServer(*varargs):
 	  if not varargs: return "OK"
 	  else: return varargs
@@ -248,6 +276,7 @@ def infoVPS(vpsname):
 		return "NOTOK"
 
 def listStartedVPS():
+	global tabsplitter
 	username = getUser()
 	if username == dtcxen_user:
 		# Bellow is the new tested and working code
@@ -452,18 +481,15 @@ def getgroupid(group):
 	entry = grp.getgrnam(group)
 	return entry[2]
 
-logging.info("Finished defining functions.")
-from threading import Thread,RLock
-from subprocess import Popen,PIPE
-import re
-import time
-import pickle
-tabsplitter = re.compile("[\t ]+").split
-tabcolonsplitter = re.compile("[\t :]+").split
-data_collection_lock = RLock()
-perfdata_dir = os.path.join("/","var","lib","dtc-xen","perfdata")
+def startup2():
+	global perfdata_dir,data_collection_lock,perfdata_dir,tabsplitter,tabcolonsplitter
+	logging.info("Finished defining functions.")
+	tabsplitter = re.compile("[\t ]+").split
+	tabcolonsplitter = re.compile("[\t :]+").split
+	data_collection_lock = RLock()
+	perfdata_dir = os.path.join("/","var","lib","dtc-xen","perfdata")
 
-logging.info("Setup Performance Data directory at %s" % perfdata_dir)
+	logging.info("Setup Performance Data directory at %s" % perfdata_dir)
 
 class Server(Thread):
 	
@@ -481,7 +507,7 @@ class Server(Thread):
 
 
 class DataCollector(Thread):
-	
+	global data_collection_lock	
 	def __init__(self):
 		Thread.__init__(self,name="Data collector thread")
 		self.setDaemon(True)
@@ -530,11 +556,12 @@ class DataCollector(Thread):
 			
 			started_time = time.time()
 			
+			global tabsplitter
 			old_dictionary,dictionary = dictionary,{}
 			domains = (
 				tabsplitter(d.strip())
 				for d in Popen(["/usr/sbin/xm","list"], stdout=PIPE).communicate()[0].splitlines()[2:]
-				if d.strip()
+					if d.strip()
 			)
 			procnetdev_readout = file("/proc/net/dev").readlines()
 			for domain in domains:
@@ -718,11 +745,12 @@ def getInstallableAPP():
 	folderlist = os.listdir('/usr/share/dtc-xen-app/')
 	return folderlist
 
-# ask for returned SOAP responses to be converted to basic python types
-Config.simplify_objects = 1
+def startup3():
+	# ask for returned SOAP responses to be converted to basic python types
+	Config.simplify_objects = 1
 
-# specify name of authorization function
-Config.authMethod = "_authorize"
+	# specify name of authorization function
+	Config.authMethod = "_authorize"
 
 def getUser():
 	c = GetSOAPContext()
@@ -794,74 +822,104 @@ def _passphrase(cert):
 	logging.debug("Pass phrase faked...")
 	return cert_passphrase
 
-if not Config.SSLserver:
-	### This is wrong.  IT should just raise Import Error.  FIXME
-	raise RuntimeError, "this Python installation doesn't have OpenSSL and M2Crypto"
+def main(argv=None):
+	startup()
+	startup2()
+	startup3()
 
-logging.info("Starting SSL context to secure webservice...")
-ssl_context = SSL.Context()
+	if not Config.SSLserver:
+		### This is wrong.  IT should just raise Import Error.  FIXME
+		raise RuntimeError, "this Python installation doesn't have OpenSSL and M2Crypto"
 
-ssl_context.load_cert(firstexisting(['/etc/dtc-xen/dtc-xen.cert.cert','/etc/pki/tls/certs/dtc-xen.crt']), firstexisting(['/etc/dtc-xen/privkey.pem','/etc/pki/tls/private/dtc-xen.key']), callback=_passphrase)
+	logging.info("Starting SSL context to secure webservice...")
+	ssl_context = SSL.Context()
 
-logging.info("Starting SOAP server to serve webserivce requests...")
+	ssl_context.load_cert(firstexisting(['/etc/dtc-xen/dtc-xen.cert.cert','/etc/pki/tls/certs/dtc-xen.crt']), firstexisting(['/etc/dtc-xen/privkey.pem','/etc/pki/tls/private/dtc-xen.key']), callback=_passphrase)
 
-soapserver = SOAPpy.SOAPServer((server_host, server_port), ssl_context = ssl_context)
-# No ssl 
-# soapserver = SOAPpy.SOAPServer((server_host, server_port))
+	logging.info("Starting SOAP server to serve webserivce requests...")
 
-#let's make some functions log exceptions, arguments and retvalues
-for f in [startVPS,destroyVPS,reinstallVPSos,getVPSState,getCollectedPerformanceData]: f = log_exceptions(f)
-# this is required because really really really old python versions don't support decorators
+	soapserver = SOAPpy.SOAPServer((server_host, server_port), ssl_context = ssl_context)
+	# No ssl 
+	# soapserver = SOAPpy.SOAPServer((server_host, server_port))
 
-logging.info("Register functions with the SOAP server...")
+	#let's make some functions log exceptions, arguments and retvalues
+	for f in [startVPS,destroyVPS,reinstallVPSos,getVPSState,getCollectedPerformanceData]: f = log_exceptions(f)
+	# this is required because really really really old python versions don't support decorators
 
-soapserver.registerFunction(_authorize)
-soapserver.registerFunction(testVPSServer)
-soapserver.registerFunction(startVPS)
-soapserver.registerFunction(destroyVPS)
-soapserver.registerFunction(shutdownVPS)
-soapserver.registerFunction(killVPS)
-soapserver.registerFunction(listStartedVPS)
-soapserver.registerFunction(getVPSState)
-soapserver.registerFunction(changeVPSxmPassword)
-soapserver.registerFunction(changeVPSsoapPassword)
-soapserver.registerFunction(changeVPSsshKey)
-soapserver.registerFunction(reportInstalledIso)
-soapserver.registerFunction(reinstallVPSos)
-soapserver.registerFunction(fsckVPSpartition)
-soapserver.registerFunction(changeBSDkernel)
-soapserver.registerFunction(writeXenPVconf)
-soapserver.registerFunction(setupLVMDisks)
-soapserver.registerFunction(getCollectedPerformanceData)
-soapserver.registerFunction(getInstallableOS)
-soapserver.registerFunction(getVPSInstallLog)
-soapserver.registerFunction(getInstallableAPP)
+	logging.info("Register functions with the SOAP server...")
 
-if run_as_daemon:
-	# Daemonize requested.  Daemonize and write pid file to /var/run/dtc-xen.pid
-	logging.info("Attempting to daemonize...")
-	import daemon
-	# unconditionally close stdin/stdout/stderr, otherwise yum reinstall fails
-	for fd in [0,1,2]:
-		try: os.close(fd)
-		except OSError: pass
-	daemon.daemonize()
-	pid = os.getpid()
-	pidfile =file("/var/run/dtc-xen.pid","w")
-	pidfile.write("%s"%pid)
-	pidfile.close()
-	logging.info("Daemonization successful -- running with PID %s"%pid)
-else:
-	logging.info("Not running as a daemon (running as a normal process)")
+	soapserver.registerFunction(_authorize)
+	soapserver.registerFunction(testVPSServer)
+	soapserver.registerFunction(startVPS)
+	soapserver.registerFunction(destroyVPS)
+	soapserver.registerFunction(shutdownVPS)
+	soapserver.registerFunction(killVPS)
+	soapserver.registerFunction(listStartedVPS)
+	soapserver.registerFunction(getVPSState)
+	soapserver.registerFunction(changeVPSxmPassword)
+	soapserver.registerFunction(changeVPSsoapPassword)
+	soapserver.registerFunction(changeVPSsshKey)
+	soapserver.registerFunction(reportInstalledIso)
+	soapserver.registerFunction(reinstallVPSos)
+	soapserver.registerFunction(fsckVPSpartition)
+	soapserver.registerFunction(changeBSDkernel)
+	soapserver.registerFunction(writeXenPVconf)
+	soapserver.registerFunction(setupLVMDisks)
+	soapserver.registerFunction(getCollectedPerformanceData)
+	soapserver.registerFunction(getInstallableOS)
+	soapserver.registerFunction(getVPSInstallLog)
+	soapserver.registerFunction(getInstallableAPP)
 
-signal.signal(signal.SIGINT,sighandler)
-signal.signal(signal.SIGTERM,sighandler)
-signal.signal(signal.SIGHUP,sighandler)
+	if run_as_daemon:
+		# Daemonize requested.  Daemonize and write pid file to /var/run/dtc-xen.pid
+		logging.info("Attempting to daemonize...")
+		import daemon
+		# unconditionally close stdin/stdout/stderr, otherwise yum reinstall fails
+		for fd in [0,1,2]:
+			try: os.close(fd)
+			except OSError: pass
+		daemon.daemonize()
+		pid = os.getpid()
+		pidfile =file("/var/run/dtc-xen.pid","w")
+		pidfile.write("%s"%pid)
+		pidfile.close()
+		logging.info("Daemonization successful -- running with PID %s"%pid)
+	else:
+		logging.info("Not running as a daemon (running as a normal process)")
+	
+	signal.signal(signal.SIGINT,sighandler)
+	signal.signal(signal.SIGTERM,sighandler)
+	signal.signal(signal.SIGHUP,sighandler)
 
-collector = DataCollector()
-collector.start()
-server = Server(soapserver)
-server.start()
-signal.pause()
-shutdown()
 
+	collector = DataCollector()
+	collector.start()
+	server = Server(soapserver)
+	server.start()
+	global keepRunning
+	while keepRunning == 1:
+		signal.pause()
+	shutdown()
+
+if __name__ == "__main__":
+	
+	# enable the below to trace the main server process
+	#import sys
+	#import trace
+
+	# create a Trace object, telling it what to ignore, and whether to
+	# do tracing or line-counting or both.
+	#tracer = trace.Trace(
+	    #ignoredirs=[sys.prefix, sys.exec_prefix],
+	    #trace=1,
+	    #count=1)
+
+	# run the new command using the given tracer
+	#tracer.run('main()')
+
+	# make a report, placing output in /tmp
+	#r = tracer.results()
+	#r.write_results(show_missing=True, coverdir="/tmp")
+
+	# cleanly run main() and handle exits
+    	sys.exit(main())
