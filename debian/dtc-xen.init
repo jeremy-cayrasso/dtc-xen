@@ -3,7 +3,7 @@
 ### BEGIN INIT INFO
 # Provides:          dtc-xen
 # Required-Start:    $all
-# Required-Stop:
+# Required-Stop:     $remote_fs
 # Should-Start:      $local_fs
 # Should-Stop:       $local_fs
 # Default-Start:     2 3 4 5
