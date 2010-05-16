@@ -1,4 +1,4 @@
-dtc-xen (0.5.8-1) unstable; urgency=low
+dtc-xen (0.5.10-1) unstable; urgency=low
 
   * New upstream release fixing:
     - [v0.5.5] Fixed syslogd logging with timestamp
@@ -14,8 +14,12 @@ dtc-xen (0.5.8-1) unstable; urgency=low
       not restart.
     - [v0.5.8] Fixed a typo in the logrotate.d file where it was not checking
       against the correct /var/run/dtc-xen.pid filename for reloading.
+    - [v0.5.9] Fixes the -HUP completely, refactored many stuffs into nicer
+      functions in the python soap server (much cleaner code now). (Damien)
+    - [0.5.10] Updated Swedish strings for dtc-xen debconf thanks to Martin
+      Bagge <brother@bsnet.se> (Closes: #564768).
 
- -- Thomas Goirand <thomas@goirand.fr>  Sun, 18 Apr 2010 23:34:38 +0800
+ -- Thomas Goirand <thomas@goirand.fr>  Fri, 07 May 2010 02:17:28 +0800
 
 dtc-xen (0.5.4-1) unstable; urgency=high
 
