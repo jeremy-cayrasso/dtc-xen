@@ -50,7 +50,13 @@ else
 	XEN_WRITE_MAC=""
 fi
 
-echo -n "kernel = \"/usr/lib/xen/boot/hvmloader\"
+if [ -f /usr/lib/xen-default/boot/hvmloader] ; then
+	HVMLOADER=/usr/lib/xen-default/boot/hvmloader
+elif [ -f /usr/lib/xen/boot/hvmloader] ; then
+	HVMLOADER=/usr/lib/xen/boot/hvmloader
+fi
+
+echo -n "kernel = \"${HVMLOADER}\"
 builder = 'hvm'
 memory = ${RAMSIZE}
 name = \"${VPSNAME}\"
@@ -71,7 +77,7 @@ if [ -z "${VNC_PASSWORD}" -o "${VNC_PASSWORD}" = "no_vnc" ] ; then
 	echo "nographic=1
 vnc=0" >>/etc/xen/${VPSNAME}
 else
-	echo "vfb = [ \"type=vnc,vncdisplay=21,vncpasswd=${VNC_PASSWORD}\" ]
+	echo "vfb = [ \"type=vnc,vncdisplay=${VPSNUM},vncpasswd=${VNC_PASSWORD}\" ]
 nographic=0
 vnc=1
 stdvga=1" >>/etc/xen/${VPSNAME}
