@@ -39,6 +39,7 @@ if [ $# -lt 5 ]; then
 	echo "         [ --initrd <initrd-full-path ] : Path to the kernel initrd image to boot with" > /dev/stderr
 	echo "                         [ --vps-fqdn ] : Customizes the hostname of the VPS" > /dev/stderr
 	echo "                              [ --mac ] : MAC address of the VPS"
+	echo "               [ --virt-type <xen|vz> ] : Virtualization (for the moment, xen or vz only)" > /dev/stderr
 	echo "Options specific to Xen HVM guests:" > /dev/stderr
 	echo "               [ --vnc-pass <VNCPASS> ] : VNC password for the physical console" > /dev/stderr
 	echo "              [ --boot-iso <file.iso> ] : CDROM device to boot on" > /dev/stderr
@@ -175,6 +176,12 @@ for i in $@ ; do
 		shift
 		shift
 		;;
+	"--virt-type")
+		if [ -z "${2}" ] ; then echo "Parameter for option --virt-type is missing" > /dev/stderr ; DO_EXIT="yes" ; fi
+		VIRT_TYPE=${2}
+		shift
+		shift
+		;;
 	"--kernel")
 		if [ -z "${2}" ] ; then echo "Parameter for option --kernel is missing" > /dev/stderr ; DO_EXIT="yes" ; fi
 		KERNELPATH="$2"
@@ -209,6 +216,20 @@ for i in $@ ; do
 		;;
 	esac
 done
+
+# Detect the virtualization type if not are given on the command line
+if [ -z "${VIRT_TYPE}" ] ; then
+	if [ -d /proc/xen ] ; then
+		VIRT_TYPE="xen"
+	fi
+	if [ -d /proc/xen ] ; then
+		VIRT_TYPE="vz"
+	fi
+fi
+if [ -z "${VIRT_TYPE}" ] ; then
+	echo "Could not find /proc/xen or /proc/vz: impossible to tell if Xen or VZ is running. Will exit now" > /dev/stderr
+	DO_EXIT="yes"
+fi
 
 if [ -z "${VPSNUM}" ] ; then
 	echo "No VPS number. Please use -vpsid <id>." > /dev/stderr
@@ -385,7 +406,7 @@ calc_formard_parms (){
 	fi
 
 	KERNEL_P="--kernel ${KERNELPATH} --kernel-release ${KERNEL_RELEASE} --kmod-path ${KMOD_PATH} --initrd ${INITRDPATH}"
-	FW_PARAMS="--disk-type ${IMAGE_TYPE} -os ${DISTRO} -ram ${VPSMEM} -path ${VPSGLOBPATH}/${VPSNUM} -vpsid ${VPSNUM} --vps-fqdn ${VPS_FQDN} --vps-domain ${VPS_DOMAIN} --node-fqdn ${NODE_FQDN} ${FW_NICS_CMD} -dns ${DNS} -gw ${GATEWAY} ${KERNEL_P}"
+	FW_PARAMS="--disk-type ${IMAGE_TYPE} -os ${DISTRO} -ram ${VPSMEM} -path ${VPSGLOBPATH}/${VPSNUM} -vpsid ${VPSNUM} --vps-fqdn ${VPS_FQDN} --vps-domain ${VPS_DOMAIN} --node-fqdn ${NODE_FQDN} ${FW_NICS_CMD} -dns ${DNS} -gw ${GATEWAY} --virt-type ${VIRT_TYPE} ${KERNEL_P}"
 	if [ -n "${MAC_ADDR}" ] ; then
 		FW_PARAMS="${FW_PARAMS} --mac ${MAC_ADDR}"
 	fi
@@ -446,53 +467,56 @@ fi
 ############################
 ### FORMAT THE PARTITION ###
 ############################
-if [ "${DISTRO}" = "xenhvm" ] ; then
-	echo "Not formating disks, xen HVM will use emulated hard drives."
-elif [ "$DISTRO" = "netbsd" ] ; then
-	echo "Not formating disks, NetBSD will use emulated hard drives."
-else
-	echo "Creating disks..."
-
-	set +e
-	$UMOUNT ${VPSGLOBPATH}/${VPSNUM} 2> /dev/null
-	rmdir ${VPSGLOBPATH}/${VPSNUM} 2> /dev/null
-	set -e
-
-	$MKDIR -p ${VPSGLOBPATH}/${VPSNUM}
-	if [ "$IMAGE_TYPE" = "lvm" ]; then
-		if [ -z "${SHORT_CIRCUIT}" ] ; then
-			$MKFS -q /dev/${LVMNAME}/${VPSNAME}
-			$MKSWAP /dev/${LVMNAME}/${VPSNAME}swap
-		else
-			echo "Not doing MKFS: debuging..."
-		fi
-
-		if grep ${VPSNAME} /etc/fstab >/dev/null ; then
-			echo "LV already exists in fstab: skipping"
-		else
-			echo "/dev/mapper/${FSTAB_LVMNAME}-${VPSNAME}  ${VPSGLOBPATH}/${VPSNUM} ext3    defaults,noauto 0 0" >>/etc/fstab
-		fi
-
+if ! [ "${VIRT_TYPE}" = "vz" -a -n "${VZ_NO_MOUNT}" ] ; then
+	if [ "${DISTRO}" = "xenhvm" ] ; then
+		echo "Not formating disks, xen HVM will use emulated hard drives."
+	elif [ "$DISTRO" = "netbsd" ] ; then
+		echo "Not formating disks, NetBSD will use emulated hard drives."
 	else
-		# support for file backed VPS
-		# Create files for hdd and swap (only if they don't exist)
-		if [ ! -e $VPSGLOBPATH/${VPSNAME}.img ]; then
-			dd if=/dev/zero of=$VPSGLOBPATH/${VPSNAME}.img bs=1G seek=${VPSHDD} count=1
-		fi
-		$MKFS -F $VPSGLOBPATH/${VPSNAME}.img
-		if [ ! -e $VPSGLOBPATH/${VPSNAME}.swap.img ]; then
-			dd if=/dev/zero of=$VPSGLOBPATH/${VPSNAME}.swap.img bs=1M seek=${VPSMEM} count=1
-		fi
-		$MKSWAP $VPSGLOBPATH/${VPSNAME}.swap.img
-		if grep ${VPSNAME} /etc/fstab >/dev/null ; then
-			echo "LoopMount already exists in fstab: skipping"
+		echo "Creating disks..."
+
+		set +e
+		$UMOUNT ${VPSGLOBPATH}/${VPSNUM} 2> /dev/null
+		rmdir ${VPSGLOBPATH}/${VPSNUM} 2> /dev/null
+		set -e
+
+		$MKDIR -p ${VPSGLOBPATH}/${VPSNUM}
+		if [ "$IMAGE_TYPE" = "lvm" ]; then
+			if [ -z "${SHORT_CIRCUIT}" ] ; then
+				$MKFS -q /dev/${LVMNAME}/${VPSNAME}
+				$MKSWAP /dev/${LVMNAME}/${VPSNAME}swap
+			else
+				echo "Not doing MKFS: debuging..."
+			fi
+	
+			if grep ${VPSNAME} /etc/fstab >/dev/null ; then
+				echo "LV already exists in fstab: skipping"
+			else
+				echo "/dev/mapper/${FSTAB_LVMNAME}-${VPSNAME}  ${VPSGLOBPATH}/${VPSNUM} ext3    defaults,noauto 0 0" >>/etc/fstab
+			fi
+
 		else
-			echo "$VPSGLOBPATH/${VPSNAME}.img  ${VPSGLOBPATH}/${VPSNUM}  ext3	defaults,noauto,loop 0 0" >>/etc/fstab
+			# support for file backed VPS
+			# Create files for hdd and swap (only if they don't exist)
+			if [ ! -e $VPSGLOBPATH/${VPSNAME}.img ]; then
+				dd if=/dev/zero of=$VPSGLOBPATH/${VPSNAME}.img bs=1G seek=${VPSHDD} count=1
+			fi
+			$MKFS -F $VPSGLOBPATH/${VPSNAME}.img
+			if [ ! -e $VPSGLOBPATH/${VPSNAME}.swap.img ]; then
+				dd if=/dev/zero of=$VPSGLOBPATH/${VPSNAME}.swap.img bs=1M seek=${VPSMEM} count=1
+			fi
+			$MKSWAP $VPSGLOBPATH/${VPSNAME}.swap.img
+			if grep ${VPSNAME} /etc/fstab >/dev/null ; then
+				echo "LoopMount already exists in fstab: skipping"
+			else
+				echo "$VPSGLOBPATH/${VPSNAME}.img  ${VPSGLOBPATH}/${VPSNUM}  ext3	defaults,noauto,loop 0 0" >>/etc/fstab
+			fi
+		fi
+		if ! [ ${VIRT_TYPE} = "vz" -a -n ${VZ_NO_MOUNT} ] ; then
+			echo "Mounting..."
+			$MOUNT ${VPSGLOBPATH}/${VPSNUM}
 		fi
 	fi
-
-	echo "Mounting..."
-	$MOUNT ${VPSGLOBPATH}/${VPSNUM}
 fi
 
 ####################
@@ -508,7 +532,7 @@ if [ -e /usr/share/dtc-xen-app/${DISTRO}/depends ] ; then
 	DISTRO=`cat /usr/share/dtc-xen-app/${DISTRO}/depends`
 fi
 
-# Rebuild the params since DISTRO might have change.
+# Rebuild the params since DISTRO might have change if we use appliances.
 calc_formard_parms
 
 # get the most recent centos release.  it WILL FAIL once centos version hits 10.  But, hell, I'm a hacky hack.
@@ -548,6 +572,7 @@ else
 		echo "Currently, you will have to manually install your distro... sorry :)"
 		echo "The filesystem is mounted on ${VPSGLOBPATH}/${VPSNUM}"
 		echo "Remember to unmount (umount ${VPSGLOBPATH}/${VPSNUM}) before booting the OS"
+		echo "if you are not running VZ."
 		echo "Cheers!"
 		exit
 	fi
@@ -569,13 +594,17 @@ else
 	fi
 fi
 
-echo -n "Setting root password... "
-chroot ${VPSGLOBPATH}/${VPSNUM} sh -c "echo root:$PASSWORD | chpasswd"
-
-if [ $? -eq 0 ] ; then
-    echo "[OK]"
+if [ "$DISTRO" = "netbsd" -o "$DISTRO" = "xenhvm" ] ; then
+	echo "Not changing password for netbsd or xenhvm!"
 else
-    echo "[FAIL]"
+	echo -n "Setting root password... "
+	chroot ${VPSGLOBPATH}/${VPSNUM} sh -c "echo root:$PASSWORD | chpasswd"
+
+	if [ $? -eq 0 ] ; then
+		echo "[OK]"
+	else
+		echo "[FAIL]"
+	fi
 fi
 
 ####################################
@@ -608,7 +637,12 @@ fi
 #################################
 ### XEN STARTUP FILE CREATION ###
 #################################
-/usr/sbin/dtc-xen_domU_gen_xen_conf ${FW_PARAMS}
+if [ "${VIRT_TYPE}" = "xen" ] ; then
+	/usr/sbin/dtc-xen_domU_gen_xen_conf ${FW_PARAMS}
+fi
+if [ "${VIRT_TYPE}" = "vz" ] ; then
+	/usr/sbin/dtc-xen_domU_gen_vz_conf ${FW_PARAMS}
+fi
 
 ########################
 ### SOME LAST THINGS ###
@@ -624,6 +658,7 @@ if [ "$DISTRO" = "centos" -a "$CENTOS_RELEASE" = "centos3" ]; then
 fi
 
 # Remove the persistent-net udev config, so the eth wont get renamed
+# when changing MAC, which is extremely not cool when migrating a VM
 if [ "$DISTRO" = "debian-dtc" -o "$DISTRO" = "debian" ] ; then
 	rm -f ${VPSGLOBPATH}/${VPSNUM}/etc/udev/rules.d/z25_persistent-net.rules
 	rm -f ${VPSGLOBPATH}/${VPSNUM}/etc/udev/rules.d/70-persistent-net.rules
@@ -639,6 +674,11 @@ if [ "$DISTRO" = "debian-dtc" ] ; then
 	cp /usr/share/dtc-xen/dtc-panel_autodeploy.sh ${VPSGLOBPATH}/${VPSNUM}/root/dtc-panel_autodeploy
 	chmod +x ${VPSGLOBPATH}/${VPSNUM}/root/dtc-panel_autodeploy
 	cp /usr/share/dtc-xen/selection_config_file ${VPSGLOBPATH}/${VPSNUM}/root
+	# We don't want the devices to be created, as this would fail in VZ (to be checked...)
+	if [ "${VIRT_TYPE}" = "vz" ] ; then
+		echo "dtc-postfix-courier dtc/conf_omit_dev_mknod boolean true
+dtc-postfix-courier dtc/conf_omit_dev_mknod seen true" >>${VPSGLOBPATH}/${VPSNUM}/root/selection_config_file
+	fi
 	echo "#!/bin/sh
 
 cd /root
@@ -687,10 +727,10 @@ fi
 #######################
 ### UMOUNT AND EXIT ###
 #######################
-
-echo "Unmounting proc and filesystem root..."
-$UMOUNT ${VPSGLOBPATH}/${VPSNUM}/proc 2> /dev/null || /bin/true
-$UMOUNT ${VPSGLOBPATH}/${VPSNUM}
-
+if ! [ "${VIRT_TYPE}" = "vz" -o "$DISTRO" = "netbsd" -o "$DISTRO" = "xenhvm" ] ; then
+	echo "Unmounting proc and filesystem root..."
+	$UMOUNT ${VPSGLOBPATH}/${VPSNUM}/proc 2> /dev/null || /bin/true
+	$UMOUNT ${VPSGLOBPATH}/${VPSNUM}
+fi
 echo "Install script finished: click on the installation tab on the left to refresh!"
 exit 0

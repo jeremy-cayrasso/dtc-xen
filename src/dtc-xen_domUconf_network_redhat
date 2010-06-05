@@ -1,8 +1,16 @@
 #!/bin/sh
 
+set -e
+
 . /usr/share/dtc-xen/dtc-xen-parse-param
 
 ETC="${VPS_PATH}/etc"
+
+if [ "${VIRT_TYPE}" = "vz" ] ; then
+	ETHNAME_PREFIX=vnet
+else
+	ETHNAME_PREFIX=eth
+fi
 
 # Configure the eth0
 if [ ! -z "${NICS}" ] ; then

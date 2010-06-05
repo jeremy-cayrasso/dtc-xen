@@ -1,8 +1,8 @@
-.TH dtc_write_xenpv_conf 8
+.TH dtc_write_xenhvm_conf 8
 .SH NAME
-dtc_write_xenpv_conf \- rewrites the xen startup script with selected params
+dtc_write_xenhvm_conf \- rewrites the xen startup script with selected params
 .SH SYNOPSIS
-.B dtc_write_xenpv_conf
+.B dtc_write_xenhvm_conf
 .I VPS_NUMBER
 .I MEMORY_SIZE
 .I ALL_IP_ADDRESSES
@@ -10,7 +10,7 @@ dtc_write_xenpv_conf \- rewrites the xen startup script with selected params
 .I HOW_TO_BOOT
 
 .SH DESCRIPTION
-.B dtc_write_xenpv_conf
+.B dtc_write_xenhvm_conf
 This shell script is a part of the dtc\-xen
 package that is to be used by the dtc panel
 to manage a Xen VPS server.
@@ -47,14 +47,14 @@ can be used to declare that you do not want the VNC console to be used at all.
 .B HOW_TO_BOOT
 This controls what the VPS will use to boot. A special value of
 .I hdd
-can be used to tell dtc_write_xenpv_conf that you want to boot on the hard
+can be used to tell dtc_write_xenhvm_conf that you want to boot on the hard
 drive of the domU. Any other parameters will be used as a .iso file located
 in /var/lib/dtc\-xen/ttyssh_home/xenXX where xenXX equals to the VPS number
 set in the
 .I VPS_NUMBER
 parameter (see above).
 
-Note that whatever is set in this parameter, dtc_write_xenpv_conf will add as
+Note that whatever is set in this parameter, dtc_write_xenhvm_conf will add as
 many cdrom devices as it finds .iso files in the /var/lib/dtc\-xen/ttyssh_home/xenXX
 folder.
 
@@ -62,7 +62,7 @@ folder.
 
 The following command:
 
-dtc_write_xenpv_conf 14 512 '1.2.3.4 1.2.3.5' mYvNcPaSs boot.iso
+dtc_write_xenhvm_conf 14 512 '1.2.3.4 1.2.3.5' mYvNcPaSs boot.iso
 
 will produce this config file in /etc/xen/xen14:
 

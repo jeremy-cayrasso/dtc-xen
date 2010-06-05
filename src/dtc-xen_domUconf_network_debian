@@ -1,8 +1,16 @@
 #!/bin/sh
 
+set -e
+
 . /usr/share/dtc-xen/dtc-xen-parse-param
 
 ETC="${VPS_PATH}/etc"
+
+if [ "${VIRT_TYPE}" = "vz" ] ; then
+	ETHNAME_PREFIX=vnet
+else
+	ETHNAME_PREFIX=eth
+fi
 
 if [ ! -z "${NICS}" ] ; then
 	echo "auto lo
@@ -19,9 +27,9 @@ iface lo inet loopback
 			N_NET=`ipcalc -n ${N_IP} ${N_MASK} | cut -d"=" -f2`
 		fi
 		if [ ${N} = 0 ] ; then
-			DEVICE=eth0
+			DEVICE="${ETHNAME_PREFIX}0"
 		else
-			DEVICE="eth0:${N}"
+			DEVICE="${ETHNAME_PREFIX}0:${N}"
 		fi
 		echo "auto ${DEVICE}
 iface ${DEVICE} inet static

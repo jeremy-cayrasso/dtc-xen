@@ -207,7 +207,7 @@
 </s:sequence>
 </s:complexType>
 </s:element>
-<s:element name="writeXenPVconf">
+<s:element name="writeXenHVMconf">
 <s:complexType>
 <s:sequence>
 <s:element minOccurs="1" maxOccurs="1" name="vpsname" type="s:string" />
@@ -218,10 +218,10 @@
 </s:sequence>
 </s:complexType>
 </s:element>
-<s:element name="writeXenPVconfResponse">
+<s:element name="writeXenHVMconfResponse">
 <s:complexType>
 <s:sequence>
-<s:element minOccurs="1" maxOccurs="1" name="writeXenPVconf" type="s:string" />
+<s:element minOccurs="1" maxOccurs="1" name="writeXenHVMconf" type="s:string" />
 </s:sequence>
 </s:complexType>
 </s:element>
@@ -426,11 +426,11 @@
 <message name="changeBSDkernelSoapOut">
 <part name="parameters" element="tns:changeBSDkernelResponse" />
 </message>
-<message name="writeXenPVconfSoapIn">
-<part name="parameters" element="tns:writeXenPVconf" />
+<message name="writeXenHVMconfSoapIn">
+<part name="parameters" element="tns:writeXenHVMconf" />
 </message>
-<message name="writeXenPVconfSoapOut">
-<part name="parameters" element="tns:writeXenPVconfResponse" />
+<message name="writeXenHVMconfSoapOut">
+<part name="parameters" element="tns:writeXenHVMconfResponse" />
 </message>
 <message name="setupLVMDisksSoapIn">
 <part name="parameters" element="tns:setupLVMDisks" />
@@ -537,9 +537,9 @@
 <input message="tns:changeBSDkernelSoapIn" />
 <output message="tns:changeBSDkernelSoapOut" />
 </operation>
-<operation name="writeXenPVconf">
-<input message="tns:writeXenPVconfSoapIn" />
-<output message="tns:writeXenPVconfSoapOut" />
+<operation name="writeXenHVMconf">
+<input message="tns:writeXenHVMconfSoapIn" />
+<output message="tns:writeXenHVMconfSoapOut" />
 </operation>
 <operation name="setupLVMDisks">
 <input message="tns:setupLVMDisksSoapIn" />
@@ -702,8 +702,8 @@
 <soap:body use="literal" />
 </output>
 </operation>
-<operation name="writeXenPVconf">
-<soap:operation soapAction="###SERVER_ADDRESS###/writeXenPVconf" style="document" />
+<operation name="writeXenHVMconf">
+<soap:operation soapAction="###SERVER_ADDRESS###/writeXenHVMconf" style="document" />
 <input>
 <soap:body use="literal" />
 </input>
