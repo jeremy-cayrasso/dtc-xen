@@ -597,14 +597,8 @@ fi
 if [ "$DISTRO" = "netbsd" -o "$DISTRO" = "xenhvm" ] ; then
 	echo "Not changing password for netbsd or xenhvm!"
 else
-	echo -n "Setting root password... "
-	chroot ${VPSGLOBPATH}/${VPSNUM} sh -c "echo root:$PASSWORD | chpasswd"
-
-	if [ $? -eq 0 ] ; then
-		echo "[OK]"
-	else
-		echo "[FAIL]"
-	fi
+	echo -n "Setting root password..."
+	chroot ${VPSGLOBPATH}/${VPSNUM} sh -c "echo $PASSWORD | passwd --stdin root > /dev/null" && echo || echo "[FAIL]"
 fi
 
 ####################################
@@ -662,12 +656,6 @@ fi
 if [ "$DISTRO" = "debian-dtc" -o "$DISTRO" = "debian" ] ; then
 	rm -f ${VPSGLOBPATH}/${VPSNUM}/etc/udev/rules.d/z25_persistent-net.rules
 	rm -f ${VPSGLOBPATH}/${VPSNUM}/etc/udev/rules.d/70-persistent-net.rules
-fi
-
-# nuke the root password in CentOS 5 and above
-# WARNING: for some reason CentOS is not using shadow passwords
-if [ "$DISTRO" = "centos" ] ; then
-	chroot ${VPSGLOBPATH}/${VPSNUM} usermod -p "" root
 fi
 
 if [ "$DISTRO" = "debian-dtc" ] ; then
