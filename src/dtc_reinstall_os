@@ -598,7 +598,12 @@ if [ "$DISTRO" = "netbsd" -o "$DISTRO" = "xenhvm" ] ; then
 	echo "Not changing password for netbsd or xenhvm!"
 else
 	echo -n "Setting root password..."
-	chroot ${VPSGLOBPATH}/${VPSNUM} sh -c "echo $PASSWORD | passwd --stdin root > /dev/null" && echo || echo "[FAIL]"
+	chroot ${VPSGLOBPATH}/${VPSNUM} sh -c "echo root:$PASSWORD | chpasswd"
+	if [ $? -eq 0 ] ; then
+		echo "[OK]"
+	else
+		echo "[FAIL]"
+	fi
 fi
 
 ####################################
