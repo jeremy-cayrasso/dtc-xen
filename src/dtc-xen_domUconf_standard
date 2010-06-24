@@ -14,10 +14,18 @@ fi
 
 ETC=${VPS_PATH}/etc
 
+if [ "${XEN_DOMU_HDD_DEV_TYPE}" = "xvd" ] ; then
+	part_dev=xvda
+	swap_dev=xvdb
+else
+	part_dev=sda1
+	swap_dev=sda2
+fi
+
 # Setup the fstab
-echo "/dev/sda1	/	ext3	errors=remount-ro	0 0
+echo "/dev/${part_dev}	/	ext3	errors=remount-ro	0 0
 proc		/proc	proc	defaults		0 0
-/dev/sda2	none	swap	sw			0 0
+/dev/${swap_dev}	none	swap	sw			0 0
 none		/dev/pts devpts	defaults		0 0
 " >${ETC}/fstab
 

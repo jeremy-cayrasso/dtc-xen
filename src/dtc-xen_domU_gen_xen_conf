@@ -6,6 +6,15 @@ set -e # DIE on errors
 
 VPSNAME=xen${VPSNUM}
 
+# Select the type of partition (eg: sdaX vs xvdX)
+if [ "${XEN_DOMU_HDD_DEV_TYPE}" = "xvd" ] ; then
+	part_dev=xvda
+	swap_dev=xvdb
+else
+	part_dev=sda1
+	swap_dev=sda2
+fi
+
 #################################
 ### XEN STARTUP FILE CREATION ###
 #################################
@@ -84,16 +93,16 @@ vif = [ '${XEN_WRITE_MAC}ip=${ALL_IPADDRS}${BRIDGE_DIRECTIVE}' ]
 
 	# Set the HDDs
 	if [ "$IMAGE_TYPE" = "lvm" ]; then
-		echo "disk = [ 'phy:/dev/mapper/${FSTAB_LVMNAME}-xen${VPSNUM},sda1,w','phy:/dev/mapper/${FSTAB_LVMNAME}-xen${VPSNUM}swap,sda2,w' ]
+		echo "disk = [ 'phy:/dev/mapper/${FSTAB_LVMNAME}-xen${VPSNUM},${part_dev},w','phy:/dev/mapper/${FSTAB_LVMNAME}-xen${VPSNUM}swap,${swap_dev},w' ]
 " >> /etc/xen/${VPSNAME}
 	else
-		echo "disk = [ 'file:$VPSGLOBPATH/${VPSNAME}.img,sda1,w','file:$VPSGLOBPATH/${VPSNAME}.swap.img,sda2,w' ]
+		echo "disk = [ 'file:$VPSGLOBPATH/${VPSNAME}.img,${part_dev},w','file:$VPSGLOBPATH/${VPSNAME}.swap.img,${swap_dev},w' ]
 " >> /etc/xen/${VPSNAME}
 	fi
 
 	# Set the boot parameters (runlevel and tty)
 	if [ "$DISTRO" = "slackware" ]; then
-		echo "root = \"/dev/sda1 ro\"
+		echo "root = \"/dev/${part_dev} ro\"
 # Sets runlevel 3.
 extra = \"3 TERM=xterm xencons=tty console=tty1\"
 " >>/etc/xen/${VPSNAME}
@@ -108,7 +117,7 @@ extra = \"3 TERM=xterm xencons=tty console=tty1\"
 				XENU_EXTRA_PARM="extra = \"4 TERM=xterm xencons=tty console=tty1\""
 			fi
 		fi
-		echo "root = \"/dev/sda1 ro\"
+		echo "root = \"/dev/${part_dev} ro\"
 # Sets runlevel 4.
 ${XENU_EXTRA_PARM}
 " >>/etc/xen/${VPSNAME}

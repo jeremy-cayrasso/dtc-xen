@@ -128,6 +128,11 @@ for i in $@ ; do
 		shift
 		shift
 		;;
+	"--xen-domu-hdd-dev-type")
+		XEN_DOMU_HDD_DEV_TYPE="${2}"
+		shift
+		shift
+		;;
 	esac
 done
 
@@ -141,7 +146,7 @@ if [ -z "${BOOT_ISO}" ] ; then
 fi
 
 KERNEL_P="--kernel ${KERNELPATH} --kernel-release ${KERNEL_RELEASE} --kmod-path ${KMOD_PATH} --initrd ${INITRDPATH}"
-FW_PARAMS="--disk-type ${IMAGE_TYPE} -path ${VPS_PATH} -ram ${VPSMEM} -vpsid ${VPSNUM} --vps-fqdn ${VPS_FQDN} --vps-domain ${VPS_DOMAIN} --node-fqdn ${NODE_FQDN} ${FW_NICS_CMD} -dns ${DNS} -gw ${GATEWAY} --virt-type ${VIRT_TYPE} ${KERNEL_P}"
+FW_PARAMS="--disk-type ${IMAGE_TYPE} --xen-domu-hdd-dev-type=${XEN_DOMU_HDD_DEV_TYPE} -path ${VPS_PATH} -ram ${VPSMEM} -vpsid ${VPSNUM} --vps-fqdn ${VPS_FQDN} --vps-domain ${VPS_DOMAIN} --node-fqdn ${NODE_FQDN} ${FW_NICS_CMD} -dns ${DNS} -gw ${GATEWAY} --virt-type ${VIRT_TYPE} ${KERNEL_P}"
 if [ -n "${MAC_ADDR}" ] ; then
 	FW_PARAMS="${FW_PARAMS} --mac ${MAC_ADDR}"
 fi

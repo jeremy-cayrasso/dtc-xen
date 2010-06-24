@@ -231,6 +231,11 @@ if [ -z "${VIRT_TYPE}" ] ; then
 	DO_EXIT="yes"
 fi
 
+# Default to using xvdX and not sdaX
+if [ -z "${XEN_DOMU_HDD_DEV_TYPE}" ] ; then
+	XEN_DOMU_HDD_DEV_TYPE=xvd
+fi
+
 if [ -z "${VPSNUM}" ] ; then
 	echo "No VPS number. Please use -vpsid <id>." > /dev/stderr
 	DO_EXIT="yes"
@@ -406,7 +411,7 @@ calc_formard_parms (){
 	fi
 
 	KERNEL_P="--kernel ${KERNELPATH} --kernel-release ${KERNEL_RELEASE} --kmod-path ${KMOD_PATH} --initrd ${INITRDPATH}"
-	FW_PARAMS="--disk-type ${IMAGE_TYPE} -os ${DISTRO} -ram ${VPSMEM} -path ${VPSGLOBPATH}/${VPSNUM} -vpsid ${VPSNUM} --vps-fqdn ${VPS_FQDN} --vps-domain ${VPS_DOMAIN} --node-fqdn ${NODE_FQDN} ${FW_NICS_CMD} -dns ${DNS} -gw ${GATEWAY} --virt-type ${VIRT_TYPE} ${KERNEL_P}"
+	FW_PARAMS="--disk-type ${IMAGE_TYPE} --xen-domu-hdd-dev-type=${XEN_DOMU_HDD_DEV_TYPE} -os ${DISTRO} -ram ${VPSMEM} -path ${VPSGLOBPATH}/${VPSNUM} -vpsid ${VPSNUM} --vps-fqdn ${VPS_FQDN} --vps-domain ${VPS_DOMAIN} --node-fqdn ${NODE_FQDN} ${FW_NICS_CMD} -dns ${DNS} -gw ${GATEWAY} --virt-type ${VIRT_TYPE} ${KERNEL_P}"
 	if [ -n "${MAC_ADDR}" ] ; then
 		FW_PARAMS="${FW_PARAMS} --mac ${MAC_ADDR}"
 	fi
