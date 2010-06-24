@@ -222,7 +222,7 @@ if [ -z "${VIRT_TYPE}" ] ; then
 	if [ -d /proc/xen ] ; then
 		VIRT_TYPE="xen"
 	fi
-	if [ -d /proc/xen ] ; then
+	if [ -d /proc/vz ] ; then
 		VIRT_TYPE="vz"
 	fi
 fi
