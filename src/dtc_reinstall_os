@@ -517,7 +517,7 @@ if ! [ "${VIRT_TYPE}" = "vz" -a -n "${VZ_NO_MOUNT}" ] ; then
 				echo "$VPSGLOBPATH/${VPSNAME}.img  ${VPSGLOBPATH}/${VPSNUM}  ext3	defaults,noauto,loop 0 0" >>/etc/fstab
 			fi
 		fi
-		if ! [ ${VIRT_TYPE} = "vz" -a -n ${VZ_NO_MOUNT} ] ; then
+		if ! [ "${VIRT_TYPE}" = "vz" -a -n "${VZ_NO_MOUNT}" ] ; then
 			echo "Mounting..."
 			$MOUNT ${VPSGLOBPATH}/${VPSNUM}
 		fi
