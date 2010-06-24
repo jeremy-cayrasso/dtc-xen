@@ -421,6 +421,9 @@ calc_formard_parms (){
 	if [ -z "${LVMNAME}" ] ; then
 		FW_PARAMS="${FW_PARAMS} --lvm-name ${LVMNAME}"
 	fi
+	if [ -n "${XENU_EXTRA_PARM}" ] ; then
+		FW_PARAMS="${FW_PARAMS} --xenu_extra_parm ${XENU_EXTRA_PARM}"
+	fi
 }
 calc_formard_parms
 
