@@ -111,15 +111,15 @@ extra = \"3 TERM=xterm xencons=tty console=tty1\"
 		if [ -z "${XENU_EXTRA_PARM}" ] ; then
 			# CentOS doesn't need the: TERM=xterm xencons=tty console=tty1
 			if [ -f /etc/redhat-release ] ; then
-				XENU_EXTRA_PARM="extra = \"4\""
+				XENU_EXTRA_PARM="4"
 			# Debian domU wont have console without: TERM=xterm xencons=tty console=tty1
 			else
-				XENU_EXTRA_PARM="extra = \"4 TERM=xterm xencons=tty console=tty1\""
+				XENU_EXTRA_PARM="4 TERM=xterm xencons=tty console=tty1"
 			fi
 		fi
 		echo "root = \"/dev/${part_dev} ro\"
 # Sets runlevel 4.
-${XENU_EXTRA_PARM}
+extra = \"${XENU_EXTRA_PARM}\"
 " >>/etc/xen/${VPSNAME}
 	fi
 fi
