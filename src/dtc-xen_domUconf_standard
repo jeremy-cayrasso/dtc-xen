@@ -29,6 +29,9 @@ proc		/proc	proc	defaults		0 0
 none		/dev/pts devpts	defaults		0 0
 " >${ETC}/fstab
 
+# Tweaks the /etc/inittab to use the console device instead of tty1
+sed -i "s/tty1/console/" ${ETC}/inittab
+
 # Setup hostname and hosts
 echo "mx.xen${VPSNUM}.${NODE_FQDN}" >${ETC}/hostname
 echo "127.0.0.1	localhost.localdomain localhost
