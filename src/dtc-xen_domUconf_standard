@@ -5,11 +5,11 @@
 if [ -r /usr/share/dtc-xen/dtc-xen-parse-param ]; then
        . /usr/share/dtc-xen/dtc-xen-parse-param
 else
-       echo "Fatal Error: Cannot read file /usr/share/dtc-xen/dtc-xen-parse-param. Exiting ..." && exit 1
+       echo "dtc-xen_domUconf_standard: Fatal Error: Cannot read file /usr/share/dtc-xen/dtc-xen-parse-param. Exiting ..." && exit 1
 fi
 
 if [ "x$VPS_PATH" = "x" ]; then
-       echo "Fatal Error: $VPS_PATH is not defined or empty. Exiting ..." && exit 1
+       echo "dtc-xen_domUconf_standard: Fatal Error: VPS_PATH is not defined or empty. Exiting ..." && exit 1
 fi
 
 ETC=${VPS_PATH}/etc
