@@ -1,3 +1,13 @@
+dtc-xen (0.5.11-1) unstable; urgency=low
+
+  * New upstream release including the following fixes/improvements:
+    - Corrected path for the HVM loader
+    - Corrected VNC password setup for HVM guests
+    - Added a hook to have a custom script (autostarts after the setup of a VM)
+    - Now using xvdX instead of sdaX as sdaX isn't supported anymore in Xen 4.x
+
+ -- Thomas Goirand <thomas@goirand.fr>  Thu, 24 Jun 2010 21:35:35 +0800
+
 dtc-xen (0.5.10-2) unstable; urgency=low
 
   * Updated Swedish debconf translation, thanks to Martin Bagge
