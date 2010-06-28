@@ -18,20 +18,21 @@
 
 . /lib/lsb/init-functions
 
+PID_FILE=/var/run/dtc-xen.pid
 PYTHON=/usr/bin/python
 case "$1" in
 start)
 	log_daemon_msg "Starting python SOAP server" "dtc-soap-server"
-	start-stop-daemon --start --pidfile /var/run/dtc-xen.pid --exec $PYTHON /usr/sbin/dtc-soap-server -- -D  
+	start-stop-daemon --start --pidfile ${PID_FILE} --exec ${PYTHON} /usr/sbin/dtc-soap-server -- -D  
 	log_end_msg $?
 ;;
 stop)
 	log_daemon_msg "Stopping python SOAP server" "dtc-soap-server"
-	start-stop-daemon --stop --oknodo --pidfile /var/run/dtc-xen.pid
+	start-stop-daemon --stop --oknodo --pidfile ${PID_FILE}
 	log_end_msg $?
 ;;
 reload)
-	start-stop-daemon --stop --signal HUP --pidfile /var/run/dtc-xen.pid --exec $PYTHON /usr/sbin/dtc-soap-server -- -D
+	start-stop-daemon --stop --signal HUP --pidfile ${PID_FILE} --exec ${PYTHON} /usr/sbin/dtc-soap-server -- -D
 ;;
 restart|force-reload)
 	$0 stop
