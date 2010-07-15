@@ -104,4 +104,17 @@ fi
 # Customize the /root/.bashrc script
 sed "s/VPS_HOSTNAME/xen${VPSNUM}.${NODE_FQDN}/" /etc/dtc-xen/bashrc >${VPS_PATH}/root/.bashrc
 
+if [ "${DISTRO}" = "debian" ] ; then
+	if [ -f ${VPS_PATH}/etc/locale.gen ] ; then
+		echo "Setting up Debian locale to en_US.UTF-8"
+		TMP_FILE=`mktemp -t DTC_SET_LOCALE.XXXXXX` || exit 1
+		grep -v "en_US.UTF-8" ${VPS_PATH}/etc/locale.gen >${TMP_FILE}
+		cat <${TMP_FILE} >${VPS_PATH}/etc/locale.gen
+		rm ${TMP_FILE}
+		echo "en_US.UTF-8 UTF-8" >>${VPS_PATH}/etc/locale.gen
+		chroot ${VPS_PATH} localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
+		chroot ${VPS_PATH} locale-gen
+	fi
+fi
+
 exit 0
