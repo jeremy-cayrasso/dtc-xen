@@ -1,6 +1,17 @@
 #!/bin/sh
 
 echo "Welcome to dtc-xen ssh console!"
+echo "WARNING:"
+echo "You might need to press enter once to display the login prompt."
+echo "You can login only ONCE in this console, and you cannot resize it either."
+echo "You'd be a lot more comfortable if you install sshd and connect to it"
+echo "directly."
+echo "It is recommended to use this ssh remote access only in order to debug"
+echo "a broken virtual machine (VM/VPS) or after you reinstalled your VPS to"
+echo "install the ssh daemon, or also if you are to debug network and/or"
+echo "your firewall."
+echo "If your ssh daemon is not installed, login as root, then do:"
+echo "apt-get install ssh (Debian) or yum install openssh-server (CentOS)"
 sleep 1
 
 if [ -n "$1" ]; then
