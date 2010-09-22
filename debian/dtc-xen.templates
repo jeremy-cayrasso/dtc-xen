@@ -115,7 +115,7 @@ _Description: VPS mountpoint:
 
 Template: dtc-xen/conf_debian_release
 Type: select
-Choices: etch, lenny, squeeze, sid
+Choices: etch, lenny, squeeze, wheezy, sid
 Default: squeeze
 _Description: Debian os to setup:
  Select the Debian operating system that you want to have setup when dtc-xen
