@@ -1,3 +1,15 @@
+dtc-xen (0.5.12-1) unstable; urgency=low
+
+  * New "upstream" (here maintainer==upstream) release fixing:
+    - Added generation of the en_US.UTF-8 locales if debian.
+    - Added a warning message in the dtc-xen_userconsole.
+    - Added wheezy as possible install target of dtc-xen.
+    - Fixed dtc-xen loosing stdout/stderr, which lead to dtc-xen memory filled
+    with xm list output and datacollector thread not working.
+  * Now using my Debian email address as maintainer.
+
+ -- Thomas Goirand <zigo@debian.org>  Wed, 29 Sep 2010 00:25:28 +0800
+
 dtc-xen (0.5.11-1) unstable; urgency=low
 
   * New upstream release including the following fixes/improvements:

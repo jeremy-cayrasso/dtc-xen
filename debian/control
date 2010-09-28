@@ -1,7 +1,7 @@
 Source: dtc-xen
 Section: web
 Priority: extra
-Maintainer: Thomas Goirand <thomas@goirand.fr>
+Maintainer: Thomas Goirand <zigo@debian.org>
 Build-Depends: debhelper (>= 5), po-debconf
 Standards-Version: 3.8.4
 Dm-Upload-Allowed: yes
