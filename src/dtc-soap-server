@@ -187,17 +187,12 @@ def startVPS(vpsname):
 		logging.info("Starting VPS %s",vpsname)
 		localsysout = StringIO()
 		localsyserr = StringIO()
-		sys.stdout = localsysout
-		sys.stderr = localsyserr
 		try:
-#			xen.xm.main.main(xmargs)
-			subprocess.Popen(["/usr/sbin/xm","create",vpsname])
+			subprocess.Popen(["/usr/sbin/xm","create",vpsname],stdout=localsysout, stderr=localsyserr)
 			logging.info("VPS %s started",vpsname)
 			return "OK","Started %s" % vpsname
 		except:
 			# this is a HACK.  It should also not capture BaseException.
-			sys.stdout = sys.__stdout__
-			sys.stderr = sys.__stderr__
 			returnString =  "NOTOK - %s %s" % (localsyserr.getvalue(), localsysout.getvalue())
 			localsyserr.close()
 			localsysout.close()
@@ -213,16 +208,11 @@ def destroyVPS(vpsname):
 		logging.info("Destroying VPS %s", vpsname)
 		localsysout = StringIO()
                 localsyserr = StringIO()
-                sys.stdout = localsysout
-                sys.stderr = localsyserr
 		try:
-#			xen.xm.main.main(xmargs)
-			subprocess.Popen(["/usr/sbin/xm","destroy",vpsname])
+			subprocess.Popen(["/usr/sbin/xm","destroy",vpsname],stdout=localsysout, stderr=localsyserr)
 			logging.info("VPS %s destroyed",vpsname)
 			return "OK","Destroyed %s" % vpsname
 		except:
-			sys.stdout = sys.__stdout__
-                        sys.stderr = sys.__stderr__
 			returnString =  "NOTOK - %s %s" % (localsyserr.getvalue(), localsysout.getvalue())
 			localsyserr.close()
 			localsysout.close()
@@ -248,16 +238,11 @@ def shutdownVPS(vpsname):
 		logging.info("Shutting VPS %s down", vpsname)
 		localsysout = StringIO()
                 localsyserr = StringIO()
-                sys.stdout = localsysout
-                sys.stderr = localsyserr
 		try:
-#			xen.xm.main.main(xmargs)
-			subprocess.Popen(["/usr/sbin/xm","shutdown",vpsname])
+			subprocess.Popen(["/usr/sbin/xm","shutdown",vpsname],stdout=localsysout, stderr=localsyserr)
 			logging.info("VPS %s shut down",vpsname)
 			return "OK","Shut down %s" % vpsname
 		except:
-                        sys.stdout = sys.__stdout__
-                        sys.stderr = sys.__stderr__
                         returnString =  "NOTOK - %s %s" % (localsyserr.getvalue(), localsysout.getvalue())
                         localsyserr.close() # FIXME not really needed to close the fds
                         localsysout.close() # reference count drops to zero -> boom they're closed.
