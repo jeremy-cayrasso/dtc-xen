@@ -188,7 +188,7 @@ def startVPS(vpsname):
 		localsysout = StringIO()
 		localsyserr = StringIO()
 		try:
-			subprocess.Popen(["/usr/sbin/xm","create",vpsname],stdout=localsysout, stderr=localsyserr)
+			subprocess.Popen(["/usr/sbin/xm","create",vpsname])
 			logging.info("VPS %s started",vpsname)
 			return "OK","Started %s" % vpsname
 		except:
@@ -209,7 +209,7 @@ def destroyVPS(vpsname):
 		localsysout = StringIO()
                 localsyserr = StringIO()
 		try:
-			subprocess.Popen(["/usr/sbin/xm","destroy",vpsname],stdout=localsysout, stderr=localsyserr)
+			subprocess.Popen(["/usr/sbin/xm","destroy",vpsname])
 			logging.info("VPS %s destroyed",vpsname)
 			return "OK","Destroyed %s" % vpsname
 		except:
@@ -239,7 +239,7 @@ def shutdownVPS(vpsname):
 		localsysout = StringIO()
                 localsyserr = StringIO()
 		try:
-			subprocess.Popen(["/usr/sbin/xm","shutdown",vpsname],stdout=localsysout, stderr=localsyserr)
+			subprocess.Popen(["/usr/sbin/xm","shutdown",vpsname])
 			logging.info("VPS %s shut down",vpsname)
 			return "OK","Shut down %s" % vpsname
 		except:
