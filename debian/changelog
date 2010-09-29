@@ -3,7 +3,7 @@ dtc-xen (0.5.13-1) unstable; urgency=low
   * New upstream version fixing:
     - The last upgrade made xm start/stop/shutdown not working at all,
     so we now remove completely the stdout/stderr trick. It wont be
-    reporting issues, but at least it will work.
+    reporting issues, but at least it will work (Closes: #598387).
 
  -- Thomas Goirand <zigo@debian.org>  Wed, 29 Sep 2010 21:50:02 +0800
 
