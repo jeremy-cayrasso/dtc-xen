@@ -1,0 +1,107 @@
+#!/bin/sh
+
+set -e # DIE on errors
+
+. /usr/share/dtc-xen/dtc-xen-parse-param
+
+VPSNAME=${VPSNUM}
+
+
+#################################
+### VZ STARTUP FILE CREATION ###
+#################################
+if [ ! -z "${MAC_ADDR}" ] ; then
+	XEN_WRITE_MAC="mac=${MAC_ADDR}, "
+else
+	XEN_WRITE_MAC=""
+fi
+
+echo -n "ONBOOT=\"yes\"
+# Primary parameters
+NUMPROC=\"1024:1024\"
+NUMTCPSOCK=\"9223372036854775807:9223372036854775807\"
+NUMOTHERSOCK=\"9223372036854775807:9223372036854775807\"
+VMGUARPAGES=\"1048576:9223372036854775807\"
+
+# Secondary parameters
+KMEMSIZE=\"9223372036854775807:9223372036854775807\"
+OOMGUARPAGES=\"1048576:9223372036854775807\"
+PRIVVMPAGES=\"1048576:1061076\"
+TCPSNDBUF=\"9223372036854775807:9223372036854775807\"
+TCPRCVBUF=\"9223372036854775807:9223372036854775807\"
+OTHERSOCKBUF=\"9223372036854775807:9223372036854775807\"
+DGRAMRCVBUF=\"9223372036854775807:9223372036854775807\"
+
+# Auxiliary parameters
+NUMFILE=\"9223372036854775807:9223372036854775807\"
+NUMFLOCK=\"9223372036854775807:9223372036854775807\"
+NUMPTY=\"255:255\"
+NUMSIGINFO=\"1024:1024\"
+DCACHESIZE=\"9223372036854775807:9223372036854775807\"
+LOCKEDPAGES=\"524288:524288\"
+SHMPAGES=\"9223372036854775807:9223372036854775807\"
+NUMIPTENT=\"9223372036854775807:9223372036854775807\"
+PHYSPAGES=\"0:9223372036854775807\"
+
+# Disk quota parameters
+DISKSPACE=\"20971520:23068672\"
+DISKINODES=\"4000000:4400000\"
+QUOTATIME=\"0\"
+QUOTAUGIDLIMIT=\"0\"
+
+# CPU fair sheduler parameter
+CPUUNITS=\"1000\"
+CPUS=\"1\"
+CPULIMIT=\"10\"
+VE_ROOT=\"/var/lib/vz/root/$VEID\"
+VE_PRIVATE=\"/var/lib/vz/private/$VEID\"
+OSTEMPLATE=\"ubuntu-8.0-standard_8.04-1_i386\"
+ORIGIN_SAMPLE=\"pve.auto\"
+IP_ADDRESS=\"190.210.60.43\"
+HOSTNAME=\"dieguito.servilinkweb.com.ar\"
+DESCRIPTION=\"Dieguito<br><br>Ubuntu Hardy (standard)\"
+NAMESERVER=\"200.69.193.1\"
+SEARCHDOMAIN=\"servilinkweb.com.ar\"
+
+
+
+
+
+
+
+kernel = \"/usr/lib/xen/boot/hvmloader\"
+builder = 'hvm'
+memory = ${VPSMEM}
+name = \"${VPSNAME}\"
+vcpus=1
+#pae=0
+#acpi=0
+#apic=0
+vif = [ 'type=ioemu, ${XEN_WRITE_MAC}ip=${ALL_IPADDRS}${BRIDGE_DIRECTIVE}' ]
+disk=[ 'phy:/dev/mapper/${FSTAB_LVMNAME}-xen${VPSNUM},ioemu:hda,w'" >//etc/vz/conf/${VPSNAME}
+	# Add all *.iso files to the config file
+	HDDLIST="bcdefghijklmnopqrstuvwxyz"
+	INCREMENT=1
+	for i in `find /var/lib/dtc-xen/ttyssh_home/xen${VPSNUM} -mindepth 1 -maxdepth 1 -iname '*.iso' | cut -d'/' -f5 | tr \\\r\\\n ,\ ` ; do
+		DRIVE_LETTER=`echo ${HDDLIST} | awk '{print substr($0,$INCREMENT,1)}'`
+		INCREMENT=$(( $INCREMENT + 1))
+		echo -n ,\'file:/var/lib/dtc-xen/ttyssh_home/xen${VPSNUM}/$i,hd${DRIVE_LETTER}:cdrom,r\' >>//etc/vz/conf/${VPSNAME}
+		echo $i
+	done
+	# Set the VPN password
+	echo " ]
+vfb = [ \"type=vnc,vncdisplay=${VPSNUM},vncpasswd=XXXX\" ]" >>//etc/vz/conf/${VPSNAME}
+	# Set the boot cd if variable is set
+	if [ -z "${BOOT_ISO}" -a -e /var/lib/dtc-xen/ttyssh_home/xen${VPSNUM}/${BOOT_ISO} ] ; then
+		echo "cdrom=\"/var/lib/dtc-xen/ttyssh_home/xen${VPSNUM}/${BOOT_ISO}\"
+boot=\"d\"
+nographic=0
+vnc=1
+stdvga=1" >>//etc/vz/conf/${VPSNAME}
+	# Otherwise boot on the HDD
+	else
+		echo "boot=\"c\"
+nographic=1" >>//etc/vz/conf/${VPSNAME}
+	fi
+	echo "serial='pty'" >>//etc/vz/conf/${VPSNAME}
+
