@@ -53,55 +53,15 @@ QUOTAUGIDLIMIT=\"0\"
 CPUUNITS=\"1000\"
 CPUS=\"1\"
 CPULIMIT=\"10\"
-VE_ROOT=\"/var/lib/vz/root/$VEID\"
-VE_PRIVATE=\"/var/lib/vz/private/$VEID\"
+VE_ROOT=\"/var/lib/dtc-xen/mnt/${VPSNUM}\"
+VE_PRIVATE=\"/var/lib/vz/private/${VPSNUM}\"
 OSTEMPLATE=\"ubuntu-8.0-standard_8.04-1_i386\"
 ORIGIN_SAMPLE=\"pve.auto\"
-IP_ADDRESS=\"190.210.60.43\"
-HOSTNAME=\"dieguito.servilinkweb.com.ar\"
+IP_ADDRESS=\"${FIRST_IP}\"
+HOSTNAME=\"${VPS_FQDN}\"
 DESCRIPTION=\"Dieguito<br><br>Ubuntu Hardy (standard)\"
-NAMESERVER=\"200.69.193.1\"
+NAMESERVER=\"${DNS}\"
 SEARCHDOMAIN=\"servilinkweb.com.ar\"
+NETIF=\"ifname=venet0,mac=${XEN_WRITE_MAC},host_mac=${XEN_WRITE_MAC}\"
 
-
-
-
-
-
-
-kernel = \"/usr/lib/xen/boot/hvmloader\"
-builder = 'hvm'
-memory = ${VPSMEM}
-name = \"${VPSNAME}\"
-vcpus=1
-#pae=0
-#acpi=0
-#apic=0
-vif = [ 'type=ioemu, ${XEN_WRITE_MAC}ip=${ALL_IPADDRS}${BRIDGE_DIRECTIVE}' ]
-disk=[ 'phy:/dev/mapper/${FSTAB_LVMNAME}-xen${VPSNUM},ioemu:hda,w'" >//etc/vz/conf/${VPSNAME}
-	# Add all *.iso files to the config file
-	HDDLIST="bcdefghijklmnopqrstuvwxyz"
-	INCREMENT=1
-	for i in `find /var/lib/dtc-xen/ttyssh_home/xen${VPSNUM} -mindepth 1 -maxdepth 1 -iname '*.iso' | cut -d'/' -f5 | tr \\\r\\\n ,\ ` ; do
-		DRIVE_LETTER=`echo ${HDDLIST} | awk '{print substr($0,$INCREMENT,1)}'`
-		INCREMENT=$(( $INCREMENT + 1))
-		echo -n ,\'file:/var/lib/dtc-xen/ttyssh_home/xen${VPSNUM}/$i,hd${DRIVE_LETTER}:cdrom,r\' >>//etc/vz/conf/${VPSNAME}
-		echo $i
-	done
-	# Set the VPN password
-	echo " ]
-vfb = [ \"type=vnc,vncdisplay=${VPSNUM},vncpasswd=XXXX\" ]" >>//etc/vz/conf/${VPSNAME}
-	# Set the boot cd if variable is set
-	if [ -z "${BOOT_ISO}" -a -e /var/lib/dtc-xen/ttyssh_home/xen${VPSNUM}/${BOOT_ISO} ] ; then
-		echo "cdrom=\"/var/lib/dtc-xen/ttyssh_home/xen${VPSNUM}/${BOOT_ISO}\"
-boot=\"d\"
-nographic=0
-vnc=1
-stdvga=1" >>//etc/vz/conf/${VPSNAME}
-	# Otherwise boot on the HDD
-	else
-		echo "boot=\"c\"
-nographic=1" >>//etc/vz/conf/${VPSNAME}
-	fi
-	echo "serial='pty'" >>//etc/vz/conf/${VPSNAME}
-
+" >/etc/vz/conf/${VPSNAME}
