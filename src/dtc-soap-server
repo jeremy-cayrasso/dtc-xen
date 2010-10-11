@@ -43,6 +43,14 @@ tabcolonsplitter = None
 data_collection_lock = None
 keepRunning = 1
 
+# Detect the virtualization environment
+virt_type = None
+if os.path.isdir('/proc/xen') == True:
+	virt_type = 'xen'
+
+if os.path.isdir('/proc/vz') == True:
+	virt_type = 'vz'
+
 def sighandler(signum,frame):
 	global last_signal
 	last_signal = signum
@@ -182,20 +190,34 @@ def testVPSServer(*varargs):
 def startVPS(vpsname):
 	username = getUser()
 	if username == dtcxen_user or username == vpsname:
-		# Lookup the database to see if we are running a process (mkfs/fsck/etc...) on the VM instance...
-		xmargs=['foo', 'create', vpsname]
-		logging.info("Starting VPS %s",vpsname)
-		localsyserr = ''
-		localsysout = ''
-		try:
-			localsysout,localsyserr = subprocess.Popen(["/usr/sbin/xm","create",vpsname],stdin=None,stdout=subprocess.PIPE,stderr=subprocess.PIPE,close_fds=True).communicate()
-			logging.info("VPS %s started",vpsname)
-			return "OK","Started %s" % vpsname
-		except:
-			# this is a HACK.  It should also not capture BaseException.
-			returnString =  "NOTOK - %s %s" % (localsyserr, localsysout)
-			logging.exception("VPS %s failed to start",vpsname)
-			return returnString
+		if virt_type == 'xen':
+			# Lookup the database to see if we are running a process (mkfs/fsck/etc...) on the VM instance...
+			xmargs=['foo', 'create', vpsname]
+			logging.info("Starting VPS %s",vpsname)
+			localsyserr = ''
+			localsysout = ''
+			try:
+				localsysout,localsyserr = subprocess.Popen(["/usr/sbin/xm","create",vpsname],stdin=None,stdout=subprocess.PIPE,stderr=subprocess.PIPE,close_fds=True).communicate()
+				logging.info("VPS %s started",vpsname)
+				return "OK","Started %s" % vpsname
+			except:
+				# this is a HACK.  It should also not capture BaseException.
+				returnString =  "NOTOK - %s %s" % (localsyserr, localsysout)
+				logging.exception("VPS %s failed to start",vpsname)
+				return returnString
+		elif virt_type == 'vz':
+			vzname = '1%s' % vpsname[3,5]
+			vzctlargs=['foo', 'create', vpsname]
+			try:
+				localsysout,localsyserr = subprocess.Popen(["/usr/sbin/vzctl","start",vzname],stdin=None,stdout=subprocess.PIPE,stderr=subprocess.PIPE,close_fds=True).communicate()
+				logging.info("VPS %s started",vpsname)
+				return "OK","Started %s" % vpsname
+			except:
+				returnString =  "NOTOK - %s %s" % (localsyserr, localsysout)
+				logging.exception("VPS %s failed to start",vpsname)
+				return returnString
+		else:
+			return "NOTOK"
 	else:
 		return "NOTOK"
 
