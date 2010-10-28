@@ -6,11 +6,12 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: dtc-xen\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-03-30 10:27+0200\n"
+"Report-Msgid-Bugs-To: dtc-xen@packages.debian.org\n"
+"POT-Creation-Date: 2010-09-29 14:06+0000\n"
 "PO-Revision-Date: 2009-07-16 14:50+0100\n"
 "Last-Translator: Ivan Masár <helix84@centrum.sk>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
+"Language: sk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -18,240 +19,323 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:1001
-msgid "Server port:"
-msgstr "Port servera:"
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:1001
-msgid "Default is 8089. Please enter the port the dtc-xen SOAP server will bind to."
-msgstr "Predvolená hodnota je 8089. Prosím, zadajte port, na ktorom bude počúvať dtc-xen SOAP server."
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:2001
 msgid "SOAP server login:"
 msgstr "Prihlasovacie meno k SOAP serveru:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:2001
-msgid "Dtc-xen will start it's Python based SOAP server to listen for incoming requests over a TCP socket. A remote application (like the dtc web hosting control panel) can then connect to it in order to start, stop, create and destroy a VPS."
-msgstr "Dtc-xen spustí svoj SOAP server založený na Pythone, ktorý bude počúvať požiadavky na TCP sockete. Vzdialená aplikácia (ako riadiaci panel webhostingu dtc) sa potom môže pripojiť a spúšťať, zastavovať, vytvárať a rušiť VPS."
+#: ../dtc-xen.templates:1001
+msgid ""
+"Dtc-xen will start it's Python based SOAP server to listen for incoming "
+"requests over a TCP socket. A remote application (like the dtc web hosting "
+"control panel) can then connect to it in order to start, stop, create and "
+"destroy a VPS."
+msgstr ""
+"Dtc-xen spustí svoj SOAP server založený na Pythone, ktorý bude počúvať "
+"požiadavky na TCP sockete. Vzdialená aplikácia (ako riadiaci panel "
+"webhostingu dtc) sa potom môže pripojiť a spúšťať, zastavovať, vytvárať a "
+"rušiť VPS."
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:2001
+#: ../dtc-xen.templates:1001
 msgid "Please enter the login name to connect to the server."
 msgstr "Prosím, zadajte prihlasovacie meno k serveru."
 
 #. Type: password
 #. Description
-#: ../dtc-xen.templates:3001
+#: ../dtc-xen.templates:2001
 msgid "SOAP server pass:"
 msgstr "Heslo k SOAP serveru:"
 
 #. Type: password
 #. Description
-#: ../dtc-xen.templates:3001
-msgid "Dtc-xen will generate a .htpasswd file for the login you have just configured."
-msgstr "Dtc-xen vytvorí súbor .htpasswd pre prihlasovacie meno, ktoré ste práve nastavili."
+#: ../dtc-xen.templates:2001
+msgid ""
+"Dtc-xen will generate a .htpasswd file for the login you have just "
+"configured."
+msgstr ""
+"Dtc-xen vytvorí súbor .htpasswd pre prihlasovacie meno, ktoré ste práve "
+"nastavili."
 
 #. Type: password
 #. Description
-#: ../dtc-xen.templates:3001
+#: ../dtc-xen.templates:2001
 msgid "Please enter the password to use in that file."
 msgstr "Prosím, zadajte heslo, ktoré sa v tomto súbore použije."
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:4001
-msgid "Server domain name:"
-msgstr "Názov domény servera:"
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:4001
-msgid "Please enter the domain name for the dtc-xen server. This will be used as a part of the URL by the SOAP dtc panel client like nodeXXXX.example.com."
-msgstr "Prosím, zadajte názov domény servera dtc-xen. Použije sa v riadiacom paneli dtc klienta ako časť URL v tvare nodeXXXX.example.com."
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:5001
-msgid "VPS Server node number:"
-msgstr "Číslo uzla VPS servera:"
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:5001
-msgid "Please enter the value to use to set up VPS numbering."
-msgstr "Prosím, zadajte hodnotu, ktorá nastaví číslovanie VPS."
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:5001
-msgid "Assuming this value is 'XXXX', the VPS numbers will be 'xenXXXXYY', YY being the VPS number itself (xenYY), and XXXX being the Xen server number. This node number must be 4 or 5 characters long."
-msgstr "Za predpokladu, že hodnota je „XXXX“ budú čísla VPS „xenXXXXYY“, kde YY je samotné číslo VPS (xenYY) a XXXX je číslo Xen servera. Toto číslo uzla musí byť dlhé 4 alebo 5 znakov."
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:5001
-msgid "As a consequence of this choice, the server's hostname will be nodeXXXX.example.com (which you can later add in your DTC control panel)."
-msgstr "V dôsledku tejto voľby bude názov servera hostiteľa nodeXXXX.example.com (čo môžete neskôr zmeniť vo vašom ovládacom paneli DTC)."
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:6001
+#: ../dtc-xen.templates:3001
 msgid "Debian repository for VPS creation:"
 msgstr "Zdroj softvéru Debianu na vytvorenie VPS:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:6001
-msgid "Please enter the repository to use for creating the VPS (Virtual Private Server). The current /etc/apt/sources.list file will be copied to the created VPS so the repository you enter here will be used only during the debootstrap stage of the VPS creation."
-msgstr "Prosím, zadajte zdroj softvéru, ktorý sa použije na vytvorenie VPS (Virtuálneho privátneho servera). Aktuálny súbor /etc/apt/sources.list sa skopíruje do vytvoreného VPS, takže zdroj, ktorý tu uvediete sa použije iba vo fáze debootstrap pri vytvorení VPS."
+#: ../dtc-xen.templates:3001
+msgid ""
+"Please enter the repository to use for creating the VPS (Virtual Private "
+"Server). The current /etc/apt/sources.list file will be copied to the "
+"created VPS so the repository you enter here will be used only during the "
+"debootstrap stage of the VPS creation."
+msgstr ""
+"Prosím, zadajte zdroj softvéru, ktorý sa použije na vytvorenie VPS "
+"(Virtuálneho privátneho servera). Aktuálny súbor /etc/apt/sources.list sa "
+"skopíruje do vytvoreného VPS, takže zdroj, ktorý tu uvediete sa použije iba "
+"vo fáze debootstrap pri vytvorení VPS."
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:7001
+#: ../dtc-xen.templates:4001
 msgid "Network mask for the VPS:"
 msgstr "Maska siete VPS:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:7001
-msgid "Please enter the network mask to use in the created Virtual Private Server's network settings."
+#: ../dtc-xen.templates:4001
+msgid ""
+"Please enter the network mask to use in the created Virtual Private Server's "
+"network settings."
 msgstr "Prosím, zadajte masku siete, ktorá sa má použiť v nastavení siete VPS."
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:8001
+#: ../dtc-xen.templates:5001
 msgid "Network address for the VPS:"
 msgstr "Sieťová adresa VPS:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:8001
-msgid "Please enter the network address to use in the created Virtual Private Server's network settings."
-msgstr "Prosím, zadajte sieťovú adresu, ktorá sa má použiť v nastavení siete VPS."
+#: ../dtc-xen.templates:5001
+msgid ""
+"Please enter the network address to use in the created Virtual Private "
+"Server's network settings."
+msgstr ""
+"Prosím, zadajte sieťovú adresu, ktorá sa má použiť v nastavení siete VPS."
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:9001
+#: ../dtc-xen.templates:6001
 msgid "Broadcast address for the VPS:"
 msgstr "Broadcast adresa VPS:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:9001
-msgid "Please enter the network broadcast address to use in the created Virtual Private Server's network settings."
-msgstr "Prosím, zadajte sieťovú broadcast adresu, ktorá sa má použiť v nastavení siete VPS."
+#: ../dtc-xen.templates:6001
+msgid ""
+"Please enter the network broadcast address to use in the created Virtual "
+"Private Server's network settings."
+msgstr ""
+"Prosím, zadajte sieťovú broadcast adresu, ktorá sa má použiť v nastavení "
+"siete VPS."
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:10001
+#: ../dtc-xen.templates:7001
 msgid "Gateway address for the VPS:"
 msgstr "Adresa brány VPS:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:10001
-msgid "Please enter the network gateway address to use in the created Virtual Private Server's network settings."
-msgstr "Prosím, zadajte sieťovú adresu brány, ktorá sa má použiť v nastavení siete VPS."
+#: ../dtc-xen.templates:7001
+msgid ""
+"Please enter the network gateway address to use in the created Virtual "
+"Private Server's network settings."
+msgstr ""
+"Prosím, zadajte sieťovú adresu brány, ktorá sa má použiť v nastavení siete "
+"VPS."
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:11001
+#: ../dtc-xen.templates:8001
 msgid "Xen kernel release name:"
 msgstr "Názov vydania jadra Xen:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:11001
-msgid "Please enter the kernel version number as it appears with the 'uname -a' command."
+#: ../dtc-xen.templates:8001
+msgid ""
+"Please enter the kernel version number as it appears with the 'uname -a' "
+"command."
 msgstr "Prosím, zadajte číslo verzie jadra ako ho vypisuje príkaz „uname -a“."
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:11001
-msgid "A kernel domU with that name must be located in /boot (example: vmlinuz-2.6.16.27-xenU) and its corresponding modules must be in /lib/modules."
-msgstr "Jadro domU s týmto názvom sa musí nachádzať v adresári /boot (napr.: vmlinuz-2.6.16.27-xenU) a jeho príslušné moduly musia byť v adresári /lib/modules."
+#: ../dtc-xen.templates:8001
+msgid ""
+"A kernel domU with that name must be located in /boot (example: "
+"vmlinuz-2.6.16.27-xenU) and its corresponding modules must be in /lib/"
+"modules."
+msgstr ""
+"Jadro domU s týmto názvom sa musí nachádzať v adresári /boot (napr.: "
+"vmlinuz-2.6.16.27-xenU) a jeho príslušné moduly musia byť v adresári /lib/"
+"modules."
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:12001
+#: ../dtc-xen.templates:9001
 msgid "Name of the initrd image:"
 msgstr "Názov obrazu initrd:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:12001
-msgid "Please enter the name of the initrd ram disk image to use when setting-up a Linux Xen startup file. Leave this blank to not setup your domU with a initrd image at all."
-msgstr "Prosím, zadajte názov ramdisku initrd, ktorý sa má použiť pri nastavovaní štartovacieho súboru Linux Xen. Toto pole nechajte prázdne ak nechcete vôbec nastaviť domU s obrazom initrd."
+#: ../dtc-xen.templates:9001
+msgid ""
+"Please enter the name of the initrd ram disk image to use when setting-up a "
+"Linux Xen startup file. Leave this blank to not setup your domU with a "
+"initrd image at all."
+msgstr ""
+"Prosím, zadajte názov ramdisku initrd, ktorý sa má použiť pri nastavovaní "
+"štartovacieho súboru Linux Xen. Toto pole nechajte prázdne ak nechcete vôbec "
+"nastaviť domU s obrazom initrd."
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:13001
+#: ../dtc-xen.templates:10001
 msgid "Volume group to create VPS in:"
 msgstr "V ktorej skupine zväzkov vytvoriť VPS:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:13001
+#: ../dtc-xen.templates:10001
 msgid "Dtc-xen creates physical partitions in an existing LVM volume group"
-msgstr "Dtc-xen vytvorí fyzické diskové oblasti v existujúcej skupine zväzkov LVM"
+msgstr ""
+"Dtc-xen vytvorí fyzické diskové oblasti v existujúcej skupine zväzkov LVM"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:13001
-msgid "Please enter that volume group name. The volume group size must fit all the virtual machines you will set up later on this server. If you don't want to use LVM (because you don't care if loopback is slower), leave this setting to the default value."
-msgstr "Prosím, zadajte názov tejto skupinu zväzkov. Veľkosť skupiny zväzkov musí byť dostatočná pre všetky virtuálne stroje, ktoré neskôr na tomto serveri vytvoríte. Ak nechcete používať LVM (pretože vám nevadí, že loopback je pomalší), ponechajte predvolenú hodnotu tejto voľby."
+#: ../dtc-xen.templates:10001
+msgid ""
+"Please enter that volume group name. The volume group size must fit all the "
+"virtual machines you will set up later on this server. If you don't want to "
+"use LVM (because you don't care if loopback is slower), leave this setting "
+"to the default value."
+msgstr ""
+"Prosím, zadajte názov tejto skupinu zväzkov. Veľkosť skupiny zväzkov musí "
+"byť dostatočná pre všetky virtuálne stroje, ktoré neskôr na tomto serveri "
+"vytvoríte. Ak nechcete používať LVM (pretože vám nevadí, že loopback je "
+"pomalší), ponechajte predvolenú hodnotu tejto voľby."
 
 #. Type: note
 #. Description
-#: ../dtc-xen.templates:14001
+#: ../dtc-xen.templates:11001
 msgid "How to finish the install"
 msgstr "Ako dokončiť inštaláciu"
 
 #. Type: note
 #. Description
-#: ../dtc-xen.templates:14001
-msgid "To finish the installation, you need to launch /usr/sbin/dtc-xen_finish_install."
-msgstr "Na dokončenie inštalácie musíte spustiť /usr/sbin/dtc-xen_finish_install."
+#: ../dtc-xen.templates:11001
+msgid ""
+"To finish the installation, you need to launch /usr/sbin/dtc-"
+"xen_finish_install."
+msgstr ""
+"Na dokončenie inštalácie musíte spustiť /usr/sbin/dtc-xen_finish_install."
 
 #. Type: note
 #. Description
-#: ../dtc-xen.templates:14001
-msgid "This script will remove port forwarding from the current sshd_config file and add the permission to access the xm console to the group xenusers so that users can login to the physical console."
-msgstr "Tento skript odstráni presmerovanie portov z aktuálneho súboru sshd_config a pridá oprávnenie na prístup ku konzole xm skupine xenusers aby sa títo používatelia mohli prihlásiť k fyzickej konzole."
+#: ../dtc-xen.templates:11001
+msgid ""
+"This script will remove port forwarding from the current sshd_config file "
+"and add the permission to access the xm console to the group xenusers so "
+"that users can login to the physical console."
+msgstr ""
+"Tento skript odstráni presmerovanie portov z aktuálneho súboru sshd_config a "
+"pridá oprávnenie na prístup ku konzole xm skupine xenusers aby sa títo "
+"používatelia mohli prihlásiť k fyzickej konzole."
 
 #. Type: note
 #. Description
-#: ../dtc-xen.templates:14001
-msgid "Please note that the system is currently safe (connections to a physical console as xenXX will be rejected because the /etc/sudoers is not changed), but a basic user won't be able to log into his physical console using ssh."
-msgstr "Pamätajte prosím, že systém je momentálne zabezpečený (pripojenia na fyzickú konzolu ako xenXX budú zamietnuté, pretože nebol zmenený /etc/sudoers), ale základný používateľ sa nebude môcť prihlásiť na svoju fyzickú konzolu prostredníctvom ssh."
+#: ../dtc-xen.templates:11001
+msgid ""
+"Please note that the system is currently safe (connections to a physical "
+"console as xenXX will be rejected because the /etc/sudoers is not changed), "
+"but a basic user won't be able to log into his physical console using ssh."
+msgstr ""
+"Pamätajte prosím, že systém je momentálne zabezpečený (pripojenia na fyzickú "
+"konzolu ako xenXX budú zamietnuté, pretože nebol zmenený /etc/sudoers), ale "
+"základný používateľ sa nebude môcť prihlásiť na svoju fyzickú konzolu "
+"prostredníctvom ssh."
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:15001
+#: ../dtc-xen.templates:12001
 msgid "VPS mountpoint:"
 msgstr "Bod pripojenia VPS:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:15001
-msgid "In order to do the setup of the VPS it's managing, dtc-xen will mount an LVM device or a file loopback on the dom0 of your Xen server, and then use it as a partition for your VPS. Loopback mounts by default are limited to a small number, and since LVM is also faster to access, it is the much preferred option. This will also be used to automatically set your /etc/fstab mount points so you can do maintenance and mount VPSes with less hassle. Enter the desired path prefix for these mount points."
-msgstr "Na nastavenie VPS, ktoré spravuje pripojí dtc-xen zariadenie LVM alebo súbor obrazu (loopback) k dom0 vášho servera Xen a potom ho použije ako diskovú oblasť pre váš VPS. Štandardne je obmedzený počet pripojení obrazov diskov na malú hodnotu a pretože k LVM je rýchlejší prístup, je to dôrazne odporúčaná voľba. Tiež sa použije na automatické nastavenie prípojných bodov /etc/fstab aby ste mohli vykonávať údržbu a pripájať VPS ľahšie. Zadajte požadovanú predponu cesty k týmto bodom pripojenia."
+#: ../dtc-xen.templates:12001
+msgid ""
+"In order to do the setup of the VPS it's managing, dtc-xen will mount an LVM "
+"device or a file loopback on the dom0 of your Xen server, and then use it as "
+"a partition for your VPS. Loopback mounts by default are limited to a small "
+"number, and since LVM is also faster to access, it is the much preferred "
+"option. This will also be used to automatically set your /etc/fstab mount "
+"points so you can do maintenance and mount VPSes with less hassle. Enter the "
+"desired path prefix for these mount points."
+msgstr ""
+"Na nastavenie VPS, ktoré spravuje pripojí dtc-xen zariadenie LVM alebo súbor "
+"obrazu (loopback) k dom0 vášho servera Xen a potom ho použije ako diskovú "
+"oblasť pre váš VPS. Štandardne je obmedzený počet pripojení obrazov diskov "
+"na malú hodnotu a pretože k LVM je rýchlejší prístup, je to dôrazne "
+"odporúčaná voľba. Tiež sa použije na automatické nastavenie prípojných "
+"bodov /etc/fstab aby ste mohli vykonávať údržbu a pripájať VPS ľahšie. "
+"Zadajte požadovanú predponu cesty k týmto bodom pripojenia."
 
 #. Type: select
 #. Description
-#: ../dtc-xen.templates:16001
+#: ../dtc-xen.templates:13001
 msgid "Debian os to setup:"
 msgstr "Ktorý OS Debian nastaviť:"
 
 #. Type: select
 #. Description
-#: ../dtc-xen.templates:16001
-msgid "Select the Debian operating system that you want to have setup when dtc-xen creates a new VM instance with debootstrap."
-msgstr "Vyberte, ktorý systém Debian chcete nastaviť, keď dtc-xen vytvorí novú inštanciu VM pomocou debootstrap."
+#: ../dtc-xen.templates:13001
+msgid ""
+"Select the Debian operating system that you want to have setup when dtc-xen "
+"creates a new VM instance with debootstrap."
+msgstr ""
+"Vyberte, ktorý systém Debian chcete nastaviť, keď dtc-xen vytvorí novú "
+"inštanciu VM pomocou debootstrap."
 
+#~ msgid "Server port:"
+#~ msgstr "Port servera:"
+
+#~ msgid ""
+#~ "Default is 8089. Please enter the port the dtc-xen SOAP server will bind "
+#~ "to."
+#~ msgstr ""
+#~ "Predvolená hodnota je 8089. Prosím, zadajte port, na ktorom bude počúvať "
+#~ "dtc-xen SOAP server."
+
+#~ msgid "Server domain name:"
+#~ msgstr "Názov domény servera:"
+
+#~ msgid ""
+#~ "Please enter the domain name for the dtc-xen server. This will be used as "
+#~ "a part of the URL by the SOAP dtc panel client like nodeXXXX.example.com."
+#~ msgstr ""
+#~ "Prosím, zadajte názov domény servera dtc-xen. Použije sa v riadiacom "
+#~ "paneli dtc klienta ako časť URL v tvare nodeXXXX.example.com."
+
+#~ msgid "VPS Server node number:"
+#~ msgstr "Číslo uzla VPS servera:"
+
+#~ msgid "Please enter the value to use to set up VPS numbering."
+#~ msgstr "Prosím, zadajte hodnotu, ktorá nastaví číslovanie VPS."
+
+#~ msgid ""
+#~ "Assuming this value is 'XXXX', the VPS numbers will be 'xenXXXXYY', YY "
+#~ "being the VPS number itself (xenYY), and XXXX being the Xen server "
+#~ "number. This node number must be 4 or 5 characters long."
+#~ msgstr ""
+#~ "Za predpokladu, že hodnota je „XXXX“ budú čísla VPS „xenXXXXYY“, kde YY "
+#~ "je samotné číslo VPS (xenYY) a XXXX je číslo Xen servera. Toto číslo uzla "
+#~ "musí byť dlhé 4 alebo 5 znakov."
+
+#~ msgid ""
+#~ "As a consequence of this choice, the server's hostname will be nodeXXXX."
+#~ "example.com (which you can later add in your DTC control panel)."
+#~ msgstr ""
+#~ "V dôsledku tejto voľby bude názov servera hostiteľa nodeXXXX.example.com "
+#~ "(čo môžete neskôr zmeniť vo vašom ovládacom paneli DTC)."

@@ -1,15 +1,16 @@
 # Japanese translation of dtc-xen debconf templates.
 # Copyright (C) 2009 Hideki Yamane <henrich@debian.or.jp>
 # This file is distributed under the same license as the dtc-xen package.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: dtc-xen 0.3.27-1\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-03-30 10:27+0200\n"
+"Report-Msgid-Bugs-To: dtc-xen@packages.debian.org\n"
+"POT-Creation-Date: 2010-09-29 14:06+0000\n"
 "PO-Revision-Date: 2009-09-07 06:52+0900\n"
 "Last-Translator: Hideki Yamane (Debian-JP) <henrich@debian.or.jp>\n"
 "Language-Team: Japanese <debian-japanese@lists.debian.org>\n"
+"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -17,123 +18,58 @@ msgstr ""
 #. Type: string
 #. Description
 #: ../dtc-xen.templates:1001
-msgid "Server port:"
-msgstr "サーバのポート番号:"
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:1001
-msgid ""
-"Default is 8089. Please enter the port the dtc-xen SOAP server will bind to."
-msgstr ""
-"デフォルトは 8089 です。dtc-xen SOAP サーバが利用するポート番号を入力してください。"
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:2001
 msgid "SOAP server login:"
 msgstr "SOAP サーバへのログイン名:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:2001
+#: ../dtc-xen.templates:1001
 msgid ""
 "Dtc-xen will start it's Python based SOAP server to listen for incoming "
 "requests over a TCP socket. A remote application (like the dtc web hosting "
 "control panel) can then connect to it in order to start, stop, create and "
 "destroy a VPS."
 msgstr ""
-"dtc-xen は、TCP ソケット越しにやってくるリクエストを listen する Python "
-"ベースの SOAP サーバを起動します。これで (dtc ウェブホスティングコントロール"
-"パネルのような) リモートアプリケーションが、VPS を起動、停止、作成、破棄する"
-"ために接続できるようになります。"
+"dtc-xen は、TCP ソケット越しにやってくるリクエストを listen する Python ベー"
+"スの SOAP サーバを起動します。これで (dtc ウェブホスティングコントロールパネ"
+"ルのような) リモートアプリケーションが、VPS を起動、停止、作成、破棄するため"
+"に接続できるようになります。"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:2001
+#: ../dtc-xen.templates:1001
 msgid "Please enter the login name to connect to the server."
 msgstr "サーバに接続するログイン名を入力してください。"
 
 #. Type: password
 #. Description
-#: ../dtc-xen.templates:3001
+#: ../dtc-xen.templates:2001
 msgid "SOAP server pass:"
 msgstr "SOAP サーバのパスワード:"
 
 #. Type: password
 #. Description
-#: ../dtc-xen.templates:3001
+#: ../dtc-xen.templates:2001
 msgid ""
 "Dtc-xen will generate a .htpasswd file for the login you have just "
 "configured."
-msgstr ""
-"dtc-xen は先ほど設定したログイン用に .htpasswd ファイルを生成します。"
+msgstr "dtc-xen は先ほど設定したログイン用に .htpasswd ファイルを生成します。"
 
 #. Type: password
 #. Description
-#: ../dtc-xen.templates:3001
+#: ../dtc-xen.templates:2001
 msgid "Please enter the password to use in that file."
 msgstr "このファイル内で使うパスワードを入力してください。"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:4001
-msgid "Server domain name:"
-msgstr "サーバのドメイン名:"
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:4001
-msgid ""
-"Please enter the domain name for the dtc-xen server. This will be used as a "
-"part of the URL by the SOAP dtc panel client like nodeXXXX.example.com."
-msgstr ""
-"dtc-xen サーバに使うドメイン名を入力してください。これは nodeXXXX.example.com "
-"のように、SOAP dtc パネルクライアントから URL の一部として利用されます。"
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:5001
-msgid "VPS Server node number:"
-msgstr "VPS サーバのノード番号:"
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:5001
-msgid "Please enter the value to use to set up VPS numbering."
-msgstr "VPS のナンバリング設定に使う値を入力してください。"
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:5001
-msgid ""
-"Assuming this value is 'XXXX', the VPS numbers will be 'xenXXXXYY', YY being "
-"the VPS number itself (xenYY), and XXXX being the Xen server number. This "
-"node number must be 4 or 5 characters long."
-msgstr ""
-"この値が 'XXXX' だと仮定すると、VPS のナンバリングは 'xenXXXXYY' になります。"
-"YY は VPS 番号そのもので (xenYY)、XXXX は Xen サーバの番号です。このノード番号"
-"は 4 文字、あるいは 5 文字の長さが必要です。"
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:5001
-msgid ""
-"As a consequence of this choice, the server's hostname will be nodeXXXX."
-"example.com (which you can later add in your DTC control panel)."
-msgstr ""
-"この選択の結果、サーバのホスト名は nodeXXXX.example.com になります (後ほど DTC "
-"コントロールパネル内で追加できます)。"
-
-#. Type: string
-#. Description
-#: ../dtc-xen.templates:6001
+#: ../dtc-xen.templates:3001
 msgid "Debian repository for VPS creation:"
 msgstr "VPS 作成用の Debian リポジトリ:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:6001
+#: ../dtc-xen.templates:3001
 msgid ""
 "Please enter the repository to use for creating the VPS (Virtual Private "
 "Server). The current /etc/apt/sources.list file will be copied to the "
@@ -147,77 +83,77 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:7001
+#: ../dtc-xen.templates:4001
 msgid "Network mask for the VPS:"
 msgstr "VPS 用のネットワークマスク:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:7001
+#: ../dtc-xen.templates:4001
 msgid ""
 "Please enter the network mask to use in the created Virtual Private Server's "
 "network settings."
 msgstr ""
-"作成するバーチャルプライベートサーバのネットワーク設定で使うネットマスクを入力"
-"してください。"
+"作成するバーチャルプライベートサーバのネットワーク設定で使うネットマスクを入"
+"力してください。"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:8001
+#: ../dtc-xen.templates:5001
 msgid "Network address for the VPS:"
 msgstr "VPS 用のネットワークアドレス:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:8001
+#: ../dtc-xen.templates:5001
 msgid ""
 "Please enter the network address to use in the created Virtual Private "
 "Server's network settings."
 msgstr ""
-"作成するバーチャルプライベートサーバのネットワーク設定で使うネットワークアドレス"
-"を入力してください。"
+"作成するバーチャルプライベートサーバのネットワーク設定で使うネットワークアド"
+"レスを入力してください。"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:9001
+#: ../dtc-xen.templates:6001
 msgid "Broadcast address for the VPS:"
 msgstr "VPS 用のブロードキャストアドレス:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:9001
+#: ../dtc-xen.templates:6001
 msgid ""
 "Please enter the network broadcast address to use in the created Virtual "
 "Private Server's network settings."
 msgstr ""
-"作成するバーチャルプライベートサーバのネットワーク設定で使う"
-"ブロードキャストアドレスを入力してください。"
+"作成するバーチャルプライベートサーバのネットワーク設定で使うブロードキャスト"
+"アドレスを入力してください。"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:10001
+#: ../dtc-xen.templates:7001
 msgid "Gateway address for the VPS:"
 msgstr "VPS 用のゲートウェイアドレス:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:10001
+#: ../dtc-xen.templates:7001
 msgid ""
 "Please enter the network gateway address to use in the created Virtual "
 "Private Server's network settings."
 msgstr ""
-"作成するバーチャルプライベートサーバのネットワーク設定で使うゲートウェイ"
-"アドレスを入力してください。"
+"作成するバーチャルプライベートサーバのネットワーク設定で使うゲートウェイアド"
+"レスを入力してください。"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:11001
+#: ../dtc-xen.templates:8001
 msgid "Xen kernel release name:"
 msgstr "Xen カーネルのリリース名:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:11001
+#: ../dtc-xen.templates:8001
 msgid ""
 "Please enter the kernel version number as it appears with the 'uname -a' "
 "command."
@@ -226,107 +162,109 @@ msgstr ""
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:11001
+#: ../dtc-xen.templates:8001
 msgid ""
-"A kernel domU with that name must be located in /boot (example: vmlinuz-"
-"2.6.16.27-xenU) and its corresponding modules must be in /lib/modules."
+"A kernel domU with that name must be located in /boot (example: "
+"vmlinuz-2.6.16.27-xenU) and its corresponding modules must be in /lib/"
+"modules."
 msgstr ""
-"domU という名前のカーネルは /boot に (例: vmlinuz-2.6.16.27-xenU)、"
-"対応するモジュールは /lib/modules に配置する必要があります。"
+"domU という名前のカーネルは /boot に (例: vmlinuz-2.6.16.27-xenU)、対応するモ"
+"ジュールは /lib/modules に配置する必要があります。"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:12001
+#: ../dtc-xen.templates:9001
 msgid "Name of the initrd image:"
 msgstr "initrd イメージの名前:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:12001
+#: ../dtc-xen.templates:9001
 msgid ""
 "Please enter the name of the initrd ram disk image to use when setting-up a "
 "Linux Xen startup file. Leave this blank to not setup your domU with a "
 "initrd image at all."
 msgstr ""
 "Linux Xen 起動ファイルの設定する際に使う initrd RAM ディスクイメージの名前を"
-"入力してください。これを空白のままにすると domU を全く initrd イメージを使わない"
-"ように設定します。"
+"入力してください。これを空白のままにすると domU を全く initrd イメージを使わ"
+"ないように設定します。"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:13001
+#: ../dtc-xen.templates:10001
 msgid "Volume group to create VPS in:"
 msgstr "VPS が作成されるボリュームグループ:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:13001
+#: ../dtc-xen.templates:10001
 msgid "Dtc-xen creates physical partitions in an existing LVM volume group"
-msgstr "dtc-xen は既存の LVM ボリュームグループ内に物理パーティションを作成します。"
+msgstr ""
+"dtc-xen は既存の LVM ボリュームグループ内に物理パーティションを作成します。"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:13001
+#: ../dtc-xen.templates:10001
 msgid ""
 "Please enter that volume group name. The volume group size must fit all the "
 "virtual machines you will set up later on this server. If you don't want to "
 "use LVM (because you don't care if loopback is slower), leave this setting "
 "to the default value."
 msgstr ""
-"ボリュームグループ名を入力してください。ボリュームグループサイズは、後ほどこの"
-"サーバ上で設定する全ての仮想マシンに一致する必要があります。(ループバックが遅く"
-"なるのを気にしないので) LVM を使いたくない場合、この設定はデフォルト値にして"
-"おいてください。"
+"ボリュームグループ名を入力してください。ボリュームグループサイズは、後ほどこ"
+"のサーバ上で設定する全ての仮想マシンに一致する必要があります。(ループバックが"
+"遅くなるのを気にしないので) LVM を使いたくない場合、この設定はデフォルト値に"
+"しておいてください。"
 
 #. Type: note
 #. Description
-#: ../dtc-xen.templates:14001
+#: ../dtc-xen.templates:11001
 msgid "How to finish the install"
 msgstr "インストール完了の仕方"
 
 #. Type: note
 #. Description
-#: ../dtc-xen.templates:14001
+#: ../dtc-xen.templates:11001
 msgid ""
 "To finish the installation, you need to launch /usr/sbin/dtc-"
 "xen_finish_install."
 msgstr ""
-"インストールを完了するには、/usr/sbin/dtc-xen_finish_install を"
-"起動する必要があります。"
+"インストールを完了するには、/usr/sbin/dtc-xen_finish_install を起動する必要が"
+"あります。"
 
 #. Type: note
 #. Description
-#: ../dtc-xen.templates:14001
+#: ../dtc-xen.templates:11001
 msgid ""
 "This script will remove port forwarding from the current sshd_config file "
 "and add the permission to access the xm console to the group xenusers so "
 "that users can login to the physical console."
 msgstr ""
-"このスクリプトは現在の sshd_config ファイルからポート転送を削除し、物理"
-"コンソールからユーザがログイン出来るようにxm コンソールへのアクセス許可権を "
+"このスクリプトは現在の sshd_config ファイルからポート転送を削除し、物理コン"
+"ソールからユーザがログイン出来るようにxm コンソールへのアクセス許可権を "
 "xenusers グループに追加します。"
 
 #. Type: note
 #. Description
-#: ../dtc-xen.templates:14001
+#: ../dtc-xen.templates:11001
 msgid ""
 "Please note that the system is currently safe (connections to a physical "
 "console as xenXX will be rejected because the /etc/sudoers is not changed), "
 "but a basic user won't be able to log into his physical console using ssh."
 msgstr ""
-"システムは現在安全でありますが (xenXX としての物理コンソールへの接続は "
-"/etc/sudoers が変更されていないので拒否されます)、基本ユーザは ssh を使って"
-"物理コンソールにログインできないことに注意ください。"
+"システムは現在安全でありますが (xenXX としての物理コンソールへの接続は /etc/"
+"sudoers が変更されていないので拒否されます)、基本ユーザは ssh を使って物理コ"
+"ンソールにログインできないことに注意ください。"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:15001
+#: ../dtc-xen.templates:12001
 msgid "VPS mountpoint:"
 msgstr "VPS のマウントポイント:"
 
 #. Type: string
 #. Description
-#: ../dtc-xen.templates:15001
+#: ../dtc-xen.templates:12001
 msgid ""
 "In order to do the setup of the VPS it's managing, dtc-xen will mount an LVM "
 "device or a file loopback on the dom0 of your Xen server, and then use it as "
@@ -336,23 +274,23 @@ msgid ""
 "points so you can do maintenance and mount VPSes with less hassle. Enter the "
 "desired path prefix for these mount points."
 msgstr ""
-"VPS 管理の設定を行うため、dtc-xen は LVM デバイスをマウント、あるいは Xen サーバ "
-"の dom0 上のファイルループバックをマウントし、VPS 用のパーティションとして利用します。"
-"ループバックマウントはデフォルトでは小さな数に制限されていますが、LVM はアクセスも"
-"早いので、こちらの方が推奨される選択肢です。これは自動的に /etc/fstab マウント"
-"ポイントを設定するのにも使われるので、労せずに VPS をメンテナンスやマウント"
-"できます。これらのマウントポイントのため、希望するパスのプレフィックスを入力して"
-"ください。"
+"VPS 管理の設定を行うため、dtc-xen は LVM デバイスをマウント、あるいは Xen "
+"サーバ の dom0 上のファイルループバックをマウントし、VPS 用のパーティションと"
+"して利用します。ループバックマウントはデフォルトでは小さな数に制限されていま"
+"すが、LVM はアクセスも早いので、こちらの方が推奨される選択肢です。これは自動"
+"的に /etc/fstab マウントポイントを設定するのにも使われるので、労せずに VPS を"
+"メンテナンスやマウントできます。これらのマウントポイントのため、希望するパス"
+"のプレフィックスを入力してください。"
 
 #. Type: select
 #. Description
-#: ../dtc-xen.templates:16001
+#: ../dtc-xen.templates:13001
 msgid "Debian os to setup:"
 msgstr "セットアップする Debian OS:"
 
 #. Type: select
 #. Description
-#: ../dtc-xen.templates:16001
+#: ../dtc-xen.templates:13001
 msgid ""
 "Select the Debian operating system that you want to have setup when dtc-xen "
 "creates a new VM instance with debootstrap."
@@ -360,3 +298,45 @@ msgstr ""
 "dtc-xen が新しい VM インスタンスを debootstrap で作成する際に設定したい "
 "Debian オペレーティングシステムを選択してください"
 
+#~ msgid "Server port:"
+#~ msgstr "サーバのポート番号:"
+
+#~ msgid ""
+#~ "Default is 8089. Please enter the port the dtc-xen SOAP server will bind "
+#~ "to."
+#~ msgstr ""
+#~ "デフォルトは 8089 です。dtc-xen SOAP サーバが利用するポート番号を入力して"
+#~ "ください。"
+
+#~ msgid "Server domain name:"
+#~ msgstr "サーバのドメイン名:"
+
+#~ msgid ""
+#~ "Please enter the domain name for the dtc-xen server. This will be used as "
+#~ "a part of the URL by the SOAP dtc panel client like nodeXXXX.example.com."
+#~ msgstr ""
+#~ "dtc-xen サーバに使うドメイン名を入力してください。これは nodeXXXX.example."
+#~ "com のように、SOAP dtc パネルクライアントから URL の一部として利用されま"
+#~ "す。"
+
+#~ msgid "VPS Server node number:"
+#~ msgstr "VPS サーバのノード番号:"
+
+#~ msgid "Please enter the value to use to set up VPS numbering."
+#~ msgstr "VPS のナンバリング設定に使う値を入力してください。"
+
+#~ msgid ""
+#~ "Assuming this value is 'XXXX', the VPS numbers will be 'xenXXXXYY', YY "
+#~ "being the VPS number itself (xenYY), and XXXX being the Xen server "
+#~ "number. This node number must be 4 or 5 characters long."
+#~ msgstr ""
+#~ "この値が 'XXXX' だと仮定すると、VPS のナンバリングは 'xenXXXXYY' になりま"
+#~ "す。YY は VPS 番号そのもので (xenYY)、XXXX は Xen サーバの番号です。この"
+#~ "ノード番号は 4 文字、あるいは 5 文字の長さが必要です。"
+
+#~ msgid ""
+#~ "As a consequence of this choice, the server's hostname will be nodeXXXX."
+#~ "example.com (which you can later add in your DTC control panel)."
+#~ msgstr ""
+#~ "この選択の結果、サーバのホスト名は nodeXXXX.example.com になります (後ほ"
+#~ "ど DTC コントロールパネル内で追加できます)。"

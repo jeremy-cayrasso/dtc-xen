@@ -1,3 +1,13 @@
+dtc-xen (0.5.13-2) unstable; urgency=low
+
+  * Fix pending l10n issues. Debconf translations:
+    - Portuguese (Pedro Ribeiro).  Closes: #597350
+  * Spanish (Francisco Javier Cuadrado).  Closes: #600407
+  * Italian (Vincenzo Campanella).  Closes: #600631
+  * Danish (Joe Hansen).  Closes: #600729
+
+ -- Thomas Goirand <zigo@debian.org>  Thu, 28 Oct 2010 15:35:11 +0800
+
 dtc-xen (0.5.13-1) unstable; urgency=low
 
   * New upstream version fixing:
