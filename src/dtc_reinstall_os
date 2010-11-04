@@ -734,6 +734,17 @@ if [ -n "${custom_postinstall_script}" ] ; then
 	fi
 fi
 
+####################################################
+### CUSTOM last_stage_postinst SCRIPT FOR DISTRO ###
+####################################################
+echo "Setting-up network for distro ${DISTRO}..."
+if ! [ "$DISTRO" = "netbsd" -o "$DISTRO" = "xenhvm" -o "$DISTRO" = "centos" -o "$DISTRO" = "centos42" -o "$DISTRO" = "debian" -o "$DISTRO" = "debian-dtc" ] ; then
+	if [ -x /usr/share/dtc-xen-os/${DISTRO}/last_stage_custom ] ; then
+		/usr/share/dtc-xen-os/${DISTRO}/last_stage_custom ${FW_PARAMS}
+	fi
+fi
+
+
 #######################
 ### UMOUNT AND EXIT ###
 #######################
