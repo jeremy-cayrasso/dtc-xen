@@ -143,20 +143,6 @@ debian_fixups () {
 	if [ -e /etc/cron.d/dtc-xen ] ; then
 		rm -f /etc/cron.d/dtc-xen
 	fi
-
-	# Because someone has to do it if nobody cares:
-	# Patches the stupid xen kernel package of Debian with the below
-	# double symlinks. Note that a bug has been sent to the pkg-xen
-	# team, and in respond, my bug was tagged "wontfix". THAT is what
-	# I call being cooperative ... and not respectful at all of the
-	# fact that the upstream of Xen puts the python libs of Xen in
-	# a folder that is in the default python path (and for a reason...).
-	if [ ! -e /usr/lib/xen ] ; then
-		ln -s /etc/alternatives/xen-default /usr/lib/xen
-	fi
-	if [ ! -e /usr/lib/python2.5/site-packages/xen ] ; then
-		ln -s /usr/lib/xen/lib/python/xen /usr/lib/python2.5/site-packages/xen
-	fi
 }
 
 VERBOSE_INSTALL=yes

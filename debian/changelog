@@ -1,3 +1,10 @@
+dtc-xen (0.5.13-3) unstable; urgency=low
+
+  * Removed /usr/lib/xen and /usr/lib/python2.5/site-packages/xen symlink
+    creation in postinst (Closes: #606591).
+
+ -- Thomas Goirand <zigo@debian.org>  Fri, 10 Dec 2010 16:24:27 +0800
+
 dtc-xen (0.5.13-2) unstable; urgency=low
 
   * Fix pending l10n issues. Debconf translations:
