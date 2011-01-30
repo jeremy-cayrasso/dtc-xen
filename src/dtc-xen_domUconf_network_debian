@@ -5,6 +5,7 @@ set -e
 . /usr/share/dtc-xen/dtc-xen-parse-param
 
 ETC="${VPS_PATH}/etc"
+DOM0GATE=`cat /etc/network/interfaces |grep gateway|cut -d" " -f2`
 
 if [ "${VIRT_TYPE}" = "vz" ] ; then
 	ETHNAME_PREFIX=vnet
@@ -34,11 +35,17 @@ iface lo inet loopback
 		echo "auto ${DEVICE}
 iface ${DEVICE} inet static
 	address ${N_IP}
-	netmask ${N_MASK}
-	network ${N_NET}
-	broadcast ${N_BCAST}" >>${ETC}/network/interfaces
+	netmask ${N_MASK}" >>${ETC}/network/interfaces
+	if [ "$N_MASK" != "255.255.255.255" ] ; then 
+        echo " network ${N_NET}" >>${ETC}/network/interfaces
+        fi
+ echo " broadcast ${N_BCAST}" >>${ETC}/network/interfaces
 		if [ ${N} = 0 ] ; then
-			echo "	gateway ${GATEWAY}" >>${ETC}/network/interfaces
+ echo " post-up route add ${DOM0GATE} dev eth0
+        post-up route add default gw ${DOM0GATE}
+        post-down route del ${DOM0GATE} dev eth0
+        post-down route del default gw ${DOM0GATE}">>${ETC}/network/interfaces
+			#echo "	gateway ${GATEWAY}" >>${ETC}/network/interfaces
 		fi
 		echo "" >>${ETC}/network/interfaces
 		N=$(( ${N} + 1 ))

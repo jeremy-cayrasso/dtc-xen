@@ -114,7 +114,8 @@ extra = \"3 TERM=xterm xencons=tty console=tty1\"
 				XENU_EXTRA_PARM="4"
 			# Debian domU wont have console without: TERM=xterm xencons=tty console=tty1
 			else
-				XENU_EXTRA_PARM="4 TERM=xterm xencons=tty console=tty1"
+				XENU_EXTRA_PARM="4"
+                                                  # TERM=xterm xencons=tty console=tty1"
 			fi
 		fi
 		echo "root = \"/dev/${part_dev} ro\"
